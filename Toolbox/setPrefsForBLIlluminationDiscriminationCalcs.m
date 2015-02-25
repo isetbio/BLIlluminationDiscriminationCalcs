@@ -7,7 +7,7 @@ function setPrefsForBLIlluminationDiscriminationCalcs
 % 2/25/2015     npc     Wrote it.
 % 
 
-    sharedRootDir = fullfile('Volumes','ColorShare1','Users', 'Shared', 'Matlab', 'Analysis', 'BLIlluminationDiscriminationCalcs');
+    sharedRootDir = fullfile(filesep,'Volumes','ColorShare1','Users', 'Shared', 'Matlab', 'Analysis', 'BLIlluminationDiscriminationCalcs');
     dataBaseDir   = fullfile(sharedRootDir, 'Data');
     
     % If the preferences group already exists, remove it
