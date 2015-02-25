@@ -17,17 +17,17 @@ function generateOpticalImageFromRGBimageTemplate
     
     % Using the calibration data from the Brainard Lab Display
     % Comment this out and use the default diplay for quicker results
-    scene = sceneFromFile(imageData, 'rgb', [], brainardLabDisplay);    
-    imgSize = calStructOBJ.get('screenSizeMM') / 1000;
-    dist = 0.764;
-    
-    fov = rad2deg(atan2(imgSize(1),dist));
-    scene = sceneSet(scene, 'fov', fov);
+%     scene = sceneFromFile(imageData, 'rgb', [], brainardLabDisplay);    
+%     imgSize = calStructOBJ.get('screenSizeMM') / 1000;
+%     dist = 0.764;
+%     
+%     fov = rad2deg(atan2(imgSize(1),dist));
+%     scene = sceneSet(scene, 'fov', fov);
     
     % Comment out the above and uncomment the line below to use the default
     % display
    
-%     scene = sceneFromFile(imageData, 'rgb');  
+    scene = sceneFromFile(imageData, 'rgb');  
     
     vcAddObject(scene);
     sceneWindow;
@@ -42,7 +42,10 @@ end
 % Method to load the image and the calibration data from the given matfile
 function [imageData, calStructOBJ] = loadData()
     % Load the image data and the calibration filename
-    data = load('data.mat');
+    baseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+    dataFilePath = fullfile(baseDir, 'ImageData', 'TestImage0.mat');
+    data = load(dataFilePath);
+    
     imageData   = data.sensorImageLeftRGB;
     calFileName = data.calData.calLeftName;
     
