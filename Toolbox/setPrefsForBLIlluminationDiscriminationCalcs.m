@@ -1,8 +1,7 @@
 function setPrefsForBLIlluminationDiscriminationCalcs
 % setPrefsForBLIlluminationDiscriminationCalcs
 %
-% Method to set the preferences for the BLIlluminationDiscriminationCalcs
-% project.
+% Method to set the preferences for the BLIlluminationDiscriminationCalcs project.
 %
 % 2/25/2015     npc     Wrote it.
 % 
