@@ -1,6 +1,12 @@
-% Method to generate an isetbio display object with given specifications
 function displayObject = generateIsetbioDisplayObjectFromCalStructObject(displayName, calStructOBJ)
-    
+% displayObject = generateIsetbioDisplayObjectFromCalStructObject(displayName, calStructOBJ)
+%
+% Method to generate an isetbio display object with given specifications
+%
+% 2/20/2015    npc  Wrote skeleton script for xiamao ding
+% 2/24/2015    xd   Updated to compute dpi, and set gamma and spds
+% 2/26/2015    npc  Updated to employ SPD subsampling 
+
     % We will need to extract the following fields from the calStructOBJ
     % (1) the display's gammaTable - this is stored in the 'gammaTable' field
     % (2) the measured primary spectral power distributions (SPDs) of the
@@ -16,17 +22,17 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
     % You will need to extract the following fields: 'gammaTable', 'S', 'P_device', 'screenSizeMM', 'screenSizePixel'
     % To see how to extract fields from a calStruct object type 'doc CalStruct' in Matlab's command window.
     
-    
     % Assemble filename for generated display object
     displayFileName = sprintf('%s.mat', displayName);
     
+    % Set the following flag to true, if you want to always generate the
+    % display object from scratch
+    forceGenerateNewDisplayObject = true;
+    
     % check if a display object with the given name exists already
-    if (~exist(displayFileName, 'file'))
+    if (~exist(displayFileName, 'file')) || (forceGenerateNewDisplayObject)
         
         % Generate an isetbio display object
-        % Type 'doc displaySet' in Matlab's command window for some pointers
-        
-        % Type necesary code to accomplish the following steps:
         
         % (1) generate a display object
         displayObject = displayCreate;
@@ -34,19 +40,24 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
         % (2) set the display's name to the input parameter displayName
         displayObject = displaySet(displayObject, 'name', displayFileName);
         
-        % (3) set the wavelength sampling at which the primary SPDs were measured
-        s = calStructOBJ.get('S');
-        top = s(2) * (s(3) - 1) + s(1);
-        wave = s(1):s(2):top;
-        displayObject = displaySet(displayObject, 'wave', wave);
+        % (3) get the wavelength sampling and the SPD from the CalStructOBJ 
+        wave = SToWls(calStructOBJ.get('S'));
+        spd = calStructOBJ.get('P_device');
         
-        % (4) set the measured SPDs of the display
-        displayObject = displaySet(displayObject, 'spd', calStructOBJ.get('P_device'));
+        % (4) subSample the SPDs
+        subSamplingFactor = 4;
+        lowPassSigma = subSamplingFactor/2;
+        maintainTotalEnergy = true;
+        [subSampledWave, subSampledSPDs] = subSampleSPDs(wave, spd, subSamplingFactor, lowPassSigma, maintainTotalEnergy);
         
-        % (5) set the display's gamma table
+        % (5) Set the display object's SPD to the subsampled versions
+        displayObject = displaySet(displayObject, 'wave', subSampledWave);
+        displayObject = displaySet(displayObject, 'spd', subSampledSPDs);
+        
+        % (6) set the display's gamma table
         displayObject = displaySet(displayObject, 'gTable', calStructOBJ.get('gammaTable'));
         
-        % (6) set the display resolution in dots (pixels) per inch
+        % (7) set the display resolution in dots (pixels) per inch
         m = calStructOBJ.get('screenSizeMM');
         p = calStructOBJ.get('screenSizePixel');
         
@@ -57,7 +68,7 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
         
         displayObject = displaySet(displayObject, 'dpi', dpi);
         
-        % (7) set the viewing distance to 76.4 cm
+        % (8) set the viewing distance to 76.4 cm
         displayObject = displaySet(displayObject, 'viewing distance', .764);
         
         % Save display object to file

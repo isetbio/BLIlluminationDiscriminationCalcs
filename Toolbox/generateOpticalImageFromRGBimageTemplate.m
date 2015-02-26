@@ -1,61 +1,65 @@
 function generateOpticalImageFromRGBimageTemplate
+% generateOpticalImageFromRGBimageTemplate
+%
+% Method to generate the optimal image object from the RGB settings data of
+% a reference image based on the spectral, gamma, and spatial properties of
+% a given display, e.g. 'StereoLCDLeft'.
+%
+% 2/20/2015    npc  Wrote skeleton script for xiamao ding
+% 2/24/2015    xd   Updated to generate isetbio display object and compute
+%                   corresponding oi based on said display object
+% 2/26/2015    npc  Updated to retrieve image and calibration data from ColorShare1
+%
 
     % Load the RGB imageData and generate the calibration object
-    [imageData, calStructOBJ] = loadData();
+    % [imageData, calStructOBJ] = loadData();
 
+    % Load the calibrationData
+    calStructOBJ = loadCalibrationData('StereoLCDLeft');
+    
+    % Load the input image
+    imageData  = loadImageData('TestImage0');
+    
     % the imageData contains an RGB matrix which is
     % sent to the frame buffer for display on a given monitor
-%     displayImage(imageData);
+    % displayImage(imageData);
 
     % Initialize ISETBIO
     s_initISET;
     
     % Generate an isetbio display object to model the display used to obtain the calibration data
+    tic
     brainardLabDisplay = generateIsetbioDisplayObjectFromCalStructObject('BrainardLabStereoLeftDisplay', calStructOBJ);
+    fprintf('Display object generation took %2.1f seconds\n', toc);
     
-    % Code to generate an isetbio scene from the RGB imageData
+    % Generate scene using custom display object generated above.
+    tic
+    scene = sceneFromFile(imageData, 'rgb', [], brainardLabDisplay);  
+    fprintf('Scene object generation took %2.1f seconds\n', toc);
     
-    % Using the calibration data from the Brainard Lab Display
-    % Comment this out and use the default diplay for quicker results
-%     scene = sceneFromFile(imageData, 'rgb', [], brainardLabDisplay);    
-%     imgSize = calStructOBJ.get('screenSizeMM') / 1000;
-%     dist = 0.764;
+    imgSize = calStructOBJ.get('screenSizeMM') / 1000;
+    dist = 0.764;
 %     
-%     fov = rad2deg(atan2(imgSize(1),dist));
-%     scene = sceneSet(scene, 'fov', fov);
+    fov = rad2deg(atan2(imgSize(1),dist));
+    scene = sceneSet(scene, 'fov', fov);
     
     % Comment out the above and uncomment the line below to use the default
     % display
    
-    scene = sceneFromFile(imageData, 'rgb');  
+%    scene = sceneFromFile(imageData, 'rgb');  
     
     vcAddObject(scene);
     sceneWindow;
     
     % Code to generate the optical image
     oi = oiCreate('human');
+    tic
     oi = oiCompute(oi,scene); 
+    fprintf('Optical image object generation took %2.1f seconds\n', toc);
     vcAddObject(oi); oiWindow;
 
 end
 
-% Method to load the image and the calibration data from the given matfile
-function [imageData, calStructOBJ] = loadData()
-    % Load the image data and the calibration filename
-    baseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-    dataFilePath = fullfile(baseDir, 'ImageData', 'TestImage0.mat');
-    data = load(dataFilePath);
-    
-    imageData   = data.sensorImageLeftRGB;
-    calFileName = data.calData.calLeftName;
-    
-    % Load the calibration data from the calibration file
-    cal = LoadCalFile(calFileName, Inf);
-
-    % Generate calStructOBJ to access the calibration data
-    calStructOBJ = ObjectToHandleCalOrCalStruct(cal);
-    clear 'cal'
-end
 
 function displayImage(imageData)
     figure();s
@@ -71,5 +75,3 @@ function displayImage(imageData)
        title(componentNames{channel});
     end
 end
-
-
