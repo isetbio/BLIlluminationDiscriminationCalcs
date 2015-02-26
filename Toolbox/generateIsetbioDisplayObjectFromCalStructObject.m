@@ -41,14 +41,17 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
         displayObject = displaySet(displayObject, 'name', displayFileName);
         
         % (3) get the wavelength sampling and the SPD from the CalStructOBJ 
-        wave = SToWls(calStructOBJ.get('S'));
+        S = calStructOBJ.get('S');
         spd = calStructOBJ.get('P_device');
         
-        % (4) subSample the SPDs
-        subSamplingFactor = 4;
-        lowPassSigma = subSamplingFactor/2;
+        % (4) subSample the SPDs 
+        % Here we specify an 8 nm sampling interval after lowpassing
+        % with a gaussian whose sigma is 4 nm
+        newSamplingIntervalInNanometers = 8;                     
+        lowPassSigmaInNanometers        = 4;        
         maintainTotalEnergy = true;
-        [subSampledWave, subSampledSPDs] = subSampleSPDs(wave, spd, subSamplingFactor, lowPassSigma, maintainTotalEnergy);
+        showFig = false;
+        [subSampledWave, subSampledSPDs] = subSampleSPDs(S, spd, newSamplingIntervalInNanometers, lowPassSigmaInNanometers, maintainTotalEnergy, showFig);
         
         % (5) Set the display object's SPD to the subsampled versions
         displayObject = displaySet(displayObject, 'wave', subSampledWave);
