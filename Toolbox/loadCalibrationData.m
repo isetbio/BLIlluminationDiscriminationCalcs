@@ -1,0 +1,20 @@
+function calStructOBJ = loadCalibrationData(calFile)
+% calStructOBJ = loadCalibrationData(calFile)
+%
+% Method to load calibration data from a calFile located in the CalData directory of the
+% BLIlluminationDiscriminationCalcs project, which currently is resides in
+% scallop's ColorShare1 shared folder.
+%
+% 2/26/2015     npc     Wrote it.
+% 
+
+    % Assemble calFileName
+    dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+    calDir   = fullfile(dataBaseDir, 'CalData', filesep);
+
+    % Load the calibration data
+    cal = LoadCalFile(calFile, [], calDir);
+    % generate calStructOBJ to access the calibration data
+    calStructOBJ = ObjectToHandleCalOrCalStruct(cal);
+    clear 'cal'
+end
