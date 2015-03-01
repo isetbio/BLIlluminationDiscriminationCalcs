@@ -37,11 +37,19 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
     % Use default subsampling to 8 nm
     defaultSVec = [380 8 51];
     
+    % Validate distance is positive
+    checkDist = @(x) validateattributes(x, {'double'}, {'positive'});
+    defaultDist = 0.764;
+    
     addRequired(p, 'displayName', @ischar);
     addRequired(p, 'calStructOBJ', checkCalStruct);
     addParameter(p, 'sVector', defaultSVec, checkSVec);
+    addParameter(p, 'distance', defaultDist, checkDist);
+    
     
     parse(p, displayName, calStructOBJ, varargin{:});
+    
+    dist = p.Results.distance
     
     % Assemble filename for generated display object
     displayFileName = sprintf('%s.mat', p.Results.displayName);
@@ -64,7 +72,6 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
         % (3) get the wavelength sampling and the SPD from the CalStructOBJ 
         S = calStructOBJ.get('S');
         spd = calStructOBJ.get('P_device');
-        
         
         
         % (4) subSample the SPDs 
@@ -95,7 +102,7 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
         displayObject = displaySet(displayObject, 'dpi', dpi);
         
         % (8) set the viewing distance to 76.4 cm
-        displayObject = displaySet(displayObject, 'viewing distance', .764);
+        displayObject = displaySet(displayObject, 'viewing distance', dist);
         
         % Save display object to file
         fprintf('Saving new display object (''%s'')\n', displayName);
