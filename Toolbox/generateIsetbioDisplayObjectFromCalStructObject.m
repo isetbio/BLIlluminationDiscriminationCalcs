@@ -1,11 +1,12 @@
-function displayObject = generateIsetbioDisplayObjectFromCalStructObject(displayName, calStructOBJ)
-% displayObject = generateIsetbioDisplayObjectFromCalStructObject(displayName, calStructOBJ)
+function displayObject = generateIsetbioDisplayObjectFromCalStructObject(displayName, calStructOBJ, varargin)
+% displayObject = generateIsetbioDisplayObjectFromCalStructObject(displayName, calStructOBJ, varargin)
 %
 % Method to generate an isetbio display object with given specifications
 %
 % 2/20/2015    npc  Wrote skeleton script for xiamao ding
 % 2/24/2015    xd   Updated to compute dpi, and set gamma and spds
 % 2/26/2015    npc  Updated to employ SPD subsampling 
+% 3/1/2015     xd   Updated to take in optional S Vector 
 
     % We will need to extract the following fields from the calStructOBJ
     % (1) the display's gammaTable - this is stored in the 'gammaTable' field
@@ -22,8 +23,28 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
     % You will need to extract the following fields: 'gammaTable', 'S', 'P_device', 'screenSizeMM', 'screenSizePixel'
     % To see how to extract fields from a calStruct object type 'doc CalStruct' in Matlab's command window.
     
+    % Input parser to see if optional S vector input exists
+    p = inputParser;
+    
+    % Check that the CalStruct input is indeed a CalStruct
+    checkCalStruct = @(x) isa(x, 'CalStruct');
+    
+    % Validate S Vector dimensions
+    SVecAtt = {'size', [1,3]};
+    SVecClass = {'double'};
+    checkSVec = @(x) validateattributes(x, SVecClass, SVecAtt);
+    
+    % Use default subsampling to 8 nm
+    defaultSVec = [380 8 51];
+    
+    addRequired(p, 'displayName', @ischar);
+    addRequired(p, 'calStructOBJ', checkCalStruct);
+    addParameter(p, 'sVector', defaultSVec, checkSVec);
+    
+    parse(p, displayName, calStructOBJ, varargin{:});
+    
     % Assemble filename for generated display object
-    displayFileName = sprintf('%s.mat', displayName);
+    displayFileName = sprintf('%s.mat', p.Results.displayName);
     
     % Set the following flag to true, if you want to always generate the
     % display object from scratch
@@ -44,10 +65,12 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
         S = calStructOBJ.get('S');
         spd = calStructOBJ.get('P_device');
         
+        
+        
         % (4) subSample the SPDs 
-        % Here we specify an 8 nm sampling interval after lowpassing
-        % with a gaussian whose sigma is 4 nm
-        newSamplingIntervalInNanometers = 8;                     
+        % Here we use the input sampling interval, the default is set to 8
+        % newSamplingIntervalInNanometers = 8; 
+        newSamplingIntervalInNanometers = p.Results.sVector(2);                     
         lowPassSigmaInNanometers        = 4;        
         maintainTotalEnergy = true;
         showFig = false;
