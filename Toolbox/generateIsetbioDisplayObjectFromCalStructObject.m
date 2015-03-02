@@ -7,6 +7,7 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
 % 2/24/2015    xd   Updated to compute dpi, and set gamma and spds
 % 2/26/2015    npc  Updated to employ SPD subsampling 
 % 3/1/2015     xd   Updated to take in optional S Vector 
+% 3/2/2015     xd   Updated to take in ExtraCalData struct
 
     % We will need to extract the following fields from the calStructOBJ
     % (1) the display's gammaTable - this is stored in the 'gammaTable' field
@@ -24,35 +25,38 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
     % To see how to extract fields from a calStruct object type 'doc CalStruct' in Matlab's command window.
     
     % Input parser to see if optional S vector input exists
-    p = inputParser;
+    input = inputParser;
     
     % Check that the CalStruct input is indeed a CalStruct
     checkCalStruct = @(x) isa(x, 'CalStruct');
     
     % Validate S Vector dimensions
-    SVecAtt = {'size', [1,3]};
+    SVecAttribute = {'size', [1,3]};
     SVecClass = {'double'};
-    checkSVec = @(x) validateattributes(x, SVecClass, SVecAtt);
+    checkSVec = @(x) validateattributes(x, SVecClass, SVecAttribute);
     
-    % Use default subsampling to 8 nm
+    % Use default subsampling of 8 nm
     defaultSVec = [380 8 51];
+       
+    % Check is ExtraCalData
+    checkExtraData = @(x) isa(x, 'ExtraCalData');
     
-    % Validate distance is positive
-    checkDist = @(x) validateattributes(x, {'double'}, {'positive'});
-    defaultDist = 0.764;
+    % default distance in ExtraCalData is set to 0.5
+%     defaultData = ExtraCalData;
     
-    addRequired(p, 'displayName', @ischar);
-    addRequired(p, 'calStructOBJ', checkCalStruct);
-    addParameter(p, 'sVector', defaultSVec, checkSVec);
-    addParameter(p, 'distance', defaultDist, checkDist);
+    addRequired(input, 'displayName', @ischar);
+    addRequired(input, 'calStructOBJ', checkCalStruct);
+    addRequired(input, 'ExtraData', checkExtraData);
+    
+    addParameter(input, 'SVector', defaultSVec, checkSVec);
     
     
-    parse(p, displayName, calStructOBJ, varargin{:});
     
-    dist = p.Results.distance
-    
+    parse(input, displayName, calStructOBJ, varargin{:});
+    input.Results
+
     % Assemble filename for generated display object
-    displayFileName = sprintf('%s.mat', p.Results.displayName);
+    displayFileName = sprintf('%s.mat', displayName);
     
     % Set the following flag to true, if you want to always generate the
     % display object from scratch
@@ -72,12 +76,11 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
         % (3) get the wavelength sampling and the SPD from the CalStructOBJ 
         S = calStructOBJ.get('S');
         spd = calStructOBJ.get('P_device');
-        
-        
+             
         % (4) subSample the SPDs 
         % Here we use the input sampling interval, the default is set to 8
         % newSamplingIntervalInNanometers = 8; 
-        newSamplingIntervalInNanometers = p.Results.sVector(2);                     
+        newSamplingIntervalInNanometers = input.Results.SVector(2);                     
         lowPassSigmaInNanometers        = 4;        
         maintainTotalEnergy = true;
         showFig = false;
@@ -101,7 +104,8 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
         
         displayObject = displaySet(displayObject, 'dpi', dpi);
         
-        % (8) set the viewing distance to 76.4 cm
+        % (8) Use the viewing distance obtained from the ExtraData Struct
+        dist = input.Results.ExtraData.distance;
         displayObject = displaySet(displayObject, 'viewing distance', dist);
         
         % Save display object to file

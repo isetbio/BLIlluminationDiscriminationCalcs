@@ -9,7 +9,8 @@ function generateOpticalImageFromRGBimageTemplate
 % 2/24/2015    xd   Updated to generate isetbio display object and compute
 %                   corresponding oi based on said display object
 % 2/26/2015    npc  Updated to retrieve image and calibration data from ColorShare1
-%
+% 3/2/2015     xd   Updated to generate an additional struct that contains
+%                   viewing distance
 
     % Load the RGB imageData and generate the calibration object
     % [imageData, calStructOBJ] = loadData();
@@ -27,9 +28,12 @@ function generateOpticalImageFromRGBimageTemplate
     % Initialize ISETBIO
     s_initISET;
     
+    extraData = ExtraCalData;
+    extraData.distance = 0.764;
+    
     % Generate an isetbio display object to model the display used to obtain the calibration data
     tic
-    brainardLabDisplay = generateIsetbioDisplayObjectFromCalStructObject('BrainardLabStereoLeftDisplay', calStructOBJ);
+    brainardLabDisplay = generateIsetbioDisplayObjectFromCalStructObject('BrainardLabStereoLeftDisplay', calStructOBJ, extraData);
     fprintf('Display object generation took %2.1f seconds\n', toc);
     
     % Generate scene using custom display object generated above.
