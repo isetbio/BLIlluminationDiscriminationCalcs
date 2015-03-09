@@ -8,6 +8,7 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
 % 2/26/2015    npc  Updated to employ SPD subsampling 
 % 3/1/2015     xd   Updated to take in optional S Vector 
 % 3/2/2015     xd   Updated to take in ExtraCalData struct
+% 3/9/2015     xd   Updated S Vector behavior
 
     % We will need to extract the following fields from the calStructOBJ
     % (1) the display's gammaTable - this is stored in the 'gammaTable' field
@@ -50,11 +51,8 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
     
     addParameter(input, 'SVector', defaultSVec, checkSVec);
     
-    
-    
     parse(input, displayName, calStructOBJ, varargin{:});
-    input.Results
-
+    
     % Assemble filename for generated display object
     displayFileName = sprintf('%s.mat', displayName);
     
@@ -76,15 +74,32 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
         % (3) get the wavelength sampling and the SPD from the CalStructOBJ 
         S = calStructOBJ.get('S');
         spd = calStructOBJ.get('P_device');
+        
+        % S vector to subsample to
+        newS = input.Results.SVector;
+        
+        % find the start and end index in SPD if newS does not start/end 
+        % at the same wavelength
+        startI = (newS(1) - S(1))/S(2) + 1;
+        ending = (newS(1) +  newS(2) * (newS(3) - 1));   
+        endI = (ending - S(1))/S(2) + 1;
+        
+        % new N
+        trimN = (ending - newS(1)) / S(2) + 1;
+        
+        % Take the portion of the original SPD that encompasses the 
+        % subsample entirely, trim any excess data
+        trimSPD = spd(startI:endI, :);
+        trimS = [newS(1) S(2) trimN];
              
         % (4) subSample the SPDs 
         % Here we use the input sampling interval, the default is set to 8
         % newSamplingIntervalInNanometers = 8; 
-        newSamplingIntervalInNanometers = input.Results.SVector(2);                     
+        newSamplingIntervalInNanometers = newS(2);                     
         lowPassSigmaInNanometers        = 4;        
         maintainTotalEnergy = true;
         showFig = false;
-        [subSampledWave, subSampledSPDs] = subSampleSPDs(S, spd, newSamplingIntervalInNanometers, lowPassSigmaInNanometers, maintainTotalEnergy, showFig);
+        [subSampledWave, subSampledSPDs] = subSampleSPDs(trimS, trimSPD, newSamplingIntervalInNanometers, lowPassSigmaInNanometers, maintainTotalEnergy, showFig);
         
         % (5) Set the display object's SPD to the subsampled versions
         displayObject = displaySet(displayObject, 'wave', subSampledWave);

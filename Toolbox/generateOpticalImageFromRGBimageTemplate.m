@@ -43,14 +43,14 @@ function generateOpticalImageFromRGBimageTemplate
     
     imgSize = calStructOBJ.get('screenSizeMM') / 1000;
     dist = 0.764;
-%     
+    
     fov = rad2deg(atan2(imgSize(1),dist));
     scene = sceneSet(scene, 'fov', fov);
     
     % Comment out the above and uncomment the line below to use the default
     % display
    
-%    scene = sceneFromFile(imageData, 'rgb');  
+    % scene = sceneFromFile(imageData, 'rgb');  
     
     vcAddObject(scene);
     sceneWindow;
