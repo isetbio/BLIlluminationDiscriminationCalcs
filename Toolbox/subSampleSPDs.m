@@ -1,4 +1,4 @@
-function [subSampledWavelengthSampling, subSampledSPDs] = subSampleSPDs(originalS, originalSPDs, newSamplingInterval, lowPassSigma, maintainTotalEnergy, showFig)
+function [subSampledWavelengthSampling, subSampledSPDs] = subSampleSPDs(originalS, originalSPDs, targetS, lowPassSigma, maintainTotalEnergy, showFig)
 % [subSampledWavelengthSampling, subSampledSPDs] = subSampleSPDs(originalS, originalSPDs, newSamplingInterval, lowPassSigma, maintainTotalEnergy, showFig)
 %
 % Method to subsample the SPDs by a given sampling interval (given in nanometers) after first
@@ -8,7 +8,11 @@ function [subSampledWavelengthSampling, subSampledSPDs] = subSampleSPDs(original
 % the intermediate steps of this operation is displayed.
 %
 % 2/26/2015     npc     Wrote it.
-% 
+% 3/10/2015     xd      Changed newSamplingInterval input to targetS
+%                       This allows targetS to have a different range
+%                       that is still contained within orginialS
+
+    newSamplingInterval = targetS(2);
 
     % ensure that newSamplingInterval, lowPassSigma are integers
     newSamplingInterval = round(newSamplingInterval);
@@ -21,7 +25,12 @@ function [subSampledWavelengthSampling, subSampledSPDs] = subSampleSPDs(original
     maxResSPDs = SplineSpd(originalS, originalSPDs, newS);
      
     % generate subsampling vector containing the indices of the samples to keep
-    subSamplingVector = (1:newSamplingInterval:numel(maxResWavelengthSampling));
+    % find start and end intervals for targetS
+    targetWavelengthSampling = SToWls(targetS);
+    startIndex = targetS(1) - originalS(1) + 1;
+    endIndex = targetWavelengthSampling(end) - originalS(1) + 1;
+
+    subSamplingVector = (startIndex:newSamplingInterval:endIndex);
     subSampledWavelengthSampling = maxResWavelengthSampling(subSamplingVector);
     
     % preallocate memory for the subsampled SPDs

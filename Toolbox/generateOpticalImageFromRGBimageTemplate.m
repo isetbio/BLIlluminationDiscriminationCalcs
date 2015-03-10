@@ -42,7 +42,7 @@ function generateOpticalImageFromRGBimageTemplate
     fprintf('Scene object generation took %2.1f seconds\n', toc);
     
     imgSize = calStructOBJ.get('screenSizeMM') / 1000;
-    dist = 0.764;
+    dist = extraData.distance;
     
     fov = rad2deg(atan2(imgSize(1),dist));
     scene = sceneSet(scene, 'fov', fov);
@@ -55,12 +55,12 @@ function generateOpticalImageFromRGBimageTemplate
     vcAddObject(scene);
     sceneWindow;
     
-    % Code to generate the optical image
-    oi = oiCreate('human');
-    tic
-    oi = oiCompute(oi,scene); 
-    fprintf('Optical image object generation took %2.1f seconds\n', toc);
-    vcAddObject(oi); oiWindow;
+%     % Code to generate the optical image
+%     oi = oiCreate('human');
+%     tic
+%     oi = oiCompute(oi,scene); 
+%     fprintf('Optical image object generation took %2.1f seconds\n', toc);
+%     vcAddObject(oi); oiWindow;
 
 end
 

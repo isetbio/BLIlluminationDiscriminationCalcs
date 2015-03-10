@@ -31,19 +31,14 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
     % Check that the CalStruct input is indeed a CalStruct
     checkCalStruct = @(x) isa(x, 'CalStruct');
     
-    % Validate S Vector dimensions
-    SVecAttribute = {'size', [1,3]};
-    SVecClass = {'double'};
-    checkSVec = @(x) validateattributes(x, SVecClass, SVecAttribute);
+    % Validate S Vector dimensions and properties
+    checkSVec = @(x) (validateSVector(calStructOBJ.get('S'), x));
     
     % Use default subsampling of 8 nm
     defaultSVec = [380 8 51];
-       
+
     % Check is ExtraCalData
     checkExtraData = @(x) isa(x, 'ExtraCalData');
-    
-    % default distance in ExtraCalData is set to 0.5
-%     defaultData = ExtraCalData;
     
     addRequired(input, 'displayName', @ischar);
     addRequired(input, 'calStructOBJ', checkCalStruct);
@@ -75,31 +70,14 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
         S = calStructOBJ.get('S');
         spd = calStructOBJ.get('P_device');
         
-        % S vector to subsample to
-        newS = input.Results.SVector;
-        
-        % find the start and end index in SPD if newS does not start/end 
-        % at the same wavelength
-        startI = (newS(1) - S(1))/S(2) + 1;
-        ending = (newS(1) +  newS(2) * (newS(3) - 1));   
-        endI = (ending - S(1))/S(2) + 1;
-        
-        % new N
-        trimN = (ending - newS(1)) / S(2) + 1;
-        
-        % Take the portion of the original SPD that encompasses the 
-        % subsample entirely, trim any excess data
-        trimSPD = spd(startI:endI, :);
-        trimS = [newS(1) S(2) trimN];
-             
+
         % (4) subSample the SPDs 
-        % Here we use the input sampling interval, the default is set to 8
-        % newSamplingIntervalInNanometers = 8; 
-        newSamplingIntervalInNanometers = newS(2);                     
-        lowPassSigmaInNanometers        = 4;        
+        % Here we get the S vector to subsample to, default is [380 8 51]
+        newS = input.Results.SVector;              
+        lowPassSigmaInNanometers = 4;        
         maintainTotalEnergy = true;
         showFig = false;
-        [subSampledWave, subSampledSPDs] = subSampleSPDs(trimS, trimSPD, newSamplingIntervalInNanometers, lowPassSigmaInNanometers, maintainTotalEnergy, showFig);
+        [subSampledWave, subSampledSPDs] = subSampleSPDs(S, spd, newS, lowPassSigmaInNanometers, maintainTotalEnergy, showFig);
         
         % (5) Set the display object's SPD to the subsampled versions
         displayObject = displaySet(displayObject, 'wave', subSampledWave);
@@ -131,4 +109,18 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
         fprintf('Loading extant display object (''%s'')\n', displayName);
         displayObject = displayCreate(displayFileName);
     end 
+end
+
+function validateSVector(oldS, newS)   
+    SVecAttribute = {'size', [1,3]};
+    SVecClass = {'double'};
+    validateattributes(newS, SVecClass, SVecAttribute)
+    
+    newWave = SToWls(newS);
+    oldWave = SToWls(oldS);
+    if newS(1) < oldS(1)
+        error('S Vector starts at lower nm than original');
+    elseif newWave(end) > oldWave(end)
+        error('S Vector ends at higher nm than original');
+    end
 end
