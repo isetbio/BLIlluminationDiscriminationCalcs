@@ -55,12 +55,12 @@ function generateOpticalImageFromRGBimageTemplate
     vcAddObject(scene);
     sceneWindow;
     
-%     % Code to generate the optical image
-%     oi = oiCreate('human');
-%     tic
-%     oi = oiCompute(oi,scene); 
-%     fprintf('Optical image object generation took %2.1f seconds\n', toc);
-%     vcAddObject(oi); oiWindow;
+    % Code to generate the optical image
+    oi = oiCreate('human');
+    tic
+    oi = oiCompute(oi,scene); 
+    fprintf('Optical image object generation took %2.1f seconds\n', toc);
+    vcAddObject(oi); oiWindow;
 
 end
 

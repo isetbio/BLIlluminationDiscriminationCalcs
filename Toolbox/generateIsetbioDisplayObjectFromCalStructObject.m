@@ -111,11 +111,13 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
     end 
 end
 
-function validateSVector(oldS, newS)   
+function validateSVector(oldS, newS)  
+    % Check that newS fits S vector parameters
     SVecAttribute = {'size', [1,3]};
     SVecClass = {'double'};
     validateattributes(newS, SVecClass, SVecAttribute)
     
+    % Check that newS is within range of oldS
     newWave = SToWls(newS);
     oldWave = SToWls(oldS);
     if newS(1) < oldS(1)
