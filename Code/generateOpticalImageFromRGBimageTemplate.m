@@ -12,6 +12,11 @@ function generateOpticalImageFromRGBimageTemplate
 % 3/2/2015     xd   Updated to generate an additional struct that contains
 %                   viewing distance
 
+    % Add project specific toolbox to path dynamically
+    myDir = fileparts(mfilename('fullpath'));
+    pathDir = fullfile(myDir,'..','Toolbox','');
+    AddToMatlabPathDynamically(pathDir);
+    
     % Load the RGB imageData and generate the calibration object
     % [imageData, calStructOBJ] = loadData();
 
@@ -19,7 +24,7 @@ function generateOpticalImageFromRGBimageTemplate
     calStructOBJ = loadCalibrationData('StereoLCDLeft');
     
     % Load the input image
-    imageData  = loadImageData('TestImage0');
+    imageData  = loadImageData('Standard/TestImage0');
     
     % the imageData contains an RGB matrix which is
     % sent to the frame buffer for display on a given monitor
