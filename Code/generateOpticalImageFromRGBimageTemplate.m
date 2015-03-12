@@ -33,6 +33,8 @@ function generateOpticalImageFromRGBimageTemplate
     % Initialize ISETBIO
     s_initISET;
     
+    
+    if (~exist('TempScene/TestImage0Scene.mat', 'file'))
     extraData = ExtraCalData;
     extraData.distance = 0.764;
     
@@ -42,30 +44,45 @@ function generateOpticalImageFromRGBimageTemplate
     fprintf('Display object generation took %2.1f seconds\n', toc);
     
     % Generate scene using custom display object generated above.
-    tic
-    scene = sceneFromFile(imageData, 'rgb', [], brainardLabDisplay);  
-    fprintf('Scene object generation took %2.1f seconds\n', toc);
-    
     imgSize = calStructOBJ.get('screenSizeMM') / 1000;
-    dist = extraData.distance;
-    
-    fov = rad2deg(atan2(imgSize(1),dist));
-    scene = sceneSet(scene, 'fov', fov);
-    
-    % Comment out the above and uncomment the line below to use the default
-    % display
-   
-    % scene = sceneFromFile(imageData, 'rgb');  
-    
+
+    scene = getSceneFromRGBImage('Standard', 'TestImage0', brainardLabDisplay, imgSize);
+    else 
+        scene = loadSceneData('TempScene','TestImage0');
+    end
     vcAddObject(scene);
     sceneWindow;
     
     % Code to generate the optical image
-    oi = oiCreate('human');
-    tic
-    oi = oiCompute(oi,scene); 
-    fprintf('Optical image object generation took %2.1f seconds\n', toc);
+    
+    % Pass in just the name without .mat, let function take care of that,
+    % do not pass 'Scene' part of name either, let function append so that it
+    % can replace with 'Optics' when saving
+    if (~exist('TempOptics/TestImage0Optics.mat', 'file'))
+        oi = getOpticalImageFromSceneData('TempScene', 'TestImage0');
+    else
+        oi = loadOpticalImageData('TempOptics', 'TestImage0');
+    end
     vcAddObject(oi); oiWindow;
+    
+    
+    
+    imgSize = calStructOBJ.get('screenSizeMM') / 1000;
+    fov = rad2deg(atan2(imgSize(1),0.764));
+    
+    tic
+    sensor = sensorCreate();
+%     s2 = sensorCreate('human');
+    sensor = sensorSetSizeToFOV(sensor,fov,scene,oi);
+    sensor = sensorSet(sensor, 'wavelength', SToWls([380 8 51]));
+    
+ 
+%     expTimes = [0.005 0.010 0.050 0.100 0.2];
+%     sensor   = sensorSet(sensor,'Exposure Time',expTimes);
+    sensor   = sensorCompute(sensor,oi);
+%     sensor   = sensorSet(sensor,'ExposurePlane',3);
+    fprintf('Sensor image object generation took %2.1f seconds\n', toc);
+    vcAddAndSelectObject(sensor); sensorImageWindow;
 
 end
 
