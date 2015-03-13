@@ -1,13 +1,14 @@
 function optics = loadOpticalImageData(folderName, imageName)
 %loadOpticalImageData
-%   Loads the saved optical image data for BLIlluminationCalcs.  Currently using a
-%   local temp folder until write access to ColorShare1 is attained.
+%   Loads the saved optical image data for BLIlluminationCalcs.  Will load
+%   optical data from 'folderName' subdirectory in OpticalImageData folder
 %
 %   3/12/2015   xd  wrote it
 
-    path = strcat(folderName, '/', imageName, 'Optics.mat');
+    dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+    opticsPath = fullfile(dataBaseDir, 'OpticalImageData', folderName, strcat(imageName, 'Optics.mat'));
 
-    data = load(path);
+    data = load(opticsPath);
     optics = data.optics;
 
 end

@@ -1,4 +1,4 @@
-function optics = getOpticalImageFromSceneData(folderName, sceneName)
+function optics = getOpticalImageFromSceneData(folderName, imageName)
 %getOpticalImageFromSceneData
 %   Loads the scene file from ColorShare1 and turns it into an optical
 %   image using default human optics
@@ -6,15 +6,9 @@ function optics = getOpticalImageFromSceneData(folderName, sceneName)
 %   3/11/2015   xd  wrote it
 
     s_initISET;
-    
-%     dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-%     sceneFilePath = fullfile(dataBaseDir, 'SceneData', folderName, sceneName);
-    
-    sceneFilePath = strcat(folderName, '/', sceneName, 'Scene.mat');
-    
+        
     % load scene
-    data = load(sceneFilePath);
-    scene = data.scene;
+    scene = loadSceneData(folderName, imageName);
     
     % load optical image
     optics = oiCreate('human');
@@ -23,6 +17,14 @@ function optics = getOpticalImageFromSceneData(folderName, sceneName)
     fprintf('Optical image object generation took %2.1f seconds\n', toc);
 
     %save data to temp until write access to ColorShare
-    save(strcat('TempOptics/', sceneName, 'Optics.mat'), 'optics');
+    
+    % TODO, just save the DATA field of scenes and optical images to save
+    % space?
+    % TODO, take in standard OI and generate noise, compare to other
+    % OI and subtract, find distance, make chooser based on it
+    
+    dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+    sceneFilePath = fullfile(dataBaseDir, 'OpticalImageData', folderName, strcat(imageName, 'Optics.mat'));
+    save(sceneFilePath, 'optics');
 end
 

@@ -26,14 +26,11 @@ function scene = getSceneFromRGBImage(folderName, imageName, display, imgSize)
     scene = sceneCrop(scene, [450 350 624 574]);
     
     % save scene object
-%     dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-%     sceneFilePath = fullfile(dataBaseDir, 'ImageData', strcat(path,'Scene.mat'));
-    
-%     mkdir(strcat(dataBaseDir, '/SceneData'), 'Standard');
-%     vcExportObject(scene, strcat('TempScene/', imageName, 'Scene.mat'));
+    dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+    sceneFilePath = fullfile(dataBaseDir, 'SceneData', strcat(path,'Scene.mat'));
 
     % Save scene data in directory, temp until write access to ColorShare
-    save(strcat('TempScene/', imageName, 'Scene.mat'), 'scene');
+    save(sceneFilePath, 'scene');
     
 end
 

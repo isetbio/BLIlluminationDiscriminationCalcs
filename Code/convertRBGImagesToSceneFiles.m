@@ -33,9 +33,15 @@ function convertRBGImagesToSceneFiles
         %   For each image file, load the image and generate a scene from it
         %   using the Brainard Lab Display calibration file
         for s = 1:length(fileList)
+            % Create new Scene object if it does not already exist
             imgSize = calStructOBJ.get('screenSizeMM') / 1000;
             imgName = strsplit(fileList{s}, '.');
-            getSceneFromRGBImage(folderList{i}, imgName{1}, brainardLabDisplay, imgSize);
+            sceneCheckPath = fullfile(dataBaseDir, 'SceneData', folderList{i}, strcat(imgName{1}, 'Scene.mat'));
+            if (~exist(sceneCheckPath, 'file'))
+                getSceneFromRGBImage(folderList{i}, imgName{1}, brainardLabDisplay, imgSize);
+            end
+            fprintf(imgName{1});
+            fprintf('\n');
         end
     end
 end
