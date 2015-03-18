@@ -23,7 +23,9 @@ function scene = getSceneFromRGBImage(folderName, imageName, display, imgSize)
     scene = sceneSet(scene, 'fov', fov);
 
     % crop out black space
-    scene = sceneCrop(scene, [450 350 624 574]);
+    % scene = sceneCrop(scene, [450 350 624 574]);
+    % use a smaller cropping area to reduce file size
+    scene = sceneCrop(scene, [550 450 40 40]);
     
     % save scene object
     dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
