@@ -24,7 +24,7 @@ function convertScenesToOpticalimages
             imgName = strsplit(fileList{s}, 'Scene');
             
             % Create new Optical Image object if it does not already exist
-            sceneCheckPath = fullfile(dataBaseDir, 'OpticalImageData', folderList{i}, strcat(imgName{1}, 'Optics.mat'));
+            sceneCheckPath = fullfile(dataBaseDir, 'OpticalImageData', folderList{i}, strcat(imgName{1}, 'OpticalImage.mat'));
             if (~exist(sceneCheckPath, 'file'))
                 getOpticalImageFromSceneData(folderList{i}, imgName{1});
             end
