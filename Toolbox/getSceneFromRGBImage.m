@@ -19,7 +19,9 @@ function scene = getSceneFromRGBImage(folderName, imageName, display, imgSize)
     
     dist = display.dist;
     
-%     imgSize = [40, 40];
+%     x = 40 / 960;
+%     y = 40 / 1280;
+%     imgSize = [x*imgSize(1), y*imgSize(2)];
     
     fov = rad2deg(atan2(imgSize(1),dist));
     scene = sceneSet(scene, 'fov', fov);
