@@ -51,8 +51,7 @@ function generateOpticalImageFromRGBimageTemplate
     else
         scene = loadSceneData('Standard','TestImage0');
     end
-    vcAddObject(scene);
-    sceneWindow;
+    vcAddObject(scene);sceneWindow;
 
     % Code to generate the optical image
 
@@ -65,36 +64,37 @@ function generateOpticalImageFromRGBimageTemplate
     else
         oi = loadOpticalImageData('Standard', 'TestImage0');
     end
-    vcAddObject(oi); oiWindow;
+%     vcAddObject(oi); oiWindow;
 
     %     oi = loadOpticalImageData('BlueIllumination', 'blue1L-RGB');
-    %     vcAddObject(oi); oiWindow;
+        vcAddObject(oi); oiWindow;
 
 
-    imgSize = calStructOBJ.get('screenSizeMM') / 1000;
-    fov = rad2deg(atan2(imgSize(1),0.764));
+    
+    fov = sceneGet(scene, 'fov');
 
     tic
     sensor = sensorCreate();
-    %     sensor = sensorCreate('human');
-    sensor = sensorSet(sensor, 'noise flag', 1);
+%         sensor = sensorCreate('human');
+    sensor = sensorSet(sensor, 'noise flag', 2);
     sensor = sensorSet(sensor,'exp time',0.050);
 
     [sensor, ~] = sensorSetSizeToFOV(sensor,fov,scene,oi);
     sensor = sensorSet(sensor, 'wavelength', SToWls([380 8 51]));
 
+%     volts = getNoisySensorImages('Standard', 'TestImage0', sensor, 10);
 
     %     expTimes = [0.005 0.010 0.050 0.100 0.2];
     %     sensor   = sensorSet(sensor,'Exposure Time',expTimes);
-    sensorimage   = sensorCompute(sensor,oi);
+    sensor = sensorCompute(sensor,oi);
     %     sensor   = sensorSet(sensor,'ExposurePlane',3);
     fprintf('Sensor image object generation took %2.1f seconds\n', toc);
-    vcAddAndSelectObject(sensorimage); sensorImageWindow;
+    vcAddAndSelectObject(sensor); sensorImageWindow;
 
-    end
+end
 
 
-    function displayImage(imageData)
+function displayImage(imageData)
     figure();s
     subplot(2,2,1);
     imshow(imageData);
