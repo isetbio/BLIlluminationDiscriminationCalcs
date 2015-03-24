@@ -46,7 +46,8 @@ function generateOpticalImageFromRGBimageTemplate
 
         % Generate scene using custom display object generated above.
         imgSize = calStructOBJ.get('screenSizeMM') / 1000;
-
+        %960 x 1280 pixels
+        
         scene = getSceneFromRGBImage('Standard', 'TestImage0', brainardLabDisplay, imgSize);
     else
         scene = loadSceneData('Standard','TestImage0');
@@ -64,9 +65,9 @@ function generateOpticalImageFromRGBimageTemplate
     else
         oi = loadOpticalImageData('Standard', 'TestImage0');
     end
-%     vcAddObject(oi); oiWindow;
+    vcAddObject(oi); oiWindow;
 
-    %     oi = loadOpticalImageData('BlueIllumination', 'blue1L-RGB');
+        oi = loadOpticalImageData('BlueIllumination', 'blue1L-RGB');
         vcAddObject(oi); oiWindow;
 
 

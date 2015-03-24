@@ -23,7 +23,7 @@ function sensorImageSimpleChooserModel
     
     % Create a sensor
     sensor = sensorCreate;
-    sensor = sensorSet(sensor, 'noise flag', 1);
+%     sensor = sensorSet(sensor, 'noise flag', 1);
     sensor = sensorSet(sensor,'exp time',0.050);
 %     [sensor, ~] = sensorSetSizeToFOV(sensor,fov,scene,oi);
     sensor = sensorSet(sensor, 'wavelength', SToWls([380 8 51]));
