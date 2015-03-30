@@ -43,87 +43,56 @@ function sensorImageSimpleChooserModel
     
     k = 3;
     
-%     % Simulate trials
-%     nSimulatedTrials = 100;
-%     correct = zeros(nSimulatedTrials,1);
-%     for t = 1:nSimulatedTrials
-%         if (rem(t,10) == 0)
-%             fprintf('Finished %d of %d simulated trials\n',t,nSimulatedTrials);
-%         end
-%         
-%         folderNum = floor(4 * rand()) + 1;
-%         imageNum  = floor(50 * rand()) + 1;
-%         imageNum  = min(50, imageNum);
-%         
-%         
-%         imageName = strcat(prefix{folderNum}, int2str(imageNum), suffix);
-%         
-%         
-%         % We need one sample for the comparison version of the standard image
-%         voltsStandardComparison = getNoisySensorImages('Standard','TestImage0',sensor,1, k);
-%         
-%         % We need one sample for the presented version of the test image
-%         %voltsTestComparison = getNoisySensorImages('BlueIllumination','blue1L-RGB',sensor,1);
-%         voltsTestComparison = getNoisySensorImages(folderList{folderNum},imageName,sensor,1);
-%         
-% %         if (t == 1)
-% %             figure; clf;
-% %             imshow(voltsStandardReference/max(voltsStandardReference(:)));
-% %             figure; clf;
-% %             imshow(voltsStandardComparison/max(voltsStandardComparison(:)));
-% %             figure; clf;
-% %             imshow(voltsTestComparison/max(voltsTestComparison(:)));
-% %             drawnow;
-% %         end
-%         
-%         % Figure out which comparison is closer to standard
-%         distToStandard = norm(voltsStandardReference(:)-voltsStandardComparison(:));
-%         distToTest = norm(voltsStandardReference(:)-voltsTestComparison(:));
-%         
-%         % Decide if 'subject' was correct on this trial
-%         if (distToStandard < distToTest)
-%             correct(t) = 1;
-%         else
-%             correct(t) = 0;
-%         end
-%     end
-%     fprintf('Percent correct = %d\n',round(100*sum(correct)/length(correct)));
+    % Simulate trials
+    nSimulatedTrials = 100;
+    correct = zeros(nSimulatedTrials,1);
+    for t = 1:nSimulatedTrials
+        if (rem(t,10) == 0)
+            fprintf('Finished %d of %d simulated trials\n',t,nSimulatedTrials);
+        end
+        
+        folderNum = floor(4 * rand()) + 1;
+        imageNum  = floor(50 * rand()) + 1;
+        imageNum  = min(50, imageNum);
+        
+        
+        imageName = strcat(prefix{folderNum}, int2str(imageNum), suffix);
+        
+        
+        % We need one sample for the comparison version of the standard image
+        voltsStandardComparison = getNoisySensorImages('Standard','TestImage0',sensor,1, k);
+        
+        % We need one sample for the presented version of the test image
+        %voltsTestComparison = getNoisySensorImages('BlueIllumination','blue1L-RGB',sensor,1);
+        voltsTestComparison = getNoisySensorImages(folderList{folderNum},imageName,sensor,1);
+        
+        %         if (t == 1)
+        %             figure; clf;
+        %             imshow(voltsStandardReference/max(voltsStandardReference(:)));
+        %             figure; clf;
+        %             imshow(voltsStandardComparison/max(voltsStandardComparison(:)));
+        %             figure; clf;
+        %             imshow(voltsTestComparison/max(voltsTestComparison(:)));
+        %             drawnow;
+        %         end
+        
+        % Figure out which comparison is closer to standard
+        distToStandard = norm(voltsStandardReference(:)-voltsStandardComparison(:));
+        distToTest = norm(voltsStandardReference(:)-voltsTestComparison(:));
+        
+        % Decide if 'subject' was correct on this trial
+        if (distToStandard < distToTest)
+            correct(t) = 1;
+        else
+            correct(t) = 0;
+        end
+    end
+    fprintf('Percent correct = %d\n',round(100*sum(correct)/length(correct)));
 
     
-    matrix = kValueComparisonBasedOnColor(sensor);
-    printmat(matrix, 'Results', 'BlueIllumination GreenIllumination RedIllumination YellowIllumination', '1 2 3 4 5');
-%     
-%     total = 10;
-%     count = 0;
-%     for i = 1:total
-%         tic
-% 
-% 
-%         
-%         % Get test image sample
-%         
-%         oi = loadOpticalImageData(folderList{folderNum}, imageName);
-%         
-%         % Get sensor image and volt data
-%         sensorImage = sensorCompute(sensor, oi);
-%         testVolt = sensorGet(sensorImage, 'volts');
-% 
-%         A = baseVolt - noisyVolt;
-%         B = baseVolt - testVolt;
-%         
-%         nA = norm(A, 'fro')
-%         nB = norm(B, 'fro')
-%         if (nA < nB)
-% %             fprintf('1\n');
-%             count = count + 1;
-%         else
-% %             fprintf('2\n');
-%         end
-%         fprintf('%2.1f\n', toc);
-%     end
-%     count
-%     result = count / total
-    
+%     matrix = kValueComparisonBasedOnColor(sensor);
+%     printmat(matrix, 'Results', 'BlueIllumination GreenIllumination RedIllumination YellowIllumination', '1 2 3 4 5');
+   
 end
 
 
@@ -138,9 +107,9 @@ function results = kValueComparisonBasedOnColor(sensor)
     
     voltsStandardRef = getNoisySensorImages('Standard','TestImage0',sensor,1);
         
-    k = 3;
-    kValue = zeros(4,5);
-    for i = 1:2
+    k = 5;
+    kValue = zeros(length(folderList),k);
+    for i = 1:length(folderList)
         for j = 1:k
             correct = 0;
             tic
