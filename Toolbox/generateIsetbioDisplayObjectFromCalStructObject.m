@@ -22,6 +22,7 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
     
     % To see what fields are available in the calStructOBJ uncomment the following line
     calStructOBJ.printMappedFieldNames();
+    
     % You will need to extract the following fields: 'gammaTable', 'S', 'P_device', 'screenSizeMM', 'screenSizePixel'
     % To see how to extract fields from a calStruct object type 'doc CalStruct' in Matlab's command window.
     
@@ -70,7 +71,6 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
         S = calStructOBJ.get('S');
         spd = calStructOBJ.get('P_device');
         
-
         % (4) subSample the SPDs 
         % Here we get the S vector to subsample to, default is [380 8 51]
         newS = input.Results.SVector;              
