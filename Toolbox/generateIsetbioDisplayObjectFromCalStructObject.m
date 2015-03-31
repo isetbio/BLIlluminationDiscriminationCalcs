@@ -21,7 +21,7 @@ function displayObject = generateIsetbioDisplayObjectFromCalStructObject(display
     % (5) the resolution of the display in pixels
     
     % To see what fields are available in the calStructOBJ uncomment the following line
-    calStructOBJ.printMappedFieldNames();
+%     calStructOBJ.printMappedFieldNames();
     % You will need to extract the following fields: 'gammaTable', 'S', 'P_device', 'screenSizeMM', 'screenSizePixel'
     % To see how to extract fields from a calStruct object type 'doc CalStruct' in Matlab's command window.
     
