@@ -91,6 +91,7 @@ function sensorImageSimpleChooserModel
 
     
 %     matrix = kValueComparisonBasedOnColor(sensor);
+%     save('crossColorComparison', 'matrix');
 %     printmat(matrix, 'Results', 'BlueIllumination GreenIllumination RedIllumination YellowIllumination', '1 2 3 4 5');
    
 end
