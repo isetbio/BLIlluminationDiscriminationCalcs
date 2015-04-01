@@ -60,6 +60,8 @@ function SceneOpticsSensorSizeComparison
     
     
     sensor = sensorCreate;
+    sensorRows = sensorGet(sensor,'rows');
+    sensor = sensorSet(sensor,'cols',sensorRows);
     sensor = sensorSet(sensor, 'noise flag', 2);
     sensor = sensorSet(sensor,'exp time',0.050);
     sensor = sensorSet(sensor, 'wavelength', SToWls([380 8 51]));
