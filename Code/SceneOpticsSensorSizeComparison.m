@@ -29,8 +29,7 @@ function SceneOpticsSensorSizeComparison
     % This is h fov
     fov = 2*rad2deg(atan2(imgSize(1)/2,dist));
     scene = sceneSet(scene, 'fov', fov);
-    scene1 = sceneCrop(scene, [550 450 40 40]);
-    scene1 = sceneSet(scene1, 'name', 'oldFOV');
+    scene1 = loadSceneData('BlueIllumination', 'blue1L-RGB');
     
     
     y = 40 / 960;
@@ -42,7 +41,7 @@ function SceneOpticsSensorSizeComparison
     
     scene2 = sceneCrop(scene, [550 450 40 40]);
     scene2 = sceneSet(scene2, 'fov', fov2);
-    scene2 = sceneSet(scene2, 'name', 'oldFOV');
+    scene2 = sceneSet(scene2, 'name', 'newFOV');
     
     vcAddObject(scene2);
     vcAddObject(scene1);sceneWindow;
@@ -77,5 +76,6 @@ function SceneOpticsSensorSizeComparison
     
     vcAddAndSelectObject(sensor1); 
     vcAddAndSelectObject(sensor2); sensorImageWindow;
+    
 end
 
