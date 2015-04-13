@@ -4,6 +4,7 @@ function scene = getSceneFromRGBImage(folderName, imageName, display, imgSize)
 %   Function to generate an ISETBIO scene from an RGB Image.  The scene
 %   will also be saved to the appropriate folder on ColorShare1 
 %   3/11/2015    xd     wrote it
+%   4/1/2015     xd     updated to adjust fov to crop size
     
     path = strcat(folderName, '/', imageName);
 
@@ -19,11 +20,11 @@ function scene = getSceneFromRGBImage(folderName, imageName, display, imgSize)
     
     dist = display.dist;
     
-%     x = 40 / 960;
-%     y = 40 / 1280;
-%     imgSize = [x*imgSize(1), y*imgSize(2)];
+    y = 40 / 960;
+    x = 40 / 1280;
+    imgSize = [x*imgSize(1), y*imgSize(2)];
     
-    fov = rad2deg(atan2(imgSize(1),dist));
+    fov = 2*rad2deg(atan2(imgSize(1)/2,dist));
     scene = sceneSet(scene, 'fov', fov);
 
     % crop out black space
