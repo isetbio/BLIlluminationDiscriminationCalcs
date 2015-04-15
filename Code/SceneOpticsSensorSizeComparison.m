@@ -15,7 +15,7 @@ function SceneOpticsSensorSizeComparison
     
     imageData  = loadImageData('Standard/TestImage0');
     
-    extraData = ExtraCalData;
+    extraData = ptb.ExtraCalData;
     extraData.distance = 0.764;
     % If you want to subsample the primaries, enter a subSamplingVector, otherwise do nothing
     % Here we will subsample with 8 nm subsampling factor
