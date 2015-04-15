@@ -2,7 +2,8 @@ function SceneOpticsSensorSizeComparison
 %SceneOpticsSensorSizeComparison
 %This function compares the various pixel sizes of the scene, oi, and
 %sensor image to see if any discernable pattern can be attained
-%   xd  3/31/15     wrote it
+% 3/31/2015  xd    wrote it
+% 4/15/2015 npc    various updates related to integration with isetbio
 
     myDir = fileparts(mfilename('fullpath'));
     pathDir = fullfile(myDir,'..','Toolbox','');
@@ -23,7 +24,7 @@ function SceneOpticsSensorSizeComparison
 
     % Generate an isetbio display object to model the display used to obtain the calibration data
     saveDisplayObject = true;
-    brainardLabDisplay = ptb.GenerateIsetbioDisplayObjectFromCalStructObject('BrainardLabStereoLeftDisplay', calStructOBJ, extraData, saveDisplayObject);
+    brainardLabDisplay = ptb.GenerateIsetbioDisplayObjectFromCalStructObject('BrainardLabStereoLeftDisplay', calStructOBJ.cal, extraData, saveDisplayObject);
     
     imgSize = calStructOBJ.get('screenSizeMM') / 1000;
     
