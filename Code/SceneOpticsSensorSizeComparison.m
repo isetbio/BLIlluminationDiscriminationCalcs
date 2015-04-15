@@ -17,17 +17,19 @@ function SceneOpticsSensorSizeComparison
     
     extraData = ExtraCalData;
     extraData.distance = 0.764;
-    dist = 0.764;
+    % If you want to subsample the primaries, enter a subSamplingVector, otherwise do nothing
+    % Here we will subsample with 8 nm subsampling factor
+    extraData.subSamplingSvector = [380 8 51];
 
     % Generate an isetbio display object to model the display used to obtain the calibration data
-    brainardLabDisplay = generateIsetbioDisplayObjectFromCalStructObject('BrainardLabStereoLeftDisplay', calStructOBJ, extraData);
+    brainardLabDisplay = ptb.GenerateIsetbioDisplayObjectFromCalStructObject('BrainardLabStereoLeftDisplay', calStructOBJ, extraData);
     
     imgSize = calStructOBJ.get('screenSizeMM') / 1000;
     
     scene = sceneFromFile(imageData, 'rgb', [], brainardLabDisplay);  
 
     % This is h fov
-    fov = 2*rad2deg(atan2(imgSize(1)/2,dist));
+    fov = 2*rad2deg(atan2(imgSize(1)/2,extraData.distance));
     scene = sceneSet(scene, 'fov', fov);
     scene1 = loadSceneData('BlueIllumination', 'blue1L-RGB');
     
@@ -36,7 +38,7 @@ function SceneOpticsSensorSizeComparison
     x = 40 / 1280;
     imgSize2 = [x*imgSize(1), y*imgSize(2)];
     
-    fov2 = 2*rad2deg(atan2(imgSize2(1)/2,dist));
+    fov2 = 2*rad2deg(atan2(imgSize2(1)/2,extraData.distance));
     
     
     scene2 = sceneCrop(scene, [550 450 40 40]);
