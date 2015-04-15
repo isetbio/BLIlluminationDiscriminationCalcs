@@ -22,7 +22,8 @@ function SceneOpticsSensorSizeComparison
     extraData.subSamplingSvector = [380 8 51];
 
     % Generate an isetbio display object to model the display used to obtain the calibration data
-    brainardLabDisplay = ptb.GenerateIsetbioDisplayObjectFromCalStructObject('BrainardLabStereoLeftDisplay', calStructOBJ, extraData);
+    saveDisplayObject = true;
+    brainardLabDisplay = ptb.GenerateIsetbioDisplayObjectFromCalStructObject('BrainardLabStereoLeftDisplay', calStructOBJ, extraData, saveDisplayObject);
     
     imgSize = calStructOBJ.get('screenSizeMM') / 1000;
     
