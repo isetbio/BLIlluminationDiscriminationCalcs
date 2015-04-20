@@ -17,10 +17,13 @@ function convertRBGImagesToSceneFiles
     % Create the display
     extraData = ExtraCalData;
     extraData.distance = 0.764;
+    extraData.subSamplingSvector = [380 8 51];
 
     % Generate an isetbio display object to model the display used to obtain the calibration data
+    saveDisplayObject = true;
+    
     tic
-    brainardLabDisplay = generateIsetbioDisplayObjectFromCalStructObject('BrainardLabStereoLeftDisplay', calStructOBJ, extraData);
+    brainardLabDisplay = ptb.GenerateIsetbioDisplayObjectFromPTBCalStruct('BrainardLabStereoLeftDisplay', calStructOBJ.cal, extraData, saveDisplayObject);
     fprintf('Display object generation took %2.1f seconds\n', toc);
 
 

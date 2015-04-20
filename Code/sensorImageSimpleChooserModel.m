@@ -7,6 +7,7 @@ function sensorImageSimpleChooserModel
 %   standard image.
 %
 %   3/17/15     xd  wrote it
+%   4/17/15     xd  update to use human sensor
 
     myDir = fileparts(mfilename('fullpath'));
     pathDir = fullfile(myDir,'..','Toolbox','');
@@ -32,7 +33,7 @@ function sensorImageSimpleChooserModel
     oi = loadOpticalImageData('Standard', 'TestImage0');
     
     % Create a sensor
-    sensor = sensorCreate;
+    sensor = sensorCreate('human');
 %     sensor = sensorSet(sensor, 'noise flag', 1);
 
     % Set the sensor dimensions to a square
@@ -43,12 +44,13 @@ function sensorImageSimpleChooserModel
     [sensor, ~] = sensorSetSizeToFOV(sensor,fov,scene,oi);
     sensor = sensorSet(sensor, 'wavelength', SToWls([380 8 51]));
     
-    % We need one sample for the initially presented reference standard image
-    voltsStandardReference = getNoisySensorImages('Standard','TestImage0',sensor,1);
-    
-    k = 1.5;
-    
-    % Simulate trials
+
+%     k = 1.0;
+%     
+%     % We need one sample for the initially presented reference standard image
+%     voltsStandardReference = getNoisySensorImages('Standard','TestImage0',sensor,1, k);    
+%     
+%     %    Simulate trials
 %     nSimulatedTrials = 100;
 %     correct = zeros(nSimulatedTrials,1);
 %     tic
@@ -57,12 +59,7 @@ function sensorImageSimpleChooserModel
 %             fprintf('Finished %d of %d simulated trials\n',t,nSimulatedTrials);
 %         end
 %         
-%         folderNum = floor(4 * rand()) + 1;
-%         imageNum  = floor(50 * rand()) + 1;
-%         imageNum  = min(50, imageNum);
-%         
-%         
-%         imageName = strcat('blue', int2str(5), suffix);
+%         imageName = strcat('blue', int2str(1), suffix);
 %         
 %         
 %         % We need one sample for the comparison version of the standard image
@@ -70,7 +67,7 @@ function sensorImageSimpleChooserModel
 %         
 %         % We need one sample for the presented version of the test image
 %         %voltsTestComparison = getNoisySensorImages('BlueIllumination','blue1L-RGB',sensor,1);
-%         voltsTestComparison = getNoisySensorImages('BlueIllumination',imageName,sensor,1);
+%         voltsTestComparison = getNoisySensorImages('BlueIllumination',imageName,sensor,1, k);
 %         
 %         %         if (t == 1)
 %         %             figure; clf;
@@ -97,9 +94,14 @@ function sensorImageSimpleChooserModel
 %     fprintf('%2.1f', toc);
 
     
-    matrix = singleColorKValueComparison(sensor, 'BlueIllumination', 'blue', 50, 5);
+    matrix = singleColorKValueComparison(sensor, 'BlueIllumination', 'blue', 50, 10);
     save('blueIllumComparison', 'matrix');
-    printmat(matrix, 'Results', '1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50', '1.0 2.0 3.0 4.0 5.0');
+    printmat(matrix, 'Results', ...
+        '1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50', ...
+        '1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0');
+%     printmat(matrix, 'Results', ...
+%         '1 2 3 4 5 6 7 8 9 10', ...
+%         '1.0 2.0 3.0 4.0 5.0');    
    
 end
 
@@ -150,19 +152,24 @@ end
 function results = singleColorKValueComparison(sensor, folderName, prefix, num, k)
 
     suffix = 'L-RGB';
-    voltsStandardRef = getNoisySensorImages('Standard','TestImage0',sensor,1);
+    
     
     multiplier = 1;
     accuracyMatrix = zeros(num, k);
     for i = 1:num
         for j = 1:k
             correct = 0;
+            % Get inital noisy ref image
+            voltsStandardRef = getNoisySensorImages('Standard','TestImage0',sensor,1,(1 + multiplier * (j - 1)));
             tic
             for t = 1:100
+                
+                % Get noisy version of standard image
                 voltsStandardComp = getNoisySensorImages('Standard','TestImage0',sensor,1,(1 + multiplier * (j - 1)));
                 imageName = strcat(prefix, int2str(i), suffix);
                 
-                voltsTestComp = getNoisySensorImages(folderName,imageName,sensor,1);
+                % Get noisy version of test image
+                voltsTestComp = getNoisySensorImages(folderName,imageName,sensor,1,(1 + multiplier * (j - 1)));
                 
                 distToStandard = norm(voltsStandardRef(:)-voltsStandardComp(:));
                 distToTest = norm(voltsStandardRef(:)-voltsTestComp(:));
@@ -174,11 +181,6 @@ function results = singleColorKValueComparison(sensor, folderName, prefix, num, 
             end
             fprintf('%2.1f\n', toc);
             accuracyMatrix(i,j) = correct;
-            
-            % No need to calc for higher k values 
-            if (correct == 0)
-                break;
-            end
         end
     end
     
