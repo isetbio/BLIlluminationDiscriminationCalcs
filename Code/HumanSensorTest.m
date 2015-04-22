@@ -5,12 +5,13 @@ function HumanSensorTest
 %   
 %   4/17/15     xd     wrote it
 
+    % Clear
+    close all; clear global; ieInit;
+    
     myDir = fileparts(mfilename('fullpath'));
     pathDir = fullfile(myDir,'..','Toolbox','');
     AddToMatlabPathDynamically(pathDir);
 
-    s_initISET;
-    
     % Load the calibrationData
     calStructOBJ = loadCalibrationData('StereoLCDLeft');
     
@@ -72,7 +73,9 @@ function HumanSensorTest
     
     sensor = sensorSet(sensor, 'name', 'HumanTest');
   
-    vcAddAndSelectObject(sensor); sensorImageWindow;
+    vcAddAndSelectObject(sensor); 
+    sensorWindow('scale',1);
+    sensorImageWindow;
     
 end
 

@@ -7,7 +7,7 @@ function threshholdBlueCumulativeNormal
 %   4/20/2015   xd  wrote it
 
     % clear
-    clc; clear all;
+    clc; clear global; close all;
 
     % load data
     data  = load('blueIllumComparison');
@@ -24,7 +24,7 @@ function threshholdBlueCumulativeNormal
 
     % Define estimated threshholdBlue and slope for k = 2 -> 7
     ThreshEstimateBlue = [4 7 12 20 30 40];
-    SlopeEstimateBlue  = [0.1 0.1 0.1 0.1 0.1 0.1];
+    SlopeEstimateBlue  = 10*[0.1 0.1 0.1 0.1 0.1 0.1];
      
     % set params
     paramsFree  = [1, 1, 0, 0];
@@ -35,8 +35,8 @@ function threshholdBlueCumulativeNormal
     threshholdBlue = zeros(6, 1);
 
     % Define PF as cumulative normal
-    PF = @PAL_CumulativeNormal;
-    PFI = @PAL_inverseCumulativeNormal;
+    PF = @PAL_Weibull;
+    PFI = @PAL_inverseWeibull;
     
     options = optimset('fminsearch');   % Type help optimset
     options.TolFun = 1e-09;             % Increase required precision on LL
@@ -64,27 +64,27 @@ function threshholdBlueCumulativeNormal
         
         
         % Plot fitted curves
-%         figure;
-%         PropCorrectData = NumPos./OutofNum;
-%         StimLevelsFine  = [min(StimLevels):(max(StimLevels)-...
-%             min(StimLevels))/1000:max(StimLevels)];
-%         Fit = PF(paramsValuesBlue(i,:), StimLevelsFine);
-%         plot(StimLevels, PropCorrectData, 'k.', 'markersize', 40);
-%         set(gca, 'fontsize', 12);
-%         hold on;
-%         plot(StimLevelsFine, Fit, 'g-', 'linewidth', 4);
-%         plot([threshholdBlue(i) threshholdBlue(i)], [0, criterion], 'b', 'linewidth', 3);
-%         
-%         ThisTitle = strcat('K-Value : ',int2str(i+1));
-%         title(ThisTitle);
-%         xlabel('Stimulus Difference (nominal)');
-%         ylabel('Percent Correct');
+        figure;
+        PropCorrectData = NumPos./OutofNum;
+        StimLevelsFine  = [min(StimLevels):(max(StimLevels)-...
+            min(StimLevels))/1000:max(StimLevels)];
+        Fit = PF(paramsValuesBlue(i,:), StimLevelsFine);
+        plot(StimLevels, PropCorrectData, 'k.', 'markersize', 40);
+        set(gca, 'fontsize', 12);
+        hold on;
+        plot(StimLevelsFine, Fit, 'g-', 'linewidth', 4);
+        plot([threshholdBlue(i) threshholdBlue(i)], [0, criterion], 'b', 'linewidth', 3);
+        
+        ThisTitle = strcat('K-Value : ',int2str(i+1));
+        title(ThisTitle);
+        xlabel('Stimulus Difference (nominal)');
+        ylabel('Percent Correct');
         
     end
 
     % Threshholds and slope estimates for greenIllumination
-    ThreshEstimateGreen = [4 10 17 24 30 38 40 45];
-    SlopeEstimateGreen  = [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1];
+    ThreshEstimateGreen = 10*ones(size([4 10 17 24 30 38 40 45]));
+    SlopeEstimateGreen  = 10*[0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1];
     paramsValuesGreen = zeros(8,4);
     threshholdGreen = zeros(8,1);
     
@@ -103,8 +103,8 @@ function threshholdBlueCumulativeNormal
     end
     
     % Thresh and slop for red
-    ThreshEstimateRed = [2 10 17 18 20 24 24 30];
-    SlopEstimateRed = [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1];
+    ThreshEstimateRed = 10*ones(size([2 10 17 18 20 24 24 30]));
+    SlopEstimateRed = 10*[0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1];
     paramsValuesRed = zeros(8,4);
     threshholdRed = zeros(8,1);
     
@@ -128,7 +128,7 @@ function threshholdBlueCumulativeNormal
     kVals = 3:10;
 
     figure;
-    plot(kVals, threshholdGreen, 'k.', 'markersize', 40);
+    plot(kVals, threshholdGreen, 'g.', 'markersize', 40);
     p = polyfit(kVals, threshholdGreen', 1);
     
     y = polyval(p, kValsFine);
@@ -139,7 +139,7 @@ function threshholdBlueCumulativeNormal
     kVals = 3:10;
 
     
-    plot(kVals, threshholdRed, 'k.', 'markersize', 40);
+    plot(kVals, threshholdRed, 'r.', 'markersize', 40);
     p = polyfit(kVals, threshholdRed', 1);
     
     y = polyval(p, kValsFine);
@@ -149,7 +149,7 @@ function threshholdBlueCumulativeNormal
     % Plot threshholdBlue against k value
     kVals = 2:7;
 
-    plot(kVals, threshholdBlue, 'k.', 'markersize', 40);
+    plot(kVals, threshholdBlue, 'b.', 'markersize', 40);
     p = polyfit(kVals, threshholdBlue', 1);
     y = polyval(p, kValsFine);
     hold on;
