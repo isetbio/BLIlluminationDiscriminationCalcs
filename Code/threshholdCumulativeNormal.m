@@ -14,6 +14,8 @@ function threshholdBlueCumulativeNormal
     blueMatrix = data.matrix;
     data  = load('greenIllumComparison');
     greenMatrix = data.matrix;
+    data  = load('redIllumComparison');
+    redMatrix = data.matrix;
     
     % set data
     StimLevels = 1:1:50;
@@ -42,8 +44,8 @@ function threshholdBlueCumulativeNormal
     options.MaxIter = 500*100;
     
     
-%     NumPos = greenMatrix(1:50, 10)';
-%     params = [45 .1 .5 0];
+%     NumPos = redMatrix(1:50, 10)';
+%     params = [30 .1 .5 0];
 %     [ params ] = PAL_PFML_Fit(StimLevels, NumPos, OutofNum, ...
 %         params, paramsFree, PF, 'SearchOptions', options)
 %     thresh = PFI(params, criterion)
@@ -100,6 +102,26 @@ function threshholdBlueCumulativeNormal
         
     end
     
+    % Thresh and slop for red
+    ThreshEstimateRed = [2 10 17 18 20 24 24 30];
+    SlopEstimateRed = [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1];
+    paramsValuesRed = zeros(8,4);
+    threshholdRed = zeros(8,1);
+    
+    % Fit curve for red
+    for i = 1:8
+        NumPos = redMatrix(1:50,i+2)';
+        
+        paramsValuesGreen(i,:) = [ThreshEstimateRed(i) SlopEstimateRed(i) 0.5 0];
+        
+        [paramsValuesRed(i,:)] = PAL_PFML_Fit(StimLevels, NumPos, OutofNum, ...
+        paramsValuesRed(i,:), paramsFree, PF, 'SearchOptions', options);
+    
+        % Get threshholdBlue
+        threshholdRed(i) = PFI(paramsValuesRed(i,:), criterion);
+        
+    end
+    
     totalRange = 1:10;
     kValsFine = [min(totalRange):(max(totalRange)-min(totalRange))/1000:max(totalRange)];
     % Plot threshholdGreen against k value
@@ -112,6 +134,17 @@ function threshholdBlueCumulativeNormal
     y = polyval(p, kValsFine);
     hold on;
     plot (kValsFine, y, 'g', 'linewidth', 4);
+    
+    % Plot threshholdRed against k
+    kVals = 3:10;
+
+    
+    plot(kVals, threshholdRed, 'k.', 'markersize', 40);
+    p = polyfit(kVals, threshholdRed', 1);
+    
+    y = polyval(p, kValsFine);
+    hold on;
+    plot (kValsFine, y, 'r', 'linewidth', 4);
         
     % Plot threshholdBlue against k value
     kVals = 2:7;
