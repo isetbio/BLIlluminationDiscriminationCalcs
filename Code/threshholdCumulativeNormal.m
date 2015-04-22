@@ -1,4 +1,4 @@
-function threshholdBlueCumulativeNormal
+function threshholdCumulativeNormal
 %threshholdBlueCumulativeNormal
 %   This function uses the cumulative normal as a psychometric function to
 %   fit the data calculated from the simple image discrimination chooser
@@ -16,6 +16,8 @@ function threshholdBlueCumulativeNormal
     greenMatrix = data.matrix;
     data  = load('redIllumComparison');
     redMatrix = data.matrix;
+    data = load('yellowIllumComparison');
+    yellowMatrix = data.matrix;
     
     % set data
     StimLevels = 1:1:50;
@@ -64,31 +66,31 @@ function threshholdBlueCumulativeNormal
         
         
         % Plot fitted curves
-        figure;
-        PropCorrectData = NumPos./OutofNum;
-        StimLevelsFine  = [min(StimLevels):(max(StimLevels)-...
-            min(StimLevels))/1000:max(StimLevels)];
-        Fit = PF(paramsValuesBlue(i,:), StimLevelsFine);
-        plot(StimLevels, PropCorrectData, 'k.', 'markersize', 40);
-        set(gca, 'fontsize', 12);
-        hold on;
-        plot(StimLevelsFine, Fit, 'g-', 'linewidth', 4);
-        plot([threshholdBlue(i) threshholdBlue(i)], [0, criterion], 'b', 'linewidth', 3);
-        
-        ThisTitle = strcat('K-Value : ',int2str(i+1));
-        title(ThisTitle);
-        xlabel('Stimulus Difference (nominal)');
-        ylabel('Percent Correct');
+%         figure;
+%         PropCorrectData = NumPos./OutofNum;
+%         StimLevelsFine  = [min(StimLevels):(max(StimLevels)-...
+%             min(StimLevels))/1000:max(StimLevels)];
+%         Fit = PF(paramsValuesBlue(i,:), StimLevelsFine);
+%         plot(StimLevels, PropCorrectData, 'k.', 'markersize', 40);
+%         set(gca, 'fontsize', 12);
+%         hold on;
+%         plot(StimLevelsFine, Fit, 'b-', 'linewidth', 4);
+%         plot([threshholdBlue(i) threshholdBlue(i)], [0, criterion], 'b', 'linewidth', 3);
+%         
+%         ThisTitle = strcat('K-Value : ',int2str(i+1));
+%         title(ThisTitle);
+%         xlabel('Stimulus Difference (nominal)');
+%         ylabel('Percent Correct');
         
     end
 
-    % Threshholds and slope estimates for greenIllumination
+    % Threshholds and slope estimates for YellowIllumination
     ThreshEstimateGreen = 10*ones(size([4 10 17 24 30 38 40 45]));
     SlopeEstimateGreen  = 10*[0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1];
     paramsValuesGreen = zeros(8,4);
-    threshholdGreen = zeros(8,1);
+    threshholdGreen= zeros(8,1);
     
-    % Fit curve for green
+    % Fit curve for Green
     for i = 1:8
         NumPos = greenMatrix(1:50,i+2)';
         
@@ -109,10 +111,11 @@ function threshholdBlueCumulativeNormal
     threshholdRed = zeros(8,1);
     
     % Fit curve for red
+    figure;
     for i = 1:8
         NumPos = redMatrix(1:50,i+2)';
         
-        paramsValuesGreen(i,:) = [ThreshEstimateRed(i) SlopEstimateRed(i) 0.5 0];
+        paramsValuesRed(i,:) = [ThreshEstimateRed(i) SlopEstimateRed(i) 0.5 0];
         
         [paramsValuesRed(i,:)] = PAL_PFML_Fit(StimLevels, NumPos, OutofNum, ...
         paramsValuesRed(i,:), paramsFree, PF, 'SearchOptions', options);
@@ -120,7 +123,62 @@ function threshholdBlueCumulativeNormal
         % Get threshholdBlue
         threshholdRed(i) = PFI(paramsValuesRed(i,:), criterion);
         
+        
+        subplot(4,2, i);
+        PropCorrectData = NumPos./OutofNum;
+        StimLevelsFine  = [min(StimLevels):(max(StimLevels)-...
+            min(StimLevels))/1000:max(StimLevels)];
+        Fit = PF(paramsValuesRed(i,:), StimLevelsFine);
+        plot(StimLevels, PropCorrectData, 'k.', 'markersize', 40);
+        set(gca, 'fontsize', 12);
+        hold on;
+        plot(StimLevelsFine, Fit, 'r-', 'linewidth', 4);
+        plot([threshholdRed(i) threshholdRed(i)], [0, criterion], 'r', 'linewidth', 3);
+        
+        ThisTitle = strcat('K-Value : ',int2str(i+1));
+        title(ThisTitle);
+        xlabel('Stimulus Difference (nominal)');
+        ylabel('Percent Correct');
     end
+    
+    % Threshholds and slope estimates for YellowIllumination
+    ThreshEstimateYellow = 10*ones(size([4 10 17 24 30 38 40 45]));
+    SlopeEstimateYellow  = 10*[0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1];
+    paramsValuesYellow = zeros(8,4);
+    threshholdYellow = zeros(8,1);
+    
+    
+        figure;
+    % Fit curve for Yellow
+    for i = 1:8
+        NumPos = yellowMatrix(1:50,i+2)';
+        
+        paramsValuesYellow(i,:) = [ThreshEstimateYellow(i) SlopeEstimateYellow(i) 0.5 0];
+        
+        [paramsValuesYellow(i,:)] = PAL_PFML_Fit(StimLevels, NumPos, OutofNum, ...
+        paramsValuesYellow(i,:), paramsFree, PF, 'SearchOptions', options);
+    
+        % Get threshholdBlue
+        threshholdYellow(i) = PFI(paramsValuesYellow(i,:), criterion);
+        
+        subplot(4,2,i);
+        PropCorrectData = NumPos./OutofNum;
+        StimLevelsFine  = [min(StimLevels):(max(StimLevels)-...
+            min(StimLevels))/1000:max(StimLevels)];
+        Fit = PF(paramsValuesYellow(i,:), StimLevelsFine);
+        plot(StimLevels, PropCorrectData, 'k.', 'markersize', 40);
+        set(gca, 'fontsize', 12);
+        hold on;
+        plot(StimLevelsFine, Fit, 'y-', 'linewidth', 4);
+        plot([threshholdYellow(i) threshholdYellow(i)], [0, criterion], 'y', 'linewidth', 3);
+        
+        ThisTitle = strcat('K-Value : ',int2str(i+1));
+        title(ThisTitle);
+        xlabel('Stimulus Difference (nominal)');
+        ylabel('Percent Correct');
+        
+    end
+    
     
     totalRange = 1:10;
     kValsFine = [min(totalRange):(max(totalRange)-min(totalRange))/1000:max(totalRange)];
@@ -145,6 +203,19 @@ function threshholdBlueCumulativeNormal
     y = polyval(p, kValsFine);
     hold on;
     plot (kValsFine, y, 'r', 'linewidth', 4);
+    
+    
+        
+    % Plot threshholdRed against k
+    kVals = 3:10;
+
+    
+    plot(kVals, threshholdYellow, 'y.', 'markersize', 40);
+    p = polyfit(kVals, threshholdYellow', 1);
+    
+    y = polyval(p, kValsFine);
+    hold on;
+    plot (kValsFine, y, 'y', 'linewidth', 4);
         
     % Plot threshholdBlue against k value
     kVals = 2:7;
