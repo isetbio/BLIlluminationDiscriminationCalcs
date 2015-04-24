@@ -40,20 +40,14 @@ function HumanSensorTest
     
     scene = sceneCrop(scene, [550 450 40 40]);
     scene = sceneSet(scene, 'fov', fov2);
-    scene = sceneSet(scene, 'name', 'humanTest');
-    
-%     vcAddObject(scene);sceneWindow;
-    
+    scene = sceneSet(scene, 'name', 'HumanTest');
+        
     % Create a oi
     
     optics = oiCreate('human');
+    oi = oiCompute(optics,scene);     
+    oi = oiSet(oi, 'name', 'HumanTest');
     
-    oi = oiCompute(optics,scene); 
-    
-    oi = oiSet(oi, 'name', 'newFOVHumanTest');
-    
-%     vcAddObject(oi); oiWindow;
-
     % Create sensor image    
     sensor = sensorCreate('human');
     sensorRows = sensorGet(sensor,'rows');
