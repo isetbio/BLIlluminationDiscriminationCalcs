@@ -41,10 +41,10 @@ function threshholdCalculation
     
     % For each illumantion color, we find a vector of threshholds at which
     % the success rate his 0.709
-    [threshholdBlue, ~] = fitToData(UsableBlue(1), UsableBlue(2), blueMatrix, paramsValueEst, 'b');
-    [threshholdRed, ~] = fitToData(UsableRed(1), UsableRed(2), redMatrix, paramsValueEst, 'r');
-    [threshholdGreen, ~] = fitToData(UsableGreen(1), UsableGreen(2), greenMatrix, paramsValueEst, 'g');
-    [threshholdYellow, ~] = fitToData(UsableYellow(1), UsableYellow(2), yellowMatrix, paramsValueEst, 'y');
+    [threshholdBlue, ~] = fitToData(UsableBlue(1), UsableBlue(2), blueMatrix, paramsValueEst, 'b', true);
+    [threshholdRed, ~] = fitToData(UsableRed(1), UsableRed(2), redMatrix, paramsValueEst, 'r',false);
+    [threshholdGreen, ~] = fitToData(UsableGreen(1), UsableGreen(2), greenMatrix, paramsValueEst, 'g',false);
+    [threshholdYellow, ~] = fitToData(UsableYellow(1), UsableYellow(2), yellowMatrix, paramsValueEst, 'y',true);
     
     % Plot each threshhold vector against its representative k-value of
     % noise.  Also fit a line to it.
@@ -64,8 +64,9 @@ function threshholdCalculation
 end
 
 % This function will fit input data to a Weibull curve.  The choice of
-% psychometric function can be changed manually here.
-function [threshhold, paramsValues] = fitToData (usableDataRange, usableDataOffset, data, paramsEstimate, color)
+% psychometric function can be changed manually here.  Set "toPlot" to
+% false to disable plotting of the fitted curves
+function [threshhold, paramsValues] = fitToData (usableDataRange, usableDataOffset, data, paramsEstimate, color, toPlot)
 
     % Pre-allocate room for return values
     threshhold = zeros(usableDataRange,1);
@@ -88,9 +89,11 @@ function [threshhold, paramsValues] = fitToData (usableDataRange, usableDataOffs
     options.MaxFunEvals = 10000 * 100;
     options.MaxIter = 500*100;
     
-    figure;
-    set(gcf, 'Position', [0 0 1000 1000]); 
-    set(gca,'FontName','Helvetica','FontSize',12);
+    if (toPlot)
+        figure;
+        set(gcf, 'Position', [0 0 1000 1000]); 
+        set(gca,'FontName','Helvetica','FontSize',12);
+    end
     for i = 1:usableDataRange
         
         % Load the current column of data, each column is a different
@@ -105,21 +108,22 @@ function [threshhold, paramsValues] = fitToData (usableDataRange, usableDataOffs
         threshhold(i) = PFI(paramsValues(i,:), criterion);
         
         % Plot fitted curves
-        subplot(usableDataRange/2,2,i);
-        PropCorrectData = NumPos./OutofNum;
-        StimLevelsFine  = min(StimLevels):(max(StimLevels)-...
-            min(StimLevels))/1000:max(StimLevels);
-        Fit = PF(paramsValues(i,:), StimLevelsFine);
-        plot(StimLevels, PropCorrectData, 'k.', 'markersize', 40);
-        set(gca, 'fontsize', 12);
-        hold on;
-        plot(StimLevelsFine, Fit, color, 'linewidth', 4);
-        plot([threshhold(i) threshhold(i)], [0, criterion], color, 'linewidth', 3);
-        
-        title(strcat('K-Value : ',int2str(i+1)));
-        xlabel('Stimulus Difference (nominal)');
-        ylabel('Percent Correct');
-        
+        if (toPlot)
+            subplot(usableDataRange/2,2,i);
+            PropCorrectData = NumPos./OutofNum;
+            StimLevelsFine  = min(StimLevels):(max(StimLevels)-...
+                min(StimLevels))/1000:max(StimLevels);
+            Fit = PF(paramsValues(i,:), StimLevelsFine);
+            plot(StimLevels, PropCorrectData, 'k.', 'markersize', 40);
+            set(gca, 'fontsize', 12);
+            hold on;
+            plot(StimLevelsFine, Fit, color, 'linewidth', 4);
+            plot([threshhold(i) threshhold(i)], [0, criterion], color, 'linewidth', 3);
+
+            title(strcat('K-Value : ',int2str(i+1)));
+            xlabel('Stimulus Difference (nominal)');
+            ylabel('Percent Correct');
+        end
     end
 end
 
