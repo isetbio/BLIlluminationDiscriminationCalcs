@@ -29,7 +29,7 @@ function threshholdCalculation
 
     % Set usable data range and offset
     % These values are attained from a cursory overview of the data
-    % Any columns that do not consistantly reach ~70% correct rate is
+    % Any columns that do not consistantly reach 70.9% correct rate is
     % ignored in the fit calculation
     
     % The first value is how many columns are usable. The second value is
