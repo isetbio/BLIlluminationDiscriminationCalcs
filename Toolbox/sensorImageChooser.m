@@ -1,23 +1,30 @@
-function decision = sensorImageChooser(sensor, noisySensor, testSensor)
-%sensorImageChooser
-%   This function tests the three input sensor images against each other.
-%   It calculates the norm of A = |sensor - noisy| and B = |sensor - test| 
-%   and returns '1' if A < B and '2' otherwise.  The inputs are assumed to
-%   be the vold data in the sensors
+function decision = sensorImageChooser(noisyStandard, noisyTest1, noisyTest2)
+% decision = sensorImageChooser(noisyStandard, noisyTest1, noisyTest2)
 %
-%   3/17/15     xd  wrote it
+% This function instantiates a near-ideal observer for the for the S - T1 -
+% T2 paradigm.
+%
+% It compares the two tests to the standard, and returns 1 or 2 depending on which one was closer
+% in a Euclidean sense.
+%
+% The inputs are arrays of sensor responses, each of the same dimension.
+%
+% 3/17/15  xd  Wrote it
 
-    deltaNoise = sensor - noisySensor;
-    deltaTest  = sensor - testSensor;
-    
-    A = norm(deltaNoise);
-    B = norm(deltaTest);
-    
-    if A < B
-        decision = 1;
-    else
-        decision = 2;
-    end
+%% Get the two relevant differences
+delta1 = noisyStandard - noisyTest1;
+delta2  = noisyStandard - noisyTest2;
+
+%% Get their Euclidean norms
+diff1 = norm(delta1(:));
+diff2 = norm(delta2(:));
+
+%% Respond according to which difference was smaller
+if diff1 < diff2
+    decision = 1;
+else
+    decision = 2;
+end
 
 end
 

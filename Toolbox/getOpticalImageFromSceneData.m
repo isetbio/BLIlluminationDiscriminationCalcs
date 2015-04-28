@@ -1,25 +1,30 @@
-function optics = getOpticalImageFromSceneData(folderName, imageName)
-%getOpticalImageFromSceneData
-%   Loads the scene file from ColorShare1 and turns it into an optical
-%   image using default human optics
+function oi = getOpticalImageFromSceneData(folderName, imageName)
+% oi = getOpticalImageFromSceneData(folderName, imageName)
 %
-%   3/11/2015   xd  wrote it
+% Loads the scene file from ColorShare1 and turns it into an optical
+% image using default human optics
+%
+% WANT TO PASS OI SO THAT IT IS EASY TO CUSTOMIZE.
+%
+% 3/11/2015   xd  wrote it
 
-    s_initISET;
-        
-    % load scene
-    scene = loadSceneData(folderName, imageName);
-    
-    % load optical image
-    optics = oiCreate('human');
-    tic
-    opticalimage = oiCompute(optics,scene); 
-    fprintf('Optical image object generation took %2.1f seconds\n', toc);
-        
-    dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-    oiFilePath = fullfile(dataBaseDir, 'OpticalImageData', folderName, strcat(imageName, 'OpticalImage.mat'));
-%     vcSaveObject(opticalimage, sceneFilePath);
+%% PROBABLY WANT TO CALL THIS ONE LEVEL UP
+ieInit;
 
-    save(oiFilePath, 'opticalimage');
+%% Load scene
+scene = loadSceneData(folderName, imageName);
+
+%% Create oi object
+oi = oiCreate('human');
+
+%% Compute optical image
+tic
+opticalimage = oiCompute(oi,scene);
+fprintf('Optical image object generation took %2.1f seconds\n', toc);
+
+%% Save the optical image where we cache these things
+dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+oiFilePath = fullfile(dataBaseDir, 'OpticalImageData', folderName, strcat(imageName, 'OpticalImage.mat'));
+save(oiFilePath, 'opticalimage');
 end
 

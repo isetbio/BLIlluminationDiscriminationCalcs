@@ -4,8 +4,8 @@ function setPrefsForBLIlluminationDiscriminationCalcs
 % Method to set the preferences for the BLIlluminationDiscriminationCalcs project.
 %
 % 2/25/2015     npc     Wrote it.
-% 
 
+    % WHere are the image data stored for us to get at?
     sharedRootDir = fullfile(filesep,'Volumes','ColorShare1','Users', 'Shared', 'Matlab', 'Analysis', 'BLIlluminationDiscriminationCalcs');
     dataBaseDir   = fullfile(sharedRootDir, 'Data');
     

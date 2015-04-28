@@ -1,14 +1,17 @@
 function scene = loadSceneData(folderName, imageName)
-%loadSceneData
-%   Loads the saved scene data for BLIlluminationCalcs.  Load data from a
-%   subdirectory 'folderName' in the SceneData directory on ColorShare1
+% scene = loadSceneData(folderName, imageName)
+% 
+% Loads the saved scene data for BLIlluminationCalcs. 
 %
-%   3/12/2015   xd  wrote it
+% Preferences are used to find the right directory.
+% 
+% 3/12/2015   xd  wrote it
 
-    dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-    scenePath = fullfile(dataBaseDir, 'SceneData', folderName, strcat(imageName, 'Scene.mat'));
+dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+scenePath = fullfile(dataBaseDir, 'SceneData', folderName, strcat(imageName, 'Scene.mat'));
 
-    data = load(scenePath);
-    scene = data.scene;
+data = load(scenePath);
+scene = data.scene;
+
 end
 

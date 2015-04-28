@@ -9,6 +9,7 @@ function volts = getNoisySensorImages(folderName, imageName, sensor, N, k)
     oi = loadOpticalImageData(folderName, imageName);
     
     % Get a noise free sensor image
+    % REALLY WE WANT PHOTONS HERE, NOT VOLTS
     sensorNF = sensorComputeNoiseFree(sensor, oi);
     noiseFree = sensorGet(sensorNF, 'volts');
     

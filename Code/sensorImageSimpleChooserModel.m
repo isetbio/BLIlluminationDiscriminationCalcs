@@ -9,41 +9,53 @@ function sensorImageSimpleChooserModel
 %   3/17/15     xd  wrote it
 %   4/17/15     xd  update to use human sensor
 
-    % Clear
+    %% Clear
     close all; clear global; ieInit;
 
+    %% Put project toolbox onto path.
     myDir = fileparts(mfilename('fullpath'));
     pathDir = fullfile(myDir,'..','Toolbox','');
     AddToMatlabPathDynamically(pathDir);
     
-    % These will be used to loop through all the scenes if desired
+    %% Parameters
+    fieldOfViewReductionFactor = 4;
+    coneIntegrationTime = 0.050;
+    S = [380 8 51];
+    
+    %% These will be used to loop through all the scenes if desired
     folderList = {'BlueIllumination', 'GreenIllumination', ...
         'RedIllumination', 'YellowIllumination'};
-    
     prefix = {'blue' , 'green', 'red', 'yellow'};
     
-    
-    % Load scene to get FOV
+    %% Load scene to get FOV.
+    % Scenes are precomputed from stimulus images and stored for our
+    % use here.
     scene = loadSceneData('Standard', 'TestImage0');
     fov = sceneGet(scene, 'fov');
-    scene = sceneSet(scene,'fov',fov/4);
+    scene = sceneSet(scene,'fov',fov/fieldOfViewReductionFactor);
     fov = sceneGet(scene, 'fov');
 
-    % load oi for FOV
+    %% Load oi for FOV.
+    % These are also precomputed.
     oi = loadOpticalImageData('Standard', 'TestImage0');
     
-    % Create a sensor
+    %% Create a sensor for human foveal vision
     sensor = sensorCreate('human');
     
     % Set the sensor dimensions to a square
     sensorRows = sensorGet(sensor,'rows');
     sensor = sensorSet(sensor,'cols',sensorRows);
     
-    sensor = sensorSet(sensor,'exp time',0.050);
-    [sensor, ~] = sensorSetSizeToFOV(sensor,fov,scene,oi);
-    sensor = sensorSet(sensor, 'wavelength', SToWls([380 8 51]));
+    % Set integration time
+    sensor = sensorSet(sensor,'exp time',coneIntegrationTime);
     
-    % Here we run the chooser model on one color illumanion set
+    % Set FOV
+    [sensor, ~] = sensorSetSizeToFOV(sensor,fov,scene,oi);
+    
+    % Set wavelength sampling
+    sensor = sensorSet(sensor, 'wavelength', SToWls(S));
+    
+    %% Run the chooser model on one color illumanion set
     % This can be looped if running the model on all data sets at once is
     % desired
     matrix = singleColorKValueComparison(sensor, 'YellowIllumination', 'yellow', 50, 10);
@@ -54,7 +66,72 @@ function sensorImageSimpleChooserModel
     
 end
 
+% results = singleColorKValueComparison(sensor, folderName, prefix, num, k)
+%
+% This function carries out the simple chooser model calculation.  
+%
+% PLEASE DEFINE THE INPUTS AND OUTPUTS TO THIS FUNCTION IN THE HELP TEXT
+% HERE.
+% 
+% Inputs:
+%   sensor -
+%   folderName -
+%   prefix -
+%   num -
+%   k -
+%
+% Outputs:
+%  results - MAYBE IT SHOULD BE CALLED ACCURACY MATRIX?
+function results = singleColorKValueComparison(sensor, folderName, prefix, num, k)
 
+    % WHAT AM I?
+    suffix = 'L-RGB';
+    
+    % This multipler parameter is the difference between noise levels, so the current
+    % value of 1 means k values will be 1,2,3...
+    multiplier = 1;
+    
+    accuracyMatrix = zeros(num, k);
+    for i = 1:num
+        for j = 1:k
+            correct = 0;
+            
+            % I THINK WE WANT TO DO THIS INSIDE THE LOOP BELOW, AT LEAST IF THE
+            % LOOP IS OVER SIMULATED TRIALS OF THE EXPERIMENT.
+            % Get inital noisy ref image
+            voltsStandardRef = getNoisySensorImages('Standard','TestImage0',sensor,1,(1 + multiplier * (j - 1)));
+            tic
+            
+            % WHAT IS THE MAGIC NUMBER 100 HERE?
+            for t = 1:100
+                
+                % Get noisy version of standard image
+                voltsStandardComp = getNoisySensorImages('Standard','TestImage0',sensor,1,(1 + multiplier * (j - 1)));
+                imageName = strcat(prefix, int2str(i), suffix);
+                
+                % Get noisy version of test image
+                voltsTestComp = getNoisySensorImages(folderName,imageName,sensor,1,(1 + multiplier * (j - 1)));
+                
+                distToStandard = norm(voltsStandardRef(:)-voltsStandardComp(:));
+                distToTest = norm(voltsStandardRef(:)-voltsTestComp(:));
+
+                % Decide if 'subject' was correct on this trial
+                if (distToStandard < distToTest)
+                    correct  = correct + 1;
+                end
+            end
+            
+            % MAYBE SAY IN THE PRINTOUT THAT THIS IS TIME
+            fprintf('%2.1f\n', toc);
+            accuracyMatrix(i,j) = correct;
+        end
+    end
+    
+    results = accuracyMatrix;
+end
+
+% THIS FUNCTION IS NEITHER USED NOR COMMENTED
+% WHAT DOES IT DO, OR SHOULD IT BE DELETED?
 function results = kValueComparisonBasedOnColor(sensor)
 
     folderList = {'BlueIllumination', 'GreenIllumination', ...
@@ -96,44 +173,4 @@ function results = kValueComparisonBasedOnColor(sensor)
         end
     end
     results = kValue;
-end
-
-% This function carries out the simple chooser model calculation.  The
-% multipler value is the difference between noise levels, so the current
-% value of 1 means k values will be 1,2,3...
-function results = singleColorKValueComparison(sensor, folderName, prefix, num, k)
-
-    suffix = 'L-RGB';
-    
-    multiplier = 1;
-    accuracyMatrix = zeros(num, k);
-    for i = 1:num
-        for j = 1:k
-            correct = 0;
-            % Get inital noisy ref image
-            voltsStandardRef = getNoisySensorImages('Standard','TestImage0',sensor,1,(1 + multiplier * (j - 1)));
-            tic
-            for t = 1:100
-                
-                % Get noisy version of standard image
-                voltsStandardComp = getNoisySensorImages('Standard','TestImage0',sensor,1,(1 + multiplier * (j - 1)));
-                imageName = strcat(prefix, int2str(i), suffix);
-                
-                % Get noisy version of test image
-                voltsTestComp = getNoisySensorImages(folderName,imageName,sensor,1,(1 + multiplier * (j - 1)));
-                
-                distToStandard = norm(voltsStandardRef(:)-voltsStandardComp(:));
-                distToTest = norm(voltsStandardRef(:)-voltsTestComp(:));
-
-                % Decide if 'subject' was correct on this trial
-                if (distToStandard < distToTest)
-                    correct  = correct + 1;
-                end
-            end
-            fprintf('%2.1f\n', toc);
-            accuracyMatrix(i,j) = correct;
-        end
-    end
-    
-    results = accuracyMatrix;
 end
