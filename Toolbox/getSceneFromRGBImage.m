@@ -1,5 +1,5 @@
-function scene = getSceneFromRGBImage(folderName, imageName, display, imgSize)
-% scene = getSceneFromRGBImage(folderName, imageName, display, imgSize)
+function scene = getSceneFromRGBImage(calcParams, folderName, imageName, display, imgSize)
+% scene = getSceneFromRGBImage(calcParams, folderName, imageName, display, imgSize)
 %
 % Function to generate an ISETBIO scene from an RGB Image.  The scene
 % will also be saved to the appropriate project folder, determined by
@@ -11,39 +11,35 @@ function scene = getSceneFromRGBImage(folderName, imageName, display, imgSize)
 %% Get path to image
 path = strcat(folderName, '/', imageName);
 
-% Load the input image
+%% Load the input image
 imageData  = loadImageData(path);
+[yImgPixels xImgPixels imgColorPlanes] = size(imageData);
 
-%% WHERE DO WE WANT THIS TO HAPPEN?  PROBABLY NOT DOWN HERE.
-ieInit;
-
-% Generate scene
+%% Generate scene
 tic;
 scene = sceneFromFile(imageData, 'rgb', [], display);
 fprintf('Scene object generation took %2.1f seconds\n', toc);
 
-%% THESE MAGIC NUMBERS ARE DANGEROUS.  WHAT ARE THEY?  LET'S SET THEM IN SOME 
-% CLEAR PLACE.  SAME WITH CROPPING NUMBESR BELOW?
-dist = display.dist;
-y = 40 / 960;
-x = 40 / 1280;
-imgSize = [x*imgSize(1), y*imgSize(2)];
+%% Crop scene to the size we want to use
+%
+% Usually not all of the original image
 
-% Get scene FOV to match stimuli in experiment
+% First have to crop the pixels, but this doesn't adjust
+% field of view
+scene = sceneCrop(scene, calcParams.cropRect);
+
+% Need to resize field of view.  Scale size of image
+% in meters by how much we're cropping out.
+dist = display.dist;
+yFraction = calcParams.cropRect(4) / yImgPixels;
+xFraction = calcParams.cropRect(3) / xImgPixels;
+imgSize = [xFraction*imgSize(1), yFraction*imgSize(2)];
 fov = 2*rad2deg(atan2(imgSize(1)/2,dist));
 scene = sceneSet(scene, 'fov', fov);
 
-% Crop out black space
-% scene = sceneCrop(scene, [450 350 624 574]);
-% use a smaller cropping area to reduce file size
-scene = sceneCrop(scene, [550 450 40 40]);
-
-% Save scene object
+%% Save scene object
 dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
 sceneFilePath = fullfile(dataBaseDir, 'SceneData', strcat(path,'Scene.mat'));
-
-%% THIS SAYS IT IS TEMPORARY.  IS IT?  FIX?
-% Save scene data in directory, temp until write access to ColorShare
 save(sceneFilePath, 'scene');
 
 end

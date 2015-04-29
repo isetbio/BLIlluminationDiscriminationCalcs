@@ -77,12 +77,12 @@ end
 %   sensor -
 %   folderName -
 %   prefix -
-%   num -
+%   numberOfColorDirections -
 %   k -
 %
 % Outputs:
 %  results - MAYBE IT SHOULD BE CALLED ACCURACY MATRIX?
-function results = singleColorKValueComparison(sensor, folderName, prefix, num, k)
+function results = singleColorKValueComparison(sensor, folderName, prefix, numberOfColorDirections, k)
 
     % WHAT AM I?
     suffix = 'L-RGB';
@@ -91,19 +91,17 @@ function results = singleColorKValueComparison(sensor, folderName, prefix, num, 
     % value of 1 means k values will be 1,2,3...
     multiplier = 1;
     
-    accuracyMatrix = zeros(num, k);
-    for i = 1:num
+    accuracyMatrix = zeros(numberOfColorDirections, k);
+    for i = 1:numberOfColorDirections
         for j = 1:k
             correct = 0;
-            
-            % I THINK WE WANT TO DO THIS INSIDE THE LOOP BELOW, AT LEAST IF THE
-            % LOOP IS OVER SIMULATED TRIALS OF THE EXPERIMENT.
-            % Get inital noisy ref image
-            voltsStandardRef = getNoisySensorImages('Standard','TestImage0',sensor,1,(1 + multiplier * (j - 1)));
-            tic
-            
+                   
             % WHAT IS THE MAGIC NUMBER 100 HERE?
+            tic
             for t = 1:100
+                
+                % Get inital noisy ref image
+                voltsStandardRef = getNoisySensorImages('Standard','TestImage0',sensor,1,(1 + multiplier * (j - 1)));
                 
                 % Get noisy version of standard image
                 voltsStandardComp = getNoisySensorImages('Standard','TestImage0',sensor,1,(1 + multiplier * (j - 1)));

@@ -42,8 +42,8 @@ function threshholdCalculation
     % For each illumantion color, we find a vector of threshholds at which
     % the success rate his 0.709
     [threshholdBlue, ~] = fitToData(UsableBlue(1), UsableBlue(2), blueMatrix, paramsValueEst, 'b', true);
-    [threshholdRed, ~] = fitToData(UsableRed(1), UsableRed(2), redMatrix, paramsValueEst, 'r',false);
-    [threshholdGreen, ~] = fitToData(UsableGreen(1), UsableGreen(2), greenMatrix, paramsValueEst, 'g',false);
+    [threshholdRed, ~] = fitToData(UsableRed(1), UsableRed(2), redMatrix, paramsValueEst, 'r',true);
+    [threshholdGreen, ~] = fitToData(UsableGreen(1), UsableGreen(2), greenMatrix, paramsValueEst, 'g',true);
     [threshholdYellow, ~] = fitToData(UsableYellow(1), UsableYellow(2), yellowMatrix, paramsValueEst, 'y',true);
     
     % Plot each threshhold vector against its representative k-value of
