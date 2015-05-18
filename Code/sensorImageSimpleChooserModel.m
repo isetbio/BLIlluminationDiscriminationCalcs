@@ -18,7 +18,7 @@ function sensorImageSimpleChooserModel
     AddToMatlabPathDynamically(pathDir);
     
     %% Parameters
-    fieldOfViewReductionFactor = 4;
+    fieldOfViewReductionFactor = 1;
     coneIntegrationTime = 0.050;
     S = [380 8 51];
     
@@ -74,42 +74,63 @@ end
 % HERE.
 % 
 % Inputs:
-%   sensor -
-%   folderName -
-%   prefix -
-%   numberOfColorDirections -
-%   k -
+%   sensor - This is the sensor that will be used to generate each of the
+%       sensor images
+%   folderName - The folder that contains the target set of optical images
+%   prefix - The color that matches the target folder, this will be used to
+%       generate the optical image name
+%   imageIllumNumber - The image number up to which the calculations should
+%       be run.  For example, if this is set to 30, only images 1-30 will
+%       be analyzed
+%   k - The number of desired k value samples.  The function
+%       starts with a k-value of 1 and increments k times.
+%       For example, an input of 10 will generate a matrix with data for
+%       k-values ranging from 1 to 10, incremented by 1.
 %
 % Outputs:
 %  results - MAYBE IT SHOULD BE CALLED ACCURACY MATRIX?
-function results = singleColorKValueComparison(sensor, folderName, prefix, numberOfColorDirections, k)
+function results = singleColorKValueComparison(sensor, folderName, prefix, imageIllumNumber, k)
 
-    % WHAT AM I?
+%% Define the suffix term for creating the image name
+%
+%  Files on the ColorShare1 server are in the format of
+%  "color"+ImgNumber+suffix
     suffix = 'L-RGB';
     
-    % This multipler parameter is the difference between noise levels, so the current
-    % value of 1 means k values will be 1,2,3...
-    multiplier = 1;
+
+%% This increment parameter is the difference between noise levels
+%
+% the current value of 1 means k values will be 1,2,3...
+    incrementMultiplier = 1;
+
+%% Preallocate space for the accuracy matrix which will store the results of the calculations
+    accuracyMatrix = zeros(imageIllumNumber, k);
     
-    accuracyMatrix = zeros(numberOfColorDirections, k);
-    for i = 1:numberOfColorDirections
+%% Run calculations up to illumination number and k-value limits
+%
+% Loop through the illumination number
+    for i = 1:imageIllumNumber
+        % Loop through the k values
         for j = 1:k
             correct = 0;
                    
             % WHAT IS THE MAGIC NUMBER 100 HERE?
             tic
             for t = 1:100
-                
                 % Get inital noisy ref image
-                voltsStandardRef = getNoisySensorImages('Standard','TestImage0',sensor,1,(1 + multiplier * (j - 1)));
+                voltsStandardRef = getNoisySensorImages('Standard','TestImage0',sensor,1,(1 + incrementMultiplier * (j - 1)));
                 
                 % Get noisy version of standard image
-                voltsStandardComp = getNoisySensorImages('Standard','TestImage0',sensor,1,(1 + multiplier * (j - 1)));
+                voltsStandardComp = getNoisySensorImages('Standard','TestImage0',sensor,1,(1 + incrementMultiplier * (j - 1)));
+                
+                % Generate Image name
                 imageName = strcat(prefix, int2str(i), suffix);
                 
                 % Get noisy version of test image
-                voltsTestComp = getNoisySensorImages(folderName,imageName,sensor,1,(1 + multiplier * (j - 1)));
+                voltsTestComp = getNoisySensorImages(folderName,imageName,sensor,1,(1 + incrementMultiplier * (j - 1)));
                 
+                % Calculate vector distance from the test image and
+                % standard image to the reference image
                 distToStandard = norm(voltsStandardRef(:)-voltsStandardComp(:));
                 distToTest = norm(voltsStandardRef(:)-voltsTestComp(:));
 
@@ -119,8 +140,8 @@ function results = singleColorKValueComparison(sensor, folderName, prefix, numbe
                 end
             end
             
-            % MAYBE SAY IN THE PRINTOUT THAT THIS IS TIME
-            fprintf('%2.1f\n', toc);
+            % print the time the calculation took
+            fprintf('Calculation time for color: %s, IllumNumber: %d, k-value %.1f = %2.1f\n', prefix, i, j, toc);
             accuracyMatrix(i,j) = correct;
         end
     end

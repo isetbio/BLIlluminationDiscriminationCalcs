@@ -7,9 +7,11 @@ function opticalImage = loadOpticalImageData(folderName, imageName)
 %
 %   3/12/2015   xd  wrote it
 
+%% Get path to OI data files
     dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
     opticsPath = fullfile(dataBaseDir, 'OpticalImageData', folderName, strcat(imageName, 'OpticalImage.mat'));
 
+%% Get data
     data = load(opticsPath);
     opticalImage = data.opticalimage;
 end

@@ -16,7 +16,7 @@ close all; ieInit;
 
 %% Control of what gets done in this function
 CACHE_SCENES = true; forceSceneCompute = false;
-CACHE_OIS = true;
+CACHE_OIS = true; forceOICompute = false;
 
 
 %% Get our project toolbox on the path
@@ -48,3 +48,7 @@ if (CACHE_SCENES)
     convertRBGImagesToSceneFiles(calcParams,forceSceneCompute);
 end
 
+%% Convert cached scenes to optical images
+if (CACHE_OIS)
+    convertScenesToOpticalimages(calcParams, forceOICompute);
+end

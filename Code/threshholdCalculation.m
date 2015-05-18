@@ -8,27 +8,24 @@ function threshholdCalculation
 %   4/22/2015   xd  finished running chooser model on all 4 illum colors
 %   4/24/2015   xd  cleaned up the function for readability
 
-    % clear
+    %% clear
     clc; clear global; close all;
 
-    % Load the data for each illumination matrix
-    data  = load('blueIllumComparison');
-    blueMatrix = data.matrix;
-    data  = load('greenIllumComparison');
-    greenMatrix = data.matrix;
-    data  = load('redIllumComparison');
-    redMatrix = data.matrix;
-    data = load('yellowIllumComparison');
-    yellowMatrix = data.matrix;
+    %% Load the data for each illumination matrix    
+    blueMatrix  = loadChooserData('blueIllumComparison');
+    greenMatrix = loadChooserData('greenIllumComparison');
+    redMatrix = loadChooserData('redIllumComparison');
+    yellowMatrix = loadChooserData('yellowIllumComparison');
     
+    %% Load default figure parameters
     figParams = getFigureParameters;
     
-    
+    %% Set estimations param for calculations
+    %
     % Use same estimated parameters for all data sets
     paramsValueEst = [10 1 0.5 0];
 
-    % Set usable data range and offset
-    % These values are attained from a cursory overview of the data
+    %% Set usable data range and offset
     % Any columns that do not consistantly reach 70.9% correct rate is
     % ignored in the fit calculation
     
@@ -39,13 +36,15 @@ function threshholdCalculation
     UsableGreen = [8 2];
     UsableYellow = [8 2];
     
+    %% Calculate Threshholds
     % For each illumantion color, we find a vector of threshholds at which
-    % the success rate his 0.709
+    % the success rate is 0.709
     [threshholdBlue, ~] = fitToData(UsableBlue(1), UsableBlue(2), blueMatrix, paramsValueEst, 'b', true);
     [threshholdRed, ~] = fitToData(UsableRed(1), UsableRed(2), redMatrix, paramsValueEst, 'r',true);
     [threshholdGreen, ~] = fitToData(UsableGreen(1), UsableGreen(2), greenMatrix, paramsValueEst, 'g',true);
     [threshholdYellow, ~] = fitToData(UsableYellow(1), UsableYellow(2), yellowMatrix, paramsValueEst, 'y',true);
     
+    %% Plot Threshholds
     % Plot each threshhold vector against its representative k-value of
     % noise.  Also fit a line to it.
     totalRange = 1:10;
@@ -68,34 +67,36 @@ end
 % false to disable plotting of the fitted curves
 function [threshhold, paramsValues] = fitToData (usableDataRange, usableDataOffset, data, paramsEstimate, color, toPlot)
 
-    % Pre-allocate room for return values
+    %% Pre-allocate room for return values
     threshhold = zeros(usableDataRange,1);
     paramsValues = zeros(usableDataRange, 4);
     
-    % Set common parameters
+    %% Set common parameters
     paramsFree  = [1, 1, 0, 0];
     criterion = .709;
     sizeOfData = size(data);
     StimLevels = 1:1:sizeOfData(1);
     OutofNum   = repmat(100, 1, sizeOfData(1));    
     
-    % Define functions to fit to
+    %% Define functions to fit to
     PF = @PAL_Weibull;
     PFI = @PAL_inverseWeibull;
     
-    % Some optimization settings for the fit
+    %% Some optimization settings for the fit
     options = optimset('fminsearch');   
     options.TolFun = 1e-09;             
     options.MaxFunEvals = 10000 * 100;
     options.MaxIter = 500*100;
     
+    %% Settings for plotting fits
     if (toPlot)
         figure;
         set(gcf, 'Position', [0 0 1000 1000]); 
         set(gca,'FontName','Helvetica','FontSize',12);
     end
+    
+    %% Calculate threshholds and fits
     for i = 1:usableDataRange
-        
         % Load the current column of data, each column is a different
         % k-value
         NumPos = data(:, i + usableDataOffset)';
@@ -130,13 +131,14 @@ end
 % This function plots the threshholds against their respective k values of
 % noise.  Currently the data is fit to a linear line.
 function fitAndPlotToThreshhold (usableDataRange, usableDataOffset, threshhold, color, kValsFine, params)
+    %% Define starting k-value
     start = 1 + usableDataOffset;
     kVals = start:1:(start + usableDataRange - 1);
     
-    % Plot threshhold points
+    %% Plot threshhold points
     plot(kVals, threshhold, strcat(color,'.'), 'markersize', params.markerSize);
     
-    % Fit to line and get set of y values
+    %% Fit to line and get set of y values
     p = polyfit(kVals, threshhold', 1);
     y = polyval(p, kValsFine);
     hold on;

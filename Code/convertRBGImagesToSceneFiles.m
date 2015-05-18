@@ -42,9 +42,11 @@ for i = 1:length(folderList)
     % using the Brainard Lab Display calibration file
     for s = 1:length(fileList)
         
-        % Create new Scene object if it does not already exist
+        % Create new Scene object if it does not already exist or if
+        % forceCompute flag is set to true
         imgSize = calStructOBJ.get('screenSizeMM') / 1000;
         imgName = strsplit(fileList{s}, '.');
+        
         sceneCheckPath = fullfile(dataBaseDir, 'SceneData', folderList{i}, strcat(imgName{1}, 'Scene.mat'));
         if (forceCompute || ~exist(sceneCheckPath, 'file'))
             getSceneFromRGBImage(calcParams,folderList{i}, imgName{1}, brainardLabDisplay, imgSize);

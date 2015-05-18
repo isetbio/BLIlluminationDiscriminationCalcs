@@ -1,4 +1,4 @@
-function oi = getOpticalImageFromSceneData(folderName, imageName)
+function oi = getOpticalImageFromSceneData(oi, folderName, imageName)
 % oi = getOpticalImageFromSceneData(folderName, imageName)
 %
 % Loads the scene file from ColorShare1 and turns it into an optical
@@ -13,9 +13,6 @@ ieInit;
 
 %% Load scene
 scene = loadSceneData(folderName, imageName);
-
-%% Create oi object
-oi = oiCreate('human');
 
 %% Compute optical image
 tic
