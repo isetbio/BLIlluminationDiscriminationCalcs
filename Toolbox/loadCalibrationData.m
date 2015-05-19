@@ -6,7 +6,7 @@ function calStructOBJ = loadCalibrationData(calFile)
 % by a project preference file.
 %
 % See also: setPrefsForBLIlluminationDiscriminationCalcs
-
+%
 % 2/26/2015     npc     Wrote it.
 
     % Assemble calFileName

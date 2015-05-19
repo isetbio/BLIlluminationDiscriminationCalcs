@@ -44,6 +44,16 @@ function threshholdCalculation
     [threshholdGreen, ~] = fitToData(UsableGreen(1), UsableGreen(2), greenMatrix, paramsValueEst, 'g',true);
     [threshholdYellow, ~] = fitToData(UsableYellow(1), UsableYellow(2), yellowMatrix, paramsValueEst, 'y',true);
     
+    %% Testing yellow photon data
+    data = load('yellowIllumComparison');
+    yellowPhoton = data.matrix;
+    Usable = [10 0];
+    [t,~] = fitToData(Usable(1), Usable(2), yellowPhoton, paramsValueEst, 'y', true);
+    figure;
+    totalRange = 1:10;
+    kValsFine = min(totalRange):(max(totalRange)-min(totalRange))/1000:max(totalRange);
+    fitAndPlotToThreshhold(Usable(1), Usable(2), t, 'y', kValsFine, figParams);
+    
     %% Plot Threshholds
     % Plot each threshhold vector against its representative k-value of
     % noise.  Also fit a line to it.
@@ -121,7 +131,7 @@ function [threshhold, paramsValues] = fitToData (usableDataRange, usableDataOffs
             plot(StimLevelsFine, Fit, color, 'linewidth', 4);
             plot([threshhold(i) threshhold(i)], [0, criterion], color, 'linewidth', 3);
 
-            title(strcat('K-Value : ',int2str(i+1)));
+            title(strcat('K-Value : ',int2str(i + usableDataOffset)));
             xlabel('Stimulus Difference (nominal)');
             ylabel('Percent Correct');
         end

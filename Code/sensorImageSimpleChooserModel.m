@@ -69,9 +69,6 @@ end
 % results = singleColorKValueComparison(sensor, folderName, prefix, num, k)
 %
 % This function carries out the simple chooser model calculation.  
-%
-% PLEASE DEFINE THE INPUTS AND OUTPUTS TO THIS FUNCTION IN THE HELP TEXT
-% HERE.
 % 
 % Inputs:
 %   sensor - This is the sensor that will be used to generate each of the
@@ -94,7 +91,8 @@ function results = singleColorKValueComparison(sensor, folderName, prefix, image
 %% Define the suffix term for creating the image name
 %
 %  Files on the ColorShare1 server are in the format of
-%  "color"+ImgNumber+suffix
+%  prefix + ImgNumber + suffix, where the prefix is the color and the
+%  suffix is defined below
     suffix = 'L-RGB';
     
 

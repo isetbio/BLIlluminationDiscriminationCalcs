@@ -5,6 +5,17 @@ function scene = getSceneFromRGBImage(calcParams, folderName, imageName, display
 % will also be saved to the appropriate project folder, determined by
 % the project preferences.
 %
+%   Inputs:
+%   calcParams - parameters for the entire calculation, will contain
+%       desired crop size
+%   folderName - folder on ColorShare in which image resides
+%   imageName - name of the image file
+%   display - Isetbio style display object to used for scene generation
+%   imgSize - size in meters of the original image
+%
+%   Outputs:
+%   scene - the scene generated through isetbio using the input parameters
+%
 % 3/11/2015    xd     wrote it
 % 4/1/2015     xd     updated to adjust fov to crop size
 
@@ -13,7 +24,7 @@ path = strcat(folderName, '/', imageName);
 
 %% Load the input image
 imageData  = loadImageData(path);
-[yImgPixels xImgPixels imgColorPlanes] = size(imageData);
+[yImgPixels, xImgPixels, ~] = size(imageData);
 
 %% Generate scene
 tic;
@@ -36,6 +47,7 @@ xFraction = calcParams.cropRect(3) / xImgPixels;
 imgSize = [xFraction*imgSize(1), yFraction*imgSize(2)];
 fov = 2*rad2deg(atan2(imgSize(1)/2,dist));
 scene = sceneSet(scene, 'fov', fov);
+scene = sceneSet(scene, 'name', strcat(imageName, 'Scene'));
 
 %% Save scene object
 dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
