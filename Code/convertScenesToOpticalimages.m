@@ -39,8 +39,9 @@ for i = 1:length(folderList)
         if (forceCompute || ~exist(sceneCheckPath, 'file'))
             getOpticalImageFromSceneData(oi, folderList{i}, imgName{1});
         end
-        fprintf(imgName{1});
-        fprintf('\n');
+        % For debugging purposes
+        %         fprintf(imgName{1});
+        %         fprintf('\n');
     end
 end
 

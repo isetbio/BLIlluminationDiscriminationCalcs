@@ -62,4 +62,7 @@ if (RUN_CHOOSER)
 end
 
 %% Calculate threshholds using chooser model data
+%
+% Note that the data set generated below is using the volt data from the
+% sensor images.  The photon data set is still being generated.
 threshholdCalculation;

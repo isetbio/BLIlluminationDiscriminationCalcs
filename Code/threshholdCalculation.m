@@ -28,7 +28,7 @@ function threshholdCalculation
     %% Set usable data range and offset
     % Any columns that do not consistantly reach 70.9% correct rate is
     % ignored in the fit calculation
-    
+   
     % The first value is how many columns are usable. The second value is
     % the offset, so the first column used would be 1 + offset
     UsableBlue = [6 1];
@@ -44,15 +44,6 @@ function threshholdCalculation
     [threshholdGreen, ~] = fitToData(UsableGreen(1), UsableGreen(2), greenMatrix, paramsValueEst, 'g',true);
     [threshholdYellow, ~] = fitToData(UsableYellow(1), UsableYellow(2), yellowMatrix, paramsValueEst, 'y',true);
     
-    %% Testing yellow photon data
-    data = load('yellowIllumComparison');
-    yellowPhoton = data.matrix;
-    Usable = [10 0];
-    [t,~] = fitToData(Usable(1), Usable(2), yellowPhoton, paramsValueEst, 'y', true);
-    figure;
-    totalRange = 1:10;
-    kValsFine = min(totalRange):(max(totalRange)-min(totalRange))/1000:max(totalRange);
-    fitAndPlotToThreshhold(Usable(1), Usable(2), t, 'y', kValsFine, figParams);
     
     %% Plot Threshholds
     % Plot each threshhold vector against its representative k-value of

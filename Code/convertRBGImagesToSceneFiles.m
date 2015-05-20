@@ -56,8 +56,9 @@ for i = 1:length(folderList)
         if (forceCompute || ~exist(sceneCheckPath, 'file'))
             getSceneFromRGBImage(calcParams,folderList{i}, imgName{1}, brainardLabDisplay, imgSize);
         end
-        fprintf(imgName{1});
-        fprintf('\n');
+        % For debugging purposes
+        % fprintf(imgName{1});
+        % fprintf('\n');
     end
 end
 end

@@ -1,0 +1,182 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>runAllCalculations</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-05-20"><meta name="DC.source" content="runAllCalculations.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Clear and initialize</a></li><li><a href="#4">Control of what gets done in this function</a></li><li><a href="#5">Get our project toolbox on the path</a></li><li><a href="#6">Make sure preferences are defined</a></li><li><a href="#7">Parameters of the calculation</a></li><li><a href="#8">Convert the images to cached scenes for more analysis</a></li><li><a href="#9">Convert cached scenes to optical images</a></li><li><a href="#10">Create data sets using the simple chooser model</a></li><li><a href="#11">Calculate threshholds using chooser model data</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> runAllCalculations
+</pre><pre class="codeinput"><span class="comment">% runAllCalculations</span>
+<span class="comment">%</span>
+<span class="comment">% Run the full set of calculations in the BLIlluminationDiscrimination</span>
+<span class="comment">% project, for one set of parameters.</span>
+<span class="comment">%</span>
+<span class="comment">% Typically, we will only execute pieces of this at any given time, because</span>
+<span class="comment">% certain parts are cached and need not be redone each time through.  But,</span>
+<span class="comment">% this documents for us the flow of the whole calculation, and also lets us</span>
+<span class="comment">% gather all of the parameters together in one place.</span>
+<span class="comment">%</span>
+<span class="comment">% 4/29/15  dhb, xd  Wrote it.</span>
+</pre><h2>Clear and initialize<a name="3"></a></h2><pre class="codeinput">close <span class="string">all</span>; ieInit;
+</pre><h2>Control of what gets done in this function<a name="4"></a></h2><pre class="codeinput">CACHE_SCENES = true; forceSceneCompute = false;
+CACHE_OIS = true; forceOICompute = false;
+RUN_CHOOSER = false; forceComputeAllChooser = true;
+</pre><h2>Get our project toolbox on the path<a name="5"></a></h2><pre class="codeinput">myDir = fileparts(mfilename(<span class="string">'fullpath'</span>));
+pathDir = fullfile(myDir,<span class="string">'..'</span>,<span class="string">'Toolbox'</span>,<span class="string">''</span>);
+AddToMatlabPathDynamically(pathDir);
+</pre><h2>Make sure preferences are defined<a name="6"></a></h2><pre class="codeinput">setPrefsForBLIlluminationDiscriminationCalcs;
+</pre><h2>Parameters of the calculation<a name="7"></a></h2><p>We'll define this as a structure, with the fields providing the name of what is specified.  These fields could later be viewed as key-value pairs either for override by key-value calling arguments or for saving out in some sensible manner in a database.  We could also run some sort of check on the structure at runtime to make sure our caches are consistent with the current parameters being used.</p><pre class="codeinput"><span class="comment">% Folder list to run over for conversions into isetbio format</span>
+calcParams.cacheFolderList = {<span class="string">'Standard'</span>, <span class="string">'BlueIllumination'</span>, <span class="string">'GreenIllumination'</span>, <span class="keyword">...</span>
+    <span class="string">'RedIllumination'</span>, <span class="string">'YellowIllumination'</span>};
+
+<span class="comment">% Specify how to crop the image.  We don't want it all.</span>
+calcParams.cropRect = [550 450 40 40];              <span class="comment">% Use [450 350 624 574] for entire non-black region of our images</span>
+
+<span class="comment">% Specify the number of times to simulate a decision in the chooser</span>
+calcParams.chooserIterations = 100;
+</pre><h2>Convert the images to cached scenes for more analysis<a name="8"></a></h2><pre class="codeinput"><span class="keyword">if</span> (CACHE_SCENES)
+    convertRBGImagesToSceneFiles(calcParams,forceSceneCompute);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Will subsample SPDs with a resolution of 8 nm
+Changing wave and interpolating SPD, for consistency
+Display object generation took 0.0 seconds
+</pre><h2>Convert cached scenes to optical images<a name="9"></a></h2><pre class="codeinput"><span class="keyword">if</span> (CACHE_OIS)
+    convertScenesToOpticalimages(calcParams, forceOICompute);
+<span class="keyword">end</span>
+</pre><h2>Create data sets using the simple chooser model<a name="10"></a></h2><pre class="codeinput"><span class="keyword">if</span> (RUN_CHOOSER)
+    sensorImageSimpleChooserModel(calcParams, forceComputeAllChooser);
+<span class="keyword">end</span>
+</pre><h2>Calculate threshholds using chooser model data<a name="11"></a></h2><p>Note that the data set generated below is using the volt data from the sensor images.  The photon data set is still being generated.</p><pre class="codeinput">threshholdCalculation;
+</pre><img vspace="5" hspace="5" src="runAllCalculations_01.png" alt=""> <img vspace="5" hspace="5" src="runAllCalculations_02.png" alt=""> <img vspace="5" hspace="5" src="runAllCalculations_03.png" alt=""> <img vspace="5" hspace="5" src="runAllCalculations_04.png" alt=""> <img vspace="5" hspace="5" src="runAllCalculations_05.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function runAllCalculations
+% runAllCalculations
+%
+% Run the full set of calculations in the BLIlluminationDiscrimination
+% project, for one set of parameters.
+%
+% Typically, we will only execute pieces of this at any given time, because
+% certain parts are cached and need not be redone each time through.  But,
+% this documents for us the flow of the whole calculation, and also lets us
+% gather all of the parameters together in one place.
+%
+% 4/29/15  dhb, xd  Wrote it.
+
+%% Clear and initialize
+close all; ieInit;
+
+%% Control of what gets done in this function
+CACHE_SCENES = true; forceSceneCompute = false;
+CACHE_OIS = true; forceOICompute = false;
+RUN_CHOOSER = false; forceComputeAllChooser = true;
+
+%% Get our project toolbox on the path
+myDir = fileparts(mfilename('fullpath'));
+pathDir = fullfile(myDir,'..','Toolbox','');
+AddToMatlabPathDynamically(pathDir);
+
+%% Make sure preferences are defined
+setPrefsForBLIlluminationDiscriminationCalcs;
+
+%% Parameters of the calculation
+%
+% We'll define this as a structure, with the fields providing the name of
+% what is specified.  These fields could later be viewed as key-value pairs
+% either for override by key-value calling arguments or for saving out in
+% some sensible manner in a database.  We could also run some sort of check
+% on the structure at runtime to make sure our caches are consistent with
+% the current parameters being used.
+
+% Folder list to run over for conversions into isetbio format
+calcParams.cacheFolderList = {'Standard', 'BlueIllumination', 'GreenIllumination', ...
+    'RedIllumination', 'YellowIllumination'};
+    
+% Specify how to crop the image.  We don't want it all.
+calcParams.cropRect = [550 450 40 40];              % Use [450 350 624 574] for entire non-black region of our images
+
+% Specify the number of times to simulate a decision in the chooser
+calcParams.chooserIterations = 100;
+
+%% Convert the images to cached scenes for more analysis
+if (CACHE_SCENES)
+    convertRBGImagesToSceneFiles(calcParams,forceSceneCompute);
+end
+
+%% Convert cached scenes to optical images
+if (CACHE_OIS)
+    convertScenesToOpticalimages(calcParams, forceOICompute);
+end
+
+%% Create data sets using the simple chooser model
+if (RUN_CHOOSER)
+    sensorImageSimpleChooserModel(calcParams, forceComputeAllChooser);
+end
+
+%% Calculate threshholds using chooser model data
+%
+% Note that the data set generated below is using the volt data from the
+% sensor images.  The photon data set is still being generated.
+threshholdCalculation;
+##### SOURCE END #####
+--></body></html>
