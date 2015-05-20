@@ -17,7 +17,7 @@ close all; ieInit;
 %% Control of what gets done in this function
 CACHE_SCENES = true; forceSceneCompute = false;
 CACHE_OIS = true; forceOICompute = false;
-
+RUN_CHOOSER = false; forceComputeAllChooser = true;
 
 %% Get our project toolbox on the path
 myDir = fileparts(mfilename('fullpath'));
@@ -43,6 +43,9 @@ calcParams.cacheFolderList = {'Standard', 'BlueIllumination', 'GreenIllumination
 % Specify how to crop the image.  We don't want it all.
 calcParams.cropRect = [550 450 40 40];              % Use [450 350 624 574] for entire non-black region of our images
 
+% Specify the number of times to simulate a decision in the chooser
+calcParams.chooserIterations = 100;
+
 %% Convert the images to cached scenes for more analysis
 if (CACHE_SCENES)
     convertRBGImagesToSceneFiles(calcParams,forceSceneCompute);
@@ -52,3 +55,11 @@ end
 if (CACHE_OIS)
     convertScenesToOpticalimages(calcParams, forceOICompute);
 end
+
+%% Create data sets using the simple chooser model
+if (RUN_CHOOSER)
+    sensorImageSimpleChooserModel(calcParams, forceComputeAllChooser);
+end
+
+%% Calculate threshholds using chooser model data
+threshholdCalculation;
