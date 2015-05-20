@@ -18,6 +18,7 @@ close all; ieInit;
 CACHE_SCENES = true; forceSceneCompute = false;
 CACHE_OIS = true; forceOICompute = false;
 RUN_CHOOSER = false; forceComputeAllChooser = true;
+displayIndividualThreshhold = true;
 
 %% Get our project toolbox on the path
 myDir = fileparts(mfilename('fullpath'));
@@ -65,4 +66,4 @@ end
 %
 % Note that the data set generated below is using the volt data from the
 % sensor images.  The photon data set is still being generated.
-threshholdCalculation;
+threshholdCalculation(displayIndividualThreshhold);

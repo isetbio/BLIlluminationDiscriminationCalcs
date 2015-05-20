@@ -159,6 +159,16 @@ function results = singleColorKValueComparison(sensor, folderName, prefix, image
     results = accuracyMatrix;
 end
 
+% calculateAllColors(calcParams, sensor)
+%
+% This function will run the simple chooser model on all the data sets
+% store on ColorShare
+%
+% Inputs:
+%   calcParams - This contains a field that defines how many times to run
+%       model
+%   senor - the desired sensor to be used for the calculation
+%
 function calculateAllColors(calcParams, sensor)
     %% These will be used to loop through all the scenes
     folderList = {'BlueIllumination', 'GreenIllumination', ...

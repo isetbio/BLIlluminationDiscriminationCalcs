@@ -1,8 +1,13 @@
-function threshholdCalculation
-%threshholdCalculation
+function threshholdCalculation(displayIndividualThreshhold)
+%threshholdCalculation(displayIndividualThreshhold)
 %   This function uses the Weibull as a psychometric function to
 %   fit the data calculated from the simple image discrimination chooser
 %   model.  
+%
+%   Inputs:
+%   displayIndividualThreshhold - Set to true if individual fitted curves
+%       are to be displayed.  Only the final threshhold graph will be shown
+%       if set to false.
 %
 %   4/20/2015   xd  wrote it
 %   4/22/2015   xd  finished running chooser model on all 4 illum colors
@@ -39,10 +44,10 @@ function threshholdCalculation
     %% Calculate Threshholds
     % For each illumantion color, we find a vector of threshholds at which
     % the success rate is 0.709
-    [threshholdBlue, ~] = fitToData(UsableBlue(1), UsableBlue(2), blueMatrix, paramsValueEst, 'b', true);
-    [threshholdRed, ~] = fitToData(UsableRed(1), UsableRed(2), redMatrix, paramsValueEst, 'r',true);
-    [threshholdGreen, ~] = fitToData(UsableGreen(1), UsableGreen(2), greenMatrix, paramsValueEst, 'g',true);
-    [threshholdYellow, ~] = fitToData(UsableYellow(1), UsableYellow(2), yellowMatrix, paramsValueEst, 'y',true);
+    [threshholdBlue, ~] = fitToData(UsableBlue(1), UsableBlue(2), blueMatrix, paramsValueEst, 'b', displayIndividualThreshhold);
+    [threshholdRed, ~] = fitToData(UsableRed(1), UsableRed(2), redMatrix, paramsValueEst, 'r',displayIndividualThreshhold);
+    [threshholdGreen, ~] = fitToData(UsableGreen(1), UsableGreen(2), greenMatrix, paramsValueEst, 'g',displayIndividualThreshhold);
+    [threshholdYellow, ~] = fitToData(UsableYellow(1), UsableYellow(2), yellowMatrix, paramsValueEst, 'y',displayIndividualThreshhold);
     
     
     %% Plot Threshholds
