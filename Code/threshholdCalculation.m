@@ -47,23 +47,23 @@ function threshholdCalculation(displayIndividualThreshhold)
     %% Calculate Threshholds
     % For each illumantion color, we find a vector of threshholds at which
     % the success rate is 0.709
-    [threshholdBlue, ~] = fitToData(UsableBlue(1), UsableBlue(2), blueMatrix, paramsValueEst, 'b', displayIndividualThreshhold);
-    [threshholdRed, ~] = fitToData(UsableRed(1), UsableRed(2), redMatrix, paramsValueEst, 'r',displayIndividualThreshhold);
-    [threshholdGreen, ~] = fitToData(UsableGreen(1), UsableGreen(2), greenMatrix, paramsValueEst, 'g',displayIndividualThreshhold);
-    [threshholdYellow, ~] = fitToData(UsableYellow(1), UsableYellow(2), yellowMatrix, paramsValueEst, 'y',displayIndividualThreshhold);
+    [threshholdBlue, ~] = fitToData(UsableBlue, blueMatrix, paramsValueEst, 'b', displayIndividualThreshhold);
+    [threshholdRed, ~] = fitToData(UsableRed, redMatrix, paramsValueEst, 'r',displayIndividualThreshhold);
+    [threshholdGreen, ~] = fitToData(UsableGreen, greenMatrix, paramsValueEst, 'g',displayIndividualThreshhold);
+    [threshholdYellow, ~] = fitToData(UsableYellow, yellowMatrix, paramsValueEst, 'y',displayIndividualThreshhold);
     
     %% Plot Threshholds
     % Plot each threshhold vector against its representative k-value of
     % noise.  Also fit a line to it.
-    totalRange = 1:1:sizeOfData(1);
+    totalRange = 1:1:sizeOfData(2);
     kValsFine = min(totalRange):(max(totalRange)-min(totalRange))/1000:max(totalRange);
     
     figure;
     set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize);
-    fitAndPlotToThreshhold(UsableBlue(1), UsableBlue(2), threshholdBlue, 'b', kValsFine, figParams);
-    fitAndPlotToThreshhold(UsableRed(1), UsableRed(2), threshholdRed, 'r', kValsFine, figParams);
-    fitAndPlotToThreshhold(UsableGreen(1), UsableGreen(2), threshholdGreen, 'g', kValsFine, figParams);
-    fitAndPlotToThreshhold(UsableYellow(1), UsableYellow(2), threshholdYellow, 'y', kValsFine, figParams);
+    fitAndPlotToThreshhold(UsableBlue, threshholdBlue, 'b', kValsFine, figParams);
+    fitAndPlotToThreshhold(UsableRed, threshholdRed, 'r', kValsFine, figParams);
+    fitAndPlotToThreshhold(UsableGreen, threshholdGreen, 'g', kValsFine, figParams);
+    fitAndPlotToThreshhold(UsableYellow, threshholdYellow, 'y', kValsFine, figParams);
     
     title('Threshhold against k-values');
     xlabel('k-values');
@@ -72,19 +72,22 @@ function threshholdCalculation(displayIndividualThreshhold)
     %% Testing yellow photon data
     yellowPhoton = loadChooserData('yellowIllumComparisonPhoton');
     Usable = [10 0];
-    [t,~] = fitToData(Usable(1), Usable(2), yellowPhoton, paramsValueEst, 'y', true);
+    [t,~] = fitToData(Usable, yellowPhoton, paramsValueEst, 'y', true);
     figure;
     sizeOfData = size(yellowPhoton);
-    totalRange = 1:1:sizeOfData(1);
+    totalRange = 1:1:sizeOfData(2);
     kValsFine = min(totalRange):(max(totalRange)-min(totalRange))/1000:max(totalRange);
-    fitAndPlotToThreshhold(Usable(1), Usable(2), t, 'y', kValsFine, figParams);
+    fitAndPlotToThreshhold(Usable, t, 'y', kValsFine, figParams);
 end
 
 % This function will fit input data to a Weibull curve.  The choice of
 % psychometric function can be changed manually here.  Set "toPlot" to
 % false to disable plotting of the fitted curves
-function [threshhold, paramsValues] = fitToData (usableDataRange, usableDataOffset, data, paramsEstimate, color, toPlot)
-
+function [threshhold, paramsValues] = fitToData (usableData, data, paramsEstimate, color, toPlot)
+    %% Define usable data limits
+    usableDataRange = usableData(1);
+    usableDataOffset = usableData(2);
+    
     %% Pre-allocate room for return values
     threshhold = zeros(usableDataRange,1);
     paramsValues = zeros(usableDataRange, 4);
@@ -148,7 +151,11 @@ end
 
 % This function plots the threshholds against their respective k values of
 % noise.  Currently the data is fit to a linear line.
-function fitAndPlotToThreshhold (usableDataRange, usableDataOffset, threshhold, color, kValsFine, params)
+function fitAndPlotToThreshhold (usableData, threshhold, color, kValsFine, params)
+    %% Define usable data limits
+    usableDataRange = usableData(1);
+    usableDataOffset = usableData(2);
+
     %% Define starting k-value
     start = 1 + usableDataOffset;
     kVals = start:1:(start + usableDataRange - 1);

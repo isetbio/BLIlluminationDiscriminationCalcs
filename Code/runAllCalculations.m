@@ -47,6 +47,12 @@ calcParams.cropRect = [550 450 40 40];              % Use [450 350 624 574] for 
 % Specify the number of times to simulate a decision in the chooser
 calcParams.chooserIterations = 100;
 
+% Specify eye movement parameters
+% EMPositions represents the number of positions of eye movement to sample,
+% in this case it is 100
+calcParams.enableEM = false;
+calcParams.EMPositions = zeroes([100 2]);
+
 %% Convert the images to cached scenes for more analysis
 if (CACHE_SCENES)
     convertRBGImagesToSceneFiles(calcParams,forceSceneCompute);

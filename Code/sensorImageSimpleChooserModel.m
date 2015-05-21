@@ -63,6 +63,24 @@ function sensorImageSimpleChooserModel(calcParams, computeAll, colorChoice)
     % Set wavelength sampling
     sensor = sensorSet(sensor, 'wavelength', SToWls(S));
     
+    %% Set eye movement parameters
+    
+    % Check if eye movement enabled
+    if (calcParams.enableEM)
+        
+        % Create eye movement object
+        em = emCreate;
+        
+        % Attach it to the sensor
+        sensor = sensorSet(sensor, 'eyemove',em);
+
+        % This is the position every millisecond.  In this case, 0.5 sec.
+        sensor = sensorSet(sensor,'positions', calcParams.EMPositions);
+
+        % Create the sequence
+        sensor = emGenSequence(sensor);
+    end
+    
     %% Compute all if flag set to true, otherwise only calculate one
     if (computeAll)
         calculateAllColors(calcParams, sensor);
@@ -77,6 +95,8 @@ function sensorImageSimpleChooserModel(calcParams, computeAll, colorChoice)
             '1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50', ...
             '1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0');
     end
+    
+    fprintf('Calculation complete');
 end
 
 % results = singleColorKValueComparison(sensor, folderName, prefix, num, k)
@@ -112,7 +132,7 @@ function results = singleColorKValueComparison(sensor, folderName, prefix, image
     
 
 %% This increment parameter is the difference between noise levels
-%
+% CHANGE THIS TO AN INPUT PARAMETER
 % the current value of 1 means k values will be 1,2,3...
     incrementMultiplier = 1;
 
