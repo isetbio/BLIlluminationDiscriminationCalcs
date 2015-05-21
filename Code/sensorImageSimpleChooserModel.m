@@ -127,7 +127,7 @@ function results = singleColorKValueComparison(sensor, folderName, prefix, image
         for j = 1:k
             correct = 0;
                    
-            % WHAT IS THE MAGIC NUMBER 100 HERE?
+            % Simulate out over calcNumber simulated trials
             tic
             for t = 1:calcNumber
                 % Get inital noisy ref image
@@ -155,7 +155,7 @@ function results = singleColorKValueComparison(sensor, folderName, prefix, image
             
             % print the time the calculation took
             fprintf('Calculation time for color: %s, IllumNumber: %d, k-value %.1f = %2.1f\n', prefix, i, j, toc);
-            accuracyMatrix(i,j) = correct;
+            accuracyMatrix(i,j) = correct / calcNumber * 100;
         end
     end
     

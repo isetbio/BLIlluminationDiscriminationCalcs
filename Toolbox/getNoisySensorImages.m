@@ -13,6 +13,7 @@ function photons = getNoisySensorImages(folderName, imageName, sensor, N, k)
 %   Outputs:
 %   photons - the photon data from the generated sensor image. If N was
 %       greater than 1, this will be an matrix of N photon data samples
+%
 %   3/18/2015   xd  wrote it
 %   4/17/2015   xd  updated to use the human sensor
 %   5/18/2015   xd  changed to use photon data instead of volt data
@@ -40,11 +41,12 @@ function photons = getNoisySensorImages(folderName, imageName, sensor, N, k)
         sensorR = coneAbsorptions(sensor, oi);
         %         noisySample(:,:,i) = sensorGet(sensorR, 'volts');
         noisySample(:,:,i) = sensorGet(sensorR, 'photons');
+        
         % Find the noise
         diff = noisySample(:,:,i) - noiseFree;
         
         % Add noise back with k multiplier
-        noisySample(:,:,i) = sensorNF.data.volts + diff * k;
+        noisySample(:,:,i) = noiseFree + diff * k;
     end
     
     photons = noisySample;

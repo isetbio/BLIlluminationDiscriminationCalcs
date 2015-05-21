@@ -22,6 +22,9 @@ function threshholdCalculation(displayIndividualThreshhold)
     redMatrix = loadChooserData('redIllumComparison');
     yellowMatrix = loadChooserData('yellowIllumComparison');
     
+    %% Get number of k-values, should be the same for all four matrices
+    sizeOfData = size(blueMatrix);
+    
     %% Load default figure parameters
     figParams = getFigureParameters;
     
@@ -49,11 +52,10 @@ function threshholdCalculation(displayIndividualThreshhold)
     [threshholdGreen, ~] = fitToData(UsableGreen(1), UsableGreen(2), greenMatrix, paramsValueEst, 'g',displayIndividualThreshhold);
     [threshholdYellow, ~] = fitToData(UsableYellow(1), UsableYellow(2), yellowMatrix, paramsValueEst, 'y',displayIndividualThreshhold);
     
-    
     %% Plot Threshholds
     % Plot each threshhold vector against its representative k-value of
     % noise.  Also fit a line to it.
-    totalRange = 1:10;
+    totalRange = 1:1:sizeOfData(1);
     kValsFine = min(totalRange):(max(totalRange)-min(totalRange))/1000:max(totalRange);
     
     figure;
@@ -72,7 +74,8 @@ function threshholdCalculation(displayIndividualThreshhold)
     Usable = [10 0];
     [t,~] = fitToData(Usable(1), Usable(2), yellowPhoton, paramsValueEst, 'y', true);
     figure;
-    totalRange = 1:10;
+    sizeOfData = size(yellowPhoton);
+    totalRange = 1:1:sizeOfData(1);
     kValsFine = min(totalRange):(max(totalRange)-min(totalRange))/1000:max(totalRange);
     fitAndPlotToThreshhold(Usable(1), Usable(2), t, 'y', kValsFine, figParams);
 end
