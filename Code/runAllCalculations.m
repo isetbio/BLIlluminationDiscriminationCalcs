@@ -52,6 +52,11 @@ calcParams.chooserIterations = 100;
 % in this case it is 100
 calcParams.enableEM = false;
 calcParams.EMPositions = zeroes([100 2]);
+calcParams.EMSampleTime = 0.001;    % Setting sample time to 50 ms
+
+% Specify cone adaptation parameters
+calcParams.coneAdaptEnable = false;
+calcParams.coneAdaptType = 1;
 
 %% Convert the images to cached scenes for more analysis
 if (CACHE_SCENES)

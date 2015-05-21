@@ -71,14 +71,24 @@ function sensorImageSimpleChooserModel(calcParams, computeAll, colorChoice)
         % Create eye movement object
         em = emCreate;
         
+        % Set the sample time
+        em = emSet(em, 'sample time', calcParams.EMSampleTime);
+        
         % Attach it to the sensor
         sensor = sensorSet(sensor, 'eyemove',em);
 
-        % This is the position every millisecond.  In this case, 0.5 sec.
+        % This is the position every sample time interval
         sensor = sensorSet(sensor,'positions', calcParams.EMPositions);
 
         % Create the sequence
         sensor = emGenSequence(sensor);
+    end
+    
+    %% Set cone adaptation parameters
+    
+    % Check if cone adaptation is enabled
+    if (calcParams.coneAdaptEnable)
+        [sensor, ~] = coneAdapt(sensor, calcParams.coneAdaptType);
     end
     
     %% Compute all if flag set to true, otherwise only calculate one
