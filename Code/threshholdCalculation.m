@@ -66,6 +66,15 @@ function threshholdCalculation(displayIndividualThreshhold)
     title('Threshhold against k-values');
     xlabel('k-values');
     ylabel('Threshhold');
+    
+    %% Testing yellow photon data
+    yellowPhoton = loadChooserData('yellowIllumComparisonPhoton');
+    Usable = [10 0];
+    [t,~] = fitToData(Usable(1), Usable(2), yellowPhoton, paramsValueEst, 'y', true);
+    figure;
+    totalRange = 1:10;
+    kValsFine = min(totalRange):(max(totalRange)-min(totalRange))/1000:max(totalRange);
+    fitAndPlotToThreshhold(Usable(1), Usable(2), t, 'y', kValsFine, figParams);
 end
 
 % This function will fit input data to a Weibull curve.  The choice of
