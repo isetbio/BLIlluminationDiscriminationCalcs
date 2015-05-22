@@ -1,6 +1,6 @@
-function photons = getNoisySensorImages(folderName, imageName, sensor, N, k)
-%getNoisySensorImages
-%   Generate N noisy sensor images of the input optical image location
+function photons = getNoisySensorImage(calcParams, folderName, imageName, sensor, k)
+%getNoisySensorImage(folderName, imageName, sensor, N, k)
+%   Generate a single noisy sensor image of the input optical image location
 %   using the given input sensor
 %
 %   Inputs:
@@ -23,32 +23,36 @@ function photons = getNoisySensorImages(folderName, imageName, sensor, N, k)
     
 %% Get a noise free version of the image
     sensorNF = sensorComputeNoiseFree(sensor, oi);
-    %     noiseFree = sensorGet(sensorNF, 'volts'); 
     noiseFree = sensorGet(sensorNF, 'photons');
     
 %% Use a default k-value of 1    
     if (nargin < 5)
         k = 1;
     end
+  
+%% Calculate noisy sample
 
-%% Preallocate space for images
-    [x,y] = size(noiseFree);
-    noisySample = zeros(x, y, N);
-    
-%% Calculate N sets of noisy samples
-    for i = 1:N
-        % Get a noisy sensor image
+    % Get a noisy sensor image
+    if (calcParams.coneAdaptEnable)
+        [~, noisySample] = coneAdapt(sensor, calcParams.coneAdaptType);
+        
+        % Data from coneAdapt is in volts, must be converted to photons
+        pixel = sensorGet(sensor,'pixel');
+        noisySample = noisySample/pixelGet(pixel,'conversionGain');
+
+        % Photons are int
+        noisySample = round(noisySample);
+    else 
         sensorR = coneAbsorptions(sensor, oi);
-        %         noisySample(:,:,i) = sensorGet(sensorR, 'volts');
-        noisySample(:,:,i) = sensorGet(sensorR, 'photons');
-        
-        % Find the noise
-        diff = noisySample(:,:,i) - noiseFree;
-        
-        % Add noise back with k multiplier
-        noisySample(:,:,i) = noiseFree + diff * k;
+        noisySample = sensorGet(sensorR, 'photons');
     end
     
+    % Find the noise
+    diff = noisySample - noiseFree;
+
+    % Add noise back with k multiplier
+    noisySample = noiseFree + diff * k;
+
     photons = noisySample;
 end
 
