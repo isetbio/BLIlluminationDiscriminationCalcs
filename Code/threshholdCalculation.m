@@ -70,14 +70,14 @@ function threshholdCalculation(displayIndividualThreshhold)
     ylabel('Threshhold');
     
     %% Testing yellow photon data
-    yellowPhoton = loadChooserData('yellowIllumComparisonPhoton');
+    yellowPhoton = loadChooserData('blueIllumComparisonPhoton');
     Usable = [10 0];
-    [t,~] = fitToData(Usable, yellowPhoton, paramsValueEst, 'y', true);
+    [t,~] = fitToData(Usable, yellowPhoton, paramsValueEst, 'b', true);
     figure;
     sizeOfData = size(yellowPhoton);
     totalRange = 1:1:sizeOfData(2);
     kValsFine = min(totalRange):(max(totalRange)-min(totalRange))/1000:max(totalRange);
-    fitAndPlotToThreshhold(Usable, t, 'y', kValsFine, figParams);
+    fitAndPlotToThreshhold(Usable, t, 'b', kValsFine, figParams);
 end
 
 % This function will fit input data to a Weibull curve.  The choice of
@@ -164,6 +164,7 @@ function fitAndPlotToThreshhold (usableData, threshhold, color, kValsFine, param
     plot(kVals, threshhold, strcat(color,'.'), 'markersize', params.markerSize);
     
     %% Fit to line and get set of y values
+    % Want to change to something that's not a linear fit
     p = polyfit(kVals, threshhold', 1);
     y = polyval(p, kValsFine);
     hold on;

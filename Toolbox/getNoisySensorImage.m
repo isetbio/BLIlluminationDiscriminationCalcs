@@ -23,8 +23,8 @@ function photons = getNoisySensorImage(calcParams, folderName, imageName, sensor
     
 %% Get a noise free version of the image
     sensorNF = sensorComputeNoiseFree(sensor, oi);
-    noiseFree = sensorGet(sensorNF, 'photons');
-    
+    noiseFree = sensorGet(sensorNF, 'photons'); % Does not work with 3D EM because of 3D
+
 %% Use a default k-value of 1    
     if (nargin < 5)
         k = 1;
@@ -33,17 +33,19 @@ function photons = getNoisySensorImage(calcParams, folderName, imageName, sensor
 %% Calculate noisy sample
 
     % Get a noisy sensor image
+    sensorR = coneAbsorptions(sensor, oi); 
+    
     if (calcParams.coneAdaptEnable)
-        [~, noisySample] = coneAdapt(sensor, calcParams.coneAdaptType);
+        [~, noisySample] = coneAdapt(sensorR, calcParams.coneAdaptType);
         
         % Data from coneAdapt is in volts, must be converted to photons
-        pixel = sensorGet(sensor,'pixel');
+        % This code is taken from sensorGet('photons')
+        pixel = sensorGet(sensorR,'pixel');
         noisySample = noisySample/pixelGet(pixel,'conversionGain');
 
         % Photons are int
         noisySample = round(noisySample);
     else 
-        sensorR = coneAbsorptions(sensor, oi);
         noisySample = sensorGet(sensorR, 'photons');
     end
     
