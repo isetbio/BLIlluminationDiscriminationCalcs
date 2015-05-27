@@ -163,12 +163,13 @@ end
 
 % computeByColor(calcParams, sensor, colorChoice)
 %
-% This function will run the simple chooser model on all the data sets
-% store on ColorShare
+% This function will run the simple chooser model on the data set specified
+% by colorChoice
 %
 % Inputs:
-%   calcParams - This contains parameters for the model
-%   sensor     - the desired sensor to be used for the calculation
+%   calcParams  - This contains parameters for the model
+%   sensor      - The desired sensor to be used for the calculation
+%   colorChoice - This defines the color on which to run the calculation
 function computeByColor(calcParams, sensor, colorChoice)
     folderList = {'BlueIllumination', 'GreenIllumination', ...
         'RedIllumination', 'YellowIllumination'};
