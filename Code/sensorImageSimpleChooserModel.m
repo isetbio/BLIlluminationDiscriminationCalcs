@@ -176,12 +176,12 @@ function computeByColor(calcParams, sensor, colorChoice)
     
     if (colorChoice == 0)
         for i=1:length(folderList)
-            matrix = singleColorKValueComparison(sensor, folderList{i}, prefix{i}, calcParams);
+            matrix = singleColorKValueComparison(calcParams, sensor, folderList{i}, prefix{i});
             fileName = strcat(prefix{1}, 'IllumComparison');
             save(fileName, 'matrix');
         end
     else
-        matrix = singleColorKValueComparison(sensor, folderList{colorChoice}, prefix{colorChoice}, calcParams);
+        matrix = singleColorKValueComparison(calcParams, sensor, folderList{colorChoice}, prefix{colorChoice});
         fileName = strcat(prefix{colorChoice}, 'IllumComparison');
         save(fileName, 'matrix');
         printmat(matrix, 'Results', ...
