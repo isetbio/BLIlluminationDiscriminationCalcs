@@ -15,7 +15,7 @@ function runAllCalculations
 close all; ieInit;
 
 %% Control of what gets done in this function
-CACHE_SCENES = true; forceSceneCompute = false;
+CACHE_SCENES = true; forceSceneCompute = true;
 CACHE_OIS = true; forceOICompute = false;
 RUN_CHOOSER = false; forceComputeAllChooser = true;
 displayIndividualThreshhold = true;
@@ -42,9 +42,15 @@ calcParams.cacheFolderList = {'Standard', 'BlueIllumination', 'GreenIllumination
     'RedIllumination', 'YellowIllumination'};
     
 % Specify how to crop the image.  We don't want it all.
-calcParams.cropRect = [550 450 40 40];              % Use [450 350 624 574] for entire non-black region of our images
+% Code further on makes the most sense if the image is square (because we
+% define a square patch of cone mosaic when we build the sensor), so the
+% cropped region should always be square.
+calcParams.cropRect = [550 450 40 40];              % [450 350 624 574] is the entire non-black region of our initial images
 
 % Specify the parameters for the chooser calculation
+calcParams.coneIntegrationTime = 0.050;
+calcParams.S = [380 8 51];
+
 calcParams.numTrials = 100;
 calcParams.maxIllumTarget = 50;
 calcParams.numKValueSamples = 10;
@@ -53,8 +59,9 @@ calcParams.numKValueSamples = 10;
 % EMPositions represents the number of positions of eye movement to sample,
 % in this case it is 100
 calcParams.enableEM = false;
-calcParams.EMPositions = zeros(100, 2);
-calcParams.EMSampleTime = 0.001;    % Setting sample time to 1 ms
+calcParams.numEMPositions = 100;
+calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
+calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
 
 % Specify cone adaptation parameters
 calcParams.coneAdaptEnable = false;

@@ -1,14 +1,15 @@
 function convertScenesToOpticalimages(calcParams, forceCompute)
-%convertScenesToOpticalimages(calcParams, forceCompute)
-%   Convert all of the scenes in the SceneData directory on ColorShare1
-%   into Optical Images
+% convertScenesToOpticalimages(calcParams, forceCompute)
 %
-%   Inputs:
+% Convert all of the scenes in the SceneData directory on ColorShare1 into Optical Images
+%
+% Inputs:
 %   calcParams - A set of parameters used to specify parameters such as
 %       target folder names and crop size
 %   forceCompute - Setting this to true will cause this function to
 %       compute a new optical image even if a cached version already exists
-%   3/13/2015   xd  wrote it
+%
+% 3/13/2015   xd  wrote it
 
 %% List of where the images will be stored on ColorShare1
 folderList = calcParams.cacheFolderList;
@@ -19,7 +20,7 @@ dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
 %% Create oi object
 oi = oiCreate('human');
 
-%% Compute the Optical Images
+%% Compute the optical images
 %
 % Loop over each image data folder
 for i = 1:length(folderList)

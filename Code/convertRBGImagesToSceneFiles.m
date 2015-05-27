@@ -5,7 +5,7 @@ function convertRBGImagesToSceneFiles(calcParams,forceCompute)
 % target folders to corresponding scene data files in the SceneData
 % folder
 %
-%   Inputs:
+% Inputs:
 %   calcParams - A set of parameters used to specify parameters such as
 %       target folder names and crop size
 %   forceCompute - Setting this to true will cause this function to
@@ -45,18 +45,17 @@ for i = 1:length(folderList)
     fileList = data.mat;
     
     % For each image file, load the image and generate a scene from it
-    % using the Brainard Lab Display calibration file
+    % using the Brainard Lab Display calibration file.  We only do this
+    % if the scene does not exist, or if the forceCompute flag is set to
+    % true.  That makes this loop fast after the first time.
     for s = 1:length(fileList)
-        
-        % Create new Scene object if it does not already exist or if
-        % forceCompute flag is set to true
-        imgSize = calStructOBJ.get('screenSizeMM') / 1000;
-        imgName = strsplit(fileList{s}, '.');
-        
+
+        imgName = strsplit(fileList{s}, '.');     
         sceneCheckPath = fullfile(dataBaseDir, 'SceneData', folderList{i}, strcat(imgName{1}, 'Scene.mat'));
         if (forceCompute || ~exist(sceneCheckPath, 'file'))
-            getSceneFromRGBImage(calcParams,folderList{i}, imgName{1}, brainardLabDisplay, imgSize);
+            getSceneFromRGBImage(calcParams,folderList{i}, imgName{1}, brainardLabDisplay);
         end
+        
         % For debugging purposes
         % fprintf(imgName{1});
         % fprintf('\n');

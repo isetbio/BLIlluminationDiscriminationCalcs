@@ -1,5 +1,5 @@
-function scene = getSceneFromRGBImage(calcParams, folderName, imageName, display, imgSize)
-% scene = getSceneFromRGBImage(calcParams, folderName, imageName, display, imgSize)
+function scene = getSceneFromRGBImage(calcParams, folderName, imageName, display)
+% scene = getSceneFromRGBImage(calcParams, folderName, imageName, display)
 %
 % Function to generate an ISETBIO scene from an RGB Image.  The scene
 % will also be saved to the appropriate project folder, determined by
@@ -11,22 +11,21 @@ function scene = getSceneFromRGBImage(calcParams, folderName, imageName, display
 %   folderName - folder on ColorShare in which image resides
 %   imageName - name of the image file
 %   display - Isetbio style display object to used for scene generation
-%   imgSize - size in meters of the original image
 %
 %   Outputs:
 %   scene - the scene generated through isetbio using the input parameters
 %
-% 3/11/2015    xd     wrote it
-% 4/1/2015     xd     updated to adjust fov to crop size
+% 3/11/2015    xd        wrote it
+% 4/1/2015     xd        updated to adjust fov to crop size
+% 5/27/15      xd, dhb   use dots per inch info in display to compute image size 
 
 %% Get path to image
 path = strcat(folderName, '/', imageName);
 
 %% Load the input image
 imageData  = loadImageData(path);
-[yImgPixels, xImgPixels, ~] = size(imageData);
 
-%% Generate scene
+%% Generate scene from full image
 tic;
 scene = sceneFromFile(imageData, 'rgb', [], display);
 fprintf('Scene object generation took %2.1f seconds\n', toc);
@@ -38,14 +37,12 @@ fprintf('Scene object generation took %2.1f seconds\n', toc);
 % First have to crop the pixels, but this doesn't adjust
 % field of view
 scene = sceneCrop(scene, calcParams.cropRect);
+xImgPixels = sceneGet(scene,'cols');
+xImgMeters = display.dpi*xImgPixels*0.0254;
 
 % Need to resize field of view.  Scale size of image
 % in meters by how much we're cropping out.
-dist = display.dist;
-yFraction = calcParams.cropRect(4) / yImgPixels;
-xFraction = calcParams.cropRect(3) / xImgPixels;
-imgSize = [xFraction*imgSize(1), yFraction*imgSize(2)];
-fov = 2*rad2deg(atan2(imgSize(1)/2,dist));
+fov = 2*rad2deg(atan2(xImgMeters/2,display.dist));
 scene = sceneSet(scene, 'fov', fov);
 scene = sceneSet(scene, 'name', strcat(imageName, 'Scene'));
 

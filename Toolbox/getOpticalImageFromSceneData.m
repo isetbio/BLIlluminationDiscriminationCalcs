@@ -4,12 +4,12 @@ function oi = getOpticalImageFromSceneData(oi, folderName, imageName)
 % Loads the scene file from ColorShare1 and turns it into an optical
 % image using default human optics
 %
-%   Inputs:
+% Inputs:
 %   oi - optical image to compute using scene
 %   folderName - folder in which target scene resides on ColorShare
 %   imageName - name of original image used to calculate the scene
 %
-%   Outputs:
+% Outputs:
 %   oi - newly calculated oi using input oi and target scene
 %
 % 3/11/2015   xd  wrote it
