@@ -165,9 +165,9 @@ function fitAndPlotToThreshold (threshold, color, kValsFine, figParams)
     
     %% Fit to line and get set of y values
     % Want to change to something that's not a linear fit
-    p = polyfit(kVals, threshold', 1);
+    p = polyfit(kVals, threshold', 3);
     y = polyval(p, kValsFine);
+    
     hold on;
     plot (kValsFine, y, color, 'linewidth', figParams.lineWidth);
-
 end

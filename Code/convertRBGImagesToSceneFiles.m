@@ -26,8 +26,9 @@ calStructOBJ = loadCalibrationData('StereoLCDLeft');
 
 % Create the display
 extraData = ptb.ExtraCalData;
+% NOTE: Should this be an input param?
 extraData.distance = 0.764;
-extraData.subSamplingSvector = [380 8 51];
+extraData.subSamplingSvector = calcParams.S;
 
 % Generate an isetbio display object to model the display used to
 % obtain the calibration data, and save this.

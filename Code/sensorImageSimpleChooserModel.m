@@ -1,4 +1,4 @@
-function sensorImageSimpleChooserModel(calcParams, computeAll, colorChoice)
+function sensorImageSimpleChooserModel(calcParams, colorChoice)
 % sensorImageSimpleChooserModel(calcParams, computeAll, colorChoice)
 %
 % This function will generate several noisy versions of the standard
@@ -10,11 +10,9 @@ function sensorImageSimpleChooserModel(calcParams, computeAll, colorChoice)
 % Inputs:
 %       calcParams  - parameters for the calculation, contains the number of
 %                     trials to run
-%       computeAll  - if set to true, the calculation will be run on all
-%                     color illumination. Otherwise, only the color specified by the
-%                     color choice input will be used
 %       colorChoice - an integer corresponding to the desired target
 %                     color illumination for calculation.
+%                     0 = compute all colors
 %                     1 = blue
 %                     2 = green
 %                     3 = red
@@ -78,48 +76,36 @@ if (calcParams.enableEM)
     sensor = emGenSequence(sensor);
 end
 
-%% Compute all if flag set to true, otherwise only calculate one
-if (computeAll)
-    calculateAllColors(calcParams, sensor);
-else
-    folderList = {'BlueIllumination', 'GreenIllumination', ...
-        'RedIllumination', 'YellowIllumination'};
-    prefix = {'blue' , 'green', 'red', 'yellow'};
-    matrix = singleColorKValueComparison(sensor, folderList{colorChoice}, prefix{colorChoice}, calcParams);
-    fileName = strcat(prefix{colorChoice}, 'IllumComparison');
-    save(fileName, 'matrix');
-    printmat(matrix, 'Results', ...
-        '1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50', ...
-        '1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0');
-end
+%% Compute according to the input color choice
+    computeByColor(calcParams, sensor, colorChoice);
 
 fprintf('Calculation complete');
 end
 
-% results = singleColorKValueComparison(sensor, folderName, prefix, num, k)
+% results = singleColorKValueComparison(calcParams, sensor, folderName, prefix)
 %
 % This function carries out the simple chooser model calculation.
 %
 % Inputs:
-%   sensor     - This is the sensor that will be used to generate each of the
-%                sensor images
-%   folderName - The folder that contains the target set of optical images
-%   prefix     - The color that matches the target folder, this will be used to
-%                generate the optical image name
 %   calcParams - This struct should contain relevant parameters for the
 %                calculation, including the number of k-value samples, the
 %                number of trials, and the illumination number to go up to.
 %                These are specified by the fields 'numTrials',
 %                'maxIllumTarget', and 'numKValueSamples'
+%   sensor     - This is the sensor that will be used to generate each of the
+%                sensor images
+%   folderName - The folder that contains the target set of optical images
+%   prefix     - The color that matches the target folder, this will be used to
+%                generate the optical image name
 % Outputs:
-%  results - A 2D matrix that contains percentages of 'correct' decisions
-%            made by the model
-function results = singleColorKValueComparison(sensor, folderName, prefix, calcParams)
-
+%    results - A 2D matrix that contains percentages of 'correct' decisions
+%              made by the model
+function results = singleColorKValueComparison(calcParams, sensor, folderName, prefix)
 %% Get relevant parameters from calcParams
 numTrials = calcParams.numTrials;
-imageIllumNumber = calcParams.maxIllumTarget;
-k = calcParams.numKValueSamples;
+maxImageIllumNumber = calcParams.maxIllumTarget;
+kSampleNum = calcParams.numKValueSamples;
+kInterval = calcParams.kInterval;
 
 %% Define the suffix term for creating the image name
 %
@@ -128,37 +114,31 @@ k = calcParams.numKValueSamples;
 %  suffix is defined below
 suffix = 'L-RGB';
 
-
-%% This increment parameter is the difference between noise levels
-% CHANGE THIS TO AN INPUT PARAMETER
-% the current value of 1 means k values will be 1,2,3...
-incrementMultiplier = 1;
-
 %% Preallocate space for the accuracy matrix which will store the results of the calculations
-accuracyMatrix = zeros(imageIllumNumber, k);
+accuracyMatrix = zeros(maxImageIllumNumber, kSampleNum);
 
 %% Run calculations up to illumination number and k-value limits
 %
 % Loop through the illumination number
-for i = 1:imageIllumNumber
+for i = 1:maxImageIllumNumber
     % Loop through the k values
-    for j = 1:k
+    for j = 1:kSampleNum
         correct = 0;
         
         % Simulate out over calcNumber simulated trials
         tic
         for t = 1:numTrials
             % Get inital noisy ref image
-            photonstandardRef = getNoisySensorImage(calcParams,'Standard','TestImage0',sensor,(1 + incrementMultiplier * (j - 1)));
+            photonstandardRef = getNoisySensorImage(calcParams,'Standard','TestImage0',sensor,(1 + kInterval * (j - 1)));
             
             % Get noisy version of standard image
-            photonsStandardComp = getNoisySensorImage(calcParams,'Standard','TestImage0',sensor,(1 + incrementMultiplier * (j - 1)));
+            photonsStandardComp = getNoisySensorImage(calcParams,'Standard','TestImage0',sensor,(1 + kInterval * (j - 1)));
             
             % Generate Image name
             imageName = strcat(prefix, int2str(i), suffix);
             
             % Get noisy version of test image
-            photonsTestComp = getNoisySensorImage(calcParams,folderName,imageName,sensor,(1 + incrementMultiplier * (j - 1)));
+            photonsTestComp = getNoisySensorImage(calcParams,folderName,imageName,sensor,(1 + kInterval * (j - 1)));
             
             % Calculate vector distance from the test image and
             % standard image to the reference image
@@ -180,25 +160,31 @@ end
 results = accuracyMatrix;
 end
 
-% calculateAllColors(calcParams, sensor)
+% computeByColor(calcParams, sensor, colorChoice)
 %
 % This function will run the simple chooser model on all the data sets
 % store on ColorShare
 %
 % Inputs:
-%   calcParams - This contains a field that defines how many times to run
-%                model
-%   sensor      - the desired sensor to be used for the calculation
-%
-function calculateAllColors(calcParams, sensor)
-%% These will be used to loop through all the scenes
-folderList = {'BlueIllumination', 'GreenIllumination', ...
-    'RedIllumination', 'YellowIllumination'};
-prefix = {'blue' , 'green', 'red', 'yellow'};
-
-for i=1:length(folderList)
-    matrix = singleColorKValueComparison(sensor, folderList{i}, prefix{i}, calcParams);
-    fileName = strcat(prefix{1}, 'IllumComparison');
-    save(fileName, 'matrix');
-end
+%   calcParams - This contains parameters for the model
+%   sensor     - the desired sensor to be used for the calculation
+function computeByColor(calcParams, sensor, colorChoice)
+    folderList = {'BlueIllumination', 'GreenIllumination', ...
+        'RedIllumination', 'YellowIllumination'};
+    prefix = {'blue' , 'green', 'red', 'yellow'};
+    
+    if (colorChoice == 0)
+        for i=1:length(folderList)
+            matrix = singleColorKValueComparison(sensor, folderList{i}, prefix{i}, calcParams);
+            fileName = strcat(prefix{1}, 'IllumComparison');
+            save(fileName, 'matrix');
+        end
+    else
+        matrix = singleColorKValueComparison(sensor, folderList{colorChoice}, prefix{colorChoice}, calcParams);
+        fileName = strcat(prefix{colorChoice}, 'IllumComparison');
+        save(fileName, 'matrix');
+        printmat(matrix, 'Results', ...
+            '1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50', ...
+            '1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0');
+    end
 end
