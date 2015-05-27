@@ -15,10 +15,10 @@ function runAllCalculations
 close all; ieInit;
 
 %% Control of what gets done in this function
-CACHE_SCENES = true; forceSceneCompute = true;
+CACHE_SCENES = true; forceSceneCompute = false;
 CACHE_OIS = true; forceOICompute = false;
-RUN_CHOOSER = false; forceComputeAllChooser = true;
-displayIndividualThreshhold = true;
+RUN_CHOOSER = false; chooserColorChoice = 0;
+displayIndividualThreshold = true;
 
 %% Get our project toolbox on the path
 myDir = fileparts(mfilename('fullpath'));
@@ -54,6 +54,7 @@ calcParams.S = [380 8 51];
 calcParams.numTrials = 100;
 calcParams.maxIllumTarget = 50;
 calcParams.numKValueSamples = 10;
+calcParams.kInterval = 1;
 
 % Specify eye movement parameters
 % EMPositions represents the number of positions of eye movement to sample,
@@ -86,4 +87,5 @@ end
 %
 % Note that the data set generated below is using the volt data from the
 % sensor images.  The photon data set is still being generated.
-threshholdCalculation(displayIndividualThreshhold);
+thresholdCalculation(displayIndividualThreshold);
+end

@@ -35,7 +35,7 @@ tic;
 brainardLabDisplay = ptb.GenerateIsetbioDisplayObjectFromPTBCalStruct('BrainardLabStereoLeftDisplay', calStructOBJ.cal, extraData, false);
 fprintf('Display object generation took %2.1f seconds\n', toc);
 
-%% Pecompute the scene files
+%% Precompute the scene files
 %
 % Loop over each image data folder and write out a scene
 for i = 1:length(folderList)

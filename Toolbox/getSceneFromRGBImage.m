@@ -5,14 +5,14 @@ function scene = getSceneFromRGBImage(calcParams, folderName, imageName, display
 % will also be saved to the appropriate project folder, determined by
 % the project preferences.
 %
-%   Inputs:
+% Inputs:
 %   calcParams - parameters for the entire calculation, will contain
-%       desired crop size
+%                desired crop size
 %   folderName - folder on ColorShare in which image resides
-%   imageName - name of the image file
-%   display - Isetbio style display object to used for scene generation
+%   imageName  - name of the image file
+%   display    - Isetbio style display object to used for scene generation
 %
-%   Outputs:
+% Outputs:
 %   scene - the scene generated through isetbio using the input parameters
 %
 % 3/11/2015    xd        wrote it
@@ -38,7 +38,7 @@ fprintf('Scene object generation took %2.1f seconds\n', toc);
 % field of view
 scene = sceneCrop(scene, calcParams.cropRect);
 xImgPixels = sceneGet(scene,'cols');
-xImgMeters = display.dpi*xImgPixels*0.0254;
+xImgMeters = xImgPixels*0.0254/display.dpi;
 
 % Need to resize field of view.  Scale size of image
 % in meters by how much we're cropping out.
