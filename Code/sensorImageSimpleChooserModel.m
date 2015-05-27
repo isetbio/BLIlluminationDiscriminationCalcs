@@ -38,6 +38,7 @@ S = calcParams.S;
 %% Load scene to get FOV.
 % Scenes are precomputed from stimulus images and stored for our use here.
 scene = loadSceneData('Standard', 'TestImage0');
+fov = sceneGet(scene, 'fov');
 
 %% Load oi for FOV.
 % These are also precomputed.
