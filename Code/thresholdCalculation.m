@@ -65,8 +65,8 @@ function thresholdCalculation(displayIndividualThreshold)
     title('Threshold against k-values');
     xlabel('k-values');
     ylabel('Threshold');
+    ylim([0 50]);
 end
-
 
 function [threshold, paramsValues, usableData] = fitToData (data, paramsEstimate, numTrials, color, toPlot)    
 %[threshold, paramsValues] = fitToData (data, paramsEstimate, color, toPlot)  
@@ -135,7 +135,26 @@ function [threshold, paramsValues, usableData] = fitToData (data, paramsEstimate
         figure;
         set(gcf,'Position',[0 0 1000 1000]); 
         set(gca,'FontName','Helvetica','FontSize',12);
+        a = annotation('textbox', [0.4,0.9,0.1,0.1], ...
+            'String',['Threshold fits for ' abbToWord(color) ' illumination']);
+        set(a, 'FontSize', 20);
+        set(a, 'LineStyle', 'none');
     end
+    
+    %% Define a function that converts from color abbreviation to full word
+    function colorFull = abbToWord(colorAbbr)
+        switch colorAbbr
+            case {'r'}
+                colorFull = 'red';
+            case {'g'}
+                colorFull = 'green';
+            case {'b'} 
+                colorFull = 'blue';
+            case {'y'}
+                colorFull = 'yellow';
+        end
+    end
+
     
     %% Calculate thresholds and fits
     for i = 1:numKValue
@@ -171,7 +190,7 @@ function [threshold, paramsValues, usableData] = fitToData (data, paramsEstimate
 end
 
 function fitAndPlotToThreshold (usableData, threshold, color, kInterval, kValsFine, figParams)
-%fitAndPlotToThreshold (threshold, color, kValsFine, figParams)
+%fitAndPlotToThreshold (usableData, threshold, color, kInterval, kValsFine, figParams)
 %
 % This function plots the thresholds against their respective k values of
 % noise.  Currently the data is fit to a linear line.
