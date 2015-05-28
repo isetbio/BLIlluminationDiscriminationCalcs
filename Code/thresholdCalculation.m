@@ -20,7 +20,7 @@ function thresholdCalculation(displayIndividualThreshold)
     blueMatrix  = loadChooserData('CurrentData','blueIllumComparisonPhotonOld');
     greenMatrix = loadChooserData('CurrentData','greenIllumComparisonPhotonOld');
     redMatrix = loadChooserData('CurrentData','redIllumComparisonPhoton');
-    yellowMatrix = loadChooserData('CurrentData','yellowIllumComparison');
+    yellowMatrix = loadChooserData('CurrentData','yellowIllumComparisonPhoton');
     
     %% Load the calcParams used for this set of data
     dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
