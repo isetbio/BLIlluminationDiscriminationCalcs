@@ -10,6 +10,8 @@ function runAllCalculations
 % gather all of the parameters together in one place.
 %
 % 4/29/15  dhb, xd  Wrote it.
+%
+% NOTE: Need to save calcParams
 
 %% Clear and initialize
 close all; ieInit;

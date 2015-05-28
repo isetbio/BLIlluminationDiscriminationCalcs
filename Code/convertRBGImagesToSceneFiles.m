@@ -6,10 +6,10 @@ function convertRBGImagesToSceneFiles(calcParams,forceCompute)
 % folder
 %
 % Inputs:
-%   calcParams - A set of parameters used to specify parameters such as
-%       target folder names and crop size
+%   calcParams   - A set of parameters used to specify parameters such as
+%                  target folder names and crop size
 %   forceCompute - Setting this to true will cause this function to
-%       compute a new scene even if a cached version already exists
+%                  compute a new scene even if a cached version already exists
 %
 % 3/12/2015   xd  wrote it
 

@@ -1,5 +1,5 @@
 function sensorImageSimpleChooserModel(calcParams, colorChoice)
-% sensorImageSimpleChooserModel(calcParams, computeAll, colorChoice)
+%sensorImageSimpleChooserModel(calcParams, computeAll, colorChoice)
 %
 % This function will generate several noisy versions of the standard
 % image.  Then it will compare the standard with one of the noisy images
@@ -83,7 +83,8 @@ end
 fprintf('Calculation complete');
 end
 
-% results = singleColorKValueComparison(calcParams, sensor, folderName, prefix)
+function results = singleColorKValueComparison(calcParams, sensor, folderName, prefix)
+%results = singleColorKValueComparison(calcParams, sensor, folderName, prefix)
 %
 % This function carries out the simple chooser model calculation.
 %
@@ -99,9 +100,9 @@ end
 %   prefix     - The color that matches the target folder, this will be used to
 %                generate the optical image name
 % Outputs:
-%    results - A 2D matrix that contains percentages of 'correct' decisions
-%              made by the model
-function results = singleColorKValueComparison(calcParams, sensor, folderName, prefix)
+%   results - A 2D matrix that contains percentages of 'correct' decisions
+%             made by the model
+
 %% Get relevant parameters from calcParams
 numTrials = calcParams.numTrials;
 maxImageIllumNumber = calcParams.maxIllumTarget;
@@ -161,7 +162,8 @@ end
 results = accuracyMatrix;
 end
 
-% computeByColor(calcParams, sensor, colorChoice)
+function computeByColor(calcParams, sensor, colorChoice)
+%computeByColor(calcParams, sensor, colorChoice)
 %
 % This function will run the simple chooser model on the data set specified
 % by colorChoice
@@ -170,7 +172,7 @@ end
 %   calcParams  - This contains parameters for the model
 %   sensor      - The desired sensor to be used for the calculation
 %   colorChoice - This defines the color on which to run the calculation
-function computeByColor(calcParams, sensor, colorChoice)
+
     folderList = {'BlueIllumination', 'GreenIllumination', ...
         'RedIllumination', 'YellowIllumination'};
     prefix = {'blue' , 'green', 'red', 'yellow'};
