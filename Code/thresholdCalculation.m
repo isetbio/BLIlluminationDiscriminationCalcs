@@ -1,17 +1,17 @@
 function thresholdCalculation(displayIndividualThreshold)
 %thresholdCalculation(displayIndividualThreshold)
-%   This function uses the Weibull as a psychometric function to
-%   fit the data calculated from the simple image discrimination chooser
-%   model.  
+% This function uses the Weibull as a psychometric function to
+% fit the data calculated from the simple image discrimination chooser
+% model.  
 %
-%   Inputs:
+% Inputs:
 %   displayIndividualThreshold - Set to true if individual fitted curves
-%       are to be displayed.  Only the final threshold graph will be shown
-%       if set to false.
+%                                are to be displayed.  Only the final threshold 
+%                                graph will be shown if set to false.
 %
-%   4/20/2015   xd  wrote it
-%   4/22/2015   xd  finished running chooser model on all 4 illum colors
-%   4/24/2015   xd  cleaned up the function for readability
+% 4/20/2015   xd  wrote it
+% 4/22/2015   xd  finished running chooser model on all 4 illum colors
+% 4/24/2015   xd  cleaned up the function for readability
 %
 % NOTE: Need to have a k-value vector in case the sample interval is not 1
 
