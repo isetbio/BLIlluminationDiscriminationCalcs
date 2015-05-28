@@ -1,8 +1,8 @@
 function thresholdCalculation(displayIndividualThreshold)
-%thresholdCalculation(displayIndividualThreshold)
-% This function uses the Weibull as a psychometric function to
-% fit the data calculated from the simple image discrimination chooser
-% model.  
+%thresholdCalculation(displayIndividualThreshold) 
+% This function passes the pre-calculated simple chooser model data to
+% fitToData to generate a fitted Weibull curve.  These curves are then
+% plotted together on one figure.
 %
 % Inputs:
 %   displayIndividualThreshold - Set to true if individual fitted curves
@@ -19,8 +19,8 @@ function thresholdCalculation(displayIndividualThreshold)
     clc; clear global; close all;
 
     %% Load the data for each illumination matrix    
-    blueMatrix  = loadChooserData('blueIllumComparisonPhoton');
-    greenMatrix = loadChooserData('greenIllumComparisonPhoton');
+    blueMatrix  = loadChooserData('blueIllumComparisonPhotonOld');
+    greenMatrix = loadChooserData('greenIllumComparisonPhotonOld');
     redMatrix = loadChooserData('redIllumComparisonPhoton');
     yellowMatrix = loadChooserData('yellowIllumComparison');
     
@@ -165,7 +165,7 @@ function fitAndPlotToThreshold (threshold, color, kValsFine, figParams)
     
     %% Fit to line and get set of y values
     % Want to change to something that's not a linear fit
-    p = polyfit(kVals, threshold', 3);
+    p = polyfit(kVals, threshold', 1);
     y = polyval(p, kValsFine);
     
     hold on;
