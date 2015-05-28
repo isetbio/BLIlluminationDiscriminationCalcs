@@ -12,6 +12,7 @@ function thresholdCalculation(displayIndividualThreshold)
 % 4/20/2015   xd  wrote it
 % 4/22/2015   xd  finished running chooser model on all 4 illum colors
 % 4/24/2015   xd  cleaned up the function for readability
+% 5/28/2015   xd  usableData range decision is now automated
 
     %% clear
     clc; clear global; close all;
