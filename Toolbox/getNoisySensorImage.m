@@ -22,8 +22,9 @@ function photons = getNoisySensorImage(calcParams, folderName, imageName, sensor
     oi = loadOpticalImageData(folderName, imageName);
     
 %% Get a noise free version of the image
-    sensorNF = sensorComputeNoiseFree(sensor, oi);
-    noiseFree = sensorGet(sensorNF, 'photons'); % Does not work with 3D EM because of 3D
+    sensorNF = sensorSet(sensor, 'noise flag', 0);
+    sensorNF = coneAbsorptions(sensorNF, oi);
+    noiseFree = sensorGet(sensorNF, 'photons'); 
 
 %% Use a default k-value of 1    
     if (nargin < 5)
