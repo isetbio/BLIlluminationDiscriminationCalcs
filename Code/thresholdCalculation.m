@@ -21,7 +21,7 @@ function thresholdCalculation(displayIndividualThreshold)
     %% Load the data for each illumination matrix    
     blueMatrix  = loadChooserData('blueIllumComparisonPhoton');
     greenMatrix = loadChooserData('greenIllumComparisonPhoton');
-    redMatrix = loadChooserData('redIllumComparison');
+    redMatrix = loadChooserData('redIllumComparisonPhoton');
     yellowMatrix = loadChooserData('yellowIllumComparison');
     
     %% Get number of k-values, should be the same for all four matrices

@@ -17,7 +17,7 @@ close all; ieInit;
 %% Control of what gets done in this function
 CACHE_SCENES = true; forceSceneCompute = false;
 CACHE_OIS = true; forceOICompute = false;
-RUN_CHOOSER = true; chooserColorChoice = 0;
+RUN_CHOOSER = true; chooserColorChoice = 4;
 displayIndividualThreshold = true;
 
 %% Get our project toolbox on the path
