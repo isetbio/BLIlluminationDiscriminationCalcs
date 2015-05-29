@@ -19,7 +19,7 @@ close all; ieInit;
 %% Control of what gets done in this function
 CACHE_SCENES = true; forceSceneCompute = false;
 CACHE_OIS = true; forceOICompute = false;
-RUN_CHOOSER = true; chooserColorChoice = 4;
+RUN_CHOOSER = false; chooserColorChoice = 4;
 displayIndividualThreshold = true;
 
 %% Get our project toolbox on the path
@@ -92,5 +92,5 @@ end
 %
 % Note that the data set generated below is using the volt data from the
 % sensor images.  The photon data set is still being generated.
-thresholdCalculation(displayIndividualThreshold);
+thresholdCalculation('OldVoltData',displayIndividualThreshold);
 end

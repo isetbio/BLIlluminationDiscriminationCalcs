@@ -1,5 +1,6 @@
-function thresholdCalculation(displayIndividualThreshold)
-%thresholdCalculation(displayIndividualThreshold) 
+function thresholdCalculation(calcIDStr,displayIndividualThreshold)
+% thresholdCalculation((calcIDStr,displayIndividualThreshold) 
+%
 % This function passes the pre-calculated simple chooser model data to
 % fitToData to generate a fitted Weibull curve.  These curves are then
 % plotted together on one figure.
@@ -18,14 +19,14 @@ function thresholdCalculation(displayIndividualThreshold)
     clc; clear global; close all;
 
     %% Load the data for each illumination matrix    
-    blueMatrix  = loadChooserData('CurrentData','blueIllumComparisonPhoton');
-    greenMatrix = loadChooserData('CurrentData','greenIllumComparisonPhoton');
-    redMatrix = loadChooserData('CurrentData','redIllumComparisonPhoton');
-    yellowMatrix = loadChooserData('CurrentData','yellowIllumComparisonPhoton');
+    blueMatrix  = loadChooserData(calcIDStr,'blueIllumComparison');
+    greenMatrix = loadChooserData(calcIDStr,'greenIllumComparison');
+    redMatrix = loadChooserData(calcIDStr,'redIllumComparison');
+    yellowMatrix = loadChooserData(calcIDStr,'yellowIllumComparison');
     
     %% Load the calcParams used for this set of data
     dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-    dataFilePath = fullfile(dataBaseDir, 'SimpleChooserData', 'CurrentData', 'calcParams');
+    dataFilePath = fullfile(dataBaseDir, 'SimpleChooserData', calcIDStr, 'calcParams');
     p = load(dataFilePath);
     calcParams = p.calcParams;
         

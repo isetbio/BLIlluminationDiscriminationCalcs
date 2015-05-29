@@ -78,7 +78,7 @@ if (calcParams.enableEM)
 end
 
 %% Compute according to the input color choice
-    computeByColor(calcParams, sensor, colorChoice);
+computeByColor(calcParams, sensor, colorChoice);
 
 fprintf('Calculation complete');
 end
