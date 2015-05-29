@@ -18,8 +18,8 @@ function thresholdCalculation(displayIndividualThreshold)
     clc; clear global; close all;
 
     %% Load the data for each illumination matrix    
-    blueMatrix  = loadChooserData('CurrentData','blueIllumComparisonPhotonOld');
-    greenMatrix = loadChooserData('CurrentData','greenIllumComparisonPhotonOld');
+    blueMatrix  = loadChooserData('CurrentData','blueIllumComparisonPhoton');
+    greenMatrix = loadChooserData('CurrentData','greenIllumComparisonPhoton');
     redMatrix = loadChooserData('CurrentData','redIllumComparisonPhoton');
     yellowMatrix = loadChooserData('CurrentData','yellowIllumComparisonPhoton');
     
