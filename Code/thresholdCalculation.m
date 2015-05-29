@@ -1,11 +1,14 @@
 function thresholdCalculation(calcIDStr,displayIndividualThreshold)
-% thresholdCalculation((calcIDStr,displayIndividualThreshold) 
+% thresholdCalculation(calcIDStr,displayIndividualThreshold) 
 %
 % This function passes the pre-calculated simple chooser model data to
 % fitToData to generate a fitted Weibull curve.  These curves are then
 % plotted together on one figure.
 %
 % Inputs:
+%   calcIDStr                  - Identifier for this calculation set.  This
+%                                is the name of the folder in which the data is
+%                                stored.
 %   displayIndividualThreshold - Set to true if individual fitted curves
 %                                are to be displayed.  Only the final threshold 
 %                                graph will be shown if set to false.

@@ -19,7 +19,7 @@ close all; ieInit;
 %% Control of what gets done in this function
 CACHE_SCENES = true; forceSceneCompute = false;
 CACHE_OIS = true; forceOICompute = false;
-RUN_CHOOSER = false; chooserColorChoice = 4;
+RUN_CHOOSER = true; chooserColorChoice = 4;
 displayIndividualThreshold = true;
 
 %% Get our project toolbox on the path
@@ -38,6 +38,9 @@ setPrefsForBLIlluminationDiscriminationCalcs;
 % some sensible manner in a database.  We could also run some sort of check
 % on the structure at runtime to make sure our caches are consistent with
 % the current parameters being used.
+
+% Set an identifier for this calculation
+calcParams.calcIDStr = 'StaticPhoton';
 
 % Folder list to run over for conversions into isetbio format
 calcParams.cacheFolderList = {'Standard', 'BlueIllumination', 'GreenIllumination', ...
@@ -92,5 +95,5 @@ end
 %
 % Note that the data set generated below is using the volt data from the
 % sensor images.  The photon data set is still being generated.
-thresholdCalculation('OldVoltData',displayIndividualThreshold);
+thresholdCalculation(calcParams.calcIDStr, displayIndividualThreshold);
 end

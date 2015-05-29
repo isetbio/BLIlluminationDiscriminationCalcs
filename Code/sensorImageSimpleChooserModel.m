@@ -29,6 +29,25 @@ myDir = fileparts(mfilename('fullpath'));
 pathDir = fullfile(myDir,'..','Toolbox','');
 AddToMatlabPathDynamically(pathDir);
 
+%% Check if destination folder exists and has files
+BaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+TargetPath = fullfile(BaseDir, 'SimpleChooserData', calcParams.calcIDStr);
+if exist(TargetPath, 'dir')
+    % Pop up dialog
+    d = dir(TargetPath);
+    if (~isempty(d))
+        save = questdlg('Files found.  Override with new results?', ...
+            'Warning', 'Yes', 'No', 'No');
+        if (strcmp(save, 'No'))
+            return;
+        end
+    end
+else
+    % Make new directory
+    RootPath = fullfile(BaseDir, 'SimpleChooserData');
+    mkdir(RootPath, calcParams.calcIDStr);
+end
+
 %% Pull parameters from passed struct for local use
 coneIntegrationTime = calcParams.coneIntegrationTime;
 S = calcParams.S;
@@ -166,7 +185,9 @@ function computeByColor(calcParams, sensor, colorChoice)
 %computeByColor(calcParams, sensor, colorChoice)
 %
 % This function will run the simple chooser model on the data set specified
-% by colorChoice
+% by colorChoice.  This will save the results in the folder defined by
+% calcIDStr in calcParams.  At the end of the calculation, the calcParams
+% will also be saved in the same folder.
 %
 % Inputs:
 %   calcParams  - This contains parameters for the model
@@ -177,18 +198,27 @@ function computeByColor(calcParams, sensor, colorChoice)
         'RedIllumination', 'YellowIllumination'};
     prefix = {'blue' , 'green', 'red', 'yellow'};
     
+    BaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+    TargetPath = fullfile(BaseDir, 'SimpleChooserData', calcParams.calcIDStr);
+    
     if (colorChoice == 0)
         for i=1:length(folderList)
             matrix = singleColorKValueComparison(calcParams, sensor, folderList{i}, prefix{i});
             fileName = strcat(prefix{i}, 'IllumComparison');
-            save(fileName, 'matrix');
+            saveDir = fullfile(TargetPath, fileName);
+            save(saveDir, 'matrix');
         end
     else
         matrix = singleColorKValueComparison(calcParams, sensor, folderList{colorChoice}, prefix{colorChoice});
         fileName = strcat(prefix{colorChoice}, 'IllumComparison');
-        save(fileName, 'matrix');
+        saveDir = fullfile(TargetPath, fileName);
+        save(saveDir, 'matrix');
         printmat(matrix, 'Results', ...
             '1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50', ...
             '1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0');
     end
+    
+    saveDir = fullfile(TargetPath, 'calcParams');
+    save(saveDir, 'calcParams');
+    
 end
