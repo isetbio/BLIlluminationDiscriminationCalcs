@@ -70,9 +70,7 @@ calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
 calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
 
 % Specify cone adaptation parameters
-% Options for coneAdaptType are from the coneAdapt function and are as
-% follows, 0 = no adaptation, 1 = single gain map for all cones, 2 = a gain
-% map for each cone class, 3 = non-linear adaptation, 4 = Rieke model
+% The Isetbio code for cone adaptation is currently under reconstruction
 calcParams.coneAdaptEnable = false;
 calcParams.coneAdaptType = 4;
 
