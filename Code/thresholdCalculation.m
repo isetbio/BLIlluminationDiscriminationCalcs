@@ -33,8 +33,7 @@ function thresholdCalculation(displayIndividualThreshold)
     figParams = getFigureParameters;
     
     %% Set estimation parameter for calculations
-    %
-    % NOTE : Should this be an input paramter???
+
     % Use same estimated parameters for all data sets
     paramsValueEst = [10 1 0.5 0];
     
