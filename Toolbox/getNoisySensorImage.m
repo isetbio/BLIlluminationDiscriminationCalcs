@@ -33,27 +33,29 @@ end
 
 %% Calculate noisy sample
 
-% Get a noisy sensor image
-sensorR = coneAbsorptions(sensor, oi);
+% OLD CODE: Get a noisy sensor image
+% sensorR = coneAbsorptions(sensor, oi);
+% 
+% if (calcParams.coneAdaptEnable)
+%     [~, noisySample] = coneAdapt(sensorR, calcParams.coneAdaptType);
+%     
+%     % Data from coneAdapt is in volts, must be converted to photons
+%     % This code is taken from sensorGet('photons')
+%     pixel = sensorGet(sensorR,'pixel');
+%     noisySample = noisySample/pixelGet(pixel,'conversionGain');
+%     noisySample = round(noisySample);
+% else
+%     noisySample = sensorGet(sensorR, 'photons');
+% end
+% 
+% % Find the noise
+% diff = noisySample - noiseFree;
 
-if (calcParams.coneAdaptEnable)
-    [~, noisySample] = coneAdapt(sensorR, calcParams.coneAdaptType);
-    
-    % Data from coneAdapt is in volts, must be converted to photons
-    % This code is taken from sensorGet('photons')
-    pixel = sensorGet(sensorR,'pixel');
-    noisySample = noisySample/pixelGet(pixel,'conversionGain');
-    noisySample = round(noisySample);
-else
-    noisySample = sensorGet(sensorR, 'photons');
-end
-
-% Find the noise
-diff = noisySample - noiseFree;
+% Get poisson noise, this is in photons
+[~, noise] = noiseShot(sensorNF);
 
 % Add noise back with k multiplier
-noisySample = noiseFree + diff * k;
+photons = noiseFree + noise * k;
 
-photons = noisySample;
 end
 
