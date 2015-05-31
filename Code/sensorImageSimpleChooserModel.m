@@ -30,11 +30,11 @@ pathDir = fullfile(myDir,'..','Toolbox','');
 AddToMatlabPathDynamically(pathDir);
 
 %% Check if destination folder exists and has files
-BaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-TargetPath = fullfile(BaseDir, 'SimpleChooserData', calcParams.calcIDStr);
-if exist(TargetPath, 'dir')
+baseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+targetPath = fullfile(baseDir, 'SimpleChooserData', calcParams.calcIDStr);
+if exist(targetPath, 'dir')
     % Pop up dialog
-    d = dir(TargetPath);
+    d = dir(targetPath);
     if (~isempty(d))
         save = questdlg('Files found.  Override with new results?', ...
             'Warning', 'Yes', 'No', 'No');
@@ -44,8 +44,8 @@ if exist(TargetPath, 'dir')
     end
 else
     % Make new directory
-    RootPath = fullfile(BaseDir, 'SimpleChooserData');
-    mkdir(RootPath, calcParams.calcIDStr);
+    rootPath = fullfile(baseDir, 'SimpleChooserData');
+    mkdir(rootPath, calcParams.calcIDStr);
 end
 
 %% Pull parameters from passed struct for local use
