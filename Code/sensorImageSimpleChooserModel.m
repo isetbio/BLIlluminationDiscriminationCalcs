@@ -35,7 +35,7 @@ targetPath = fullfile(baseDir, 'SimpleChooserData', calcParams.calcIDStr);
 if exist(targetPath, 'dir')
     % Pop up dialog
     d = dir(targetPath);
-    if (~isempty(d))
+    if numel(d) > 2
         save = questdlg('Files found.  Override with new results?', ...
             'Warning', 'Yes', 'No', 'No');
         if (strcmp(save, 'No'))
@@ -85,6 +85,10 @@ if (calcParams.enableEM)
     
     % Set the sample time
     em = emSet(em, 'sample time', calcParams.EMSampleTime);
+    
+    % Set tremor amplitude
+    amplitude = emGet(em, 'tremor amplitude');
+    em = emSet(em, 'tremor amplitude', amplitude * calcParams.tremorAmpFactor);
     
     % Attach it to the sensor
     sensor = sensorSet(sensor,'eyemove',em);
@@ -150,7 +154,7 @@ for i = 1:maxImageIllumNumber
         tic
         for t = 1:numTrials
             % Get inital noisy ref image
-            photonstandardRef = getNoisySensorImage(calcParams,'Standard','TestImage0',sensor,(1 + kInterval * (j - 1)));
+            photonsStandardRef = getNoisySensorImage(calcParams,'Standard','TestImage0',sensor,(1 + kInterval * (j - 1)));
             
             % Get noisy version of standard image
             photonsStandardComp = getNoisySensorImage(calcParams,'Standard','TestImage0',sensor,(1 + kInterval * (j - 1)));
@@ -163,8 +167,8 @@ for i = 1:maxImageIllumNumber
             
             % Calculate vector distance from the test image and
             % standard image to the reference image
-            distToStandard = norm(photonstandardRef(:)-photonsStandardComp(:));
-            distToTest = norm(photonstandardRef(:)-photonsTestComp(:));
+            distToStandard = norm(photonsStandardRef(:)-photonsStandardComp(:));
+            distToTest = norm(photonsStandardRef(:)-photonsTestComp(:));
             
             % Decide if 'subject' was correct on this trial
             if (distToStandard < distToTest)

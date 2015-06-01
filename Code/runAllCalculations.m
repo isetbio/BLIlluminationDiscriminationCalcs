@@ -18,10 +18,10 @@ function runAllCalculations
 close all; ieInit;
 
 %% Control of what gets done in this function
-CACHE_SCENES = true; forceSceneCompute = false;
-CACHE_OIS = true; forceOICompute = false;
-RUN_CHOOSER = true; chooserColorChoice = 0;
-displayIndividualThreshold = true;
+CACHE_SCENES = false; forceSceneCompute = false;
+CACHE_OIS = false; forceOICompute = false;
+RUN_CHOOSER = true; chooserColorChoice = 1;
+CALC_THRESH = false; displayIndividualThreshold = true;
 
 %% Get our project toolbox on the path
 myDir = fileparts(mfilename('fullpath'));
@@ -32,7 +32,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 % Set identifiers to run
-calcIDStrs = {'StaticPhoton_NM1' 'StaticPhoton_NM2'};
+calcIDStrs = {'Runtime Tests'};
 
 %% Parameters of the calculation
 %
@@ -49,7 +49,7 @@ for k1 = 1:length(calcIDStrs)
     
     % Folder list to run over for conversions into isetbio format
     switch (calcParams.calcIDStr)
-        case {'StaticPhoton', 'ThreeFrameEM'}
+        case {'StaticPhoton', 'ThreeFrameEM','Runtime Tests'}
             calcParams.cacheFolderList = {'Standard', 'BlueIllumination', 'GreenIllumination', ...
                 'RedIllumination', 'YellowIllumination'};
         case {'StaticPhoton_NM1'}
@@ -73,17 +73,18 @@ for k1 = 1:length(calcIDStrs)
     calcParams.S = [380 8 51];
     
     calcParams.numTrials = 100;
-    calcParams.maxIllumTarget = 50;
-    calcParams.numKValueSamples = 10;
-    calcParams.kInterval = 1;
+    calcParams.maxIllumTarget = 1;
+    calcParams.numKValueSamples = 5;
+    calcParams.kInterval = 2;
     
     % Specify eye movement parameters
     % EMPositions represents the number of positions of eye movement to sample,
     % in this case it is 100
-    calcParams.enableEM = false;
-    calcParams.numEMPositions = 100;
+    calcParams.enableEM = true;
+    calcParams.numEMPositions = 3;
     calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
     calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
+    calcParams.tremorAmpFactor = 1;                    % This factor determines amplitude of tremors
     
     % Specify cone adaptation parameters
     % The Isetbio code for cone adaptation is currently under reconstruction
@@ -106,10 +107,9 @@ for k1 = 1:length(calcIDStrs)
     end
     
     %% Calculate threshholds using chooser model data
-    %
-    % Note that the data set generated below is using the volt data from the
-    % sensor images.  The photon data set is still being generated.
-    thresholdCalculation(calcParams.calcIDStr, displayIndividualThreshold);
+    if (CALC_THRESH)
+        thresholdCalculation(calcParams.calcIDStr, displayIndividualThreshold);
+    end
 end
 
 end
