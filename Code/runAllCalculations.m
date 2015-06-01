@@ -81,7 +81,7 @@ for k1 = 1:length(calcIDStrs)
     % EMPositions represents the number of positions of eye movement to sample,
     % in this case it is 100
     calcParams.enableEM = true;
-    calcParams.numEMPositions = 3;
+    calcParams.numEMPositions = 1;
     calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
     calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
     calcParams.tremorAmpFactor = 1;                    % This factor determines amplitude of tremors
