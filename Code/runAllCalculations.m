@@ -32,7 +32,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 % Set identifiers to run
-calcIDStrs = {'Runtime Tests'};
+calcIDStrs = {'ConeIntegrationTime_Tests'};
 
 %% Parameters of the calculation
 %
@@ -49,7 +49,7 @@ for k1 = 1:length(calcIDStrs)
     
     % Folder list to run over for conversions into isetbio format
     switch (calcParams.calcIDStr)
-        case {'StaticPhoton', 'ThreeFrameEM','Runtime Tests'}
+        case {'StaticPhoton', 'ThreeFrameEM','Runtime Tests','ConeIntegrationTime_Tests'}
             calcParams.cacheFolderList = {'Standard', 'BlueIllumination', 'GreenIllumination', ...
                 'RedIllumination', 'YellowIllumination'};
         case {'StaticPhoton_NM1'}
@@ -69,19 +69,19 @@ for k1 = 1:length(calcIDStrs)
     calcParams.cropRect = [550 450 40 40];              % [450 350 624 574] is the entire non-black region of our initial images
     
     % Specify the parameters for the chooser calculation
-    calcParams.coneIntegrationTime = 0.050;
+    calcParams.coneIntegrationTime = 0.001;
     calcParams.S = [380 8 51];
     
     calcParams.numTrials = 100;
     calcParams.maxIllumTarget = 1;
-    calcParams.numKValueSamples = 5;
-    calcParams.kInterval = 2;
+    calcParams.numKValueSamples = 10;
+    calcParams.kInterval = 1;
     
     % Specify eye movement parameters
     % EMPositions represents the number of positions of eye movement to sample,
     % in this case it is 100
-    calcParams.enableEM = true;
-    calcParams.numEMPositions = 1;
+    calcParams.enableEM = false;
+    calcParams.numEMPositions = 5;
     calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
     calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
     calcParams.tremorAmpFactor = 1;                    % This factor determines amplitude of tremors

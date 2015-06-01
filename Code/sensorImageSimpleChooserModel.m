@@ -149,21 +149,21 @@ for i = 1:maxImageIllumNumber
     % Loop through the k values
     for j = 1:kSampleNum
         correct = 0;
-        
+        currKValue = (1 + kInterval * (j - 1));
         % Simulate out over calcNumber simulated trials
         tic
         for t = 1:numTrials
             % Get inital noisy ref image
-            photonsStandardRef = getNoisySensorImage(calcParams,'Standard','TestImage0',sensor,(1 + kInterval * (j - 1)));
+            photonsStandardRef = getNoisySensorImage(calcParams,'Standard','TestImage0',sensor,currKValue);
             
             % Get noisy version of standard image
-            photonsStandardComp = getNoisySensorImage(calcParams,'Standard','TestImage0',sensor,(1 + kInterval * (j - 1)));
+            photonsStandardComp = getNoisySensorImage(calcParams,'Standard','TestImage0',sensor,currKValue);
             
             % Generate Image name
             imageName = strcat(prefix, int2str(i), suffix);
             
             % Get noisy version of test image
-            photonsTestComp = getNoisySensorImage(calcParams,folderName,imageName,sensor,(1 + kInterval * (j - 1)));
+            photonsTestComp = getNoisySensorImage(calcParams,folderName,imageName,sensor,currKValue);
             
             % Calculate vector distance from the test image and
             % standard image to the reference image
@@ -177,7 +177,7 @@ for i = 1:maxImageIllumNumber
         end
         
         % Print the time the calculation took
-        fprintf('Calculation time for color: %s, IllumNumber: %d, k-value %.1f = %2.1f\n', prefix, i, j, toc);
+        fprintf('Calculation time for color: %s, IllumNumber: %d, k-value %.1f = %2.1f\n', prefix, i, currKValue, toc);
         accuracyMatrix(i,j) = correct / numTrials * 100;
     end
 end
