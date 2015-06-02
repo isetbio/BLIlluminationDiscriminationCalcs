@@ -20,7 +20,7 @@ close all; ieInit;
 %% Control of what gets done in this function
 CACHE_SCENES = false; forceSceneCompute = false;
 CACHE_OIS = false; forceOICompute = false;
-RUN_CHOOSER = true; chooserColorChoice = 1;
+RUN_CHOOSER = true; chooserColorChoice = 0;
 CALC_THRESH = false; displayIndividualThreshold = false;
 
 %% Get our project toolbox on the path
@@ -32,7 +32,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 % Set identifiers to run
-calcIDStrs = {'ConeIntegrationTime_Tests'};
+calcIDStrs = {'StaticPhoton_MatlabRNG','StaticPhoton_NM1_MatlabRNG','StaticPhoton_NM2_MatlabRNG'};
 
 %% Parameters of the calculation
 %
@@ -49,13 +49,13 @@ for k1 = 1:length(calcIDStrs)
     
     % Folder list to run over for conversions into isetbio format
     switch (calcParams.calcIDStr)
-        case {'StaticPhoton', 'ThreeFrameEM','Runtime Tests','ConeIntegrationTime_Tests'}
+        case {'StaticPhoton', 'ThreeFrameEM','Runtime Tests','ConeIntegrationTime_Tests','StaticPhoton_MatlabRNG'}
             calcParams.cacheFolderList = {'Standard', 'BlueIllumination', 'GreenIllumination', ...
                 'RedIllumination', 'YellowIllumination'};
-        case {'StaticPhoton_NM1'}
+        case {'StaticPhoton_NM1','StaticPhoton_NM1_MatlabRNG'}
             calcParams.cacheFolderList = {'Standard_NM1', 'BlueIllumination_NM1', 'GreenIllumination_NM1', ...
                 'RedIllumination_NM1', 'YellowIllumination_NM1'};
-        case {'StaticPhoton_NM2'}
+        case {'StaticPhoton_NM2','StaticPhoton_NM2_MatlabRNG'}
             calcParams.cacheFolderList = {'Standard_NM2', 'BlueIllumination_NM2', 'GreenIllumination_NM2', ...
                 'RedIllumination_NM2', 'YellowIllumination_NM2'};
         otherwise
@@ -69,11 +69,11 @@ for k1 = 1:length(calcIDStrs)
     calcParams.cropRect = [550 450 40 40];              % [450 350 624 574] is the entire non-black region of our initial images
     
     % Specify the parameters for the chooser calculation
-    calcParams.coneIntegrationTime = 0.001;
+    calcParams.coneIntegrationTime = 0.050;
     calcParams.S = [380 8 51];
     
-    calcParams.numTrials = 1;
-    calcParams.maxIllumTarget = 1;
+    calcParams.numTrials = 100;
+    calcParams.maxIllumTarget = 50;
     calcParams.numKValueSamples = 10;
     calcParams.kInterval = 1;
     
