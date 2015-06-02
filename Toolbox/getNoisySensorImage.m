@@ -53,7 +53,11 @@ end
 
 % Get poisson noise, this is in photons
 
-[~, noise] = noiseShot(sensorNF);
+% [~, noise] = noiseShot(sensorNF);
+
+% Temporarily use poissonrnd while fixing noiseShot
+noisyImage = poissrnd(noiseFree);
+noise = noisyImage - noiseFree;
 
 % Add noise back with k multiplier
 photons = noiseFree + noise * k;
