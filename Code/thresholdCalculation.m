@@ -23,7 +23,7 @@ function thresholdCalculation(calcIDStr,displayIndividualThreshold)
 
     %% Load the data for each illumination matrix    
     blueMatrix  = loadChooserData(calcIDStr,'blueIllumComparison');
-    greenMatrix = loadChooserData(calcIDStr,'greenIllumComparison');
+    greenMatrix = loadChooserData(calcIDStr,'greenIllumComparison');close a
     redMatrix = loadChooserData(calcIDStr,'redIllumComparison');
     yellowMatrix = loadChooserData(calcIDStr,'yellowIllumComparison');
     
