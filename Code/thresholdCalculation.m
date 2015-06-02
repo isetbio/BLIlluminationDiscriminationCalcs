@@ -45,10 +45,10 @@ function thresholdCalculation(calcIDStr,displayIndividualThreshold)
     % For each illumantion color, we find a vector of thresholds at which
     % the success rate is 0.709
     numTrials = calcParams.numTrials;
-    [thresholdBlue, ~, uBlue] = fitToData(blueMatrix, paramsValueEst, numTrials, 'b', displayIndividualThreshold);
-    [thresholdRed, ~, uRed] = fitToData(redMatrix, paramsValueEst, numTrials, 'r', displayIndividualThreshold);
-    [thresholdGreen, ~, uGreen] = fitToData(greenMatrix, paramsValueEst, numTrials, 'g', displayIndividualThreshold);
-    [thresholdYellow, ~, uYellow] = fitToData(yellowMatrix, paramsValueEst, numTrials, 'y', displayIndividualThreshold);
+    [psycho.thresholdBlue, psycho.bluePsychoFitParams, psycho.uBlue] = fitToData(blueMatrix, paramsValueEst, numTrials, 'b', displayIndividualThreshold);
+    [psycho.thresholdRed, psycho.redPsychoFitParams, psycho.uRed] = fitToData(redMatrix, paramsValueEst, numTrials, 'r', displayIndividualThreshold);
+    [psycho.thresholdGreen, psycho.greenPsychoFitParams, psycho.uGreen] = fitToData(greenMatrix, paramsValueEst, numTrials, 'g', displayIndividualThreshold);
+    [psycho.thresholdYellow, psycho.yellowPsychoFitParams, psycho.uYellow] = fitToData(yellowMatrix, paramsValueEst, numTrials, 'y', displayIndividualThreshold);
     
     %% Plot Thresholds
     
@@ -60,15 +60,19 @@ function thresholdCalculation(calcIDStr,displayIndividualThreshold)
     
     figure;
     set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize);
-    fitAndPlotToThreshold(uBlue, thresholdBlue, 'b', kInterval, kValsFine, figParams);
-    fitAndPlotToThreshold(uRed, thresholdRed, 'r', kInterval, kValsFine, figParams);
-    fitAndPlotToThreshold(uGreen, thresholdGreen, 'g', kInterval, kValsFine, figParams);
-    fitAndPlotToThreshold(uYellow, thresholdYellow, 'y', kInterval, kValsFine, figParams);
+    fitAndPlotToThreshold(psycho.uBlue, psycho.thresholdBlue, 'b', kInterval, kValsFine, figParams);
+    fitAndPlotToThreshold(psycho.uRed, psycho.thresholdRed, 'r', kInterval, kValsFine, figParams);
+    fitAndPlotToThreshold(psycho.uGreen, psycho.thresholdGreen, 'g', kInterval, kValsFine, figParams);
+    fitAndPlotToThreshold(psycho.uYellow, psycho.thresholdYellow, 'y', kInterval, kValsFine, figParams);
     
     title('Threshold against k-values');
     xlabel('k-values');
     ylabel('Threshold');
     ylim([0 50]);
+    
+    % Save the threshold data for later plotting
+    outputFile = fullfile(dataBaseDir, 'SimpleChooserData', calcIDStr, 'psychofitSummary');
+    save(outputFile,'calcParams','psycho');
 end
 
 function [threshold, paramsValues, usableData] = fitToData (data, paramsEstimate, numTrials, color, toPlot)    
@@ -158,7 +162,6 @@ function [threshold, paramsValues, usableData] = fitToData (data, paramsEstimate
         end
     end
 
-    
     %% Calculate thresholds and fits
     for i = 1:numKValue
         % Load the current column of data, each column is a different k-value
