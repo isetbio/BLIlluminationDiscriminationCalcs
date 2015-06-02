@@ -139,6 +139,17 @@ kInterval = calcParams.kInterval;
 %  suffix is defined below
 suffix = 'L-RGB';
 
+%% Get a list of images
+
+% This will return the list of optical images in ascending illum number order
+dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+folderPath = fullfile(dataBaseDir, 'OpticalImageData', folderName);
+data = what(folderPath);
+fileList = data.mat;
+fileList = sort(fileList);
+[~,b] = sort(cellfun(@numel, fileList));
+fileList = fileList(b);
+
 %% Preallocate space for the accuracy matrix which will store the results of the calculations
 accuracyMatrix = zeros(maxImageIllumNumber, kSampleNum);
 
@@ -160,7 +171,9 @@ for i = 1:maxImageIllumNumber
             photonsStandardComp = getNoisySensorImage(calcParams,'Standard','TestImage0',sensor,currKValue);
             
             % Generate Image name
-            imageName = strcat(prefix, int2str(i), suffix);
+%             imageName = strcat(prefix, int2str(i), suffix);
+            imageName = fileList{i};
+            imageName = strrep(imageName, 'OpticalImage.mat', '');
             
             % Get noisy version of test image
             photonsTestComp = getNoisySensorImage(calcParams,folderName,imageName,sensor,currKValue);
@@ -198,9 +211,11 @@ function computeByColor(calcParams, sensor, colorChoice)
 %   sensor      - The desired sensor to be used for the calculation
 %   colorChoice - This defines the color on which to run the calculation
 
-    folderList = {'BlueIllumination', 'GreenIllumination', ...
-        'RedIllumination', 'YellowIllumination'};
+%     folderList = {'BlueIllumination', 'GreenIllumination', ...
+%         'RedIllumination', 'YellowIllumination'};
     prefix = {'blue' , 'green', 'red', 'yellow'};
+    
+    folderList = calcParams.cacheFolderList(2:5);
     
     BaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
     TargetPath = fullfile(BaseDir, 'SimpleChooserData', calcParams.calcIDStr);

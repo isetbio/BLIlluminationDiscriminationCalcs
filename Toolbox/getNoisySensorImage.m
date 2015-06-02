@@ -52,10 +52,14 @@ end
 % diff = noisySample - noiseFree;
 
 % Get poisson noise, this is in photons
+
 [~, noise] = noiseShot(sensorNF);
 
 % Add noise back with k multiplier
 photons = noiseFree + noise * k;
+
+% Photons are whole numbers
+photons = round(photons);
 
 end
 
