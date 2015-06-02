@@ -21,7 +21,7 @@ close all; ieInit;
 CACHE_SCENES = false; forceSceneCompute = false;
 CACHE_OIS = false; forceOICompute = false;
 RUN_CHOOSER = true; chooserColorChoice = 1;
-CALC_THRESH = false; displayIndividualThreshold = true;
+CALC_THRESH = false; displayIndividualThreshold = false;
 
 %% Get our project toolbox on the path
 myDir = fileparts(mfilename('fullpath'));
@@ -43,7 +43,7 @@ calcIDStrs = {'ConeIntegrationTime_Tests'};
 % on the structure at runtime to make sure our caches are consistent with
 % the current parameters being used.
 %
-% This part loops through the caculatiosn for all caldIDStrs specified
+% This part loops through the calculations for all caldIDStrs specified
 for k1 = 1:length(calcIDStrs)
     calcParams.calcIDStr = calcIDStrs{k1};
     
@@ -72,7 +72,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.coneIntegrationTime = 0.001;
     calcParams.S = [380 8 51];
     
-    calcParams.numTrials = 100;
+    calcParams.numTrials = 1;
     calcParams.maxIllumTarget = 1;
     calcParams.numKValueSamples = 10;
     calcParams.kInterval = 1;
