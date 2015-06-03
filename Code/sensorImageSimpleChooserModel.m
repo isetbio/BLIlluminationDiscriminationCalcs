@@ -7,6 +7,10 @@ function sensorImageSimpleChooserModel(calcParams, colorChoice)
 % Success rate will be defined as how many times it chooses the noisy
 % standard image.
 %
+% It is likely that calculating all four color directions in one run is
+% preferable since the sensor object is not saved, and thus the cone mosaic
+% which is randomly generated is not preserved across calculations.
+%
 % Inputs:
 %       calcParams  - parameters for the calculation, contains the number of
 %                     trials to run
@@ -132,13 +136,6 @@ maxImageIllumNumber = calcParams.maxIllumTarget;
 kSampleNum = calcParams.numKValueSamples;
 kInterval = calcParams.kInterval;
 
-%% Define the suffix term for creating the image name
-%
-%  Files on the ColorShare1 server are in the format of
-%  prefix + ImgNumber + suffix, where the prefix is the color and the
-%  suffix is defined below
-suffix = 'L-RGB';
-
 %% Get a list of images
 
 % This will return the list of optical images in ascending illum number order
@@ -154,9 +151,25 @@ fileList = fileList(b);
 accuracyMatrix = zeros(maxImageIllumNumber, kSampleNum);
 
 %% Run calculations up to illumination number and k-value limits
-%
+
+% Compute noise free cone absorptions for the standard image, this will be
+% the same throught the entire simulation
+
+oiStandard = loadOpticalImageData('Standard', 'TestImage0');
+sensorStandard = sensorSet(sensor, 'noise flag', 0);
+sensorStandard = coneAbsorptions(sensorStandard, oiStandard);
+
 % Loop through the illumination number
 for i = 1:maxImageIllumNumber
+    
+    % Compute the noise free cone absorptions for the current test image
+    imageName = fileList{i};
+    imageName = strrep(imageName, 'OpticalImage.mat', '');
+    
+    oiTest = loadOpticalImageData(folderName, imageName);
+    sensorTest = sensorSet(sensor, 'noise flag', 0);
+    sensorTest = coneAbsorptions(sensorTest, oiTest);
+    
     % Loop through the k values
     for j = 1:kSampleNum
         correct = 0;
@@ -165,18 +178,13 @@ for i = 1:maxImageIllumNumber
         tic
         for t = 1:numTrials
             % Get inital noisy ref image
-            photonsStandardRef = getNoisySensorImage(calcParams,'Standard','TestImage0',sensor,currKValue);
+            photonsStandardRef = getNoisySensorImage(calcParams,sensorStandard,currKValue);
             
             % Get noisy version of standard image
-            photonsStandardComp = getNoisySensorImage(calcParams,'Standard','TestImage0',sensor,currKValue);
-            
-            % Generate Image name
-%             imageName = strcat(prefix, int2str(i), suffix);
-            imageName = fileList{i};
-            imageName = strrep(imageName, 'OpticalImage.mat', '');
-            
+            photonsStandardComp = getNoisySensorImage(calcParams,sensorStandard,currKValue);
+                        
             % Get noisy version of test image
-            photonsTestComp = getNoisySensorImage(calcParams,folderName,imageName,sensor,currKValue);
+            photonsTestComp = getNoisySensorImage(calcParams,sensorTest,currKValue);
             
             % Calculate vector distance from the test image and
             % standard image to the reference image
