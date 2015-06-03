@@ -19,7 +19,7 @@ function thresholdCalculation(calcIDStr,displayIndividualThreshold)
 % 5/28/2015   xd  usableData range decision is now automated
 
 %% clear
-clc; clear global; close all;
+clc; clear global; %close all;
 
 
 %% Get our project toolbox on the path
@@ -28,14 +28,14 @@ pathDir = fullfile(myDir,'..','Toolbox','');
 AddToMatlabPathDynamically(pathDir);
 
 %% Load the data for each illumination matrix
-blueMatrix  = loadChooserData(calcIDStr,'blueIllumComparison');
-greenMatrix = loadChooserData(calcIDStr,'greenIllumComparison');
-redMatrix = loadChooserData(calcIDStr,'redIllumComparison');
-yellowMatrix = loadChooserData(calcIDStr,'yellowIllumComparison');
+blueMatrix  = loadChooserData(calcIDStr,['blueIllumComparison' calcIDStr]);
+greenMatrix = loadChooserData(calcIDStr,['greenIllumComparison' calcIDStr]);
+redMatrix = loadChooserData(calcIDStr,['redIllumComparison' calcIDStr]);
+yellowMatrix = loadChooserData(calcIDStr,['yellowIllumComparison' calcIDStr]);
 
 %% Load the calcParams used for this set of data
 dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-dataFilePath = fullfile(dataBaseDir, 'SimpleChooserData', calcIDStr, 'calcParams');
+dataFilePath = fullfile(dataBaseDir, 'SimpleChooserData', calcIDStr, ['calcParams' calcIDStr]);
 p = load(dataFilePath);
 calcParams = p.calcParams;
 
@@ -71,13 +71,13 @@ fitAndPlotToThreshold(psycho.uRed, psycho.thresholdRed, 'r', kInterval, kValsFin
 fitAndPlotToThreshold(psycho.uGreen, psycho.thresholdGreen, 'g', kInterval, kValsFine, figParams);
 fitAndPlotToThreshold(psycho.uYellow, psycho.thresholdYellow, 'y', kInterval, kValsFine, figParams);
 
-title('Threshold against k-values');
+title(['Threshold against k-values for ' calcIDStr]);
 xlabel('k-values');
 ylabel('Threshold');
 ylim([0 50]);
 
 % Save the threshold data for later plotting
-outputFile = fullfile(dataBaseDir, 'SimpleChooserData', calcIDStr, 'psychofitSummary');
+outputFile = fullfile(dataBaseDir, 'SimpleChooserData', calcIDStr, ['psychofitSummary' calcIDStr]);
 save(outputFile,'calcParams','psycho');
 end
 
@@ -121,6 +121,8 @@ for ii = 1:sizeOfData(2)
         break;
     end
 end
+
+if ~exist('usableData','var'), error('No Usable Data'); end
 
 %% Set common parameters
 paramsFree  = [1, 1, 0, 0];

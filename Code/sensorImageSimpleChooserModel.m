@@ -231,13 +231,13 @@ function computeByColor(calcParams, sensor, colorChoice)
     if (colorChoice == 0)
         for i=1:length(folderList)
             matrix = singleColorKValueComparison(calcParams, sensor, folderList{i}, prefix{i});
-            fileName = strcat(prefix{i}, 'IllumComparison');
+            fileName = strcat(prefix{i}, ['IllumComparison' calcParams.calcIDStr]);
             saveDir = fullfile(TargetPath, fileName);
             save(saveDir, 'matrix');
         end
     else
         matrix = singleColorKValueComparison(calcParams, sensor, folderList{colorChoice}, prefix{colorChoice});
-        fileName = strcat(prefix{colorChoice}, 'IllumComparison');
+        fileName = strcat(prefix{colorChoice}, ['IllumComparison' calcParams.calcIDStr]);
         saveDir = fullfile(TargetPath, fileName);
         save(saveDir, 'matrix');
         printmat(matrix, 'Results', ...
@@ -245,7 +245,7 @@ function computeByColor(calcParams, sensor, colorChoice)
             '1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0');
     end
     
-    saveDir = fullfile(TargetPath, 'calcParams');
+    saveDir = fullfile(TargetPath, ['calcParams' calcParams.calcIDStr]);
     save(saveDir, 'calcParams');
     
 end
