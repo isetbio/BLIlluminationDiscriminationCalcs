@@ -20,8 +20,8 @@ close all; ieInit;
 %% Control of what gets done in this function
 CACHE_SCENES = false; forceSceneCompute = false;
 CACHE_OIS = false; forceOICompute = false;
-RUN_CHOOSER = true; chooserColorChoice = 0;
-CALC_THRESH = false; displayIndividualThreshold = false;
+RUN_CHOOSER = false; chooserColorChoice = 1;
+CALC_THRESH = true; displayIndividualThreshold = false;
 
 %% Get our project toolbox on the path
 myDir = fileparts(mfilename('fullpath'));
@@ -32,7 +32,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 % Set identifiers to run
-calcIDStrs = {'StaticPhoton_MatlabRNG','StaticPhoton_NM1_MatlabRNG','StaticPhoton_NM2_MatlabRNG'};
+calcIDStrs = {'StaticPhoton'};
 
 %% Parameters of the calculation
 %
@@ -49,7 +49,8 @@ for k1 = 1:length(calcIDStrs)
     
     % Folder list to run over for conversions into isetbio format
     switch (calcParams.calcIDStr)
-        case {'StaticPhoton', 'ThreeFrameEM','Runtime Tests','ConeIntegrationTime_Tests','StaticPhoton_MatlabRNG'}
+        case {'StaticPhoton', 'ThreeFrameEM','ConeIntegrationTime_Tests', ...
+                'StaticPhoton_MatlabRNG'}
             calcParams.cacheFolderList = {'Standard', 'BlueIllumination', 'GreenIllumination', ...
                 'RedIllumination', 'YellowIllumination'};
         case {'StaticPhoton_NM1','StaticPhoton_NM1_MatlabRNG'}
@@ -69,19 +70,20 @@ for k1 = 1:length(calcIDStrs)
     calcParams.cropRect = [550 450 40 40];              % [450 350 624 574] is the entire non-black region of our initial images
     
     % Specify the parameters for the chooser calculation
-    calcParams.coneIntegrationTime = 0.050;
+    calcParams.coneIntegrationTime = 0.005;
     calcParams.S = [380 8 51];
     
     calcParams.numTrials = 100;
     calcParams.maxIllumTarget = 50;
     calcParams.numKValueSamples = 10;
     calcParams.kInterval = 1;
+    calcParams.startK = 8;
     
     % Specify eye movement parameters
     % EMPositions represents the number of positions of eye movement to sample,
     % in this case it is 100
     calcParams.enableEM = false;
-    calcParams.numEMPositions = 5;
+    calcParams.numEMPositions = 1;
     calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
     calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
     calcParams.tremorAmpFactor = 1;                    % This factor determines amplitude of tremors

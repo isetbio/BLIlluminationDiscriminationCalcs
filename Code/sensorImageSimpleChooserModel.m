@@ -173,7 +173,7 @@ for i = 1:maxImageIllumNumber
     % Loop through the k values
     for j = 1:kSampleNum
         correct = 0;
-        currKValue = (1 + kInterval * (j - 1));
+        currKValue = (calcParams.startK + kInterval * (j - 1));
         % Simulate out over calcNumber simulated trials
         tic
         for t = 1:numTrials

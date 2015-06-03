@@ -61,8 +61,9 @@ numTrials = calcParams.numTrials;
 % Plot each threshold vector against its representative k-value of
 % noise.  Also fit a line to it.
 kInterval = calcParams.kInterval;
-maxK = 1 + (calcParams.numKValueSamples - 1) * kInterval;
-kValsFine = 1:(maxK-1)/1000:maxK;
+startK = calcParams.startK;
+maxK = startK + (calcParams.numKValueSamples - 1) * kInterval;
+kValsFine = startK:(maxK-1)/1000:maxK;
 
 figure;
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize);
