@@ -17,7 +17,7 @@ close all; ieInit;
 %% Control of what gets done in this function
 CACHE_SCENES = false; forceSceneCompute = false;
 CACHE_OIS = false; forceOICompute = false;
-RUN_CHOOSER = true; chooserColorChoice = 1; overWriteFlag = 1;
+RUN_CHOOSER = true; chooserColorChoice = 0; overWriteFlag = 1;
 
 %% Get our project toolbox on the path
 myDir = fileparts(mfilename('fullpath'));
@@ -42,9 +42,12 @@ while ~KEY_IS_PRESSED
     data = what(BaseDir);
     toDoList = data.mat;
     
+    
+    
     % If there are files present, run the calculations with those
     % parameters.  Otherwise, wait until there are files in the queue.
     if ~isempty(toDoList)
+        pause(10);
         
         % Perform calculations on the present files
         for ii=1:length(toDoList)

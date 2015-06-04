@@ -44,7 +44,7 @@ targetPath = fullfile(baseDir, 'SimpleChooserData', calcParams.calcIDStr);
 % Make a new directory if target is non-existant, otherwise follow the
 % overWrite flag
 if exist(targetPath, 'dir')    
-    if overWrite
+    if ~overWrite
         return;
     end
 else
