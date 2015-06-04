@@ -21,7 +21,7 @@ BaseDir = getpref('BLIlluminationDiscriminationCalcs', 'QueueDir');
 calcParams.calcIDStr = 'BugTests';
 
 % Folder list to run over for conversions into isetbio format
-calcParams = getCacheFolderList(calcParams);
+calcParams = updateCacheFolderList(calcParams);
 
 % Specify how to crop the image.  We don't want it all.
 % Code further on makes the most sense if the image is square (because we
@@ -54,7 +54,7 @@ calcParams.coneAdaptEnable = false;
 calcParams.coneAdaptType = 4;
 
 %% Save the parameter in the queue directory
-savePath = fullfile(BaseDir, ['calcParam' calcParams.calcIDStr]);
+savePath = fullfile(BaseDir, ['calcParams' calcParams.calcIDStr]);
 save(savePath, 'calcParams');
 end
 
