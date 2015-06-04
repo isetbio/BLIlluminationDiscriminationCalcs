@@ -1,4 +1,4 @@
-function sensorImageSimpleChooserModel(calcParams, colorChoice)
+function sensorImageSimpleChooserModel(calcParams, colorChoice, overWrite)
 %sensorImageSimpleChooserModel(calcParams, computeAll, colorChoice)
 %
 % This function will generate several noisy versions of the standard
@@ -21,12 +21,16 @@ function sensorImageSimpleChooserModel(calcParams, colorChoice)
 %                     2 = green
 %                     3 = red
 %                     4 = yellow
+%       overWrite   - This flag determines whether this function will
+%                     write over any existing files in a target directory.
+%                     Set this to 1 to write over, 0 to avoid doing so.
 %
-% 3/17/15     xd  wrote it
-% 4/17/15     xd  update to use human sensor
+% 3/17/15  xd  wrote it
+% 4/17/15  xd  update to use human sensor
+% 6/4/15   xd  added overWrite flag
 
-%% Clear
-close all; clear global; ieInit;
+%% Set defaults for inputs
+if notDefined('overWrite'), overWrite = 0; end
 
 %% Put project toolbox onto path.
 myDir = fileparts(mfilename('fullpath'));
@@ -36,18 +40,14 @@ AddToMatlabPathDynamically(pathDir);
 %% Check if destination folder exists and has files
 baseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
 targetPath = fullfile(baseDir, 'SimpleChooserData', calcParams.calcIDStr);
-if exist(targetPath, 'dir')
-    % Pop up dialog
-    d = dir(targetPath);
-    if numel(d) > 2
-        save = questdlg('Files found.  Override with new results?', ...
-            'Warning', 'Yes', 'No', 'No');
-        if (strcmp(save, 'No'))
-            return;
-        end
+
+% Make a new directory if target is non-existant, otherwise follow the
+% overWrite flag
+if exist(targetPath, 'dir')    
+    if overWrite
+        return;
     end
 else
-    % Make new directory
     rootPath = fullfile(baseDir, 'SimpleChooserData');
     mkdir(rootPath, calcParams.calcIDStr);
 end

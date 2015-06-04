@@ -11,8 +11,6 @@ function runAllCalculations
 %
 % 4/29/15  dhb, xd           Wrote it.
 % 5/31/15  dhb               Tuning for multiple calculations
-%
-% NOTE: Need to save calcParams
 
 %% Clear and initialize
 close all; ieInit;
@@ -20,7 +18,7 @@ close all; ieInit;
 %% Control of what gets done in this function
 CACHE_SCENES = false; forceSceneCompute = false;
 CACHE_OIS = false; forceOICompute = false;
-RUN_CHOOSER = true; chooserColorChoice = 0;
+RUN_CHOOSER = true; chooserColorChoice = 0; overWriteFlag = 1;
 CALC_THRESH = true; displayIndividualThreshold = false;
 
 %% Get our project toolbox on the path
@@ -48,20 +46,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.calcIDStr = calcIDStrs{k1};
     
     % Folder list to run over for conversions into isetbio format
-    switch (calcParams.calcIDStr)
-        case {'StaticPhoton', 'ThreeFrameEM','ConeIntegrationTime_Tests', ...
-                'StaticPhoton_MatlabRNG','StaticPhoton_iePoisson'}
-            calcParams.cacheFolderList = {'Standard', 'BlueIllumination', 'GreenIllumination', ...
-                'RedIllumination', 'YellowIllumination'};
-        case {'StaticPhoton_NM1','StaticPhoton_NM1_MatlabRNG'}
-            calcParams.cacheFolderList = {'Standard_NM1', 'BlueIllumination_NM1', 'GreenIllumination_NM1', ...
-                'RedIllumination_NM1', 'YellowIllumination_NM1'};
-        case {'StaticPhoton_NM2','StaticPhoton_NM2_MatlabRNG'}
-            calcParams.cacheFolderList = {'Standard_NM2', 'BlueIllumination_NM2', 'GreenIllumination_NM2', ...
-                'RedIllumination_NM2', 'YellowIllumination_NM2'};
-        otherwise
-            error('Unknown calcIDStr set');
-    end
+    calcParams = getCacheFolderList(calcParams);
     
     % Specify how to crop the image.  We don't want it all.
     % Code further on makes the most sense if the image is square (because we
@@ -105,7 +90,7 @@ for k1 = 1:length(calcIDStrs)
     
     %% Create data sets using the simple chooser model
     if (RUN_CHOOSER)
-        sensorImageSimpleChooserModel(calcParams, chooserColorChoice);
+        sensorImageSimpleChooserModel(calcParams, chooserColorChoice, overWriteFlag);
     end
     
     %% Calculate threshholds using chooser model data
