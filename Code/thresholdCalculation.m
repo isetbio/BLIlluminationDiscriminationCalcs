@@ -17,6 +17,7 @@ function thresholdCalculation(calcIDStr,displayIndividualThreshold)
 % 4/22/2015   xd  finished running chooser model on all 4 illum colors
 % 4/24/2015   xd  cleaned up the function for readability
 % 5/28/2015   xd  usableData range decision is now automated
+% 6/4/15      xd  now decides usable end range as well
 
 %% clear
 clc; clear global; %close all;
@@ -82,7 +83,7 @@ outputFile = fullfile(dataBaseDir, 'SimpleChooserData', calcIDStr, ['psychofitSu
 save(outputFile,'calcParams','psycho');
 end
 
-function [threshold, paramsValues, usableData] = fitToData (data, paramsEstimate, numTrials, color, toPlot)
+function [threshold, paramsValues, usableDataStart] = fitToData (data, paramsEstimate, numTrials, color, toPlot)
 %[threshold, paramsValues] = fitToData (data, paramsEstimate, color, toPlot)
 %
 % This function will fit input data to a Weibull curve.  The choice of
@@ -118,19 +119,33 @@ for ii = 1:sizeOfData(2)
     avg = sum / 5;
     
     if (avg < 80)
-        usableData = ii;
+        usableDataStart = ii;
         break;
     end
 end
 
-if ~exist('usableData','var'), error('No Usable Data'); end
+if ~exist('usableDataStart','var'), error('No Usable Data'); end
+
+usableDataEnd = sizeOfData(2) + 1;
+% If the average of the last 5 values is less than 70, this is the first
+% non usable column of data
+for ii = 1:sizeOfData(2)
+    sum = data(46,ii) + data(47,ii) + data(48,ii) + data(49,ii) + data(50,ii);
+    avg = sum / 5;
+    
+    if (avg < 70)
+        usableDataEnd = ii;
+        break;
+    end
+    
+end
 
 %% Set common parameters
 paramsFree  = [1, 1, 0, 0];
 criterion = .709;
 stimLevels = 1:1:sizeOfData(1);
 outOfNum   = repmat(numTrials, 1, sizeOfData(1));
-numKValue = sizeOfData(2) - usableData + 1;
+numKValue = usableDataEnd - usableDataStart;
 
 %% Pre-allocate room for return values
 threshold = zeros(numKValue,1);
@@ -174,7 +189,7 @@ end
 %% Calculate thresholds and fits
 for i = 1:numKValue
     % Load the current column of data, each column is a different k-value
-    NumPos = data(:, i + usableData - 1)';
+    NumPos = data(:, i + usableDataStart - 1)';
     
     % Fit the data to a curve
     [paramsValues(i,:)] = PAL_PFML_Fit(stimLevels, NumPos, outOfNum, ...
@@ -196,7 +211,7 @@ for i = 1:numKValue
         plot(StimLevelsFine, Fit, color, 'linewidth', 4);
         plot([threshold(i) threshold(i)], [0, criterion], color, 'linewidth', 3);
         
-        title(strcat('K-Value : ',int2str(i + usableData - 1)));
+        title(strcat('K-Value : ',int2str(i + usableDataStart - 1)));
         xlabel('Stimulus Difference (nominal)');
         ylabel('Percent Correct');
         ylim([0 1.0]);
@@ -221,7 +236,9 @@ function fitAndPlotToThreshold (usableData, threshold, color, kInterval, kValsFi
 %   figParams  - Parameters to format the plot
 
 %% Define x-axis value range
-kVals = usableData:kInterval:max(kValsFine);
+numOfData = size(threshold);
+dataEnd = usableData + (numOfData(1) - 1) * kInterval;
+kVals = usableData:kInterval:dataEnd;
 
 %% Plot threshold points
 plot(kVals, threshold, strcat(color,'.'), 'markersize', figParams.markerSize);

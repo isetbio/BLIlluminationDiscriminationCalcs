@@ -18,7 +18,7 @@ BaseDir = getpref('BLIlluminationDiscriminationCalcs', 'QueueDir');
 %% Create a calcParam object
 
 % Set the name of this calculation set
-calcParams.calcIDStr = 'BugTests';
+calcParams.calcIDStr = 'StaticPhoton_NM1';
 
 % Folder list to run over for conversions into isetbio format
 calcParams = updateCacheFolderList(calcParams);
@@ -34,10 +34,10 @@ calcParams.coneIntegrationTime = 0.050;
 calcParams.S = [380 8 51];
 
 calcParams.numTrials = 100;
-calcParams.maxIllumTarget = 1;
+calcParams.maxIllumTarget = 50;
 calcParams.numKValueSamples = 10;
-calcParams.kInterval = 1;
-calcParams.startK = 1;
+calcParams.kInterval = 0.1;
+calcParams.startK = 24.75;
 
 % Specify eye movement parameters
 % EMPositions represents the number of positions of eye movement to sample,
