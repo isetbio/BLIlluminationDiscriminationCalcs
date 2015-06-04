@@ -20,7 +20,7 @@ close all; ieInit;
 %% Control of what gets done in this function
 CACHE_SCENES = false; forceSceneCompute = false;
 CACHE_OIS = false; forceOICompute = false;
-RUN_CHOOSER = false; chooserColorChoice = 1;
+RUN_CHOOSER = true; chooserColorChoice = 0;
 CALC_THRESH = true; displayIndividualThreshold = false;
 
 %% Get our project toolbox on the path
@@ -32,7 +32,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 % Set identifiers to run
-calcIDStrs = {'StaticPhoton'};
+calcIDStrs = {'StaticPhoton_iePoisson'};
 
 %% Parameters of the calculation
 %
@@ -50,7 +50,7 @@ for k1 = 1:length(calcIDStrs)
     % Folder list to run over for conversions into isetbio format
     switch (calcParams.calcIDStr)
         case {'StaticPhoton', 'ThreeFrameEM','ConeIntegrationTime_Tests', ...
-                'StaticPhoton_MatlabRNG'}
+                'StaticPhoton_MatlabRNG','StaticPhoton_iePoisson'}
             calcParams.cacheFolderList = {'Standard', 'BlueIllumination', 'GreenIllumination', ...
                 'RedIllumination', 'YellowIllumination'};
         case {'StaticPhoton_NM1','StaticPhoton_NM1_MatlabRNG'}
@@ -70,14 +70,14 @@ for k1 = 1:length(calcIDStrs)
     calcParams.cropRect = [550 450 40 40];              % [450 350 624 574] is the entire non-black region of our initial images
     
     % Specify the parameters for the chooser calculation
-    calcParams.coneIntegrationTime = 0.005;
+    calcParams.coneIntegrationTime = 0.050;
     calcParams.S = [380 8 51];
     
     calcParams.numTrials = 100;
     calcParams.maxIllumTarget = 50;
     calcParams.numKValueSamples = 10;
     calcParams.kInterval = 1;
-    calcParams.startK = 8;
+    calcParams.startK = 1;
     
     % Specify eye movement parameters
     % EMPositions represents the number of positions of eye movement to sample,
