@@ -198,7 +198,7 @@ for i = 1:maxImageIllumNumber
         end
         
         % Print the time the calculation took
-        fprintf('Calculation time for color: %s, IllumNumber: %d, k-value %.1f = %2.1f\n', prefix, i, currKValue, toc);
+        fprintf('Calculation time for color: %s, IllumNumber: %d, k-value %.2f = %2.1f\n', prefix, i, currKValue, toc);
         accuracyMatrix(i,j) = correct / numTrials * 100;
     end
 end
