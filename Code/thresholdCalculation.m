@@ -79,7 +79,7 @@ ylim([0 50]);
 
 % Save the threshold data for later plotting
 outputFile = fullfile(dataBaseDir, 'SimpleChooserData', calcIDStr, ['psychofitSummary' calcIDStr]);
-save(outputFile,'calcParams','psycho');
+% save(outputFile,'calcParams','psycho');
 end
 
 function [threshold, paramsValues, usableData] = fitToData (data, paramsEstimate, numTrials, color, toPlot)

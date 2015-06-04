@@ -18,7 +18,7 @@ close all; ieInit;
 %% Control of what gets done in this function
 CACHE_SCENES = false; forceSceneCompute = false;
 CACHE_OIS = false; forceOICompute = false;
-RUN_CHOOSER = true; chooserColorChoice = 0; overWriteFlag = 1;
+RUN_CHOOSER = false; chooserColorChoice = 0; overWriteFlag = 1;
 CALC_THRESH = true; displayIndividualThreshold = false;
 
 %% Get our project toolbox on the path
@@ -30,7 +30,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 % Set identifiers to run
-calcIDStrs = {'StaticPhoton_iePoisson'};
+calcIDStrs = {'StaticPhoton_iePoisson', 'StaticPhoton', 'StaticPhoton_MatlabRNG'};
 
 %% Parameters of the calculation
 %
@@ -46,7 +46,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.calcIDStr = calcIDStrs{k1};
     
     % Folder list to run over for conversions into isetbio format
-    calcParams = getCacheFolderList(calcParams);
+    calcParams = updateCacheFolderList(calcParams);
     
     % Specify how to crop the image.  We don't want it all.
     % Code further on makes the most sense if the image is square (because we
