@@ -125,9 +125,9 @@ end
 
 if ~exist('usableDataStart','var'), error('No Usable Data'); end
 
-usableDataEnd = sizeOfData(2) + 1;
 % If the average of the last 5 values is less than 70, this is the first
 % non usable column of data
+usableDataEnd = sizeOfData(2) + 1;
 for ii = 1:sizeOfData(2)
     sum = data(46,ii) + data(47,ii) + data(48,ii) + data(49,ii) + data(50,ii);
     avg = sum / 5;

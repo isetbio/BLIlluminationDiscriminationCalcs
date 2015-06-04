@@ -14,7 +14,8 @@ function updatedParams = updateCacheFolderList(calcParams)
 
 switch (calcParams.calcIDStr)
     case {'StaticPhoton', 'ThreeFrameEM','ConeIntegrationTime_Tests', ...
-            'StaticPhoton_MatlabRNG','StaticPhoton_iePoisson', 'BugTests'}
+            'StaticPhoton_MatlabRNG','StaticPhoton_iePoisson', 'BugTests', ...
+            'StaticPhoton_5EM_10MS'}
         calcParams.cacheFolderList = {'Standard', 'BlueIllumination', 'GreenIllumination', ...
             'RedIllumination', 'YellowIllumination'};
     case {'StaticPhoton_NM1','StaticPhoton_NM1_MatlabRNG'}
