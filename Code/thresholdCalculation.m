@@ -22,7 +22,6 @@ function thresholdCalculation(calcIDStr,displayIndividualThreshold)
 %% clear
 clc; clear global; %close all;
 
-
 %% Get our project toolbox on the path
 myDir = fileparts(mfilename('fullpath'));
 pathDir = fullfile(myDir,'..','Toolbox','');
@@ -215,6 +214,7 @@ for i = 1:numKValue
         xlabel('Stimulus Difference (nominal)');
         ylabel('Percent Correct');
         ylim([0 1.0]);
+        xlim([0 50]);
     end
 end
 end
@@ -237,8 +237,9 @@ function fitAndPlotToThreshold (usableData, threshold, color, kInterval, kValsFi
 
 %% Define x-axis value range
 numOfData = size(threshold);
-dataEnd = usableData + (numOfData(1) - 1) * kInterval;
-kVals = usableData:kInterval:dataEnd;
+dataStart = min(kValsFine(:)) + (usableData - 1) * kInterval;
+dataEnd = dataStart + (numOfData(1) - 1) * kInterval;
+kVals = dataStart:kInterval:dataEnd;
 
 %% Plot threshold points
 plot(kVals, threshold, strcat(color,'.'), 'markersize', figParams.markerSize);
