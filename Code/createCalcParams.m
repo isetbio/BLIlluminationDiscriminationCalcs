@@ -1,5 +1,5 @@
-function calcParamCreator
-% calcParamCreator
+function createCalcParams
+% createCalcParams
 %
 % This function creates a calcParam file and saves it to the CalcParamQueue
 % folder on ColorShare.  From there, the queue can be processed by the
@@ -18,7 +18,7 @@ BaseDir = getpref('BLIlluminationDiscriminationCalcs', 'QueueDir');
 %% Create a calcParam object
 
 % Set the name of this calculation set
-calcParams.calcIDStr = 'StaticPhoton_NM1';
+calcParams.calcIDStr = 'StaticPhoton_5EM_10MS_SUM';
 
 % Folder list to run over for conversions into isetbio format
 calcParams = updateCacheFolderList(calcParams);
@@ -30,23 +30,23 @@ calcParams = updateCacheFolderList(calcParams);
 calcParams.cropRect = [550 450 40 40];              % [450 350 624 574] is the entire non-black region of our initial images
 
 % Specify the parameters for the chooser calculation
-calcParams.coneIntegrationTime = 0.050;
+calcParams.coneIntegrationTime = 0.010;
 calcParams.S = [380 8 51];
 
 calcParams.numTrials = 100;
 calcParams.maxIllumTarget = 50;
 calcParams.numKValueSamples = 10;
-calcParams.kInterval = 0.1;
-calcParams.startK = 24.75;
+calcParams.kInterval = 1;
+calcParams.startK = 1;
 
 % Specify eye movement parameters
 % EMPositions represents the number of positions of eye movement to sample,
 % in this case it is 100
-calcParams.enableEM = false;
-calcParams.numEMPositions = 1;
+calcParams.enableEM = true;
+calcParams.numEMPositions = 5;
 calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
-calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
-calcParams.tremorAmpFactor = 1;                     % This factor determines amplitude of tremors
+calcParams.EMSampleTime = 0.010;                    % Setting sample time to 1 ms
+calcParams.tremorAmpFactor = 0;                     % This factor determines amplitude of tremors
 
 % Specify cone adaptation parameters
 % The Isetbio code for cone adaptation is currently under reconstruction
