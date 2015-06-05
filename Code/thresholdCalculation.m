@@ -136,7 +136,6 @@ for ii = 1:sizeOfData(2)
         usableDataEnd = ii;
         break;
     end
-    
 end
 
 %% Set common parameters

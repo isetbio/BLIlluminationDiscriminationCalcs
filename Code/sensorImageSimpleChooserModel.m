@@ -186,6 +186,13 @@ for i = 1:maxImageIllumNumber
             % Get noisy version of test image
             photonsTestComp = getNoisySensorImage(calcParams,sensorTest,currKValue);
             
+            % Check if result is 3D, in that case take sum of slices
+            if calcParams.enableEM
+                photonsStandardRef = sum(photonsStandardRef,3);
+                photonsStandardComp = sum(photonsStandardComp,3);
+                photonsTestComp = sum(photonsTestComp,3);
+            end
+            
             % Calculate vector distance from the test image and
             % standard image to the reference image
             distToStandard = norm(photonsStandardRef(:)-photonsStandardComp(:));
