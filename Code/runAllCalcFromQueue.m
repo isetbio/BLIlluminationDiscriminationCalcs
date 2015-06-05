@@ -12,7 +12,7 @@ function runAllCalcFromQueue
 % 6/4/15  xd  wrote it
 
 %% Clear and initialize
-close all; ieInit;
+clear all; close all; ieInit;
 
 %% Control of what gets done in this function
 CACHE_SCENES = false; forceSceneCompute = false;
@@ -30,11 +30,21 @@ setPrefsForBLIlluminationDiscriminationCalcs;
 %% Get the queue directory
 BaseDir = getpref('BLIlluminationDiscriminationCalcs', 'QueueDir');
 
+%% Create a cell array to hold calcParams that have been run
+% This is in case a deletion/permission error occurs on ColorShare
+usedParams = cell(1,10);
+usedIndex  = 1;                             % Next position in usedParams to fill
+
 %% Set up an infinite loop
 global KEY_IS_PRESSED
 KEY_IS_PRESSED = 0;
 gcf
 set(gcf, 'KeyPressFcn', @myKeyPressFcn)
+a = annotation('textbox', [0.2,0.6,0.1,0.1], ...
+    'String','Press a button \newlineto exit program');
+set(a, 'FontSize', 20);
+set(a, 'LineStyle', 'none');
+
 while ~KEY_IS_PRESSED
     drawnow
     
@@ -42,7 +52,10 @@ while ~KEY_IS_PRESSED
     data = what(BaseDir);
     toDoList = data.mat;
     
-    
+    % Remove any matches between usedParams and toDoList
+    if usedIndex > 1
+        toDoList = setdiff(usedParams, toDoList);
+    end
     
     % If there are files present, run the calculations with those
     % parameters.  Otherwise, wait until there are files in the queue.
@@ -71,10 +84,22 @@ while ~KEY_IS_PRESSED
             end
         end
         
-        % Delete these files from the queue
+        % Delete these files from the queue.  If an error occurs, add the
+        % file name to a cell array so that the file is not processed again.
+        % This cell array doubles in size whenever it is full.
         for ii=1:length(toDoList)
             currentFile = toDoList{ii};
-            delete(fullfile(BaseDir, currentFile));
+            try
+                delete(fullfile(BaseDir, currentFile));
+            catch
+                usedParams{usedIndex} = currentFile;
+                if usedIndex == length(usedParams)
+                    temp = cell(1, 2 * usedIndex);
+                    temp(1:usedIndex) = usedParams;
+                    usedParams = temp;
+                end
+                usedIndex = usedIndex + 1;
+            end
         end
     else
         disp('waiting...')
