@@ -58,12 +58,12 @@ S = calcParams.S;
 
 %% Load scene to get FOV.
 % Scenes are precomputed from stimulus images and stored for our use here.
-scene = loadSceneData('Standard', 'TestImage0');
-fov = sceneGet(scene, 'fov');
+% scene = loadSceneData('Standard', 'TestImage0');
+% fov = sceneGet(scene, 'fov');
 
 %% Load oi for FOV.
 % These are also precomputed.
-oi = loadOpticalImageData('Standard', 'TestImage0');
+% oi = loadOpticalImageData('Standard', 'TestImage0');
 
 %% Create a sensor for human foveal vision
 sensor = sensorCreate('human');
@@ -76,7 +76,8 @@ sensor = sensorSet(sensor,'cols',sensorRows);
 sensor = sensorSet(sensor,'exp time',coneIntegrationTime);
 
 % Set FOV
-[sensor, ~] = sensorSetSizeToFOV(sensor,fov,scene,oi);
+oi = oiCreate('human');
+sensor = sensorSetSizeToFOV(sensor,calcParams.sensorFOV,[],oi);
 
 % Set wavelength sampling
 sensor = sensorSet(sensor, 'wavelength', SToWls(S));

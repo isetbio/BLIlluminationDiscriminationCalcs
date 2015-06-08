@@ -18,7 +18,7 @@ BaseDir = getpref('BLIlluminationDiscriminationCalcs', 'QueueDir');
 %% Create a calcParam object
 
 % Set the name of this calculation set
-calcParams.calcIDStr = 'StaticPhoton_5EM_10MS_SUM';
+calcParams.calcIDStr = 'SensorFOV';
 
 % Folder list to run over for conversions into isetbio format
 calcParams = updateCacheFolderList(calcParams);
@@ -30,8 +30,9 @@ calcParams = updateCacheFolderList(calcParams);
 calcParams.cropRect = [550 450 40 40];              % [450 350 624 574] is the entire non-black region of our initial images
 
 % Specify the parameters for the chooser calculation
-calcParams.coneIntegrationTime = 0.010;
+calcParams.coneIntegrationTime = 0.050;
 calcParams.S = [380 8 51];
+calcParams.sensorFOV = 1; 
 
 calcParams.numTrials = 100;
 calcParams.maxIllumTarget = 50;
@@ -42,7 +43,7 @@ calcParams.startK = 1;
 % Specify eye movement parameters
 % EMPositions represents the number of positions of eye movement to sample,
 % in this case it is 100
-calcParams.enableEM = true;
+calcParams.enableEM = false;
 calcParams.numEMPositions = 5;
 calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
 calcParams.EMSampleTime = 0.010;                    % Setting sample time to 1 ms

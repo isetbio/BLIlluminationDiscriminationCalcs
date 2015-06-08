@@ -18,8 +18,8 @@ close all; ieInit;
 %% Control of what gets done in this function
 CACHE_SCENES = false; forceSceneCompute = false;
 CACHE_OIS = false; forceOICompute = false;
-RUN_CHOOSER = false; chooserColorChoice = 0; overWriteFlag = 1;
-CALC_THRESH = true; displayIndividualThreshold = false;
+RUN_CHOOSER = false; chooserColorChoice = 1; overWriteFlag = 1;
+CALC_THRESH = true; displayIndividualThreshold = true;
 
 %% Get our project toolbox on the path
 myDir = fileparts(mfilename('fullpath'));
@@ -30,7 +30,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 % Set identifiers to run
-calcIDStrs = {'StaticPhoton_iePoisson', 'StaticPhoton', 'StaticPhoton_MatlabRNG'};
+calcIDStrs = {'SystemicPercentTest'};
 
 %% Parameters of the calculation
 %
@@ -57,21 +57,22 @@ for k1 = 1:length(calcIDStrs)
     % Specify the parameters for the chooser calculation
     calcParams.coneIntegrationTime = 0.050;
     calcParams.S = [380 8 51];
+    calcParams.sensorFOV = 1;             % Visual angle defining the size of the sensor
     
-    calcParams.numTrials = 100;
-    calcParams.maxIllumTarget = 50;
-    calcParams.numKValueSamples = 10;
-    calcParams.kInterval = 1;
+    calcParams.numTrials = 500;
+    calcParams.maxIllumTarget = 2;
+    calcParams.numKValueSamples = 30;
+    calcParams.kInterval = 2;
     calcParams.startK = 1;
     
     % Specify eye movement parameters
     % EMPositions represents the number of positions of eye movement to sample,
     % in this case it is 100
     calcParams.enableEM = false;
-    calcParams.numEMPositions = 1;
+    calcParams.numEMPositions = 5;
     calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
     calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
-    calcParams.tremorAmpFactor = 1;                    % This factor determines amplitude of tremors
+    calcParams.tremorAmpFactor = 0;                    % This factor determines amplitude of tremors
     
     % Specify cone adaptation parameters
     % The Isetbio code for cone adaptation is currently under reconstruction

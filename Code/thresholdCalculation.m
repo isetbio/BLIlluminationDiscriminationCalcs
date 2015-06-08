@@ -1,5 +1,5 @@
 function thresholdCalculation(calcIDStr,displayIndividualThreshold)
-% thresholdCalculation(calcIDStr,displayIndividualThreshold) 
+% thresholdCalculation(calcIDStr,displayIndividualThreshold)
 %
 % This function passes the pre-calculated simple chooser model data to
 % fitToData to generate a fitted Weibull curve.  These curves are then
@@ -10,7 +10,7 @@ function thresholdCalculation(calcIDStr,displayIndividualThreshold)
 %                                is the name of the folder in which the data is
 %                                stored.
 %   displayIndividualThreshold - Set to true if individual fitted curves
-%                                are to be displayed.  Only the final threshold 
+%                                are to be displayed.  Only the final threshold
 %                                graph will be shown if set to false.
 %
 % 4/20/2015   xd  wrote it
@@ -50,11 +50,10 @@ paramsValueEst = [10 1 0.5 0];
 %% Calculate Thresholds
 % For each illumantion color, we find a vector of thresholds at which
 % the success rate is 0.709
-numTrials = calcParams.numTrials;
-[psycho.thresholdBlue, psycho.bluePsychoFitParams, psycho.uBlue] = fitToData(blueMatrix, paramsValueEst, numTrials, 'b', displayIndividualThreshold);
-[psycho.thresholdRed, psycho.redPsychoFitParams, psycho.uRed] = fitToData(redMatrix, paramsValueEst, numTrials, 'r', displayIndividualThreshold);
-[psycho.thresholdGreen, psycho.greenPsychoFitParams, psycho.uGreen] = fitToData(greenMatrix, paramsValueEst, numTrials, 'g', displayIndividualThreshold);
-[psycho.thresholdYellow, psycho.yellowPsychoFitParams, psycho.uYellow] = fitToData(yellowMatrix, paramsValueEst, numTrials, 'y', displayIndividualThreshold);
+[psycho.thresholdBlue, psycho.bluePsychoFitParams, psycho.uBlue] = fitToData(calcParams, blueMatrix, paramsValueEst, 'b', displayIndividualThreshold);
+[psycho.thresholdRed, psycho.redPsychoFitParams, psycho.uRed] = fitToData(calcParams, redMatrix, paramsValueEst, 'r', displayIndividualThreshold);
+[psycho.thresholdGreen, psycho.greenPsychoFitParams, psycho.uGreen] = fitToData(calcParams, greenMatrix, paramsValueEst, 'g', displayIndividualThreshold);
+[psycho.thresholdYellow, psycho.yellowPsychoFitParams, psycho.uYellow] = fitToData(calcParams, yellowMatrix, paramsValueEst, 'y', displayIndividualThreshold);
 
 %% Plot Thresholds
 
@@ -82,7 +81,7 @@ outputFile = fullfile(dataBaseDir, 'SimpleChooserData', calcIDStr, ['psychofitSu
 save(outputFile,'calcParams','psycho');
 end
 
-function [threshold, paramsValues, usableDataStart] = fitToData (data, paramsEstimate, numTrials, color, toPlot)
+function [threshold, paramsValues, usableDataStart] = fitToData (calcParams, data, paramsEstimate, color, toPlot)
 %[threshold, paramsValues] = fitToData (data, paramsEstimate, color, toPlot)
 %
 % This function will fit input data to a Weibull curve.  The choice of
@@ -94,10 +93,10 @@ function [threshold, paramsValues, usableDataStart] = fitToData (data, paramsEst
 % the usableData field.
 %
 % Inputs:
+%   calcParams     - A struct containing parameters used for the chooser calculation
 %   data           - The data with which to fit a Weibull curve.
 %   paramsEstimate - The initial estimates for the fitting function.
 %   numTrials      - The number of trials run for this data set
-%   color          - The color to use to plot the fit.
 %   toPlot         - Boolean flag to decide whether or not to plot all the
 %                    individual fitted curves
 %
@@ -109,7 +108,9 @@ function [threshold, paramsValues, usableDataStart] = fitToData (data, paramsEst
 %                  for fitting
 
 %% Find usable data range
+
 sizeOfData = size(data);
+
 % To find the start of the usable data, take average of 1st 5 values
 % and if it is less than 80, declare that column to be the first
 % possible start
@@ -139,11 +140,15 @@ for ii = 1:sizeOfData(2)
 end
 
 %% Set common parameters
+numTrials = calcParams.numTrials;
 paramsFree  = [1, 1, 0, 0];
 criterion = .709;
 stimLevels = 1:1:sizeOfData(1);
 outOfNum   = repmat(numTrials, 1, sizeOfData(1));
 numKValue = usableDataEnd - usableDataStart;
+
+%% Convert data from percentage to trial sample numbers
+data = data * numTrials / 100;
 
 %% Pre-allocate room for return values
 threshold = zeros(numKValue,1);
@@ -209,7 +214,8 @@ for i = 1:numKValue
         plot(StimLevelsFine, Fit, color, 'linewidth', 4);
         plot([threshold(i) threshold(i)], [0, criterion], color, 'linewidth', 3);
         
-        title(strcat('K-Value : ',int2str(i + usableDataStart - 1)));
+        currentK = calcParams.startK + calcParams.kInterval * (i + usableDataStart - 1 - 1);
+        title(strcat('K-Value : ',int2str(currentK)));
         xlabel('Stimulus Difference (nominal)');
         ylabel('Percent Correct');
         ylim([0 1.0]);
