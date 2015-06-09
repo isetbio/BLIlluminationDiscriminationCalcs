@@ -22,6 +22,8 @@ switch (calcParams.calcIDStr)
         calcParams.cacheFolderList = {'NM1', 'NM1'};
     case {'StaticPhoton_NM2','StaticPhoton_NM2_MatlabRNG'}
         calcParams.cacheFolderList = {'NM2', 'NM2'};
+    case {'StaticPhoton_2'}
+        calcParams.cacheFolderList = {'Neutral', 'Neutral_2'};
     otherwise
         error('Unknown calcIDStr set');
 end
