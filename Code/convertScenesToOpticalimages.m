@@ -24,6 +24,7 @@ for ii = 1:length(contents)
     if ~strcmp(curr.name,'.') && ~strcmp(curr.name,'..') && curr.isdir
         emptyCells = cellfun('isempty', folderList);
         firstIndex = find(emptyCells == 1, 1);
+        fprintf('%s', curr.name);
         folderList{firstIndex} = curr.name;
     end
 end
@@ -37,7 +38,7 @@ oi = oiCreate('human');
 targetPath = fullfile(dataBaseDir, 'OpticalImageData', targetFolderList{2});
 if ~exist(targetPath, 'dir')
     parentPath = fullfile(dataBaseDir, 'OpticalImageData');
-    mkDir(parentPath, targetFolderList{2});
+    mkdir(parentPath, targetFolderList{2});
     for i = 1:length(folderList)
         mkdir(targetPath,folderList{i});
     end

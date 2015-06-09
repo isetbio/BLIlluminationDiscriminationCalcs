@@ -54,7 +54,7 @@ fprintf('Display object generation took %2.1f seconds\n', toc);
 targetPath = fullfile(dataBaseDir, 'SceneData', targetFolderList{2});
 if ~exist(targetPath, 'dir')
     parentPath = fullfile(dataBaseDir, 'SceneData');
-    mkDir(parentPath, targetFolderList{2});
+    mkdir(parentPath, targetFolderList{2});
     for i = 1:length(imageFolderList)
         mkdir(targetPath,imageFolderList{i});
     end

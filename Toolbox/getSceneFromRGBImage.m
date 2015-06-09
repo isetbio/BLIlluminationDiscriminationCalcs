@@ -21,7 +21,7 @@ function scene = getSceneFromRGBImage(calcParams, folderName, imageName, display
 %5/29/15       dhb       make target directory if it doesn't exist yet.
 
 %% Get path to image
-path = strcat(folderName, '/', imageName);
+path = fullfile(calcParams.cacheFolderList{1}, folderName, imageName);
 
 %% Load the input image
 imageData  = loadImageData(path);

@@ -16,7 +16,7 @@ function oi = getOpticalImageFromSceneData(calcParams, oi, folderName, imageName
 % 5/29/15   dhb      make target dir if it doesn't yet exist
 
 %% Load scene
-scene = loadSceneData(folderName, imageName);
+scene = loadSceneData([calcParams.cacheFolderList{2} '/' folderName], imageName);
 
 %% Compute optical image
 tic
@@ -25,7 +25,7 @@ fprintf('Optical image object generation took %2.1f seconds\n', toc);
 
 %% Save the optical image where we cache these things
 dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-oiFilePath = fullfile(dataBaseDir, 'OpticalImageData', calcParams.cachFolderList{2}, folderName, strcat(imageName, 'OpticalImage.mat'));
+oiFilePath = fullfile(dataBaseDir, 'OpticalImageData', calcParams.cacheFolderList{2}, folderName, strcat(imageName, 'OpticalImage.mat'));
 theDir = fileparts(oiFilePath);
 if (~exist(theDir,'dir'))
     mkdir(theDir);

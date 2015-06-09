@@ -43,8 +43,10 @@ targetPath = fullfile(baseDir, 'SimpleChooserData', calcParams.calcIDStr);
 
 % Make a new directory if target is non-existant, otherwise follow the
 % overWrite flag
-if exist(targetPath, 'dir') && ~overWrite
-    return;
+if exist(targetPath, 'dir')
+    if ~overWrite
+        return;
+    end
 else
     rootPath = fullfile(baseDir, 'SimpleChooserData');
     mkdir(rootPath, calcParams.calcIDStr);
@@ -109,7 +111,7 @@ computeByColor(calcParams, sensor, colorChoice);
 fprintf('Calculation complete');
 end
 
-function results = singleColorKValueComparison(calcParams, sensor, folderName, prefix)
+function results = singleColorKValueComparison(calcParams, sensor, standardPath, folderName, prefix)
 %results = singleColorKValueComparison(calcParams, sensor, folderName, prefix)
 %
 % This function carries out the simple chooser model calculation.
@@ -139,7 +141,7 @@ kInterval = calcParams.kInterval;
 
 % This will return the list of optical images in ascending illum number order
 dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-folderPath = fullfile(dataBaseDir, 'OpticalImageData', folderName);
+folderPath = fullfile(dataBaseDir, 'OpticalImageData', calcParams.cacheFolderList{2}, folderName);
 data = what(folderPath);
 fileList = data.mat;
 fileList = sort(fileList);
@@ -154,7 +156,8 @@ accuracyMatrix = zeros(maxImageIllumNumber, kSampleNum);
 % Compute noise free cone absorptions for the standard image, this will be
 % the same throught the entire simulation
 
-oiStandard = loadOpticalImageData('Standard', 'TestImage0');
+
+oiStandard = loadOpticalImageData(standardPath, 'TestImage0');
 sensorStandard = sensorSet(sensor, 'noise flag', 0);
 sensorStandard = coneAbsorptions(sensorStandard, oiStandard);
 
@@ -165,7 +168,7 @@ for i = 1:maxImageIllumNumber
     imageName = fileList{i};
     imageName = strrep(imageName, 'OpticalImage.mat', '');
     
-    oiTest = loadOpticalImageData(folderName, imageName);
+    oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' folderName], imageName);
     sensorTest = sensorSet(sensor, 'noise flag', 0);
     sensorTest = coneAbsorptions(sensorTest, oiTest);
     
@@ -248,6 +251,7 @@ for ii = 1:length(contents)
 end
 
 % The list is alphabetical and standard is fourth
+standard = folderList{4};
 folderList = [folderList(1:3) folderList(5)];
 
 BaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
@@ -255,22 +259,22 @@ TargetPath = fullfile(BaseDir, 'SimpleChooserData', calcParams.calcIDStr);
 
 if (colorChoice == 0)
     for i=1:length(folderList)
-        matrix = singleColorKValueComparison(calcParams, sensor, folderList{i}, prefix{i});
+        matrix = singleColorKValueComparison(calcParams, sensor, ...
+            fullfile(targetFolder, standard), folderList{i}, prefix{i});
         fileName = strcat(prefix{i}, ['IllumComparison' calcParams.calcIDStr]);
         saveDir = fullfile(TargetPath, fileName);
         save(saveDir, 'matrix');
     end
 else
-    matrix = singleColorKValueComparison(calcParams, sensor, folderList{colorChoice}, prefix{colorChoice});
+    matrix = singleColorKValueComparison(calcParams, sensor, ...
+        fullfile(targetFolder, standard), folderList{colorChoice}, prefix{colorChoice});
     fileName = strcat(prefix{colorChoice}, ['IllumComparison' calcParams.calcIDStr]);
     saveDir = fullfile(TargetPath, fileName);
     save(saveDir, 'matrix');
-    printmat(matrix, 'Results', ...
-        '1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50', ...
-        '1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0');
 end
 
 saveDir = fullfile(TargetPath, ['calcParams' calcParams.calcIDStr]);
 save(saveDir, 'calcParams');
+fprintf('Current calculation complete');
 
 end
