@@ -13,11 +13,23 @@ function convertRBGImagesToSceneFiles(calcParams,forceCompute)
 %
 % 3/12/2015   xd  wrote it
 
-%% List of where the images will be stored on ColorShare1
-folderList = calcParams.cacheFolderList;
-
 %% Point at where input data live
 dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+
+%% List of where the images will be stored on ColorShare1
+targetFolderList = calcParams.cacheFolderList;
+
+imageDir = fullfile(dataBaseDir, 'ImageData', targetFolderList{1});
+contents = dir(imageDir);
+imageFolderList = cell(1,5);
+for ii = 1:length(contents)
+    curr = contents(ii);
+    if ~strcmp(curr.name,'.') && ~strcmp(curr.name,'..') && curr.isdir
+        emptyCells = cellfun('isempty', imageFolderList);
+        firstIndex = find(emptyCells == 1, 1);
+        imageFolderList{firstIndex} = curr.name;
+    end
+end
 
 %% Create isetbio display object from BL calibration file
 %
@@ -37,11 +49,21 @@ brainardLabDisplay = ptb.GenerateIsetbioDisplayObjectFromPTBCalStruct('BrainardL
 fprintf('Display object generation took %2.1f seconds\n', toc);
 
 %% Precompute the scene files
-%
+
+% Check if target folder exists, if not, create folder and sub folders
+targetPath = fullfile(dataBaseDir, 'SceneData', targetFolderList{2});
+if ~exist(targetPath, 'dir')
+    parentPath = fullfile(dataBaseDir, 'SceneData');
+    mkDir(parentPath, targetFolderList{2});
+    for i = 1:length(imageFolderList)
+        mkdir(targetPath,imageFolderList{i});
+    end
+end
+
 % Loop over each image data folder and write out a scene
-for i = 1:length(folderList)
+for i = 1:length(imageFolderList)
     % Point at scene directory
-    imageFilePath = fullfile(dataBaseDir, 'ImageData', folderList{i});
+    imageFilePath = fullfile(imageDir, imageFolderList{i});    
     data = what(imageFilePath);
     fileList = data.mat;
     
@@ -52,9 +74,9 @@ for i = 1:length(folderList)
     for s = 1:length(fileList)
 
         imgName = strsplit(fileList{s}, '.');     
-        sceneCheckPath = fullfile(dataBaseDir, 'SceneData', folderList{i}, strcat(imgName{1}, 'Scene.mat'));
+        sceneCheckPath = fullfile(dataBaseDir, 'SceneData',targetFolderList{2}, imageFolderList{i}, strcat(imgName{1}, 'Scene.mat'));
         if (forceCompute || ~exist(sceneCheckPath, 'file'))
-            getSceneFromRGBImage(calcParams,folderList{i}, imgName{1}, brainardLabDisplay);
+            getSceneFromRGBImage(calcParams,imageFolderList{i}, imgName{1}, brainardLabDisplay);
         end
         
         % For debugging purposes

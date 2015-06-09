@@ -43,10 +43,8 @@ targetPath = fullfile(baseDir, 'SimpleChooserData', calcParams.calcIDStr);
 
 % Make a new directory if target is non-existant, otherwise follow the
 % overWrite flag
-if exist(targetPath, 'dir')    
-    if ~overWrite
-        return;
-    end
+if exist(targetPath, 'dir') && ~overWrite
+    return;
 else
     rootPath = fullfile(baseDir, 'SimpleChooserData');
     mkdir(rootPath, calcParams.calcIDStr);
@@ -183,7 +181,7 @@ for i = 1:maxImageIllumNumber
             
             % Get noisy version of standard image
             photonsStandardComp = getNoisySensorImage(calcParams,sensorStandard,currKValue);
-                        
+            
             % Get noisy version of test image
             photonsTestComp = getNoisySensorImage(calcParams,sensorTest,currKValue);
             
@@ -229,31 +227,50 @@ function computeByColor(calcParams, sensor, colorChoice)
 
 %     folderList = {'BlueIllumination', 'GreenIllumination', ...
 %         'RedIllumination', 'YellowIllumination'};
-    prefix = {'blue' , 'green', 'red', 'yellow'};
-    
-    folderList = calcParams.cacheFolderList(2:5);
-    
-    BaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-    TargetPath = fullfile(BaseDir, 'SimpleChooserData', calcParams.calcIDStr);
-    
-    if (colorChoice == 0)
-        for i=1:length(folderList)
-            matrix = singleColorKValueComparison(calcParams, sensor, folderList{i}, prefix{i});
-            fileName = strcat(prefix{i}, ['IllumComparison' calcParams.calcIDStr]);
-            saveDir = fullfile(TargetPath, fileName);
-            save(saveDir, 'matrix');
-        end
-    else
-        matrix = singleColorKValueComparison(calcParams, sensor, folderList{colorChoice}, prefix{colorChoice});
-        fileName = strcat(prefix{colorChoice}, ['IllumComparison' calcParams.calcIDStr]);
+prefix = {'blue' , 'green', 'red', 'yellow'};
+
+%% Point at where input data live
+dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+
+%% List of where the images will be stored on ColorShare1
+targetFolder = calcParams.cacheFolderList{2};
+
+imageDir = fullfile(dataBaseDir, 'OpticalImageData', targetFolder);
+contents = dir(imageDir);
+folderList = cell(1,5);
+for ii = 1:length(contents)
+    curr = contents(ii);
+    if ~strcmp(curr.name,'.') && ~strcmp(curr.name,'..') && curr.isdir
+        emptyCells = cellfun('isempty', folderList);
+        firstIndex = find(emptyCells == 1, 1);
+        folderList{firstIndex} = curr.name;
+    end
+end
+
+% The list is alphabetical and standard is fourth
+folderList = [folderList(1:3) folderList(5)];
+
+BaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+TargetPath = fullfile(BaseDir, 'SimpleChooserData', calcParams.calcIDStr);
+
+if (colorChoice == 0)
+    for i=1:length(folderList)
+        matrix = singleColorKValueComparison(calcParams, sensor, folderList{i}, prefix{i});
+        fileName = strcat(prefix{i}, ['IllumComparison' calcParams.calcIDStr]);
         saveDir = fullfile(TargetPath, fileName);
         save(saveDir, 'matrix');
-        printmat(matrix, 'Results', ...
-            '1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50', ...
-            '1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0');
     end
-    
-    saveDir = fullfile(TargetPath, ['calcParams' calcParams.calcIDStr]);
-    save(saveDir, 'calcParams');
-    
+else
+    matrix = singleColorKValueComparison(calcParams, sensor, folderList{colorChoice}, prefix{colorChoice});
+    fileName = strcat(prefix{colorChoice}, ['IllumComparison' calcParams.calcIDStr]);
+    saveDir = fullfile(TargetPath, fileName);
+    save(saveDir, 'matrix');
+    printmat(matrix, 'Results', ...
+        '1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50', ...
+        '1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0');
+end
+
+saveDir = fullfile(TargetPath, ['calcParams' calcParams.calcIDStr]);
+save(saveDir, 'calcParams');
+
 end

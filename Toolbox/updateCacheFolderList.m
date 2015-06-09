@@ -17,14 +17,11 @@ switch (calcParams.calcIDStr)
             'StaticPhoton_MatlabRNG','StaticPhoton_iePoisson', 'BugTests', ...
             'StaticPhoton_5EM_10MS','StaticPhoton_10MS','StaticPhoton_5EM_10MS_SUM',...
             'SystemicPercentTest','SystemicPercentTestLong','SensorFOV'}
-        calcParams.cacheFolderList = {'Standard', 'BlueIllumination', 'GreenIllumination', ...
-            'RedIllumination', 'YellowIllumination'};
+        calcParams.cacheFolderList = {'Neutral', 'Neutral'};
     case {'StaticPhoton_NM1','StaticPhoton_NM1_MatlabRNG'}
-        calcParams.cacheFolderList = {'Standard_NM1', 'BlueIllumination_NM1', 'GreenIllumination_NM1', ...
-            'RedIllumination_NM1', 'YellowIllumination_NM1'};
+        calcParams.cacheFolderList = {'NM1', 'NM1'};
     case {'StaticPhoton_NM2','StaticPhoton_NM2_MatlabRNG'}
-        calcParams.cacheFolderList = {'Standard_NM2', 'BlueIllumination_NM2', 'GreenIllumination_NM2', ...
-            'RedIllumination_NM2', 'YellowIllumination_NM2'};
+        calcParams.cacheFolderList = {'NM2', 'NM2'};
     otherwise
         error('Unknown calcIDStr set');
 end

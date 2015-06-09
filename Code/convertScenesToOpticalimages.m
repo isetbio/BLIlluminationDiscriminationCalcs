@@ -11,21 +11,42 @@ function convertScenesToOpticalimages(calcParams, forceCompute)
 %
 % 3/13/2015   xd  wrote it
 
-%% List of where the images will be stored on ColorShare1
-folderList = calcParams.cacheFolderList;
-    
 %% Point at where input data live
 dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-    
+
+%% List of where the images will be stored on ColorShare1
+targetFolderList = calcParams.cacheFolderList;
+sceneDir = fullfile(dataBaseDir, 'SceneData', targetFolderList{2});
+contents = dir(sceneDir);
+folderList = cell(1,5);
+for ii = 1:length(contents)
+    curr = contents(ii);
+    if ~strcmp(curr.name,'.') && ~strcmp(curr.name,'..') && curr.isdir
+        emptyCells = cellfun('isempty', folderList);
+        firstIndex = find(emptyCells == 1, 1);
+        folderList{firstIndex} = curr.name;
+    end
+end
+
 %% Create oi object
 oi = oiCreate('human');
 
 %% Compute the optical images
-%
+
+% Check if target folder exists, if not, create folder and sub folders
+targetPath = fullfile(dataBaseDir, 'OpticalImageData', targetFolderList{2});
+if ~exist(targetPath, 'dir')
+    parentPath = fullfile(dataBaseDir, 'OpticalImageData');
+    mkDir(parentPath, targetFolderList{2});
+    for i = 1:length(folderList)
+        mkdir(targetPath,folderList{i});
+    end
+end
+
 % Loop over each image data folder
 for i = 1:length(folderList)
     % Get list of all files in directory
-    imageFilePath = fullfile(dataBaseDir, 'SceneData', folderList{i});
+    imageFilePath = fullfile(sceneDir, folderList{i});
     data = what(imageFilePath);
     fileList = data.mat;
 
@@ -36,9 +57,9 @@ for i = 1:length(folderList)
 
         % Create new Optical Image object if it does not already exist
         % or if forceCompute flag is set to true
-        sceneCheckPath = fullfile(dataBaseDir, 'OpticalImageData', folderList{i}, strcat(imgName{1}, 'OpticalImage.mat'));
-        if (forceCompute || ~exist(sceneCheckPath, 'file'))
-            getOpticalImageFromSceneData(oi, folderList{i}, imgName{1});
+        oiCheckPath = fullfile(dataBaseDir, 'OpticalImageData', targetFolderList{2}, folderList{i}, strcat(imgName{1}, 'OpticalImage.mat'));
+        if (forceCompute || ~exist(oiCheckPath, 'file'))
+            getOpticalImageFromSceneData(calcParams, oi, folderList{i}, imgName{1});
         end
         % For debugging purposes
         %         fprintf(imgName{1});

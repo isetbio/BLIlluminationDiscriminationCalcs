@@ -1,5 +1,5 @@
-function oi = getOpticalImageFromSceneData(oi, folderName, imageName)
-% oi = getOpticalImageFromSceneData(folderName, imageName)
+function oi = getOpticalImageFromSceneData(calcParams, oi, folderName, imageName)
+% oi = getOpticalImageFromSceneData(calcParams, oi, folderName, imageName)
 %
 % Loads the scene file from ColorShare1 and turns it into an optical
 % image using default human optics
@@ -24,8 +24,8 @@ opticalimage = oiCompute(oi,scene);
 fprintf('Optical image object generation took %2.1f seconds\n', toc);
 
 %% Save the optical image where we cache these things
-dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-oiFilePath = fullfile(dataBaseDir, 'OpticalImageData', folderName, strcat(imageName, 'OpticalImage.mat'));
+dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+oiFilePath = fullfile(dataBaseDir, 'OpticalImageData', calcParams.cachFolderList{2}, folderName, strcat(imageName, 'OpticalImage.mat'));
 theDir = fileparts(oiFilePath);
 if (~exist(theDir,'dir'))
     mkdir(theDir);

@@ -96,7 +96,6 @@ function [threshold, paramsValues, usableDataStart] = fitToData (calcParams, dat
 %   calcParams     - A struct containing parameters used for the chooser calculation
 %   data           - The data with which to fit a Weibull curve.
 %   paramsEstimate - The initial estimates for the fitting function.
-%   numTrials      - The number of trials run for this data set
 %   toPlot         - Boolean flag to decide whether or not to plot all the
 %                    individual fitted curves
 %
@@ -165,15 +164,15 @@ options.MaxFunEvals = 10000 * 100;
 options.MaxIter = 500*100;
 
 %% Settings for plotting fits
-if (toPlot)
-    figure;
-    set(gcf,'Position',[0 0 1000 1000]);
-    set(gca,'FontName','Helvetica','FontSize',12);
-    a = annotation('textbox', [0.4,0.9,0.1,0.1], ...
-        'String',['Threshold fits for ' abbToWord(color) ' illumination']);
-    set(a, 'FontSize', 20);
-    set(a, 'LineStyle', 'none');
-end
+    function createFigure
+        figure;
+        set(gcf,'Position',[0 0 1000 1000]);
+        set(gca,'FontName','Helvetica','FontSize',12);
+        a = annotation('textbox', [0.4,0.9,0.1,0.1], ...
+            'String',['Threshold fits for ' abbToWord(color) ' illumination']);
+        set(a, 'FontSize', 20);
+        set(a, 'LineStyle', 'none');
+    end
 
 %% Define a function that converts from color abbreviation to full word
     function colorFull = abbToWord(colorAbbr)
@@ -188,6 +187,8 @@ end
                 colorFull = 'yellow';
         end
     end
+%% Set max subplots per figure
+maxSubplot = 6;
 
 %% Calculate thresholds and fits
 for i = 1:numKValue
@@ -203,7 +204,11 @@ for i = 1:numKValue
     
     % Plot fitted curves
     if (toPlot)
-        subplot(ceil(numKValue/2),2,i);
+        x = rem(i - 1, maxSubplot) + 1;
+        if x == 1
+            createFigure;
+        end
+        subplot(maxSubplot/2,2,x);
         PropCorrectData = NumPos./outOfNum;
         StimLevelsFine  = min(stimLevels):(max(stimLevels)-...
             min(stimLevels))/1000:max(stimLevels);
