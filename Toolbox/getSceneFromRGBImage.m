@@ -49,7 +49,7 @@ scene = sceneSet(scene, 'name', strcat(imageName, 'Scene'));
 
 %% Save scene object
 dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-sceneFilePath = fullfile(dataBaseDir, 'SceneData', calcParams.cacheFolderList{2}, strcat(path,'Scene.mat'));
+sceneFilePath = fullfile(dataBaseDir, 'SceneData', strcat(path,'Scene.mat'));
 theDir = fileparts(sceneFilePath);
 if (~exist(theDir,'dir'))
     mkdir(theDir);
