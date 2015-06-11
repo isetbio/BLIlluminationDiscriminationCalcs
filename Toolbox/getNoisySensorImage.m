@@ -30,10 +30,12 @@ noiseFree = sensorGet(sensor, 'photons');
 
 % Get poisson noise, this is in photons
 
-[~, noise] = noiseShot(sensor);
+% [~, noise] = noiseShot(sensor);
+% 
+% % Add noise back with k multiplier
+% photons = noiseFree + noise * k;
 
-% Add noise back with k multiplier
-photons = noiseFree + noise * k;
+photons = noiseFree + k * sqrt(noiseFree) .* randn(size(noiseFree));
 
 % Photons are whole numbers
 % photons = round(photons);     % Disable rounding for bug testing
