@@ -1,6 +1,6 @@
 close all; clear all;
 
-calcIDStr = {'SystemicPercentTestLowIllum','SystemicPercentTestLowIllum_2'};
+calcIDStr = {'SystemicPercentTestLowIllum','SystemicPercentTestLowIllum_2','SystemicPercentTestLongNoRound'};
 for jj = 1:length(calcIDStr)
     blueMatrix  = loadChooserData(calcIDStr{jj},['blueIllumComparison' calcIDStr{jj}]);
     greenMatrix = loadChooserData(calcIDStr{jj},['greenIllumComparison' calcIDStr{jj}]);
