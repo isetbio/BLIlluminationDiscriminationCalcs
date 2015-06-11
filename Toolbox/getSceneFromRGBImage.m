@@ -17,8 +17,8 @@ function scene = getSceneFromRGBImage(calcParams, folderName, imageName, display
 %
 % 3/11/2015    xd        wrote it
 % 4/1/2015     xd        updated to adjust fov to crop size
-% 5/27/15      xd, dhb   use dots per inch info in display to compute image size 
-%5/29/15       dhb       make target directory if it doesn't exist yet.
+% 5/27/15      xd, dhb   use dots per inch info in display to compute image size
+% 5/29/15      dhb       make target directory if it doesn't exist yet.
 
 %% Get path to image
 path = fullfile(calcParams.cacheFolderList{1}, folderName, imageName);

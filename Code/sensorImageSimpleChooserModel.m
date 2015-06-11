@@ -167,6 +167,7 @@ for i = 1:maxImageIllumNumber
     % Compute the noise free cone absorptions for the current test image
     imageName = fileList{i};
     imageName = strrep(imageName, 'OpticalImage.mat', '');
+    fprintf('%s\n', imageName);
     
     oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' folderName], imageName);
     sensorTest = sensorSet(sensor, 'noise flag', 0);

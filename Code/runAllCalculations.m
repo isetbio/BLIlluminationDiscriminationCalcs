@@ -19,7 +19,7 @@ close all; ieInit;
 CACHE_SCENES = false; forceSceneCompute = false;
 CACHE_OIS = false; forceOICompute = false;
 RUN_CHOOSER = false; chooserColorChoice = 1; overWriteFlag = 1;
-CALC_THRESH = true; displayIndividualThreshold = true;
+CALC_THRESH = true; displayIndividualThreshold = false;
 
 %% Get our project toolbox on the path
 myDir = fileparts(mfilename('fullpath'));
@@ -30,7 +30,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 % Set identifiers to run
-calcIDStrs = {'SystemicPercentTest'};
+calcIDStrs = {'SystemicPercentTest','SystemicPercentTestLong','SystemicPercentTestEM', 'StaticPhoton', 'StaticPhoton_2'};
 
 %% Parameters of the calculation
 %
@@ -57,10 +57,10 @@ for k1 = 1:length(calcIDStrs)
     % Specify the parameters for the chooser calculation
     calcParams.coneIntegrationTime = 0.050;
     calcParams.S = [380 8 51];
-    calcParams.sensorFOV = 1;             % Visual angle defining the size of the sensor
+    calcParams.sensorFOV = 0.83;             % Visual angle defining the size of the sensor
     
     calcParams.numTrials = 500;
-    calcParams.maxIllumTarget = 2;
+    calcParams.maxIllumTarget = 50;
     calcParams.numKValueSamples = 30;
     calcParams.kInterval = 2;
     calcParams.startK = 1;

@@ -32,15 +32,11 @@ noiseFree = sensorGet(sensor, 'photons');
 
 [~, noise] = noiseShot(sensor);
 
-% Temporarily use poissonrnd while fixing noiseShot
-% noisyImage = poissrnd(noiseFree);
-% noise = noisyImage - noiseFree;
-
 % Add noise back with k multiplier
 photons = noiseFree + noise * k;
 
 % Photons are whole numbers
-photons = round(photons);
+% photons = round(photons);     % Disable rounding for bug testing
 
 end
 

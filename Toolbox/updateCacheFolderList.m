@@ -12,17 +12,21 @@ function updatedParams = updateCacheFolderList(calcParams)
 %
 % 6/4/15  xd  wrote it
 
+% The first folder represents the raw RGB image source.  The second folder
+% is the subdirectory in which the scene data and oi data will be stored.
+% If the second directory does not exist, it will be created.
 switch (calcParams.calcIDStr)
-    case {'StaticPhoton', 'ThreeFrameEM','ConeIntegrationTime_Tests', ...
-            'StaticPhoton_MatlabRNG','StaticPhoton_iePoisson', 'BugTests', ...
+    case {'StaticPhoton', 'ThreeFrameEM','StaticPhoton_MatlabRNG', ...
+            'StaticPhoton_iePoisson', 'BugTests', ...
             'StaticPhoton_5EM_10MS','StaticPhoton_10MS','StaticPhoton_5EM_10MS_SUM',...
-            'SystemicPercentTest','SystemicPercentTestLong','SensorFOV'}
+            'SystemicPercentTest','SystemicPercentTestLong','SensorFOV',...
+            'SystemicPercentTestEM','SystemicPercentTestLowIllum'}
         calcParams.cacheFolderList = {'Neutral', 'Neutral'};
     case {'StaticPhoton_NM1','StaticPhoton_NM1_MatlabRNG'}
         calcParams.cacheFolderList = {'NM1', 'NM1'};
     case {'StaticPhoton_NM2','StaticPhoton_NM2_MatlabRNG'}
         calcParams.cacheFolderList = {'NM2', 'NM2'};
-    case {'StaticPhoton_2'}
+    case {'StaticPhoton_2','SystemicPercentTestLowIllum_2'}
         calcParams.cacheFolderList = {'Neutral', 'Neutral_2'};
     otherwise
         error('Unknown calcIDStr set');
