@@ -35,9 +35,8 @@ noiseFree = sensorGet(sensor, 'photons');
 % % Add noise back with k multiplier
 % photons = noiseFree + noise * k;
 
-% photons = noiseFree + k * sqrt(noiseFree) .* randn(size(noiseFree));
+photons = noiseFree + k * sqrt(noiseFree) .* randn(size(noiseFree));
 
-photons = normrnd(noiseFree, k * sqrt(noiseFree));
 
 % Photons are whole numbers
 % photons = round(photons);     % Disable rounding for bug testing
