@@ -28,6 +28,8 @@ switch (calcParams.calcIDStr)
         calcParams.cacheFolderList = {'NM2', 'NM2'};
     case {'StaticPhoton_2','SystemicPercentTestLowIllum_2'}
         calcParams.cacheFolderList = {'Neutral', 'Neutral_2'};
+    case {'PixelNoiseTest'}
+        calcParams.cacheFolderList = {'New Images', 'PixelNoise'};
     otherwise
         error('Unknown calcIDStr set');
 end

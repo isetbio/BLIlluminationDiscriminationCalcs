@@ -1,7 +1,7 @@
 close all; clear all;
 
-calcIDStr = {'SystemicPercentTestLowIllum','SystemicPercentTestLowIllum_2',...
-    'SystemicPercentTestLongNoRound','SystemicPercentTestNormalDist'};
+calcIDStr = {'SystemicPercentTestLowIllum',...
+    'SystemicPercentTestLongNoRound','SystemicPercentTestNormalDist','SystemicPercentTestNormrnd'};
 for jj = 1:length(calcIDStr)
     blueMatrix  = loadChooserData(calcIDStr{jj},['blueIllumComparison' calcIDStr{jj}]);
     greenMatrix = loadChooserData(calcIDStr{jj},['greenIllumComparison' calcIDStr{jj}]);
@@ -34,6 +34,6 @@ for jj = 1:length(calcIDStr)
     matrices(:,:,4) = yellowMatrix;
     
     for ii = 1:4
-        plot(x, mean(matrices(:,:,ii)), color{ii}, 'markersize', 30);
+        plot(x, matrices(1,:,ii), color{ii}, 'markersize', 30);
     end
 end
