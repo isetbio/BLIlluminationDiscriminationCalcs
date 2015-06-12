@@ -56,7 +56,9 @@ if ~exist(targetPath, 'dir')
     parentPath = fullfile(dataBaseDir, 'SceneData');
     mkdir(parentPath, targetFolderList{2});
     for i = 1:length(imageFolderList)
-        mkdir(targetPath,imageFolderList{i});
+        if ~isempty(imageFolderList{i})
+          mkdir(targetPath,imageFolderList{i});
+        end
     end
 end
 

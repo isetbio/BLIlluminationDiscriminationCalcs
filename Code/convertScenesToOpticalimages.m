@@ -40,7 +40,9 @@ if ~exist(targetPath, 'dir')
     parentPath = fullfile(dataBaseDir, 'OpticalImageData');
     mkdir(parentPath, targetFolderList{2});
     for i = 1:length(folderList)
-        mkdir(targetPath,folderList{i});
+        if ~isempty(imageFolderList{i})
+            mkdir(targetPath,folderList{i});
+        end
     end
 end
 
@@ -50,12 +52,12 @@ for i = 1:length(folderList)
     imageFilePath = fullfile(sceneDir, folderList{i});
     data = what(imageFilePath);
     fileList = data.mat;
-
+    
     % For each scene object, create a optical image object from it
     for s = 1:length(fileList)
         % Removing the 'Scene.mat' to make renaming easier
         imgName = strsplit(fileList{s}, 'Scene');
-
+        
         % Create new Optical Image object if it does not already exist
         % or if forceCompute flag is set to true
         oiCheckPath = fullfile(dataBaseDir, 'OpticalImageData', targetFolderList{2}, folderList{i}, strcat(imgName{1}, 'OpticalImage.mat'));
