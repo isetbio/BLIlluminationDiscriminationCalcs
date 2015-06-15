@@ -40,7 +40,7 @@ if ~exist(targetPath, 'dir')
     parentPath = fullfile(dataBaseDir, 'OpticalImageData');
     mkdir(parentPath, targetFolderList{2});
     for i = 1:length(folderList)
-        if ~isempty(imageFolderList{i})
+        if ~isempty(folderList{i})
             mkdir(targetPath,folderList{i});
         end
     end

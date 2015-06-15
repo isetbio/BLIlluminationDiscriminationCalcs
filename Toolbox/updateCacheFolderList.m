@@ -31,6 +31,8 @@ switch (calcParams.calcIDStr)
         calcParams.cacheFolderList = {'Neutral', 'Neutral_2'};
     case {'PixelNoiseTest'}
         calcParams.cacheFolderList = {'New Images', 'PixelNoise'};
+    case {'PixelNoiseAffirm'}
+        calcParams.cacheFolderList = {'NewNewImages', 'PixelNoise2'};
     otherwise
         error('Unknown calcIDStr set');
 end
