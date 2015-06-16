@@ -6,7 +6,7 @@ rng(1);
 %% Set up some parameter variables for this comparison
 
 % The number of dimensions
-nDim = [2 100 1000 10000];
+nDim = [2 100 1000];
 
 % Distance from unitVector -> this can be a vector as well
 dist = 10;
@@ -18,7 +18,7 @@ k = [1 100 50000];
 nTrials = 1000;
 
 % boolean to determine whether or not to use uniform data
-uniform = false;
+uniform = true;
 
 %% Define function handles for desired test runs
 normal = @(v,k) v + k * randn(size(v));
@@ -34,7 +34,7 @@ manhattan = @(X1, X2) norm(X1(:) - X2(:), 1);
 cosineAngle = @(X1, X2) 1 - dot(X1(:), X2(:)) / (norm(X1(:)) * norm(X2(:)));
 
 distList = {euclid, bDist, manhattan, cosineAngle};
-targetFunction = 1; % determines which function from above to use as distance parameter
+targetFunction = 2; % determines which function from above to use as distance parameter
 
 %% Pre-allocate space for a results matrices
 r = zeros(length(nDim), length(k), length(funcList));
@@ -46,7 +46,9 @@ for ii = 1:length(nDim)
     if uniform
         testVector = unitVector + dist;
     else
+        rng(2);
         testVector = unitVector + 2 * dist * rand(size(unitVector));
+        rng(1);
     end
     
     for ff = 1:length(funcList)
