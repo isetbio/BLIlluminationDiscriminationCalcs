@@ -1,19 +1,20 @@
-clear all; close all;
+function correct = testLinearClassifiers(p)
+%TESTLINEARCLASSIFIERS Summary of this function goes here
+%   Detailed explanation goes here
+
+%% Unpack parameters
+nDim = p.nDim;
+dist = p.dist;
+trainingSetSize = p.trainingSetSize; 
+k = p.k; 
+uniformDist = p.uniformDist; 
+testSampleSize = p.testSampleSize;
+origin = p.origin;
+uniformOrigin = p.uniformOrigin; 
+originVariation = p.originVariation;
 
 %% Set rng seed for reproducibility
 rng(1);
-
-%% Set some initial parameters
-
-nDim = 100;
-dist = 6;
-trainingSetSize = 500;
-k = 100;
-uniformDist = false;
-testSampleSize = 100;
-origin = 1000;
-uniformOrigin = false;
-originVariation = 5;
 
 %% Define function handles for desired distribution types
 normal = @(v,k) normrnd(v,k);
@@ -84,4 +85,7 @@ end
 correct = result - 1;
 
 correct = sum(correct, 3) / testSampleSize * 100;
-printmat(correct, 'Correct rate', 'norm pApprox poiss', 'DA NB SVM');
+% printmat(correct, 'Correct rate', 'norm pApprox poiss', 'DA NB SVM');
+
+end
+
