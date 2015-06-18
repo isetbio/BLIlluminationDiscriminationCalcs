@@ -20,7 +20,7 @@ nTrials = 1000;
 % boolean to determine whether or not to use uniform data
 uniform = false;
 uniformOrigin = false;
-originVariation = 10;
+originVariation = 5;
 
 %% Define function handles for desired test runs
 normal = @(v,k) v + k * randn(size(v));
@@ -36,7 +36,7 @@ manhattan = @(X1, X2) norm(X1(:) - X2(:), 1);
 cosineAngle = @(X1, X2) 1 - dot(X1(:), X2(:)) / (norm(X1(:)) * norm(X2(:)));
 
 distList = {euclid, bDist, manhattan, cosineAngle};
-targetFunction = 3; % determines which function from above to use as distance parameter
+targetFunction = 1; % determines which function from above to use as distance parameter
 
 %% Pre-allocate space for a results matrices
 r = zeros(length(nDim), length(k), length(funcList));
@@ -47,7 +47,7 @@ for ii = 1:length(nDim)
     unitVector = repmat(1000, 1, nDim(ii));
     
     if ~uniformOrigin
-        unitVector = unitVector + originVariation * (rand(size(unitVector)) - 0.5);
+        unitVector = unitVector + 2 * originVariation * (rand(size(unitVector)) - 0.5);
     end
     
     if uniform
