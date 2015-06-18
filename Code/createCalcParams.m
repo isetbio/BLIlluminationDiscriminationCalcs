@@ -18,7 +18,7 @@ BaseDir = getpref('BLIlluminationDiscriminationCalcs', 'QueueDir');
 %% Create a calcParam object
 
 % Set the name of this calculation set
-calcParams.calcIDStr = 'SensorFOV';
+calcParams.calcIDStr = 'StaticPhoton_AfterMerge';
 
 % Folder list to run over for conversions into isetbio format
 calcParams = updateCacheFolderList(calcParams);
@@ -32,7 +32,7 @@ calcParams.cropRect = [550 450 40 40];              % [450 350 624 574] is the e
 % Specify the parameters for the chooser calculation
 calcParams.coneIntegrationTime = 0.050;
 calcParams.S = [380 8 51];
-calcParams.sensorFOV = 1; 
+calcParams.sensorFOV = 0.83; 
 
 calcParams.numTrials = 100;
 calcParams.maxIllumTarget = 50;
