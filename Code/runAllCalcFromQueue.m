@@ -33,7 +33,7 @@ BaseDir = getpref('BLIlluminationDiscriminationCalcs', 'QueueDir');
 %% Create a cell array to hold calcParams that have been run
 % This is in case a deletion/permission error occurs on ColorShare
 usedParams = cell(1,10);
-usedIndex  = 0.83;                             % Next position in usedParams to fill in terms of visual angle
+usedIndex  = 1;                             % Next position in usedParams to fill in terms of visual angle
 
 %% Set up an infinite loop
 global KEY_IS_PRESSED
