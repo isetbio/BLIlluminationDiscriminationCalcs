@@ -28,7 +28,7 @@ switch (calcParams.calcIDStr)
         calcParams.cacheFolderList = {'NM1', 'NM1'};
     case {'StaticPhoton_NM2','StaticPhoton_NM2_MatlabRNG'}
         calcParams.cacheFolderList = {'NM2', 'NM2'};
-    case {'StaticPhoton_2','SystemicPercentTestLowIllum_2'}
+    case {'StaticPhoton_2','SystemicPercentTestLowIllum_2','StaticPhoton_2_Cosine'}
         calcParams.cacheFolderList = {'Neutral', 'Neutral_2'};
     case {'PixelNoiseTest'}
         calcParams.cacheFolderList = {'New Images', 'PixelNoise'};
