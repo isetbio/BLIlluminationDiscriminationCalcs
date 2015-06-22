@@ -1,7 +1,7 @@
 clear all; close all;
 
 %% Set rng seed for reproducibility
-% rng(1);
+rng(1);
 
 %% Set some initial parameters
 

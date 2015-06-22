@@ -1,7 +1,7 @@
 clear;
 
 %% Set rng seed for reproducibility
-% rng(1);
+rng(1);
 
 %% Set some initial parameters
 
@@ -38,9 +38,9 @@ end
 if uniformDist
     testVector = targetVector + dist;
 else
-%     rng(2);
+    rng(2);
     testVector = targetVector + 2 * dist * rand(size(targetVector));
-%     rng(1);
+    rng(1);
 end
 
 for ii = 1:trainingSetSize/2
