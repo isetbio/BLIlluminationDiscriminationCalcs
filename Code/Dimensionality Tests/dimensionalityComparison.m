@@ -1,7 +1,7 @@
 clear all; close all;
 
 %% Set rng seed for reproducibility
-rng(1);
+% rng(1);
 
 %% Set up some parameter variables for this comparison
 
@@ -9,7 +9,7 @@ rng(1);
 nDim = [10 100 1000 10000];
 
 % Distance from unitVector -> this can be a vector as well
-dist = 10;
+dist = 50;
 
 % k values to test
 k = [1 100 50000];
@@ -34,9 +34,10 @@ euclid = @(X1, X2) norm(X1(:) - X2(:));
 bDist = @(X1, X2) bhattacharyya(X1(:)', X2(:)');
 manhattan = @(X1, X2) norm(X1(:) - X2(:), 1);
 cosineAngle = @(X1, X2) 1 - dot(X1(:), X2(:)) / (norm(X1(:)) * norm(X2(:)));
+dotP = @(X1, X2) dot(X1(:), X2(:));
 
-distList = {euclid, bDist, manhattan, cosineAngle};
-targetFunction = 4; % determines which function from above to use as distance parameter
+distList = {euclid, bDist, manhattan, cosineAngle, dotP};
+targetFunction = 5; % determines which function from above to use as distance parameter
 
 %% Pre-allocate space for a results matrices
 r = zeros(length(nDim), length(k), length(funcList));
@@ -53,9 +54,9 @@ for ii = 1:length(nDim)
     if uniform
         testVector = unitVector + dist;
     else
-        rng(2);
+%         rng(2);
         testVector = unitVector + 2 * dist * rand(size(unitVector));
-        rng(1);
+%         rng(1);
     end
     
     for ff = 1:length(funcList)
@@ -65,9 +66,9 @@ for ii = 1:length(nDim)
             
             c = 0;
             
-            % Allows for reproducibility regardless of param size
-            seed = str2double([int2str(ii) int2str(ff) int2str(jj)]);
-            rng(seed);
+%             % Allows for reproducibility regardless of param size
+%             seed = str2double([int2str(ii) int2str(ff) int2str(jj)]);
+%             rng(seed);
             
             for kk = 1:nTrials
 

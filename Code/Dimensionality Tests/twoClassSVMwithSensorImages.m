@@ -6,7 +6,7 @@ clear;
 
 trainingSetSize = 2500;
 testSampleSize = 1000;
-k = 7000;
+k = [1 10 100 1000];
 targetFunction = 2;
 %% Define functions to use
 poissApprox = @(v,k) normrnd(v, k * sqrt(v));
@@ -44,16 +44,35 @@ toc
 
 %% Generate some test data
 testData = zeros(testSampleSize, length(pS(:)));
-
-tic
-for ii = 1:testSampleSize
-    testData(ii,:) = funcList{targetFunction}(pS(:),k);
+correctTotal = zeros(length(k), 1);
+for jj = length(k)
+    tic
+    for ii = 1:testSampleSize
+        testData(ii,:) = funcList{targetFunction}(pS(:),k(jj));
+    end
+    toc
+    
+    result = predict(classifier, testData);
+    
+    
+    correct = result - 1;
+    
+    correct = sum(correct) / testSampleSize * 100
+    
+    testData = zeros(testSampleSize, length(pS(:)));
+    
+    tic
+    for ii = 1:testSampleSize
+        testData(ii,:) = funcList{targetFunction}(pT(:),k(jj));
+    end
+    toc
+    
+    result = predict(classifier, testData);
+    
+    
+    correct2 = abs(result - 2);
+    
+    correct2 = sum(correct2) / testSampleSize * 100
+    
+    correctTotal(ii) = (correct + correct2) / 2;
 end
-toc
-
-result = predict(classifier, testData);
-
-
-correct = result - 1;
-
-correct = sum(correct) / testSampleSize * 100
