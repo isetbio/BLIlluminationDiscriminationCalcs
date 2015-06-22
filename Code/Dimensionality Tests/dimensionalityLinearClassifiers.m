@@ -6,14 +6,14 @@ clear all; close all;
 %% Set some initial parameters
 
 nDim = 10000;
-dist = 30;
-trainingSetSize = 1000;
-k = 100;
+dist = 50;
+trainingSetSize = 2500;
+k = 1000;
 uniformDist = false;
-testSampleSize = 100;
+testSampleSize = 1000;
 origin = 1000;
 uniformOrigin = false;
-originVariation = 5;
+originVariation = 50;
 
 %% Define function handles for desired distribution types
 normal = @(v,k) normrnd(v,k);
@@ -64,7 +64,7 @@ classifiers = cell(length(funcList), length(fitList));
 for jj = 1:length(funcList)
     for ii = 1:length(fitList)
         tic 
-        classifiers{jj,ii} = fitList{ii}(data(:,:,1), class(:,:,1));
+        classifiers{jj,ii} = fitList{ii}(data(:,:,jj), class(:,:,jj));
         toc
     end
 end

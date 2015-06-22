@@ -10,13 +10,13 @@ trainingSetSize = 1000;
 trainingData = normrnd(1000, sqrt(1000), [trainingSetSize, nDim]);
 
 %% Train SVM
-svm = fitcsvm(trainingData, zeros(trainingSetSize,1), 'KernelScale', 10000);
+svm = fitcsvm(trainingData, zeros(trainingSetSize,1));
 
 %% Test SVM
-k = 105;
+k = 1;
 testData = normrnd(1000, k * sqrt(1000), [10, nDim]);
 [~, scores] = predict(svm, testData)
-testData = normrnd(1050, k * sqrt(1050), [10, nDim]);
+testData = normrnd(1200, k * sqrt(1200), [10, nDim]);
 [~, scores] = predict(svm, testData)
 
 % General idea behind SVM model
