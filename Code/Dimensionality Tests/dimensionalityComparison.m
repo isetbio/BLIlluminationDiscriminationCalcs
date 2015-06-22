@@ -9,7 +9,7 @@ rng(1);
 nDim = [10 100 1000 10000];
 
 % Distance from unitVector -> this can be a vector as well
-dist = 6;
+dist = 10;
 
 % k values to test
 k = [1 100 50000];
@@ -36,7 +36,7 @@ manhattan = @(X1, X2) norm(X1(:) - X2(:), 1);
 cosineAngle = @(X1, X2) 1 - dot(X1(:), X2(:)) / (norm(X1(:)) * norm(X2(:)));
 
 distList = {euclid, bDist, manhattan, cosineAngle};
-targetFunction = 1; % determines which function from above to use as distance parameter
+targetFunction = 4; % determines which function from above to use as distance parameter
 
 %% Pre-allocate space for a results matrices
 r = zeros(length(nDim), length(k), length(funcList));
