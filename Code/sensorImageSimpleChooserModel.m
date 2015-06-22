@@ -161,6 +161,8 @@ oiStandard = loadOpticalImageData(standardPath, 'TestImage0');
 sensorStandard = sensorSet(sensor, 'noise flag', 0);
 sensorStandard = coneAbsorptions(sensorStandard, oiStandard);
 
+cosineAngle = @(X1, X2) 1 - dot(X1(:), X2(:)) / (norm(X1(:)) * norm(X2(:)));
+
 % Loop through the illumination number
 for i = 1:maxImageIllumNumber
     
@@ -195,11 +197,14 @@ for i = 1:maxImageIllumNumber
                 photonsStandardComp = sum(photonsStandardComp,3);
                 photonsTestComp = sum(photonsTestComp,3);
             end
-            
+
             % Calculate vector distance from the test image and
             % standard image to the reference image
-            distToStandard = norm(photonsStandardRef(:)-photonsStandardComp(:));
-            distToTest = norm(photonsStandardRef(:)-photonsTestComp(:));
+%             distToStandard = norm(photonsStandardRef(:)-photonsStandardComp(:));
+%             distToTest = norm(photonsStandardRef(:)-photonsTestComp(:));
+
+            distToStandard = cosineAngle(photonsStandardRef, photonsStandardComp);
+            distToTest = cosineAngle(photonsStandardRef, photonsTestComp);
             
             % Decide if 'subject' was correct on this trial
             if (distToStandard < distToTest)
