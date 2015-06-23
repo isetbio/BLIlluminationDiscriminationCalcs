@@ -23,7 +23,7 @@ rng(1);
 
 % A vector of stimulus dimensions to test for.  Each of these
 % will be done in turn.
-dimensionalities = [10 100];
+dimensionalities = [10000];
 
 % Noise expansion factors to test. Each of these will be done in turn.
 % 
@@ -50,9 +50,14 @@ noiseFuncNames = {'Normal', 'PoissonApprox' 'Poisson'};
 % Length of test vector, and distance from comparionVectorMean to testVectorMean.
 % This distance is defined relative to the unit length of
 % the comparison vector
-comparisonVectorLength = 500;
+comparisonVectorLength = 1000;
 testDistanceFraction = 0.05;
 testDistance = testDistanceFraction*comparisonVectorLength;
+
+% Select the fraction of vectors from the null space matrix to sum.  It
+% seems that summing the whole matrix results in NaN being generated in the
+% Poisson distribution, but a smaller fraction avoids this issue.
+orthogonalVectorFraction = 100;
 
 % Number of trials to simulate to obtain percent correct, and
 % number of times to repead.  Repeating allows us to get mean
@@ -107,7 +112,8 @@ for ii = 1:length(dimensionalities)
             testVectorPerturbation = -testDistance*testVectorPerturbation/norm(testVectorPerturbation);
         case 3
             orthogonalMatrix = null(comparisonVectorMean);
-            orthogonalVector = sum(orthogonalMatrix, 2)';
+            orthogonalVector = sum(orthogonalMatrix(:,1:(ceil(length(orthogonalMatrix(1,:))/orthogonalVectorFraction))),2)';
+%             orthogonalVector = orthogonalMatrix(:,1)' + orthogonalMatrix(:,3)';
             testVectorPerturbation = testDistance*orthogonalVector/norm(orthogonalVector);
     end
             
@@ -223,25 +229,36 @@ directoryName = [distMeasureNames{whichDistanceMeasure} '_' ...
     '_' mat2str(dimensionalities)];
 mkdir(directoryName);
 
+figure;
+set(gcf, 'position', [0 0 1500 1500]);
 for ii = 1:length(dimensionalities)
     for jj = 1:length(noiseFuncList)
         subplot(length(dimensionalities),length(noiseFuncList),jj + (ii - 1)*3);
-        h = errorbar(noiseFactorKs,percentCorrectMeanMatrix(ii,:,jj), 2*percentCorrectStderrMatrix(ii,:,jj), 'b.', 'markersize', 20);
+        h = errorbar(noiseFactorKs,percentCorrectMeanMatrix(ii,:,jj), 2*percentCorrectStderrMatrix(ii,:,jj), 'b.-', 'markersize', 20);
         set(get(h,'Parent'),'XScale','log')
+        hold on
+        plot(xlim, [50 50], 'k--');
+                
         title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))]);
         xlabel('k');
         ylabel('% correct');
+        xlim([0 10*max(noiseFactorKs)]);
+        ylim([35 100]);
     end
 end
 suptitle(['Mean percent correct for ' distMeasureNames{whichDistanceMeasure}]);
-savefig(fullfile(directoryName, 'PercentCorrect'));
+FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'pdf');
 
 figure;
+set(gcf, 'position', [0 0 1500 1500]);
 for ii = 1:length(dimensionalities)
     for jj = 1:length(noiseFuncList)
         subplot(length(dimensionalities),length(noiseFuncList),jj + (ii - 1)*3);
         h = plot(noiseFactorKs,ttestMatrix(ii,:,jj), 'r.', 'markersize', 20);
         set(get(h,'Parent'),'XScale','log')
+        
+        hold on
+        plot(xlim, [0.05 0.05], 'k--');
         title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))]);
         xlabel('k');
         ylabel('p value');
@@ -249,7 +266,6 @@ for ii = 1:length(dimensionalities)
     end
 end
 suptitle(['p values for ' distMeasureNames{whichDistanceMeasure}]);
-savefig(fullfile(directoryName, 'pvalues'));
+FigureSave(fullfile(directoryName, 'pvalues'), gcf, 'pdf');
 
-save(fullfile(directoryName, 'data'), 'percentCorrectRawMatrix', 'percentCorrectMeanMatrix', 'percentCorrectStderrMatrix',...
-        'ttestMatrix');
+save(fullfile(directoryName, 'data'));
