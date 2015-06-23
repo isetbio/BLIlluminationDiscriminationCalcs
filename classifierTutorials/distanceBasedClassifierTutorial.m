@@ -26,6 +26,10 @@ rng(1);
 dimensionalities = [10 100];
 
 % Noise expansion factors to test. Each of these will be done in turn.
+% 
+% These k's are expressed in units of noise so that k == 1 correponds to
+% having the mean lenght of a noise draw about the same as the vector
+% length between the mean comparison and test vectors.
 noiseFactorKs = [1 10 100 1000 10000 100000];
 
 % Define function handles to specify noise type. Each of these
@@ -33,8 +37,7 @@ noiseFactorKs = [1 10 100 1000 10000 100000];
 % 
 % These are a little awkward because we need both c and t to get the
 % normal constant variance to have about the right variance, but only c for the other two.
-% Look at how these are called below to see the slightly bizarre usage that comes
-% up.
+% Look at how these are called below to see the slightly bizarre usage that comes up.
 normal = @(c,t,k) normrnd(c, k*sqrt(mean([c t])));
 poissApprox = @(c,t,k) normrnd(c, k * sqrt(c));
 poiss = @(c,t,k) c + k * (poissrnd(c) - c);
@@ -48,17 +51,14 @@ noiseFuncNames = {'Normal', 'PoissonApprox' 'Poisson'};
 % This distance is defined relative to the unit length of
 % the comparison vector
 comparisonVectorLength = 500;
-testDistance = 0.05*comparisonVectorLength;
+testDistanceFraction = 0.05;
+testDistance = testDistanceFraction*comparisonVectorLength;
 
 % Number of trials to simulate to obtain percent correct, and
 % number of times to repead.  Repeating allows us to get mean
 % and standard error, so that we can decide about reliability.
 nSimulatedTrials = 100;
-nSimulations = 10;
-
-% Boolean to determine whether or not to use uniform data
-uniform = false;
-originVariation = 5;
+nSimulations = 5;
 
 %% Define different distance measures and pick which one to use here.
 euclid = @(X1, X2) norm(X1(:) - X2(:));
@@ -96,6 +96,13 @@ for ii = 1:length(dimensionalities)
     testVectorPerturbation = rand(1, theDimensionality);
     testVectorPerturbation = testDistance*testVectorPerturbation/norm(testVectorPerturbation);
     testVectorMean = comparisonVectorMean + testVectorPerturbation;
+    
+    % If you want a test orthogonal to the comparison, then use
+    %   foo = null(comparisonVectorMean);
+    % Each column of foo will contain a vector that is orthogonal to 
+    % the comparison.  So you can take any linear combination of the
+    % columns and get a vector orthogonal to the comparison.  Then just 
+    % normalize its length as above.
     
     % To keep things intuitive, we want the scale of the noise for k == 1 to be
     % roughly commensurate with the vector distance between the comparison
