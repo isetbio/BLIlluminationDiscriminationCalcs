@@ -60,6 +60,12 @@ testDistance = testDistanceFraction*comparisonVectorLength;
 nSimulatedTrials = 100;
 nSimulations = 5;
 
+% The direction of the test vector relative to the comparison vector.  Set
+% this to 1 for positive extension along the comparison vector, 2 for a
+% negative, 3 for an orthogonal direction.
+testVectorDirection = 3;
+testDirectionName = {'Positive' 'Negative' 'Orthonormal'};
+
 %% Define different distance measures and pick which one to use here.
 euclid = @(X1, X2) norm(X1(:) - X2(:));
 bDist = @(X1, X2) bhattacharyya(X1(:)', X2(:)');
@@ -90,11 +96,24 @@ for ii = 1:length(dimensionalities)
     comparisonVectorMean = rand(1, theDimensionality);
     comparisonVectorMean = comparisonVectorLength*comparisonVectorMean/norm(comparisonVectorMean);
  
+    % Set up the test vector perturbation in accoradance to the direction
+    % decision desired.
+    switch(testVectorDirection)
+        case 1
+            testVectorPerturbation = rand(1, theDimensionality);
+            testVectorPerturbation = testDistance*testVectorPerturbation/norm(testVectorPerturbation);
+        case 2
+            testVectorPerturbation = rand(1, theDimensionality);
+            testVectorPerturbation = -testDistance*testVectorPerturbation/norm(testVectorPerturbation);
+        case 3
+            orthogonalMatrix = null(comparisonVectorMean);
+            orthogonalVector = sum(orthogonalMatrix, 2)';
+            testVectorPerturbation = testDistance*orthogonalVector/norm(orthogonalVector);
+    end
+            
     % Set up test vector mean.  We choose a random perturbation direction in the vector
     % space and normalize it to have length testDistance.  Then we add it
     % to the comparison vector mean.
-    testVectorPerturbation = rand(1, theDimensionality);
-    testVectorPerturbation = testDistance*testVectorPerturbation/norm(testVectorPerturbation);
     testVectorMean = comparisonVectorMean + testVectorPerturbation;
     
     % If you want a test orthogonal to the comparison, then use
@@ -197,3 +216,40 @@ for ff = 1:length(noiseFuncList)
     printmat(ttestMatrix(:,:,ff), noiseFuncNames{ff}, rows, cols);
 end
 
+%% Plot and save the results
+
+directoryName = [distMeasureNames{whichDistanceMeasure} '_' ...
+    testDirectionName{testVectorDirection} '_testDist' num2str(testDistanceFraction) ...
+    '_' mat2str(dimensionalities)];
+mkdir(directoryName);
+
+for ii = 1:length(dimensionalities)
+    for jj = 1:length(noiseFuncList)
+        subplot(length(dimensionalities),length(noiseFuncList),jj + (ii - 1)*3);
+        h = errorbar(noiseFactorKs,percentCorrectMeanMatrix(ii,:,jj), 2*percentCorrectStderrMatrix(ii,:,jj), 'b.', 'markersize', 20);
+        set(get(h,'Parent'),'XScale','log')
+        title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))]);
+        xlabel('k');
+        ylabel('% correct');
+    end
+end
+suptitle(['Mean percent correct for ' distMeasureNames{whichDistanceMeasure}]);
+savefig(fullfile(directoryName, 'PercentCorrect'));
+
+figure;
+for ii = 1:length(dimensionalities)
+    for jj = 1:length(noiseFuncList)
+        subplot(length(dimensionalities),length(noiseFuncList),jj + (ii - 1)*3);
+        h = plot(noiseFactorKs,ttestMatrix(ii,:,jj), 'r.', 'markersize', 20);
+        set(get(h,'Parent'),'XScale','log')
+        title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))]);
+        xlabel('k');
+        ylabel('p value');
+        ylim([0 1]);
+    end
+end
+suptitle(['p values for ' distMeasureNames{whichDistanceMeasure}]);
+savefig(fullfile(directoryName, 'pvalues'));
+
+save(fullfile(directoryName, 'data'), 'percentCorrectRawMatrix', 'percentCorrectMeanMatrix', 'percentCorrectStderrMatrix',...
+        'ttestMatrix');
