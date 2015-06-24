@@ -54,11 +54,6 @@ comparisonVectorLength = 1000;
 testDistanceFraction = 0.05;
 testDistance = testDistanceFraction*comparisonVectorLength;
 
-% Select the fraction of vectors from the null space matrix to sum.  It
-% seems that summing the whole matrix results in NaN being generated in the
-% Poisson distribution, but a smaller fraction avoids this issue.
-orthogonalVectorFraction = 500;
-
 % Number of trials to simulate to obtain percent correct, and
 % number of times to repead.  Repeating allows us to get mean
 % and standard error, so that we can decide about reliability.
@@ -112,11 +107,6 @@ for ii = 1:length(dimensionalities)
             testVectorPerturbation = -testDistance*comparisonVectorMean/norm(comparisonVectorMean);
         case 3
             orthogonalMatrix = null(comparisonVectorMean);
-% %             if orthogonalVectorFraction < length(orthogonalMatrix(1,:))
-%                 orthogonalVector = sum(orthogonalMatrix(:,1:(ceil(length(orthogonalMatrix(1,:))/orthogonalVectorFraction))),2)';
-% %             else 
-% %                 orthogonalVector = sum(orthogonalMatrix,2)';
-% %             end
             orthogonalVector = orthogonalMatrix(:,1)';
             testVectorPerturbation = testDistance*orthogonalVector/norm(orthogonalVector);
             clear orthogonalMatrix;
