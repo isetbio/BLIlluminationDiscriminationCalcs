@@ -119,6 +119,7 @@ for ii = 1:length(dimensionalities)
 % %             end
             orthogonalVector = orthogonalMatrix(:,1)';
             testVectorPerturbation = testDistance*orthogonalVector/norm(orthogonalVector);
+            clear orthogonalMatrix;
     end
             
     % Set up test vector mean.  We choose a random perturbation direction in the vector
@@ -200,8 +201,6 @@ for ii = 1:length(dimensionalities)
             theValues = squeeze(percentCorrectRawMatrix(ii,jj,ff,:));
             [~,ttestMatrix(ii,jj,ff)] = ttest(theValues,50);
         end
-        
- 
     end
 end
 
@@ -237,7 +236,7 @@ figure;
 set(gcf, 'position', [0 0 1500 1500]);
 for ii = 1:length(dimensionalities)
     for jj = 1:length(noiseFuncList)
-        subplot(length(dimensionalities),length(noiseFuncList),jj + (ii - 1)*3);
+        subplot(length(dimensionalities),length(noiseFuncList),jj + (ii - 1)*length(noiseFuncList));
         h = errorbar(noiseFactorKs,percentCorrectMeanMatrix(ii,:,jj), 2*percentCorrectStderrMatrix(ii,:,jj), 'b.-', 'markersize', 20);
         set(get(h,'Parent'),'XScale','log')
         hold on
@@ -246,8 +245,8 @@ for ii = 1:length(dimensionalities)
         title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))]);
         xlabel('k');
         ylabel('% correct');
-        xlim([0 10*max(noiseFactorKs)]);
-        ylim([35 100]);
+        xlim([min(noiseFactorKs)/10 10*max(noiseFactorKs)]);
+        ylim([0 100]);
     end
 end
 suptitle(['Mean percent correct for ' distMeasureNames{whichDistanceMeasure}]);
@@ -267,6 +266,7 @@ for ii = 1:length(dimensionalities)
         title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))]);
         xlabel('k');
         ylabel('p value');
+        xlim([min(noiseFactorKs)/10 10*max(noiseFactorKs)]);
         ylim([0 1]);
     end
 end
