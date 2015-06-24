@@ -67,7 +67,7 @@ nSimulations = 10;
 % this to 1 for positive extension along the comparison vector, 2 for a
 % negative, 3 for an orthogonal direction.
 testVectorDirection = 2;
-testDirectionName = {'Positive' 'Negative' 'Orthogonal'};
+testDirectionName = {'Pos' 'Neg' 'Orth'};
 
 %% Define the parameters to use to train the SVM
 %
@@ -76,7 +76,7 @@ testDirectionName = {'Positive' 'Negative' 'Orthogonal'};
 SVM = @(d,c) fitcsvm(d,c);
 
 linearClassifierList = {SVM};
-linearClassifierNames = {'Matlab_SVM'};
+linearClassifierNames = {'MatlabSVM'};
 whichClassifier = 1;
 
 % Define the appropriate functions that will use the classifier to predict
@@ -231,8 +231,8 @@ end
 
 %% Plot and save the results
 
-directoryName = ['SVM_' testDirectionName{testVectorDirection} '_testDist' ...
-    num2str(testDistanceFraction) '_' mat2str(dimensionalities) '_' ...
+directoryName = [linearClassifierNames{whichClassifier} '_' testDirectionName{testVectorDirection}...
+    '_testDist' num2str(testDistanceFraction) '_' mat2str(dimensionalities) '_' ...
     num2str(trainingSetSize)];
 mkdir(directoryName);
 

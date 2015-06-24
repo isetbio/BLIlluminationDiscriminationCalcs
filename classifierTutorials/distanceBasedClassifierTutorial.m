@@ -64,7 +64,7 @@ nSimulations = 10;
 % this to 1 for positive extension along the comparison vector, 2 for a
 % negative, 3 for an orthogonal direction.
 testVectorDirection = 3;
-testDirectionName = {'Positive' 'Negative' 'Orthogonal'};
+testDirectionName = {'Pos' 'Neg' 'Orth'};
 
 %% Define different distance measures and pick which one to use here.
 euclid = @(X1, X2) norm(X1(:) - X2(:));
@@ -250,9 +250,9 @@ for ii = 1:length(dimensionalities)
         subplot(length(dimensionalities),length(noiseFuncList),jj + (ii - 1)*3);
         h = plot(noiseFactorKs,ttestMatrix(ii,:,jj), 'r.', 'markersize', 20);
         set(get(h,'Parent'),'XScale','log')
-        
         hold on
         plot(xlim, [0.05 0.05], 'k--');
+        
         title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))]);
         xlabel('k');
         ylabel('p value');
