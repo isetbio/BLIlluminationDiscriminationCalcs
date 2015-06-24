@@ -206,6 +206,10 @@ for ii = 1:length(dimensionalities)
         end
     end
     clear trainedSVMList;
+    clear data;
+    clear class;
+    clear testData;
+    clear testClasses;
 end
 
 % Get mean results matrix
@@ -253,7 +257,7 @@ for ii = 1:length(dimensionalities)
         ylim([0 100]);
     end
 end
-suptitle('Mean percent correct for SVM');
+suptitle(['Mean percent correct for SVM ' testDirectionName{testVectorDirection}]);
 savefig(fullfile(directoryName, 'PercentCorrect'));
 % FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'pdf');
 
@@ -274,7 +278,7 @@ for ii = 1:length(dimensionalities)
         ylim([0 1]);
     end
 end
-suptitle('p values for SVM');
+suptitle(['p values for SVM ', testDirectionName{testVectorDirection}]);
 savefig(fullfile(directoryName, 'pvalues'));
 % FigureSave(fullfile(directoryName, 'pvalues'), gcf, 'pdf');
 
