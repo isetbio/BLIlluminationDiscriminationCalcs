@@ -23,7 +23,7 @@ rng(1);
 
 % A vector of stimulus dimensions to test for.  Each of these
 % will be done in turn.
-dimensionalities = [10000];
+dimensionalities = [10 100 1000 10000];
 
 % Noise expansion factors to test. Each of these will be done in turn.
 % 
@@ -57,19 +57,19 @@ testDistance = testDistanceFraction*comparisonVectorLength;
 % Select the fraction of vectors from the null space matrix to sum.  It
 % seems that summing the whole matrix results in NaN being generated in the
 % Poisson distribution, but a smaller fraction avoids this issue.
-orthogonalVectorFraction = 100;
+orthogonalVectorFraction = 500;
 
 % Number of trials to simulate to obtain percent correct, and
 % number of times to repead.  Repeating allows us to get mean
 % and standard error, so that we can decide about reliability.
-nSimulatedTrials = 100;
-nSimulations = 5;
+nSimulatedTrials = 1000;
+nSimulations = 10;
 
 % The direction of the test vector relative to the comparison vector.  Set
 % this to 1 for positive extension along the comparison vector, 2 for a
 % negative, 3 for an orthogonal direction.
 testVectorDirection = 3;
-testDirectionName = {'Positive' 'Negative' 'Orthonormal'};
+testDirectionName = {'Positive' 'Negative' 'Orthogonal'};
 
 %% Define different distance measures and pick which one to use here.
 euclid = @(X1, X2) norm(X1(:) - X2(:));
@@ -105,15 +105,19 @@ for ii = 1:length(dimensionalities)
     % decision desired.
     switch(testVectorDirection)
         case 1
-            testVectorPerturbation = rand(1, theDimensionality);
-            testVectorPerturbation = testDistance*testVectorPerturbation/norm(testVectorPerturbation);
+%             testVectorPerturbation = rand(1, theDimensionality);
+            testVectorPerturbation = testDistance*comparisonVectorMean/norm(comparisonVectorMean);
         case 2
-            testVectorPerturbation = rand(1, theDimensionality);
-            testVectorPerturbation = -testDistance*testVectorPerturbation/norm(testVectorPerturbation);
+%             testVectorPerturbation = rand(1, theDimensionality);
+            testVectorPerturbation = -testDistance*comparisonVectorMean/norm(comparisonVectorMean);
         case 3
             orthogonalMatrix = null(comparisonVectorMean);
-            orthogonalVector = sum(orthogonalMatrix(:,1:(ceil(length(orthogonalMatrix(1,:))/orthogonalVectorFraction))),2)';
-%             orthogonalVector = orthogonalMatrix(:,1)' + orthogonalMatrix(:,3)';
+% %             if orthogonalVectorFraction < length(orthogonalMatrix(1,:))
+%                 orthogonalVector = sum(orthogonalMatrix(:,1:(ceil(length(orthogonalMatrix(1,:))/orthogonalVectorFraction))),2)';
+% %             else 
+% %                 orthogonalVector = sum(orthogonalMatrix,2)';
+% %             end
+            orthogonalVector = orthogonalMatrix(:,1)';
             testVectorPerturbation = testDistance*orthogonalVector/norm(orthogonalVector);
     end
             
@@ -247,7 +251,8 @@ for ii = 1:length(dimensionalities)
     end
 end
 suptitle(['Mean percent correct for ' distMeasureNames{whichDistanceMeasure}]);
-FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'pdf');
+savefig(fullfile(directoryName, 'PercentCorrect'));
+% FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'pdf');
 
 figure;
 set(gcf, 'position', [0 0 1500 1500]);
@@ -266,6 +271,7 @@ for ii = 1:length(dimensionalities)
     end
 end
 suptitle(['p values for ' distMeasureNames{whichDistanceMeasure}]);
-FigureSave(fullfile(directoryName, 'pvalues'), gcf, 'pdf');
+savefig(fullfile(directoryName, 'pvalues'));
+% FigureSave(fullfile(directoryName, 'pvalues'), gcf, 'pdf');
 
 save(fullfile(directoryName, 'data'));
