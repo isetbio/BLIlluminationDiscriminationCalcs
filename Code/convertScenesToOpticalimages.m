@@ -24,7 +24,7 @@ for ii = 1:length(contents)
     if ~strcmp(curr.name,'.') && ~strcmp(curr.name,'..') && curr.isdir
         emptyCells = cellfun('isempty', folderList);
         firstIndex = find(emptyCells == 1, 1);
-        fprintf('%s', curr.name);
+        % fprintf('%s', curr.name);
         folderList{firstIndex} = curr.name;
     end
 end

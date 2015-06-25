@@ -16,10 +16,10 @@ function runAllCalculations
 close all; ieInit;
 
 %% Control of what gets done in this function
-CACHE_SCENES = false; forceSceneCompute = false;
-CACHE_OIS = false; forceOICompute = false;
+CACHE_SCENES = true; forceSceneCompute = false;
+CACHE_OIS = true; forceOICompute = false;
 RUN_CHOOSER = false; chooserColorChoice = 1; overWriteFlag = 1;
-CALC_THRESH = true; displayIndividualThreshold = false;
+CALC_THRESH = false; displayIndividualThreshold = false;
 
 %% Get our project toolbox on the path
 myDir = fileparts(mfilename('fullpath'));
@@ -30,7 +30,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 % Set identifiers to run
-calcIDStrs = {'SystemicPercentTest','SystemicPercentTestLong','SystemicPercentTestEM', 'StaticPhoton', 'StaticPhoton_2'};
+calcIDStrs = {'StaticPhoton'};
 
 %% Parameters of the calculation
 %
@@ -53,10 +53,10 @@ for k1 = 1:length(calcIDStrs)
     % define a square patch of cone mosaic when we build the sensor), so the
     % cropped region should always be square.
     calcParams.cropRect = [550 450 40 40];              % [450 350 624 574] is the entire non-black region of our initial images
-    
+    calcParams.S = [380 8 51];
+        
     % Specify the parameters for the chooser calculation
     calcParams.coneIntegrationTime = 0.050;
-    calcParams.S = [380 8 51];
     calcParams.sensorFOV = 0.83;             % Visual angle defining the size of the sensor
     
     calcParams.numTrials = 500;
@@ -64,6 +64,15 @@ for k1 = 1:length(calcIDStrs)
     calcParams.numKValueSamples = 30;
     calcParams.kInterval = 2;
     calcParams.startK = 1;
+    
+    % Specify the number of standard image samples available as well as the
+    % number of test image samples available.  The chooser will randomly
+    % choose two images out of the target set and one image out of the
+    % comparison set.  This is in order to reduce the effect of pixel noise
+    % cause by the image renderer.
+    
+    calcParams.targetImageSetSize = 7;
+    calcParams.comparisonImageSetSize = 1;
     
     % Specify eye movement parameters
     % EMPositions represents the number of positions of eye movement to sample,

@@ -257,7 +257,7 @@ for ii = 1:length(dimensionalities)
         ylim([0 100]);
     end
 end
-suptitle(['Mean percent correct for SVM ' testDirectionName{testVectorDirection}]);
+suptitle(['Mean percent correct for SVM ' testDirectionName{testVectorDirection}]); 
 savefig(fullfile(directoryName, 'PercentCorrect'));
 % FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'pdf');
 

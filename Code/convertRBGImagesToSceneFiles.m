@@ -38,7 +38,6 @@ calStructOBJ = loadCalibrationData('StereoLCDLeft');
 
 % Create the display
 extraData = ptb.ExtraCalData;
-% NOTE: Should this be an input param?
 extraData.distance = 0.764;
 extraData.subSamplingSvector = calcParams.S;
 

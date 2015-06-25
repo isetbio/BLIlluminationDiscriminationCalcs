@@ -28,9 +28,15 @@ function sensorImageSimpleChooserModel(calcParams, colorChoice, overWrite)
 % 3/17/15  xd  wrote it
 % 4/17/15  xd  update to use human sensor
 % 6/4/15   xd  added overWrite flag
+% 6/25/16  xd  the standard and test now sample from a pool of images
 
 %% Set defaults for inputs
 if notDefined('overWrite'), overWrite = 0; end
+
+%% Check for faulty parameters
+if calcParams.targetImageSetSize < 2
+    error('Must have a standard image pool size of at least 2');
+end
 
 %% Put project toolbox onto path.
 myDir = fileparts(mfilename('fullpath'));
@@ -139,7 +145,12 @@ kInterval = calcParams.kInterval;
 
 %% Get a list of images
 
-% This will return the list of optical images in ascending illum number order
+% This will return the list of optical images in ascending illum number
+% order.  In addition, if a specific illumination number has more than one
+% copy, the file name should formatted like 'blue1L#-RGB...' where #
+% represents the copy number.  For consistancy, I believe these should also
+% be zero indexed like the standard are. In this case # would start with 1.
+% Code beyond this point will assume that this is so.
 dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
 folderPath = fullfile(dataBaseDir, 'OpticalImageData', calcParams.cacheFolderList{2}, folderName);
 data = what(folderPath);
@@ -147,6 +158,7 @@ fileList = data.mat;
 fileList = sort(fileList);
 [~,b] = sort(cellfun(@numel, fileList));
 fileList = fileList(b);
+fileList = fileList((cellfun(@(x)any(isempty(regexp(x,'L[\d]','once'))),fileList) == 1)); % Removes any copies of test images
 
 %% Preallocate space for the accuracy matrix which will store the results of the calculations
 accuracyMatrix = zeros(maxImageIllumNumber, kSampleNum);
@@ -154,21 +166,34 @@ accuracyMatrix = zeros(maxImageIllumNumber, kSampleNum);
 %% Run calculations up to illumination number and k-value limits
 
 % Compute noise free cone absorptions for the standard image, this will be
-% the same throught the entire simulation
+% the same throughout the entire simulation.  We choose 2 images without
+% replacement from the standard image pool.  This is in order to account
+% for the pixel noise present from the renderer.  The images happen to be
+% indexed starting at 0.
+standardChoice = randsample(calcParams.targetImageSetSize, 2);
 
-
-oiStandard = loadOpticalImageData(standardPath, 'TestImage0');
+refChoice = ['TestImage' int2str(standardChoice(1) - 1)];
+oiStandard = loadOpticalImageData(standardPath, refChoice);
 sensorStandard = sensorSet(sensor, 'noise flag', 0);
 sensorStandard = coneAbsorptions(sensorStandard, oiStandard);
 
-cosineAngle = @(X1, X2) 1 - dot(X1(:), X2(:)) / (norm(X1(:)) * norm(X2(:)));
+compChoice = ['TestImage' int2str(standardChoice(2) - 1)];
+oiStandardComp = loadOpticalImageData(standardPath, compChoice);
+sensorStandardComp = sensorSet(sensor, 'noise flag', 0);
+sensorStandardComp = coneAbsorptions(sensorStandardComp,oiStandardComp);
 
 % Loop through the illumination number
 for i = 1:maxImageIllumNumber
     
-    % Compute the noise free cone absorptions for the current test image
+    % Compute the noise free cone absorptions for the current test image.
+    % If the test image pool is greater than 1 for a illumination number,
+    % we choose one randomly.
     imageName = fileList{i};
     imageName = strrep(imageName, 'OpticalImage.mat', '');
+    testChoice = randsample(calcParams.comparisonImageSetSize, 1);
+    if testChoice > 1
+        imageName = strrep(imageName, 'L-', ['L' int2str(testChoice - 1) '-']);
+    end   
     fprintf('%s\n', imageName);
     
     oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' folderName], imageName);
@@ -186,7 +211,7 @@ for i = 1:maxImageIllumNumber
             photonsStandardRef = getNoisySensorImage(calcParams,sensorStandard,currKValue);
             
             % Get noisy version of standard image
-            photonsStandardComp = getNoisySensorImage(calcParams,sensorStandard,currKValue);
+            photonsStandardComp = getNoisySensorImage(calcParams,sensorStandardComp,currKValue);
             
             % Get noisy version of test image
             photonsTestComp = getNoisySensorImage(calcParams,sensorTest,currKValue);
@@ -200,12 +225,9 @@ for i = 1:maxImageIllumNumber
 
             % Calculate vector distance from the test image and
             % standard image to the reference image
-%             distToStandard = norm(photonsStandardRef(:)-photonsStandardComp(:));
-%             distToTest = norm(photonsStandardRef(:)-photonsTestComp(:));
-
-            distToStandard = cosineAngle(photonsStandardRef, photonsStandardComp);
-            distToTest = cosineAngle(photonsStandardRef, photonsTestComp);
-            
+            distToStandard = norm(photonsStandardRef(:)-photonsStandardComp(:));
+            distToTest = norm(photonsStandardRef(:)-photonsTestComp(:));
+  
             % Decide if 'subject' was correct on this trial
             if (distToStandard < distToTest)
                 correct  = correct + 1;
