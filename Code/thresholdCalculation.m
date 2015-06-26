@@ -71,7 +71,7 @@ fitAndPlotToThreshold(psycho.uRed, psycho.thresholdRed, 'r', kInterval, kValsFin
 fitAndPlotToThreshold(psycho.uGreen, psycho.thresholdGreen, 'g', kInterval, kValsFine, figParams);
 fitAndPlotToThreshold(psycho.uYellow, psycho.thresholdYellow, 'y', kInterval, kValsFine, figParams);
 
-title(['Threshold against k-values for ' calcIDStr]);
+title(['Threshold against k-values for ' calcIDStr], 'interpreter', 'none');
 xlabel('k-values');
 ylabel('Threshold');
 ylim([0 50]);
@@ -168,10 +168,7 @@ options.MaxIter = 500*100;
         figure;
         set(gcf,'Position',[0 0 1000 1000]);
         set(gca,'FontName','Helvetica','FontSize',12);
-        a = annotation('textbox', [0.4,0.9,0.1,0.1], ...
-            'String',['Threshold fits for ' abbToWord(color) ' illumination']);
-        set(a, 'FontSize', 20);
-        set(a, 'LineStyle', 'none');
+        suptitle(['Threshold fits for ' abbToWord(color) ' illumination']);
     end
 
 %% Define a function that converts from color abbreviation to full word
@@ -255,9 +252,17 @@ kVals = dataStart:kInterval:dataEnd;
 plot(kVals, threshold, strcat(color,'.'), 'markersize', figParams.markerSize);
 
 %% Fit to line and get set of y values
-% Want to change to something that's not a linear fit
-p = polyfit(kVals, threshold', 1);
-y = polyval(p, kValsFine);
+
+% This will start the fit as a linear line.  Then increase the target fit
+% and try again if the mean error is greater than the tolerance.  
+errorTolerance = 5e-1;
+delta = 1;
+polynomialToFit = 1;
+while mean(delta) > errorTolerance
+    [p, S] = polyfit(kVals, threshold', polynomialToFit);
+    [y, delta] = polyval(p, kValsFine,S);
+    polynomialToFit = polynomialToFit + 1;
+end
 
 hold on;
 plot (kValsFine, y, color, 'linewidth', figParams.lineWidth);
