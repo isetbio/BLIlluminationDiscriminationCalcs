@@ -254,16 +254,24 @@ plot(kVals, threshold, strcat(color,'.'), 'markersize', figParams.markerSize);
 %% Fit to line and get set of y values
 
 % This will start the fit as a linear line.  Then increase the target fit
-% and try again if the mean error is greater than the tolerance.  
-errorTolerance = 5e-1;
+% and try again if the mean error is greater than the tolerance.
+errorTolerance = .75;
 delta = 1;
 polynomialToFit = 1;
-while mean(delta) > errorTolerance
-    [p, S] = polyfit(kVals, threshold', polynomialToFit);
-    [y, delta] = polyval(p, kValsFine,S);
-    polynomialToFit = polynomialToFit + 1;
-end
 
+s = warning('error','MATLAB:polyval:ZeroDOF');
+while mean(delta) > errorTolerance && polynomialToFit < 4
+    try
+        [p, S] = polyfit(kVals, threshold', polynomialToFit);
+        [y, delta] = polyval(p, kValsFine,S);
+        polynomialToFit = polynomialToFit + 1;
+    catch
+        [p, S] = polyfit(kVals, threshold', polynomialToFit - 1);
+        y = polyval(p, kValsFine,S);
+        break;
+    end
+end
+warning(s);
 hold on;
 plot (kValsFine, y, color, 'linewidth', figParams.lineWidth);
 end
