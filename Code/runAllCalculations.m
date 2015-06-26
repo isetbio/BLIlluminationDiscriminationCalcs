@@ -16,9 +16,9 @@ function runAllCalculations
 close all; ieInit;
 
 %% Control of what gets done in this function
-CACHE_SCENES = true; forceSceneCompute = false;
-CACHE_OIS = true; forceOICompute = false;
-RUN_CHOOSER = false; chooserColorChoice = 1; overWriteFlag = 1;
+CACHE_SCENES = false; forceSceneCompute = false;
+CACHE_OIS = false; forceOICompute = false;
+RUN_CHOOSER = true; chooserColorChoice = 1; overWriteFlag = 1;
 CALC_THRESH = false; displayIndividualThreshold = false;
 
 %% Get our project toolbox on the path
@@ -55,15 +55,20 @@ for k1 = 1:length(calcIDStrs)
     calcParams.cropRect = [550 450 40 40];              % [450 350 624 574] is the entire non-black region of our initial images
     calcParams.S = [380 8 51];
         
-    % Specify the parameters for the chooser calculation
+    % Parameters for creating the sensor
     calcParams.coneIntegrationTime = 0.050;
     calcParams.sensorFOV = 0.83;             % Visual angle defining the size of the sensor
     
+    % Specify the parameters for the chooser calculation
     calcParams.numTrials = 500;
-    calcParams.maxIllumTarget = 50;
-    calcParams.numKValueSamples = 30;
-    calcParams.kInterval = 2;
+    calcParams.maxIllumTarget = 3;
+    calcParams.numKValueSamples = 10;
+    calcParams.kInterval = 1;
     calcParams.startK = 1;
+    
+    calcParams.numKgSamples = 1;
+    calcParams.startKg = 0;
+    calcParams.KgInterval = 1;
     
     % Specify the number of standard image samples available as well as the
     % number of test image samples available.  The chooser will randomly
