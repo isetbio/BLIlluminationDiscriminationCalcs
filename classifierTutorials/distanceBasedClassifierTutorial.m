@@ -138,7 +138,7 @@ for ii = 1:length(dimensionalities)
     testPoissonNoiseLengths = zeros(nSimulatedTrials,1);
     for zz = 1:nSimulatedTrials
         comparisonPoissonNoise(zz,:) = poiss(comparisonVectorMean,testVectorMean,1);
-        comparisonPoissonNoiseLengths(zz) = norm(comparisonPoissonNoise(ii,:));
+        comparisonPoissonNoiseLengths(zz) = norm(comparisonPoissonNoise(zz,:));
         testPoissonNoise(zz,:) = poiss(testVectorMean,comparisonVectorMean,1);
         testPoissonNoiseLengths(zz) = norm(testPoissonNoise(zz,:));
     end
