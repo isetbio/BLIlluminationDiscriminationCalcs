@@ -31,9 +31,13 @@ noiseFree = sensorGet(sensor, 'photons');
 % Get poisson noise, this is in photons
 
 [~, noise] = noiseShot(sensor);
-% 
-% % Add noise back with k multiplier
-photons = noiseFree + noise * k;
+
+% Add noise back with k multiplier
+% photons = noiseFree + noise * k;
+
+% Try to do something with uniform noise and see result
+avg = mean2(noiseFree);
+photons = noiseFree + noise + k * .1 * avg * rand(size(noiseFree));
 
 % photons = noiseFree + k * sqrt(noiseFree) .* randn(size(noiseFree));
 
