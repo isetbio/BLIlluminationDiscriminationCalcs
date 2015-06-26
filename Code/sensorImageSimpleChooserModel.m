@@ -165,40 +165,53 @@ accuracyMatrix = zeros(maxImageIllumNumber, kSampleNum);
 
 %% Run calculations up to illumination number and k-value limits
 
-% Compute noise free cone absorptions for the standard image, this will be
-% the same throughout the entire simulation.  We choose 2 images without
-% replacement from the standard image pool.  This is in order to account
-% for the pixel noise present from the renderer.  The images happen to be
-% indexed starting at 0.
-standardChoice = randsample(calcParams.targetImageSetSize, 2);
+% Precompute all the images from the standard pool to save computational
+% time later on
+standardPool = cell(1, calcParams.targetImageSetSize);
+for ii = 1:calcParams.targetImageSetSize
+    opticalImageName = ['TestImage' int2str(ii - 1)];
+    oi = loadOpticalImageData(standardPath, opticalImageName);
+    sensorStandard = sensorSet(sensor, 'noise flag', 0);
+    sensorStandard = coneAbsorptions(sensorStandard, oi);
+    standardPool{ii} = sensorStandard;
+end
 
-refChoice = ['TestImage' int2str(standardChoice(1) - 1)];
-oiStandard = loadOpticalImageData(standardPath, refChoice);
-sensorStandard = sensorSet(sensor, 'noise flag', 0);
-sensorStandard = coneAbsorptions(sensorStandard, oiStandard);
-
-compChoice = ['TestImage' int2str(standardChoice(2) - 1)];
-oiStandardComp = loadOpticalImageData(standardPath, compChoice);
-sensorStandardComp = sensorSet(sensor, 'noise flag', 0);
-sensorStandardComp = coneAbsorptions(sensorStandardComp,oiStandardComp);
+% OLD CODE
+% refChoice = ['TestImage' int2str(standardChoice(1) - 1)];
+% oiStandard = loadOpticalImageData(standardPath, refChoice);
+% sensorStandard = sensorSet(sensor, 'noise flag', 0);
+% sensorStandard = coneAbsorptions(sensorStandard, oiStandard);
+%
+% compChoice = ['TestImage' int2str(standardChoice(2) - 1)];
+% oiStandardComp = loadOpticalImageData(standardPath, compChoice);
+% sensorStandardComp = sensorSet(sensor, 'noise flag', 0);
+% sensorStandardComp = coneAbsorptions(sensorStandardComp,oiStandardComp);
 
 % Loop through the illumination number
 for i = 1:maxImageIllumNumber
     
-    % Compute the noise free cone absorptions for the current test image.
-    % If the test image pool is greater than 1 for a illumination number,
-    % we choose one randomly.
+    % Precompute the test image pool to save computational time.
     imageName = fileList{i};
     imageName = strrep(imageName, 'OpticalImage.mat', '');
-    testChoice = randsample(calcParams.comparisonImageSetSize, 1);
-    if testChoice > 1
-        imageName = strrep(imageName, 'L-', ['L' int2str(testChoice - 1) '-']);
-    end   
-    fprintf('%s\n', imageName);
+    testPool = cell(1, calcParams.comparisonImageSetSize);
+    for oo = 1:calcParams.comparisonImageSetSize
+        if 00 > 1
+            imageName = strrep(imageName, 'L-', ['L' int2str(oo - 1) '-']);
+        end
+        oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' folderName], imageName);
+        sensorTest = sensorSet(sensor, 'noise flag', 0);
+        sensorTest = coneAbsorptions(sensorTest, oiTest);
+        testPool{oo} = sensorTest;
+    end
     
-    oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' folderName], imageName);
-    sensorTest = sensorSet(sensor, 'noise flag', 0);
-    sensorTest = coneAbsorptions(sensorTest, oiTest);
+%     if testChoice > 1
+%         imageName = strrep(imageName, 'L-', ['L' int2str(testChoice - 1) '-']);
+%     end
+%     fprintf('%s\n', imageName);
+%     
+%     oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' folderName], imageName);
+%     sensorTest = sensorSet(sensor, 'noise flag', 0);
+%     sensorTest = coneAbsorptions(sensorTest, oiTest);
     
     % Loop through the k values
     for j = 1:kSampleNum
@@ -207,14 +220,22 @@ for i = 1:maxImageIllumNumber
         % Simulate out over calcNumber simulated trials
         tic
         for t = 1:numTrials
+            
+            % We choose 2 images without replacement from the standard image pool.  
+            % This is in order to account for the pixel noise present from the renderer.
+            standardChoice = randsample(calcParams.targetImageSetSize, 2);
+            
+            % Randomly choose one image from the test pool
+            testChoice = randsample(calcParams.comparisonImageSetSize, 1);
+            
             % Get inital noisy ref image
-            photonsStandardRef = getNoisySensorImage(calcParams,sensorStandard,currKValue);
+            photonsStandardRef = getNoisySensorImage(calcParams,standardPool{standardChoice(1)},currKValue);
             
             % Get noisy version of standard image
-            photonsStandardComp = getNoisySensorImage(calcParams,sensorStandardComp,currKValue);
+            photonsStandardComp = getNoisySensorImage(calcParams,standardPool{standardChoice(2)},currKValue);
             
             % Get noisy version of test image
-            photonsTestComp = getNoisySensorImage(calcParams,sensorTest,currKValue);
+            photonsTestComp = getNoisySensorImage(calcParams,testPool{testChoice},currKValue);
             
             % Check if result is 3D, in that case take sum of slices
             if calcParams.enableEM
@@ -222,12 +243,12 @@ for i = 1:maxImageIllumNumber
                 photonsStandardComp = sum(photonsStandardComp,3);
                 photonsTestComp = sum(photonsTestComp,3);
             end
-
+            
             % Calculate vector distance from the test image and
             % standard image to the reference image
             distToStandard = norm(photonsStandardRef(:)-photonsStandardComp(:));
             distToTest = norm(photonsStandardRef(:)-photonsTestComp(:));
-  
+            
             % Decide if 'subject' was correct on this trial
             if (distToStandard < distToTest)
                 correct  = correct + 1;

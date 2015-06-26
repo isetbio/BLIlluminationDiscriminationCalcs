@@ -16,9 +16,9 @@ function runAllCalculations
 close all; ieInit;
 
 %% Control of what gets done in this function
-CACHE_SCENES = true; forceSceneCompute = false;
-CACHE_OIS = true; forceOICompute = false;
-RUN_CHOOSER = false; chooserColorChoice = 1; overWriteFlag = 1;
+CACHE_SCENES = false; forceSceneCompute = false;
+CACHE_OIS = false; forceOICompute = false;
+RUN_CHOOSER = true; chooserColorChoice = 1; overWriteFlag = 1;
 CALC_THRESH = false; displayIndividualThreshold = false;
 
 %% Get our project toolbox on the path
@@ -59,10 +59,10 @@ for k1 = 1:length(calcIDStrs)
     calcParams.coneIntegrationTime = 0.050;
     calcParams.sensorFOV = 0.83;             % Visual angle defining the size of the sensor
     
-    calcParams.numTrials = 500;
-    calcParams.maxIllumTarget = 50;
-    calcParams.numKValueSamples = 30;
-    calcParams.kInterval = 2;
+    calcParams.numTrials = 100;
+    calcParams.maxIllumTarget = 3;
+    calcParams.numKValueSamples = 10;
+    calcParams.kInterval = 1;
     calcParams.startK = 1;
     
     % Specify the number of standard image samples available as well as the
