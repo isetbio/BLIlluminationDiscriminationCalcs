@@ -114,7 +114,7 @@ end
 %% Compute according to the input color choice
 computeByColor(calcParams, sensor, colorChoice);
 
-fprintf('Calculation complete');
+fprintf('Calculation complete\n');
 end
 
 function results = singleColorKValueComparison(calcParams, sensor, standardPath, folderName, prefix)
@@ -140,8 +140,10 @@ function results = singleColorKValueComparison(calcParams, sensor, standardPath,
 %% Get relevant parameters from calcParams
 numTrials = calcParams.numTrials;
 maxImageIllumNumber = calcParams.maxIllumTarget;
-kSampleNum = calcParams.numKValueSamples;
-kInterval = calcParams.kInterval;
+KpSampleNum = calcParams.numKValueSamples;
+KpInterval = calcParams.kInterval;
+KgSampleNum = calcParams.numKgSamples;
+KgInterval = calcParams.KgInterval;
 
 %% Get a list of images
 
@@ -149,8 +151,8 @@ kInterval = calcParams.kInterval;
 % order.  In addition, if a specific illumination number has more than one
 % copy, the file name should formatted like 'blue1L#-RGB...' where #
 % represents the copy number.  For consistancy, I believe these should also
-% be zero indexed like the standard are. In this case # would start with 1.
-% Code beyond this point will assume that this is so.
+% be zero indexed like the standard are, except that the 0th term will not have a #. 
+% In this case # would start with 1. Code beyond this point will assume that this is so.
 dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
 folderPath = fullfile(dataBaseDir, 'OpticalImageData', calcParams.cacheFolderList{2}, folderName);
 data = what(folderPath);
@@ -161,7 +163,7 @@ fileList = fileList(b);
 fileList = fileList((cellfun(@(x)any(isempty(regexp(x,'L[\d]','once'))),fileList) == 1)); % Removes any copies of test images
 
 %% Preallocate space for the accuracy matrix which will store the results of the calculations
-accuracyMatrix = zeros(maxImageIllumNumber, kSampleNum);
+accuracyMatrix = zeros(maxImageIllumNumber, KpSampleNum, KgSampleNum);
 
 %% Run calculations up to illumination number and k-value limits
 
@@ -176,26 +178,27 @@ for ii = 1:calcParams.targetImageSetSize
     standardPool{ii} = sensorStandard;
 end
 
-% OLD CODE
-% refChoice = ['TestImage' int2str(standardChoice(1) - 1)];
-% oiStandard = loadOpticalImageData(standardPath, refChoice);
-% sensorStandard = sensorSet(sensor, 'noise flag', 0);
-% sensorStandard = coneAbsorptions(sensorStandard, oiStandard);
-%
-% compChoice = ['TestImage' int2str(standardChoice(2) - 1)];
-% oiStandardComp = loadOpticalImageData(standardPath, compChoice);
-% sensorStandardComp = sensorSet(sensor, 'noise flag', 0);
-% sensorStandardComp = coneAbsorptions(sensorStandardComp,oiStandardComp);
+% Compute the mean of the standardPool isomerizations.  This will serve as
+% the standard deviation of an optional Gaussian noise factor Kg.
+photonCellArray = cell(1, length(standardPool));
+for ii = 1:length(photonCellArray)
+    photonCellArray{ii} = sensorGet(standardPool{ii}, 'photons');
+end
+photonCellArray = cellfun(@(x)mean2(x),photonCellArray, 'UniformOutput', 0);
+calcParams.meanStandard = mean(cat(1,photonCellArray{:}));
 
 % Loop through the illumination number
-for i = 1:maxImageIllumNumber
+for ii = 1:maxImageIllumNumber
+    fprintf('Running trials for %s illumination step %u\n', prefix, ii);
+%     fprintf('Estimated time for this step: ');
+%     toDelete = 0;
     
     % Precompute the test image pool to save computational time.
-    imageName = fileList{i};
+    imageName = fileList{ii};
     imageName = strrep(imageName, 'OpticalImage.mat', '');
     testPool = cell(1, calcParams.comparisonImageSetSize);
     for oo = 1:calcParams.comparisonImageSetSize
-        if 00 > 1
+        if oo > 1
             imageName = strrep(imageName, 'L-', ['L' int2str(oo - 1) '-']);
         end
         oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' folderName], imageName);
@@ -204,60 +207,67 @@ for i = 1:maxImageIllumNumber
         testPool{oo} = sensorTest;
     end
     
-%     if testChoice > 1
-%         imageName = strrep(imageName, 'L-', ['L' int2str(testChoice - 1) '-']);
-%     end
-%     fprintf('%s\n', imageName);
-%     
-%     oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' folderName], imageName);
-%     sensorTest = sensorSet(sensor, 'noise flag', 0);
-%     sensorTest = coneAbsorptions(sensorTest, oiTest);
-    
     % Loop through the k values
-    for j = 1:kSampleNum
+    for jj = 1:KpSampleNum
         correct = 0;
-        currKValue = (calcParams.startK + kInterval * (j - 1));
-        % Simulate out over calcNumber simulated trials
-        tic
-        for t = 1:numTrials
-            
-            % We choose 2 images without replacement from the standard image pool.  
-            % This is in order to account for the pixel noise present from the renderer.
-            standardChoice = randsample(calcParams.targetImageSetSize, 2);
-            
-            % Randomly choose one image from the test pool
-            testChoice = randsample(calcParams.comparisonImageSetSize, 1);
-            
-            % Get inital noisy ref image
-            photonsStandardRef = getNoisySensorImage(calcParams,standardPool{standardChoice(1)},currKValue);
-            
-            % Get noisy version of standard image
-            photonsStandardComp = getNoisySensorImage(calcParams,standardPool{standardChoice(2)},currKValue);
-            
-            % Get noisy version of test image
-            photonsTestComp = getNoisySensorImage(calcParams,testPool{testChoice},currKValue);
-            
-            % Check if result is 3D, in that case take sum of slices
-            if calcParams.enableEM
-                photonsStandardRef = sum(photonsStandardRef,3);
-                photonsStandardComp = sum(photonsStandardComp,3);
-                photonsTestComp = sum(photonsTestComp,3);
-            end
-            
-            % Calculate vector distance from the test image and
-            % standard image to the reference image
-            distToStandard = norm(photonsStandardRef(:)-photonsStandardComp(:));
-            distToTest = norm(photonsStandardRef(:)-photonsTestComp(:));
-            
-            % Decide if 'subject' was correct on this trial
-            if (distToStandard < distToTest)
-                correct  = correct + 1;
-            end
-        end
+        Kp = calcParams.startK + KpInterval * (jj - 1);
         
-        % Print the time the calculation took
-        fprintf('Calculation time for color: %s, IllumNumber: %d, k-value %.2f = %2.1f\n', prefix, i, currKValue, toc);
-        accuracyMatrix(i,j) = correct / numTrials * 100;
+        for kk = 1:KgSampleNum
+            Kg = calcParams.startKg + KgInterval * (kk - 1);
+            
+            % Simulate out over calcNumber simulated trials
+            tic
+            for tt = 1:numTrials
+                
+                % We choose 2 images without replacement from the standard image pool.
+                % This is in order to account for the pixel noise present from the renderer.
+                standardChoice = randsample(calcParams.targetImageSetSize, 2);
+                
+                % Randomly choose one image from the test pool
+                testChoice = randsample(calcParams.comparisonImageSetSize, 1);
+                
+                % Get inital noisy ref image
+                photonsStandardRef = getNoisySensorImage(calcParams,standardPool{standardChoice(1)},Kp,Kg);
+                
+                % Get noisy version of standard image
+                photonsStandardComp = getNoisySensorImage(calcParams,standardPool{standardChoice(2)},Kp,Kg);
+                
+                % Get noisy version of test image
+                photonsTestComp = getNoisySensorImage(calcParams,testPool{testChoice},Kp,Kg);
+                
+                % Check if result is 3D, in that case take sum of slices
+                if calcParams.enableEM
+                    photonsStandardRef = sum(photonsStandardRef,3);
+                    photonsStandardComp = sum(photonsStandardComp,3);
+                    photonsTestComp = sum(photonsTestComp,3);
+                end
+                
+                % Calculate vector distance from the test image and
+                % standard image to the reference image
+                distToStandard = norm(photonsStandardRef(:)-photonsStandardComp(:));
+                distToTest = norm(photonsStandardRef(:)-photonsTestComp(:));
+                
+                % Decide if 'subject' was correct on this trial
+                if (distToStandard < distToTest)
+                    correct  = correct + 1;
+                end
+            end
+            
+            % Print the time the calculation took
+            fprintf('Calculation time for Kp %.2f, Kg %.2f = %2.1f\n', Kp, Kg, toc);
+%             for dd = 1:toDelete
+%                 fprintf('\b');
+%             end
+%             totalSecondsRemaining = ((KpSampleNum - jj + 1)*KgSampleNum + kk - 1) * toc;
+%             hours = totalSecondsRemaining / 3600;
+%             minutes = mod(totalSecondsRemaining, 3600) / 60;
+%             seconds = mod(mod(totalSecondsRemaining, 3600),60);
+%             output = [int2str(hours) ' hrs ' int2str(minutes) ' min ' int2str(seconds) ' s'];
+%             fprintf('%s', output);
+%             toDelete = numel(output);
+
+            accuracyMatrix(ii,jj,kk) = correct / numTrials * 100;
+        end
     end
 end
 

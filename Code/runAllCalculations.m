@@ -55,15 +55,20 @@ for k1 = 1:length(calcIDStrs)
     calcParams.cropRect = [550 450 40 40];              % [450 350 624 574] is the entire non-black region of our initial images
     calcParams.S = [380 8 51];
         
-    % Specify the parameters for the chooser calculation
+    % Parameters for creating the sensor
     calcParams.coneIntegrationTime = 0.050;
     calcParams.sensorFOV = 0.83;             % Visual angle defining the size of the sensor
     
-    calcParams.numTrials = 100;
+    % Specify the parameters for the chooser calculation
+    calcParams.numTrials = 500;
     calcParams.maxIllumTarget = 3;
     calcParams.numKValueSamples = 10;
     calcParams.kInterval = 1;
     calcParams.startK = 1;
+    
+    calcParams.numKgSamples = 1;
+    calcParams.startKg = 0;
+    calcParams.KgInterval = 1;
     
     % Specify the number of standard image samples available as well as the
     % number of test image samples available.  The chooser will randomly

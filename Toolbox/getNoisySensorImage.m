@@ -1,4 +1,4 @@
-function photons = getNoisySensorImage(calcParams, sensor, k)
+function photons = getNoisySensorImage(calcParams, sensor, Kp, Kg)
 %getNoisySensorImage(calcParams, folderName, imageName, sensor, k)
 % Generate a single noisy sensor image of the input optical image location
 % using the given input sensor
@@ -9,7 +9,10 @@ function photons = getNoisySensorImage(calcParams, sensor, k)
 %   sensor     - A sensor which already contains a noise free sensor image.
 %                This sensor image will be used to compute a noisy image
 %                with the desired k-value.
-%   k          - The k-value of noise desired in this image.
+%   Kp         - The k factor for the Poisson noise of this image.
+%   Kg         - The k factor for the Gaussian noise in this image.  The
+%                standard deviation for this noise will be the sqaure root
+%                of the mean of the target image isomerizations.
 %
 % Outputs:
 %   photons - the photon data from the generated sensor image.
@@ -19,9 +22,13 @@ function photons = getNoisySensorImage(calcParams, sensor, k)
 % 5/18/2015   xd  changed to use photon data instead of volt data
 % 6/3/15      xd  now requires a precomputed noise free image
 
-%% Use a default k-value of 1
+%% Use a default k-values for p and g
+if nargin == 3
+    Kg = 0;
+end
 if (nargin < 2)
-    k = 1;
+    Kp = 1;
+    Kg = 0;
 end
 
 %% Calculate noisy sample
@@ -29,19 +36,13 @@ end
 noiseFree = sensorGet(sensor, 'photons');
 
 % Get poisson noise, this is in photons
+[~, nP] = noiseShot(sensor);
 
-[~, noise] = noiseShot(sensor);
+% Get the Gaussian noise
+nG = sqrt(calcParams.meanStandard) * randn(size(noiseFree));
 
-% Add noise back with k multiplier
-% photons = noiseFree + noise * k;
-
-% Try to do something with uniform noise and see result
-avg = mean2(noiseFree);
-photons = noiseFree + noise + k * .1 * avg * rand(size(noiseFree));
-
-% photons = noiseFree + k * sqrt(noiseFree) .* randn(size(noiseFree));
-
-% photons = normrnd(noiseFree, k * sqrt(noiseFree));
+% Add noise back with k multipliers
+photons = noiseFree + Kg * nP + Kp * nG;
 
 % Photons are whole numbers
 photons = round(photons);     % Disable rounding for bug testing

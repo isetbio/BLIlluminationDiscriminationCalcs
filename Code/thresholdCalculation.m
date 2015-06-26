@@ -50,10 +50,10 @@ paramsValueEst = [10 1 0.5 0];
 %% Calculate Thresholds
 % For each illumantion color, we find a vector of thresholds at which
 % the success rate is 0.709
-[psycho.thresholdBlue, psycho.bluePsychoFitParams, psycho.uBlue] = fitToData(calcParams, blueMatrix, paramsValueEst, 'b', displayIndividualThreshold);
-[psycho.thresholdRed, psycho.redPsychoFitParams, psycho.uRed] = fitToData(calcParams, redMatrix, paramsValueEst, 'r', displayIndividualThreshold);
-[psycho.thresholdGreen, psycho.greenPsychoFitParams, psycho.uGreen] = fitToData(calcParams, greenMatrix, paramsValueEst, 'g', displayIndividualThreshold);
-[psycho.thresholdYellow, psycho.yellowPsychoFitParams, psycho.uYellow] = fitToData(calcParams, yellowMatrix, paramsValueEst, 'y', displayIndividualThreshold);
+[psycho.thresholdBlue, psycho.bluePsychoFitParams, psycho.uBlue] = fitToData(calcParams, blueMatrix(:,:,1), paramsValueEst, 'b', displayIndividualThreshold);
+[psycho.thresholdRed, psycho.redPsychoFitParams, psycho.uRed] = fitToData(calcParams, redMatrix(:,:,1), paramsValueEst, 'r', displayIndividualThreshold);
+[psycho.thresholdGreen, psycho.greenPsychoFitParams, psycho.uGreen] = fitToData(calcParams, greenMatrix(:,:,1), paramsValueEst, 'g', displayIndividualThreshold);
+[psycho.thresholdYellow, psycho.yellowPsychoFitParams, psycho.uYellow] = fitToData(calcParams, yellowMatrix(:,:,1), paramsValueEst, 'y', displayIndividualThreshold);
 
 %% Plot Thresholds
 
@@ -82,7 +82,7 @@ save(outputFile,'calcParams','psycho');
 end
 
 function [threshold, paramsValues, usableDataStart] = fitToData (calcParams, data, paramsEstimate, color, toPlot)
-%[threshold, paramsValues] = fitToData (data, paramsEstimate, color, toPlot)
+% [threshold, paramsValues] = fitToData (data, paramsEstimate, color, toPlot)
 %
 % This function will fit input data to a Weibull curve.  The choice of
 % psychometric function can be changed manually here.  Set "toPlot" to
@@ -227,7 +227,7 @@ end
 end
 
 function fitAndPlotToThreshold (usableData, threshold, color, kInterval, kValsFine, figParams)
-%fitAndPlotToThreshold (usableData, threshold, color, kInterval, kValsFine, figParams)
+% fitAndPlotToThreshold (usableData, threshold, color, kInterval, kValsFine, figParams)
 %
 % This function plots the thresholds against their respective k values of
 % noise.  Currently the data is fit to a linear line.
@@ -255,10 +255,9 @@ plot(kVals, threshold, strcat(color,'.'), 'markersize', figParams.markerSize);
 
 % This will start the fit as a linear line.  Then increase the target fit
 % and try again if the mean error is greater than the tolerance.
-errorTolerance = .75;
+errorTolerance = .5;
 delta = 1;
 polynomialToFit = 1;
-
 s = warning('error','MATLAB:polyval:ZeroDOF');
 while mean(delta) > errorTolerance && polynomialToFit < 4
     try
@@ -272,6 +271,7 @@ while mean(delta) > errorTolerance && polynomialToFit < 4
     end
 end
 warning(s);
+
 hold on;
 plot (kValsFine, y, color, 'linewidth', figParams.lineWidth);
 end
