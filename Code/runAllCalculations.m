@@ -18,7 +18,7 @@ close all; ieInit;
 %% Control of what gets done in this function
 CACHE_SCENES = false; forceSceneCompute = false;
 CACHE_OIS = false; forceOICompute = false;
-RUN_CHOOSER = true; chooserColorChoice = 1; overWriteFlag = 1;
+RUN_CHOOSER = true; chooserColorChoice = 0; overWriteFlag = 1;
 CALC_THRESH = false; displayIndividualThreshold = false;
 
 %% Get our project toolbox on the path
@@ -30,7 +30,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 % Set identifiers to run
-calcIDStrs = {'StaticPhoton'};
+calcIDStrs = {'StaticPhoton_Gaussian'};
 
 %% Parameters of the calculation
 %
@@ -61,14 +61,14 @@ for k1 = 1:length(calcIDStrs)
     
     % Specify the parameters for the chooser calculation
     calcParams.numTrials = 500;
-    calcParams.maxIllumTarget = 3;
+    calcParams.maxIllumTarget = 50;
     calcParams.numKValueSamples = 10;
     calcParams.kInterval = 1;
     calcParams.startK = 1;
     
-    calcParams.numKgSamples = 1;
+    calcParams.numKgSamples = 5;
     calcParams.startKg = 0;
-    calcParams.KgInterval = 1;
+    calcParams.KgInterval = 2;
     
     % Specify the number of standard image samples available as well as the
     % number of test image samples available.  The chooser will randomly
@@ -86,7 +86,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.numEMPositions = 5;
     calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
     calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
-    calcParams.tremorAmpFactor = 0;                    % This factor determines amplitude of tremors
+    calcParams.tremorAmpFactor = 0;                     % This factor determines amplitude of tremors
     
     % Specify cone adaptation parameters
     % The Isetbio code for cone adaptation is currently under reconstruction
