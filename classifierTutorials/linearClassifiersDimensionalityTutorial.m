@@ -268,7 +268,7 @@ for ii = 1:length(dimensionalities)
 end
 suptitle(['Mean percent correct for SVM ' testDirectionName{testVectorDirection}]);
 savefig(fullfile(directoryName, 'PercentCorrect'));
-FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'pdf');
+FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'tiff');
 
 figure;
 set(gcf, 'position', [0 0 1500 1500]);
@@ -290,6 +290,6 @@ for ii = 1:length(dimensionalities)
 end
 suptitle(['p values for SVM ', testDirectionName{testVectorDirection}]);
 savefig(fullfile(directoryName, 'pvalues'));
-FigureSave(fullfile(directoryName, 'pvalues'), gcf, 'pdf');
+FigureSave(fullfile(directoryName, 'pvalues'), gcf, 'tiff');
 
 save(fullfile(directoryName, 'data'));

@@ -51,10 +51,10 @@
 % 10000 dimensions.
 % 
 % Here are the links to the full figures of percents and p values:
-%
+% 
 % Here is a comparison of when the dimensionality is 10000:
-%
-%
+% 
+% 
 % These results make sense when considering that the Poisson distribution
 % scales with the length of the mean.  In the orthogonal case, especially
 % in high dimensions, the test vector was not perturbed in a manner that
@@ -79,10 +79,10 @@
 % similar.
 % 
 % Here are the links to the full figures of percents and p values:
-%
+% 
 % Here is a comparison of when the dimensionality is 10000:
-%
-%
+% 
+% 
 % This result can explained by the SVM creating a hyperplane using support
 % vectors to classify the test sets.  Since this hyperplane is fixed, it is
 % expected that increasing the noise distribution will eventually result in

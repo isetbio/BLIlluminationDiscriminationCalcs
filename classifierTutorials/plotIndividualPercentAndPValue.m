@@ -55,6 +55,6 @@ ylim(figParams.pvalueYLim);
 
 suptitle(theTitle);
 savefig(fullfile(directoryName, theTitle));
-FigureSave(fullfile(directoryName, theTitle), gcf, 'pdf');
+FigureSave(fullfile(directoryName, theTitle), gcf, 'tiff');
 end
 
