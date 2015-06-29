@@ -18,9 +18,10 @@ function thresholdCalculation(calcIDStr,displayIndividualThreshold)
 % 4/24/2015   xd  cleaned up the function for readability
 % 5/28/2015   xd  usableData range decision is now automated
 % 6/4/15      xd  now decides usable end range as well
+% 6/29/15     xd  implemented fitting to Kg values
 
 %% clear
-clc; clear global; %close all;
+clear global; %close all;
 
 %% Get our project toolbox on the path
 myDir = fileparts(mfilename('fullpath'));
@@ -38,6 +39,7 @@ dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
 dataFilePath = fullfile(dataBaseDir, 'SimpleChooserData', calcIDStr, ['calcParams' calcIDStr]);
 p = load(dataFilePath);
 calcParams = p.calcParams;
+calcParams = updateCalcParamFields(calcParams);
 
 %% Load default figure parameters
 figParams = getFigureParameters;
@@ -48,28 +50,57 @@ figParams = getFigureParameters;
 paramsValueEst = [10 1 0.5 0];
 
 %% Calculate Thresholds
-% For each illumantion color, we find a vector of thresholds at which
-% the success rate is 0.709
-[psycho.thresholdBlue, psycho.bluePsychoFitParams, psycho.uBlue] = fitToData(calcParams, blueMatrix(:,:,1), paramsValueEst, 'b', displayIndividualThreshold);
-[psycho.thresholdRed, psycho.redPsychoFitParams, psycho.uRed] = fitToData(calcParams, redMatrix(:,:,1), paramsValueEst, 'r', displayIndividualThreshold);
-[psycho.thresholdGreen, psycho.greenPsychoFitParams, psycho.uGreen] = fitToData(calcParams, greenMatrix(:,:,1), paramsValueEst, 'g', displayIndividualThreshold);
-[psycho.thresholdYellow, psycho.yellowPsychoFitParams, psycho.uYellow] = fitToData(calcParams, yellowMatrix(:,:,1), paramsValueEst, 'y', displayIndividualThreshold);
+
+% Preload cells the size of Kg samples to store thresholds fitted along Kp
+tBlue = cell(calcParams.numKgSamples, 1);
+tGreen = cell(calcParams.numKgSamples, 1);
+tRed = cell(calcParams.numKgSamples, 1);
+tYellow = cell(calcParams.numKgSamples, 1);
+
+pBlue = cell(calcParams.numKgSamples, 1);
+pGreen = cell(calcParams.numKgSamples, 1);
+pRed = cell(calcParams.numKgSamples, 1);
+pYellow = cell(calcParams.numKgSamples, 1);
+
+uBlue = ones(calcParams.numKgSamples, 1);
+uGreen = ones(calcParams.numKgSamples, 1);
+uRed = ones(calcParams.numKgSamples, 1);
+uYellow = ones(calcParams.numKgSamples, 1);
+
+% For each illumination color, we find a vector of thresholds at which the success rate is 0.709
+for ii = 1:calcParams.numKgSamples
+    [tBlue{ii}, pBlue{ii}, uBlue(ii)] = fitToData(calcParams, blueMatrix(:,:,ii), paramsValueEst, 'b', displayIndividualThreshold);
+    [tRed{ii}, pRed{ii}, uRed(ii)] = fitToData(calcParams, redMatrix(:,:,ii), paramsValueEst, 'r', displayIndividualThreshold);
+    [tGreen{ii}, pGreen{ii}, uGreen(ii)] = fitToData(calcParams, greenMatrix(:,:,ii), paramsValueEst, 'g', displayIndividualThreshold);
+    [tYellow{ii}, pYellow{ii}, uYellow(ii)] = fitToData(calcParams, yellowMatrix(:,:,ii), paramsValueEst, 'y', displayIndividualThreshold);
+end
+
+psycho.thresholdBlueTotal = uBlue; psycho.bluePsychoFitParamsTotal = pBlue; psycho.uBlueTotal = uBlue;
+psycho.thresholdRedTotal = uRed; psycho.redPsychoFitParamsTotal = pRed; psycho.uRedTotal = uRed;
+psycho.thresholdGreenTotal = uGreen; psycho.greenPsychoFitParamsTotal = pGreen; psycho.uGreenTotal = uGreen;
+psycho.thresholdYellowTotal = uYellow; psycho.yellowPsychoFitParamsTotal = pYellow; psycho.uYellowTotal = uYellow;
+
+% Save some data in previous format to code further on does not break
+psycho.thresholdBlue = tBlue{1}; psycho.bluePsychoFitParams = pBlue{1}; psycho.uBlue = uBlue(1);
+psycho.thresholdRed = tRed{1}; psycho.redPsychoFitParams = pRed{1}; psycho.uRed = uRed(1);
+psycho.thresholdGreen = tGreen{1}; psycho.greenPsychoFitParams = pGreen{1}; psycho.uGreen = uGreen(1);
+psycho.thresholdYellow = tYellow{1}; psycho.yellowPsychoFitParams = pYellow{1}; psycho.uYellow = uYellow(1);
 
 %% Plot Thresholds
 
 % Plot each threshold vector against its representative k-value of
 % noise.  Also fit a line to it.
-kInterval = calcParams.kInterval;
-startK = calcParams.startK;
-maxK = startK + (calcParams.numKValueSamples - 1) * kInterval;
-kValsFine = startK:(maxK-1)/1000:maxK;
+KpInterval = calcParams.KpInterval;
+startKp = calcParams.startKp;
+maxKp = startKp + (calcParams.numKpSamples - 1) * KpInterval;
+KpValsFine = startKp:(maxKp-1)/1000:maxKp;
 
 figure;
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize);
-fitAndPlotToThreshold(psycho.uBlue, psycho.thresholdBlue, 'b', kInterval, kValsFine, figParams);
-fitAndPlotToThreshold(psycho.uRed, psycho.thresholdRed, 'r', kInterval, kValsFine, figParams);
-fitAndPlotToThreshold(psycho.uGreen, psycho.thresholdGreen, 'g', kInterval, kValsFine, figParams);
-fitAndPlotToThreshold(psycho.uYellow, psycho.thresholdYellow, 'y', kInterval, kValsFine, figParams);
+fitAndPlotToThreshold(psycho.uBlue, psycho.thresholdBlue, 'b', KpInterval, KpValsFine, figParams);
+fitAndPlotToThreshold(psycho.uRed, psycho.thresholdRed, 'r', KpInterval, KpValsFine, figParams);
+fitAndPlotToThreshold(psycho.uGreen, psycho.thresholdGreen, 'g', KpInterval, KpValsFine, figParams);
+fitAndPlotToThreshold(psycho.uYellow, psycho.thresholdYellow, 'y', KpInterval, KpValsFine, figParams);
 
 title(['Threshold against k-values for ' calcIDStr], 'interpreter', 'none');
 xlabel('k-values');
@@ -106,7 +137,7 @@ function [threshold, paramsValues, usableDataStart] = fitToData (calcParams, dat
 %   usableData   - The first column at which the data set is appropriate
 %                  for fitting
 
-%% Find usable data range
+%% Find usable data range based on Kp
 
 sizeOfData = size(data);
 
@@ -226,27 +257,27 @@ for i = 1:numKValue
 end
 end
 
-function fitAndPlotToThreshold (usableData, threshold, color, kInterval, kValsFine, figParams)
+function fitAndPlotToThreshold (usableData, threshold, color, KpInterval, KpValsFine, figParams)
 % fitAndPlotToThreshold (usableData, threshold, color, kInterval, kValsFine, figParams)
 %
 % This function plots the thresholds against their respective k values of
 % noise.  Currently the data is fit to a linear line.
 %
 % Inputs:
-%   usableData - The start index at which the data is usable for fitting
-%   threshold  - The threshold data to plot
-%   color      - The color to plot the data
-%   kInterval  - The interval between k-value samples
-%   kValsFine  - The total range to plot the fit over.  This should be
-%                subdivided into many small intervals (finely) to create
-%                a line
-%   figParams  - Parameters to format the plot
+%   usableData  - The start index at which the data is usable for fitting
+%   threshold   - The threshold data to plot
+%   color       - The color to plot the data
+%   KpInterval  - The interval between k-Poisson samples
+%   KpValsFine  - The total range to plot the fit over.  This should be
+%                 subdivided into many small intervals (finely) to create
+%                 a line
+%   figParams   - Parameters to format the plot
 
 %% Define x-axis value range
 numOfData = size(threshold);
-dataStart = min(kValsFine(:)) + (usableData - 1) * kInterval;
-dataEnd = dataStart + (numOfData(1) - 1) * kInterval;
-kVals = dataStart:kInterval:dataEnd;
+dataStart = min(KpValsFine(:)) + (usableData - 1) * KpInterval;
+dataEnd = dataStart + (numOfData(1) - 1) * KpInterval;
+kVals = dataStart:KpInterval:dataEnd;
 
 %% Plot threshold points
 plot(kVals, threshold, strcat(color,'.'), 'markersize', figParams.markerSize);
@@ -262,16 +293,16 @@ s = warning('error','MATLAB:polyval:ZeroDOF');
 while mean(delta) > errorTolerance && polynomialToFit < 4
     try
         [p, S] = polyfit(kVals, threshold', polynomialToFit);
-        [y, delta] = polyval(p, kValsFine,S);
+        [y, delta] = polyval(p, KpValsFine,S);
         polynomialToFit = polynomialToFit + 1;
     catch
         [p, S] = polyfit(kVals, threshold', polynomialToFit - 1);
-        y = polyval(p, kValsFine,S);
+        y = polyval(p, KpValsFine,S);
         break;
     end
 end
 warning(s);
 
 hold on;
-plot (kValsFine, y, color, 'linewidth', figParams.lineWidth);
+plot (KpValsFine, y, color, 'linewidth', figParams.lineWidth);
 end
