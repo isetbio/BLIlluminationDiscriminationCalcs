@@ -1,9 +1,6 @@
-This directory contains Matlab scripts and data that compare the effects of high dimensional data 
-on distance based and machine learning classification methods.  All methods are tested with Gaussian, 
-Poisson, and Poisson approximation noise added to two vectors in high dimensional space.
+This directory contains Matlab scripts and data that compare the effects of high dimensional data on distance based and machine learning classification methods.  All methods are tested with Gaussian, Poisson, and Poisson approximation noise added to two vectors in high dimensional space.
 
-distanceBasedClassifierTutorial.m goes over several distance measurements.  It uses bhattacharyya.m for 
-one of its possible distance metrics.  Result data for the Euclidian distance is included in this directory.
+distanceBasedClassifierTutorial.m goes over several distance measurements.  It uses bhattacharyya.m for one of its possible distance metrics.  Result data for the Euclidian distance is included in this directory.
 
 linearClassifierDimensionalityTutorial.m covers the SVM method.  Results from this is also included.
 
@@ -11,5 +8,4 @@ twoClassSVMwithSensorImages.m compares data generated from cached data from the 
 
 suptitle.m and getDimensionalityTutorialFigParams.m are just functions for plot formatting.
 
-plotIndividualPercentAndPValue.m will plot a dimensionality and noise function combination.  It takes the data.m file as 
-an input so it must be loaded to a variable.
+plotIndividualPercentAndPValue.m will plot a dimensionality and noise function combination.  It takes the data.m file as an input so it must be loaded to a variable.
