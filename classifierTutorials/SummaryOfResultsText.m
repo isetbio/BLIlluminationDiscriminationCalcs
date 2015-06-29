@@ -7,7 +7,7 @@
 % 
 % In both scripts, randomly generated test data is subjected to the
 % addition of noise in the form of draws from a Gaussian distribution,
-% Poisson distribution, and a Poisson approximation in the form of a
+% Poisson distribution, and a Poisson approximation in the that is a
 % Gaussian with the standard deviation set to the square root of the mean.
 % The mean of the Gaussian distribution was scaled to the vector length
 % between the comparison vector and the test vector.  This is detailed in
@@ -21,7 +21,7 @@
 % 
 % Classification consisted of two separate draws of noise for the
 % comparison vector and one draw for the test vector.  One comparison
-% served as the reference.  If the other comparison was chosed, the result
+% served as the reference.  If the other comparison was chosen, the result
 % was considered correct.  In the case of the SVM, correct classification
 % into arbitrarily determined classes for the comparison and test vectors
 % was considered.
