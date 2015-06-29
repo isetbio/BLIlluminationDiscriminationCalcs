@@ -33,6 +33,12 @@ function sensorImageSimpleChooserModel(calcParams, colorChoice, overWrite)
 %% Set defaults for inputs
 if notDefined('overWrite'), overWrite = 0; end
 
+%% Set RNG seed to be time dependent
+% 
+% For some reason, the RNG does the same thing everytime when run on the
+% blocks computer
+rng('shuffle');
+
 %% Check for faulty parameters
 if calcParams.targetImageSetSize < 2
     error('Must have a standard image pool size of at least 2');
