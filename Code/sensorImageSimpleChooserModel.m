@@ -140,8 +140,8 @@ function results = singleColorKValueComparison(calcParams, sensor, standardPath,
 %% Get relevant parameters from calcParams
 numTrials = calcParams.numTrials;
 maxImageIllumNumber = calcParams.maxIllumTarget;
-KpSampleNum = calcParams.numKValueSamples;
-KpInterval = calcParams.kInterval;
+KpSampleNum = calcParams.numKpSamples;
+KpInterval = calcParams.KpInterval;
 KgSampleNum = calcParams.numKgSamples;
 KgInterval = calcParams.KgInterval;
 
@@ -210,7 +210,7 @@ for ii = 1:maxImageIllumNumber
     % Loop through the k values
     for jj = 1:KpSampleNum
         correct = 0;
-        Kp = calcParams.startK + KpInterval * (jj - 1);
+        Kp = calcParams.startKp + KpInterval * (jj - 1);
         
         for kk = 1:KgSampleNum
             Kg = calcParams.startKg + KgInterval * (kk - 1);

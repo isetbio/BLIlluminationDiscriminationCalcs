@@ -18,8 +18,8 @@ close all; ieInit;
 %% Control of what gets done in this function
 CACHE_SCENES = false; forceSceneCompute = false;
 CACHE_OIS = false; forceOICompute = false;
-RUN_CHOOSER = true; chooserColorChoice = 1; overWriteFlag = 1;
-CALC_THRESH = false; displayIndividualThreshold = false;
+RUN_CHOOSER = false; chooserColorChoice = 1; overWriteFlag = 1;
+CALC_THRESH = true; displayIndividualThreshold = false;
 
 %% Get our project toolbox on the path
 myDir = fileparts(mfilename('fullpath'));
@@ -30,7 +30,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 % Set identifiers to run
-calcIDStrs = {'StaticPhoton'};
+calcIDStrs = {'StaticPhoton_DiffStandardN'};
 
 %% Parameters of the calculation
 %
@@ -59,13 +59,22 @@ for k1 = 1:length(calcIDStrs)
     calcParams.coneIntegrationTime = 0.050;
     calcParams.sensorFOV = 0.83;             % Visual angle defining the size of the sensor
     
-    % Specify the parameters for the chooser calculation
+    % Specify the number of trials for each combination of Kp Kg as well as
+    % the highest illumination step (max 50) to go up to.
     calcParams.numTrials = 500;
     calcParams.maxIllumTarget = 3;
-    calcParams.numKValueSamples = 10;
-    calcParams.kInterval = 1;
-    calcParams.startK = 1;
     
+    % Kp represents the scale factor for the Poisson noise.  This is the
+    % realistic noise representation of the photons arriving at the retina.
+    % Therefore, startKp should always be kept at 1.
+    calcParams.numKpSamples = 10;
+    calcParams.KpInterval = 1;
+    calcParams.startKp = 1;
+    
+    % Kg is the scale factor for an optional Gaussian noise.  The standard
+    % deviation of the Gaussian distribution is equal to the square root of
+    % the mean photoisomerizations across the available target image
+    % samples.
     calcParams.numKgSamples = 1;
     calcParams.startKg = 0;
     calcParams.KgInterval = 1;
@@ -86,7 +95,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.numEMPositions = 5;
     calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
     calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
-    calcParams.tremorAmpFactor = 0;                    % This factor determines amplitude of tremors
+    calcParams.tremorAmpFactor = 0;                     % This factor determines amplitude of tremors
     
     % Specify cone adaptation parameters
     % The Isetbio code for cone adaptation is currently under reconstruction
