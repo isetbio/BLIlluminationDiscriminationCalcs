@@ -18,7 +18,7 @@ close all; ieInit;
 %% Control of what gets done in this function
 CACHE_SCENES = false; forceSceneCompute = false;
 CACHE_OIS = false; forceOICompute = false;
-RUN_CHOOSER = false; chooserColorChoice = 1; overWriteFlag = 1;
+RUN_CHOOSER = false; chooserColorChoice = 0; overWriteFlag = 1;
 CALC_THRESH = true; displayIndividualThreshold = false;
 
 %% Get our project toolbox on the path
@@ -62,7 +62,7 @@ for k1 = 1:length(calcIDStrs)
     % Specify the number of trials for each combination of Kp Kg as well as
     % the highest illumination step (max 50) to go up to.
     calcParams.numTrials = 500;
-    calcParams.maxIllumTarget = 3;
+    calcParams.maxIllumTarget = 50;
     
     % Kp represents the scale factor for the Poisson noise.  This is the
     % realistic noise representation of the photons arriving at the retina.
@@ -75,9 +75,9 @@ for k1 = 1:length(calcIDStrs)
     % deviation of the Gaussian distribution is equal to the square root of
     % the mean photoisomerizations across the available target image
     % samples.
-    calcParams.numKgSamples = 1;
+    calcParams.numKgSamples = 5;
     calcParams.startKg = 0;
-    calcParams.KgInterval = 1;
+    calcParams.KgInterval = 2;
     
     % Specify the number of standard image samples available as well as the
     % number of test image samples available.  The chooser will randomly
