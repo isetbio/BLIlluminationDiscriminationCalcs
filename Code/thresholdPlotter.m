@@ -54,12 +54,24 @@ while true
         case {'close all' 'ca'}
             close all;
         case {'plot single' 'ps'}
-            target = input('Enter 2 numbers for target Kp Kg: ', 's');
+            target = input('Enter 2 numbers followed by a color for target (Kp Kg color): ', 's');
             [f, s] = strtok(target, ' ');
+            [s, c] = strtok(s, ' ');
             Kp = str2double(f);
             Kg = str2double(strtrim(s));
-            green = loadChooserData(calcParams.calcIDStr, ['greenIllumComparison' calcParams.calcIDStr]);
-            fitToData(calcParams, green, psychoData.psycho.greenPsychoFitParamsTotal,psychoData.psycho.uGreenTotal, 'g', Kg, Kp);
+            Color = strtrim(c);
+            data = loadChooserData(calcParams.calcIDStr, [Color 'IllumComparison' calcParams.calcIDStr]);
+            switch Color
+                case 'green'
+                    fitToData(calcParams, data, psychoData.psycho.greenPsychoFitParamsTotal,psychoData.psycho.uGreenTotal, 'g', Kg, Kp);
+                case 'blue'
+                    fitToData(calcParams, data, psychoData.psycho.bluePsychoFitParamsTotal,psychoData.psycho.uBlueTotal, 'b', Kg, Kp);
+                case 'red'
+                    fitToData(calcParams, data, psychoData.psycho.redPsychoFitParamsTotal,psychoData.psycho.uRedTotal, 'r', Kg, Kp);
+                case 'yellow'
+                    fitToData(calcParams, data, psychoData.psycho.yellowPsychoFitParamsTotal,psychoData.psycho.uYellowTotal, 'y', Kg, Kp);
+            end
+        case {'plot all' 'pa'}
         case {'exit'}
             break;
     end
