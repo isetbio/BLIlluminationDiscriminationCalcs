@@ -89,6 +89,7 @@ SVMPred = @(s,d) predict(s,d);
 predictionFunctionList = {SVMPred};
 whichPredictionFunction = 1;
 
+trainPerNoiseLevel = true;
 %% Pre-allocate space for results matrix.  This gives simulated percent
 % correct for each parameter explored.
 percentCorrectRawMatrix = zeros(length(dimensionalities), length(noiseFactorKs), length(noiseFuncList), nSimulations);
@@ -167,21 +168,34 @@ for ii = 1:length(dimensionalities)
     % might depend on how the psychophysical experiment being modelled is
     % set up.  This same kind of question will come up when modeling an
     % experiment with multiple stimulus levels and directions using an SVM.
-    trainedSVMList = cell(length(noiseFactorKs),length(noiseFuncList));
-    for jj = 1:length(noiseFactorKs)
-        fprintf('\tTraining classifier for noise factor %d, adjusted to %g\n',noiseFactorKs(jj),adjustedNoiseFactorKs(jj)); 
+    if trainPerNoiseLevel
+        trainedSVMList = cell(length(noiseFactorKs),length(noiseFuncList));
+        for jj = 1:length(noiseFactorKs)
+            fprintf('\tTraining classifier for noise factor %d, adjusted to %g\n',noiseFactorKs(jj),adjustedNoiseFactorKs(jj));
+            for ff = 1:length(noiseFuncList)
+                data = zeros(trainingSetSize, theDimensionality);
+                class = ones(trainingSetSize, 1);
+                class(1:trainingSetSize/2, 1) = 0;
+                for tt = 1:trainingSetSize/2
+                    data(tt,:) = noiseFuncList{ff}(comparisonVectorMean, testVectorMean, adjustedNoiseFactorKs(jj));
+                    data(trainingSetSize/2 + tt,:) = noiseFuncList{ff}(testVectorMean, comparisonVectorMean, adjustedNoiseFactorKs(jj));
+                end
+                trainedSVMList{jj,ff} = linearClassifierList{whichClassifier}(data, class);
+            end
+        end
+    else
+        trainedSVMList = cell(1,length(noiseFuncList));
         for ff = 1:length(noiseFuncList)
             data = zeros(trainingSetSize, theDimensionality);
             class = ones(trainingSetSize, 1);
             class(1:trainingSetSize/2, 1) = 0;
             for tt = 1:trainingSetSize/2
-                data(tt,:) = noiseFuncList{ff}(comparisonVectorMean, testVectorMean, adjustedNoiseFactorKs(jj));
-                data(trainingSetSize/2 + tt,:) = noiseFuncList{ff}(testVectorMean, comparisonVectorMean, adjustedNoiseFactorKs(jj));
+                data(tt,:) = noiseFuncList{ff}(comparisonVectorMean, testVectorMean, adjustedNoiseFactorKs(1));
+                data(trainingSetSize/2 + tt,:) = noiseFuncList{ff}(testVectorMean, comparisonVectorMean, adjustedNoiseFactorKs(1));
             end
-            trainedSVMList{jj,ff} = linearClassifierList{whichClassifier}(data, class);
+            trainedSVMList{ff} = linearClassifierList{whichClassifier}(data, class);
         end
     end
-        
     % Test the SVMs on the set of noise levels/functions.
     for jj = 1:length(noiseFactorKs)
         % Get noise factor.  This scales the "natural" magnitude of
@@ -211,7 +225,11 @@ for ii = 1:length(dimensionalities)
                 % The amount of correct classifications will be how many
                 % entries in classifiedData are the same as the
                 % corresponding entries in testClasses.
-                classifiedData = predictionFunctionList{whichPredictionFunction}(trainedSVMList{jj,ff}, testData);
+                if trainPerNoiseLevel
+                    classifiedData = predictionFunctionList{whichPredictionFunction}(trainedSVMList{jj,ff}, testData);
+                else
+                    classifiedData = predictionFunctionList{whichPredictionFunction}(trainedSVMList{ff}, testData);
+                end
                 numberCorrect = sum(classifiedData == testClasses);
                 
                 % Store percent correct
