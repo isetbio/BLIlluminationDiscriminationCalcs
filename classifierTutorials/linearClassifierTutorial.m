@@ -1,11 +1,12 @@
-% dimensionalityLinearClassifiers
+% linearClassifierTutorial
 %
 % This is analogous to distanceBasedClassfierTutorial.m.  However, here we
 % will be using a SVM to explore the behavior of classification as a
 % function of dimensionality and noise factor.
 %
-% 6/XX/15  xd wrote it
-% 6/24/15  xd added header and organized like distanceBasedClassfierTutorial.m
+% 6/XX/15  xd   Wrote it
+% 6/24/15  xd   Added header and organized like distanceBasedClassfierTutorial.m
+% 6/30/15  dhb  Rename for parallel structure and minor edits.
 
 %% Clear
 clear; close all;
@@ -46,6 +47,8 @@ noiseFuncNames = {'Normal', 'PoissonApprox' 'Poisson'};
 % classification.  However, the running time will also be increased in
 % accordance.  This value should be an even number due to how the code is
 % set up.
+%
+% This should be an even number.
 trainingSetSize = 2500;
 
 % Length of test vector, and distance from comparionVectorMean to testVectorMean.
@@ -91,7 +94,6 @@ whichPredictionFunction = 1;
 percentCorrectRawMatrix = zeros(length(dimensionalities), length(noiseFactorKs), length(noiseFuncList), nSimulations);
 ttestMatrix = zeros(length(dimensionalities), length(noiseFactorKs), length(noiseFuncList));
 
-
 %% Loop through parameters
 
 for ii = 1:length(dimensionalities)
@@ -108,12 +110,13 @@ for ii = 1:length(dimensionalities)
     % Set up the test vector perturbation in accoradance to the direction
     % decision desired.
     switch(testVectorDirection)
+        % Increase along comparison direction.
         case 1
-%             testVectorPerturbation = rand(1, theDimensionality);
             testVectorPerturbation = testDistance*comparisonVectorMean/norm(comparisonVectorMean);
+        % Decrease along comparison direction.
         case 2
-%             testVectorPerturbation = rand(1, theDimensionality);
             testVectorPerturbation = -testDistance*comparisonVectorMean/norm(comparisonVectorMean);
+        % Step in a direction orthogonal to the comparison.
         case 3
             orthogonalMatrix = null(comparisonVectorMean);
             orthogonalVector = orthogonalMatrix(:,1)';
@@ -150,41 +153,55 @@ for ii = 1:length(dimensionalities)
     noiseLengthInTestDistance = meanNoiseLength/testDistance;
     adjustedNoiseFactorKs = noiseFactorKs/noiseLengthInTestDistance;
     
-    % Train the SVM's on the set of noise functions.  Each noise function
+    % Train the SVM's on the set of noise levels/functions.  Each noise function
     % will have its own SVM.  The data will comprise of exactly 50% of
     % comparison vector and 50% of test vector.  For this tutorial, the
     % comparison vectors will be labeled class 0, and the test vectors will
-    % be labeled class 1.  The SVM will be trained with the adjusted k
-    % value for k = 1.
-    trainedSVMList = cell(1,length(noiseFuncList));
-    for ff = 1:length(noiseFuncList)
-        data = zeros(trainingSetSize, theDimensionality);
-        class = ones(trainingSetSize, 1);
-        class(1:trainingSetSize/2, 1) = 0;
-        for tt = 1:trainingSetSize/2
-            data(tt,:) = noiseFuncList{ff}(comparisonVectorMean, testVectorMean, adjustedNoiseFactorKs(1));
-            data(trainingSetSize/2 + tt,:) = noiseFuncList{ff}(testVectorMean, comparisonVectorMean, adjustedNoiseFactorKs(1));
+    % be labeled class 1.
+    %
+    % The SVM is trained separately with each noise level.  Slow.  It is an
+    % interesting question for modelling a numan observer whether an SVM
+    % should be trained separately for each level of noise or not.  And if
+    % not, what noise level should be used, or whether draws from many
+    % noise levels should be intermixed in the training.  The right answer
+    % might depend on how the psychophysical experiment being modelled is
+    % set up.
+    trainedSVMList = cell(length(noiseFactorKs),length(noiseFuncList));
+    for jj = 1:length(noiseFactorKs)
+        fprintf('\tTraining classifier for noise factor %d, adjusted to %g\n',noiseFactorKs(jj),adjustedNoiseFactorKs(jj)); 
+        for ff = 1:length(noiseFuncList)
+            data = zeros(trainingSetSize, theDimensionality);
+            class = ones(trainingSetSize, 1);
+            class(1:trainingSetSize/2, 1) = 0;
+            for tt = 1:trainingSetSize/2
+                data(tt,:) = noiseFuncList{ff}(comparisonVectorMean, testVectorMean, adjustedNoiseFactorKs(jj));
+                data(trainingSetSize/2 + tt,:) = noiseFuncList{ff}(testVectorMean, comparisonVectorMean, adjustedNoiseFactorKs(jj));
+            end
+            trainedSVMList{jj,ff} = linearClassifierList{whichClassifier}(data, class);
         end
-        trainedSVMList{ff} = linearClassifierList{whichClassifier}(data, class);
     end
-    
-    % Loop over the noise vector
+        
+    % Test the SVMs on the set of noise levels/functions.
     for jj = 1:length(noiseFactorKs)
         % Get noise factor.  This scales the "natural" magnitude of
         % the noise, as defined by the noise functions.
         theAdjustedNoiseK = adjustedNoiseFactorKs(jj);
-        fprintf('\tRunning noise factor %d, adjusted to %g\n',noiseFactorKs(jj),theAdjustedNoiseK); 
+        fprintf('\tRunning classification tests for noise factor %d, adjusted to %g\n',noiseFactorKs(jj),theAdjustedNoiseK); 
         
         % Loop over type of noise
         for ff = 1:length(noiseFuncList)
             fprintf('\t\tRunning noise function %s\n',noiseFuncNames{ff});
-
+            
+            % Simulate trials
+            %
+            % Space for classification data
             testClasses = ones(nSimulatedTrials, 1);
             testClasses(1:nSimulatedTrials/2, 1) = 0;
-            % Simulate trials
+            
+            % Loop
             for ll = 1:nSimulations
-                testData = zeros(nSimulatedTrials, theDimensionality);
                 % Fill the test data matrix
+                testData = zeros(nSimulatedTrials, theDimensionality);
                 for kk = 1:nSimulatedTrials/2
                     testData(kk,:) = noiseFuncList{ff}(comparisonVectorMean, testVectorMean, theAdjustedNoiseK);
                     testData(nSimulatedTrials/2 + kk,:) = noiseFuncList{ff}(testVectorMean, comparisonVectorMean, theAdjustedNoiseK);
@@ -193,7 +210,7 @@ for ii = 1:length(dimensionalities)
                 % The amount of correct classifications will be how many
                 % entries in classifiedData are the same as the
                 % corresponding entries in testClasses.
-                classifiedData = predictionFunctionList{whichPredictionFunction}(trainedSVMList{ff}, testData);
+                classifiedData = predictionFunctionList{whichPredictionFunction}(trainedSVMList{jj,ff}, testData);
                 numberCorrect = sum(classifiedData == testClasses);
                 
                 % Store percent correct
@@ -205,6 +222,8 @@ for ii = 1:length(dimensionalities)
             [~,ttestMatrix(ii,jj,ff)] = ttest(theValues,50);
         end
     end
+    
+    %% Clear out for next dimension
     clear trainedSVMList;
     clear data;
     clear class;
@@ -258,8 +277,8 @@ for ii = 1:length(dimensionalities)
     end
 end
 suptitle(['Mean percent correct for SVM ' testDirectionName{testVectorDirection}]); 
-savefig(fullfile(directoryName, 'PercentCorrect'));
-% FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'pdf');
+% savefig(fullfile(directoryName, 'PercentCorrect'));
+FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'pdf');
 
 figure;
 set(gcf, 'position', [0 0 1500 1500]);
@@ -279,7 +298,7 @@ for ii = 1:length(dimensionalities)
     end
 end
 suptitle(['p values for SVM ', testDirectionName{testVectorDirection}]);
-savefig(fullfile(directoryName, 'pvalues'));
-% FigureSave(fullfile(directoryName, 'pvalues'), gcf, 'pdf');
+%savefig(fullfile(directoryName, 'pvalues'));
+FigureSave(fullfile(directoryName, 'pvalues'), gcf, 'pdf');
 
 save(fullfile(directoryName, 'data'));

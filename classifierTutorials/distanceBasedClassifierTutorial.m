@@ -12,6 +12,7 @@
 %
 % 6/XX/15  xd    Wrote it.
 % 6/22/15  dhb   Added history and header comment. Renamed.
+% 6/30/15  dhb   Minor.
 
 %% Clear and close
 clear; close all;
@@ -48,8 +49,7 @@ noiseFuncNames = {'Normal', 'PoissonApprox' 'Poisson'};
 %% Set up fixed parameters
 
 % Length of test vector, and distance from comparionVectorMean to testVectorMean.
-% This distance is defined relative to the unit length of
-% the comparison vector
+% This distance is defined relative to the unit length of the comparison vector
 comparisonVectorLength = 1000;
 testDistanceFraction = 0.05;
 testDistance = testDistanceFraction*comparisonVectorLength;
@@ -99,12 +99,13 @@ for ii = 1:length(dimensionalities)
     % Set up the test vector perturbation in accoradance to the direction
     % decision desired.
     switch(testVectorDirection)
+        % Increase along comparison direction.
         case 1
-%             testVectorPerturbation = rand(1, theDimensionality);
             testVectorPerturbation = testDistance*comparisonVectorMean/norm(comparisonVectorMean);
+        % Decrease along comparison direction.
         case 2
-%             testVectorPerturbation = rand(1, theDimensionality);
             testVectorPerturbation = -testDistance*comparisonVectorMean/norm(comparisonVectorMean);
+        % Step in a direction orthogonal to the comparison.
         case 3
             orthogonalMatrix = null(comparisonVectorMean);
             orthogonalVector = orthogonalMatrix(:,1)';
@@ -116,13 +117,6 @@ for ii = 1:length(dimensionalities)
     % space and normalize it to have length testDistance.  Then we add it
     % to the comparison vector mean.
     testVectorMean = comparisonVectorMean + testVectorPerturbation;
-    
-    % If you want a test orthogonal to the comparison, then use
-    %   foo = null(comparisonVectorMean);
-    % Each column of foo will contain a vector that is orthogonal to 
-    % the comparison.  So you can take any linear combination of the
-    % columns and get a vector orthogonal to the comparison.  Then just 
-    % normalize its length as above.
     
     % To keep things intuitive, we want the scale of the noise for k == 1 to be
     % roughly commensurate with the vector distance between the comparison
@@ -264,4 +258,5 @@ suptitle(['p values for ' distMeasureNames{whichDistanceMeasure} ' ' testDirecti
 savefig(fullfile(directoryName, 'pvalues'));
 % FigureSave(fullfile(directoryName, 'pvalues'), gcf, 'pdf');
 
+% Save all the data in case we need it later.
 save(fullfile(directoryName, 'data'));
