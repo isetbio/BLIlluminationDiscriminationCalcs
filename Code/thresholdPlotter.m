@@ -35,7 +35,7 @@ while true
                 KgInterval = calcParams.KgInterval;
                 numKgSamples = calcParams.numKgSamples;
                 KgVals = startKg:KgInterval:(numKgSamples - 1) * KgInterval;
-                fprintf('%s\n',sprintf('%d', KgVals));
+                fprintf('%s\n',sprintf('% d', KgVals));
             end
         case {'List Kp', 'li kp'}
             if ~exist('calcParams', 'var')
@@ -45,7 +45,7 @@ while true
                 KpInterval = calcParams.KpInterval;
                 numKpSamples = calcParams.numKpSamples;
                 KgVals = startKp:KpInterval:(numKpSamples - 1) * KpInterval;
-                fprintf('% s\n',sprintf('%d', KgVals));
+                fprintf('%s\n',sprintf('% d', KgVals));
             end
         case {'plot' 'p'}
             type = input('kType (Kg/Kp): ', 's');
@@ -63,7 +63,6 @@ while true
         case {'exit'}
             break;
     end
-    
 end
 end
 
