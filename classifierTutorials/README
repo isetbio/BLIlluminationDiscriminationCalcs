@@ -4,8 +4,6 @@ distanceBasedClassifierTutorial.m goes over several distance measurements.  It u
 
 linearClassifierDimensionalityTutorial.m covers the SVM method.  Results from this is also included.
 
-twoClassSVMwithSensorImages.m compares data generated from cached data from the BLIlluminationDiscriminationCalcs project.
-
 suptitle.m and getDimensionalityTutorialFigParams.m are just functions for plot formatting.
 
 plotIndividualPercentAndPValue.m will plot a dimensionality and noise function combination.  It takes the data.m file as an input so it must be loaded to a variable.
