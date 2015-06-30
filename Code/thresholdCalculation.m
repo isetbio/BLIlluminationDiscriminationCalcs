@@ -75,10 +75,10 @@ for ii = 1:calcParams.numKgSamples
     [tYellow{ii}, pYellow{ii}, uYellow(ii)] = fitToData(calcParams, yellowMatrix(:,:,ii), paramsValueEst, 'y', displayIndividualThreshold);
 end
 
-psycho.thresholdBlueTotal = uBlue; psycho.bluePsychoFitParamsTotal = pBlue; psycho.uBlueTotal = uBlue;
-psycho.thresholdRedTotal = uRed; psycho.redPsychoFitParamsTotal = pRed; psycho.uRedTotal = uRed;
-psycho.thresholdGreenTotal = uGreen; psycho.greenPsychoFitParamsTotal = pGreen; psycho.uGreenTotal = uGreen;
-psycho.thresholdYellowTotal = uYellow; psycho.yellowPsychoFitParamsTotal = pYellow; psycho.uYellowTotal = uYellow;
+psycho.thresholdBlueTotal = tBlue; psycho.bluePsychoFitParamsTotal = pBlue; psycho.uBlueTotal = uBlue;
+psycho.thresholdRedTotal = tRed; psycho.redPsychoFitParamsTotal = pRed; psycho.uRedTotal = uRed;
+psycho.thresholdGreenTotal = tGreen; psycho.greenPsychoFitParamsTotal = pGreen; psycho.uGreenTotal = uGreen;
+psycho.thresholdYellowTotal = tYellow; psycho.yellowPsychoFitParamsTotal = pYellow; psycho.uYellowTotal = uYellow;
 
 % Save some data in previous format to code further on does not break
 psycho.thresholdBlue = tBlue{1}; psycho.bluePsychoFitParams = pBlue{1}; psycho.uBlue = uBlue(1);
@@ -88,24 +88,9 @@ psycho.thresholdYellow = tYellow{1}; psycho.yellowPsychoFitParams = pYellow{1}; 
 
 %% Plot Thresholds
 
-% Plot each threshold vector against its representative k-value of
-% noise.  Also fit a line to it.
-KpInterval = calcParams.KpInterval;
-startKp = calcParams.startKp;
-maxKp = startKp + (calcParams.numKpSamples - 1) * KpInterval;
-KpValsFine = startKp:(maxKp-1)/1000:maxKp;
-
-figure;
-set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize);
-fitAndPlotToThreshold(psycho.uBlue, psycho.thresholdBlue, 'b', KpInterval, KpValsFine, figParams);
-fitAndPlotToThreshold(psycho.uRed, psycho.thresholdRed, 'r', KpInterval, KpValsFine, figParams);
-fitAndPlotToThreshold(psycho.uGreen, psycho.thresholdGreen, 'g', KpInterval, KpValsFine, figParams);
-fitAndPlotToThreshold(psycho.uYellow, psycho.thresholdYellow, 'y', KpInterval, KpValsFine, figParams);
-
-title(['Threshold against k-values for ' calcIDStr], 'interpreter', 'none');
-xlabel('k-values');
-ylabel('Threshold');
-ylim([0 50]);
+% % Plot each threshold vector against its representative k-value of
+% % noise.  Also fit a line to it.
+plotAllThresholds(calcParams, psycho, figParams);
 
 % Save the threshold data for later plotting
 outputFile = fullfile(dataBaseDir, 'SimpleChooserData', calcIDStr, ['psychofitSummary' calcIDStr]);
@@ -255,54 +240,4 @@ for i = 1:numKValue
         xlim([0 50]);
     end
 end
-end
-
-function fitAndPlotToThreshold (usableData, threshold, color, KpInterval, KpValsFine, figParams)
-% fitAndPlotToThreshold (usableData, threshold, color, kInterval, kValsFine, figParams)
-%
-% This function plots the thresholds against their respective k values of
-% noise.  Currently the data is fit to a linear line.
-%
-% Inputs:
-%   usableData  - The start index at which the data is usable for fitting
-%   threshold   - The threshold data to plot
-%   color       - The color to plot the data
-%   KpInterval  - The interval between k-Poisson samples
-%   KpValsFine  - The total range to plot the fit over.  This should be
-%                 subdivided into many small intervals (finely) to create
-%                 a line
-%   figParams   - Parameters to format the plot
-
-%% Define x-axis value range
-numOfData = size(threshold);
-dataStart = min(KpValsFine(:)) + (usableData - 1) * KpInterval;
-dataEnd = dataStart + (numOfData(1) - 1) * KpInterval;
-kVals = dataStart:KpInterval:dataEnd;
-
-%% Plot threshold points
-plot(kVals, threshold, strcat(color,'.'), 'markersize', figParams.markerSize);
-
-%% Fit to line and get set of y values
-
-% This will start the fit as a linear line.  Then increase the target fit
-% and try again if the mean error is greater than the tolerance.
-errorTolerance = .5;
-delta = 1;
-polynomialToFit = 1;
-s = warning('error','MATLAB:polyval:ZeroDOF');
-while mean(delta) > errorTolerance && polynomialToFit < 4
-    try
-        [p, S] = polyfit(kVals, threshold', polynomialToFit);
-        [y, delta] = polyval(p, KpValsFine,S);
-        polynomialToFit = polynomialToFit + 1;
-    catch
-        [p, S] = polyfit(kVals, threshold', polynomialToFit - 1);
-        y = polyval(p, KpValsFine,S);
-        break;
-    end
-end
-warning(s);
-
-hold on;
-plot (KpValsFine, y, color, 'linewidth', figParams.lineWidth);
 end
