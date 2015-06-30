@@ -165,7 +165,8 @@ for ii = 1:length(dimensionalities)
     % not, what noise level should be used, or whether draws from many
     % noise levels should be intermixed in the training.  The right answer
     % might depend on how the psychophysical experiment being modelled is
-    % set up.
+    % set up.  This same kind of question will come up when modeling an
+    % experiment with multiple stimulus levels and directions using an SVM.
     trainedSVMList = cell(length(noiseFactorKs),length(noiseFuncList));
     for jj = 1:length(noiseFactorKs)
         fprintf('\tTraining classifier for noise factor %d, adjusted to %g\n',noiseFactorKs(jj),adjustedNoiseFactorKs(jj)); 
