@@ -24,13 +24,14 @@ switch (calcParams.calcIDStr)
             'SystemicPercentTestNormrnd','StaticPhoton_AfterMerge','StaticPhoton_AfterMergeLong',...
             'StaticPhoton_CosineSim','StaticPhoton_CosineSimT','StaticPhoton_Dot',...
             'StaticPhoton_Angle','StaticPhoton_DiffStandard','StaticPhoton_DiffStandardN',...
-            'StaticPhoton_DiffStandardN2','StaticPhoton_Gaussian'}
+            'StaticPhoton_DiffStandardN2'}
         calcParams.cacheFolderList = {'Neutral', 'Neutral'};
     case {'StaticPhoton_NM1','StaticPhoton_NM1_MatlabRNG'}
         calcParams.cacheFolderList = {'NM1', 'NM1'};
     case {'StaticPhoton_NM2','StaticPhoton_NM2_MatlabRNG'}
         calcParams.cacheFolderList = {'NM2', 'NM2'};
-    case {'StaticPhoton_2','SystemicPercentTestLowIllum_2','StaticPhoton_2_Cosine'}
+    case {'StaticPhoton_2','SystemicPercentTestLowIllum_2','StaticPhoton_2_Cosine',...
+            'StaticPhoton_2_UnifNoise'}
         calcParams.cacheFolderList = {'Neutral', 'Neutral_2'};
     case {'PixelNoiseTest'}
         calcParams.cacheFolderList = {'New Images', 'PixelNoise'};
