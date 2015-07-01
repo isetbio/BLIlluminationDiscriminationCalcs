@@ -18,7 +18,7 @@ rng(1);
 
 % A vector of stimulus dimensions to test for.  Each of these
 % will be done in turn.
-dimensionalities = [10 100];
+dimensionalities = [10 100 1000 10000];
 
 % Noise expansion factors to test. Each of these will be done in turn.
 %
@@ -69,7 +69,7 @@ nSimulations = 10;
 % The direction of the test vector relative to the comparison vector.  Set
 % this to 1 for positive extension along the comparison vector, 2 for a
 % negative, 3 for an orthogonal direction.
-testVectorDirection = 2;
+testVectorDirection = 3;
 testDirectionName = {'Pos' 'Neg' 'Orth'};
 
 %% Define the parameters to use to train the SVM
@@ -96,7 +96,7 @@ percentCorrectRawMatrix = zeros(length(dimensionalities), length(noiseFactorKs),
 ttestMatrix = zeros(length(dimensionalities), length(noiseFactorKs), length(noiseFuncList));
 
 %% Loop through parameters
-
+someSVMData = cell(length(dimensionalities),length(noiseFactorKs),length(noiseFuncList));
 for ii = 1:length(dimensionalities)
     theDimensionality = dimensionalities(ii);
     fprintf('Running dimension %d, %d of %d dimensions\n',theDimensionality,ii,length(dimensionalities));
@@ -239,6 +239,14 @@ for ii = 1:length(dimensionalities)
             % Compute t-test from 50%
             theValues = squeeze(percentCorrectRawMatrix(ii,jj,ff,:));
             [~,ttestMatrix(ii,jj,ff)] = ttest(theValues,50);
+        end
+    end
+    
+    for jj = 1:length(noiseFactorKs)
+        for ff = 1:length(noiseFuncList)
+            % This is a struct in case other information needs to be saved
+            data.NumSupportVectors = sum(trainedSVMList{jj,ff}.IsSupportVector);
+            someSVMData{ii,jj,ff} = data;
         end
     end
     
