@@ -69,7 +69,7 @@ nSimulations = 10;
 % The direction of the test vector relative to the comparison vector.  Set
 % this to 1 for positive extension along the comparison vector, 2 for a
 % negative, 3 for an orthogonal direction.
-testVectorDirection = 3;
+testVectorDirection = 1;
 testDirectionName = {'Pos' 'Neg' 'Orth'};
 
 %% Define the parameters to use to train the SVM
