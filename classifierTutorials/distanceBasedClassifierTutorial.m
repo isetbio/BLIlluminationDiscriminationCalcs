@@ -248,6 +248,7 @@ FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'tiff');
 
 figure;
 set(gcf, 'position', [0 0 1500 1500]);
+set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
 for ii = 1:length(dimensionalities)
     for jj = 1:length(noiseFuncList)
         subplot(length(dimensionalities),length(noiseFuncList),jj + (ii - 1)*length(noiseFuncList));

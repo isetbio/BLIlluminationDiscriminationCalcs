@@ -286,19 +286,28 @@ directoryName = [linearClassifierNames{whichClassifier} '_' testDirectionName{te
     num2str(trainingSetSize)];
 mkdir(directoryName);
 
+% Load and set some common parameters
+figParams = getDimensionalityTutorialFigParams;
+figParams.percentXLim = [min(noiseFactorKs)/10 10*max(noiseFactorKs)];
+figParams.pvalueXLim = figParams.percentXLim;
+figParams.percentYLim = [0 100];
+figParams.pvalueYLim = [0 1];
+figParams.figDir = directoryName;
+
 figure;
 set(gcf, 'position', [0 0 1500 1500]);
+set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
 for ii = 1:length(dimensionalities)
     for jj = 1:length(noiseFuncList)
         subplot(length(dimensionalities),length(noiseFuncList),jj + (ii - 1)*length(noiseFuncList));
-        h = errorbar(noiseFactorKs,percentCorrectMeanMatrix(ii,:,jj), 2*percentCorrectStderrMatrix(ii,:,jj), 'b.-', 'markersize', 20);
+        h = errorbar(noiseFactorKs,percentCorrectMeanMatrix(ii,:,jj), 2*percentCorrectStderrMatrix(ii,:,jj), 'b.-', 'markersize', figParams.markerSize);
         set(get(h,'Parent'),'XScale','log')
         hold on
         plot(xlim, [50 50], 'k--');
                 
-        title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))]);
-        xlabel('k');
-        ylabel('% correct');
+        title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))],'FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
+        xlabel('k','FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
+        ylabel('% correct','FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
         xlim([min(noiseFactorKs)/10 10*max(noiseFactorKs)]);
         ylim([0 100]);
     end
@@ -309,17 +318,18 @@ FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'pdf');
 
 figure;
 set(gcf, 'position', [0 0 1500 1500]);
+set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
 for ii = 1:length(dimensionalities)
     for jj = 1:length(noiseFuncList)
         subplot(length(dimensionalities),length(noiseFuncList),jj + (ii - 1)*3);
-        h = plot(noiseFactorKs,ttestMatrix(ii,:,jj), 'r.', 'markersize', 20);
+        h = plot(noiseFactorKs,ttestMatrix(ii,:,jj), 'r.', 'markersize', figParams.markerSize);
         set(get(h,'Parent'),'XScale','log')
         
         hold on
         plot(xlim, [0.05 0.05], 'k--');
-        title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))]);
-        xlabel('k');
-        ylabel('p value');
+        title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))],'FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
+        xlabel('k','FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
+        ylabel('p value','FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
         xlim([min(noiseFactorKs)/10 10*max(noiseFactorKs)]);
         ylim([0 1]);
     end
