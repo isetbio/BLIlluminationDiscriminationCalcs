@@ -38,11 +38,8 @@
 % the Poisson and the Poisson approximation were agreeable to each other
 % across all three directions and will be referred to together in this
 % summary.  With the Poisson noise, only the orthogonal direction showed
-% convergence to fifty percent in high k.  Additionally, the p values
-% showed more likelihood to be below 0.05 considering only results for k >=
-% 1000.  There were 4 cases out of 24 values (8 plots of k >= 1000) for the
-% orthogonal Poisson versus 1 case out of 36 values (12 plots) for the
-% Gaussian draw.  Additional runs may further clarify this observation.
+% convergence to fifty percent in high k. 
+% 
 % In the case of the positive and negative directions, results differed
 % from fifty percent significantly.  In the positive dimension, increase in
 % dimensionality resulted in an increase of classification accuracy in high
@@ -73,10 +70,7 @@
 % adjusted k = 1. Once trained, the SVM was tested with test sets also
 % consisting of half comparison and half test vectors.  The SVM approached
 % 50% accuracy at k = 10000 in all three directions and noise
-% distributions.  Looking at the p values, there were 4 cases out of 72 (36
-% plots) where p < 0.05.  As with the Euclidian measure, the percent
-% correct between the Poisson and the Poisson approximation were very
-% similar.
+% distributions.  
 % 
 % Here are the links to the full figures of percents and p values:
 % 
