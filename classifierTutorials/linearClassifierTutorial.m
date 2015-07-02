@@ -76,7 +76,7 @@ testDirectionName = {'Pos' 'Neg' 'Orth'};
 %
 % This is set up as a function list so that alternate machine learning
 % algorithms can be added at ease without drastically altering the code.
-SVM = @(d,c) fitcsvm(d,c);
+SVM = @(d,c) fitcsvm(d,c, 'Standardize', true);
 
 linearClassifierList = {SVM};
 linearClassifierNames = {'MatlabSVM'};
@@ -227,12 +227,36 @@ for ii = 1:length(dimensionalities)
                 % corresponding entries in testClasses.
                 if trainPerNoiseLevel
                     classifiedData = predictionFunctionList{whichPredictionFunction}(trainedSVMList{jj,ff}, testData);
+                    theSVM = trainedSVMList{jj,ff};
                 else
                     classifiedData = predictionFunctionList{whichPredictionFunction}(trainedSVMList{ff}, testData);
+                    theSVM = trainedSVMList{ff};
                 end
-                numberCorrect = sum(classifiedData == testClasses);
                 
-                % Store percent correct
+                % Here create a figure of the splitting, in 2 dimensions,
+                % along with the mean data points.  The beta field is a
+                % vector orthogonal to the hyperplane.  We use this vector
+                % to calculate a transformation matrix which will change
+                % the basis of our testing data to that of the hyperplane.
+                beta = theSVM.Beta;
+                hyperplane = null(beta');
+                transformedTestData = normc([beta hyperplane])' * testData';
+                transformedTestData = transformedTestData';
+                
+                class0Mean = mean(transformedTestData(testClasses == 0,:));
+                class1Mean = mean(transformedTestData(testClasses == 1,:));
+                
+                h = nan(1,4);
+                
+                figure;
+                h(1:2) = gscatter(transformedTestData(:,1), transformedTestData(:,2), classifiedData, 'mc', '**');
+                hold on;
+                h(3) = plot(class0Mean(1), class0Mean(2), 'r.', 'markersize', 30);
+                h(4) = plot(class1Mean(1), class1Mean(2), 'b.', 'markersize', 30);
+                legend(h, {'Class 0' 'Class 1' 'Mean 0' 'Mean 1'});
+                
+                % Calculate and store percent correct
+                numberCorrect = sum(classifiedData == testClasses);
                 percentCorrectRawMatrix(ii,jj,ff,ll) = numberCorrect / nSimulatedTrials * 100;
             end
             
