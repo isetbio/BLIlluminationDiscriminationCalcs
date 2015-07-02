@@ -90,6 +90,14 @@ predictionFunctionList = {SVMPred};
 whichPredictionFunction = 1;
 
 trainPerNoiseLevel = true;
+
+%% Make directory for plots
+directoryName = [linearClassifierNames{whichClassifier} '_' testDirectionName{testVectorDirection}...
+    '_testDist' num2str(testDistanceFraction) '_' mat2str(dimensionalities) '_' ...
+    num2str(trainingSetSize) '_tPNL=' num2str(trainPerNoiseLevel)];
+mkdir(directoryName);
+mkdir(fullfile(directoryName, 'HyperplaneFigs'));
+
 %% Pre-allocate space for results matrix.  This gives simulated percent
 % correct for each parameter explored.
 percentCorrectRawMatrix = zeros(length(dimensionalities), length(noiseFactorKs), length(noiseFuncList), nSimulations);
@@ -245,15 +253,26 @@ for ii = 1:length(dimensionalities)
                 
                 class0Mean = mean(transformedTestData(testClasses == 0,:));
                 class1Mean = mean(transformedTestData(testClasses == 1,:));
-                
+                                
                 h = nan(1,4);
                 
                 figure;
+                subplot(1,2,1);
                 h(1:2) = gscatter(transformedTestData(:,1), transformedTestData(:,2), classifiedData, 'mc', '**');
                 hold on;
-                h(3) = plot(class0Mean(1), class0Mean(2), 'r.', 'markersize', 30);
-                h(4) = plot(class1Mean(1), class1Mean(2), 'b.', 'markersize', 30);
+                h(3) = plot(class0Mean(1), class0Mean(2), 'r.', 'markersize', 50);
+                h(4) = plot(class1Mean(1), class1Mean(2), 'b.', 'markersize', 50);
                 legend(h, {'Class 0' 'Class 1' 'Mean 0' 'Mean 1'});
+                title('SVM Classification', 'FontSize', 20);
+                
+                subplot(1,2,2);
+                gscatter(transformedTestData(:,1), transformedTestData(:,2), testClasses, 'mc', '**');
+                title('Actual Classes', 'FontSize', 20);
+                
+                theTitle = ['Noise factor: ' int2str(noiseFactorKs(jj)) ', dimentionality: ' int2str(theDimensionality)];
+                suptitle(theTitle);
+                savefig(fullfile(directoryName, 'HyperplaneFigs', theTitle));
+                close;
                 
                 % Calculate and store percent correct
                 numberCorrect = sum(classifiedData == testClasses);
@@ -280,6 +299,11 @@ for ii = 1:length(dimensionalities)
     clear class;
     clear testData;
     clear testClasses;
+    clear transformedTestData;
+    clear theSVM;
+    clear classifiedData;
+    clear hyperplane;
+    clear beta;
 end
 
 % Get mean results matrix
@@ -304,11 +328,6 @@ for ff = 1:length(noiseFuncList)
 end
 
 %% Plot and save the results
-
-directoryName = [linearClassifierNames{whichClassifier} '_' testDirectionName{testVectorDirection}...
-    '_testDist' num2str(testDistanceFraction) '_' mat2str(dimensionalities) '_' ...
-    num2str(trainingSetSize)];
-mkdir(directoryName);
 
 % Load and set some common parameters
 figParams = getDimensionalityTutorialFigParams;
