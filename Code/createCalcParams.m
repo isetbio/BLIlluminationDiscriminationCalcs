@@ -23,7 +23,7 @@ BaseDir = getpref('BLIlluminationDiscriminationCalcs', 'QueueDir');
 %% Create a calcParam object
 
 % Set the name of this calculation set
-calcParams.calcIDStr = 'StaticPhoton';
+calcParams.calcIDStr = 'StaticPhoton_15';
 
 % Folder list to run over for conversions into isetbio format
 calcParams = updateCacheFolderList(calcParams);
@@ -32,7 +32,7 @@ calcParams = updateCacheFolderList(calcParams);
     % Code further on makes the most sense if the image is square (because we
     % define a square patch of cone mosaic when we build the sensor), so the
     % cropped region should always be square.
-    calcParams.cropRect = [550 450 40 40];              % [450 350 624 574] is the entire non-black region of our initial images with small border
+    calcParams.cropRect = [650 750 40 40];              % [450 350 624 574] is the entire non-black region of our initial images with small border
     calcParams.S = [380 8 51];                          % [489 393 535 480] will get image without any black border
         
     % Parameters for creating the sensor
