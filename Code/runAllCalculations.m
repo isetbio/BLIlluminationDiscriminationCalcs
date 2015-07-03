@@ -30,7 +30,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 % Set identifiers to run
-calcIDStrs = {'StaticPhoton_Gaussian', 'StaticPhoton_DiffStandardN'};
+calcIDStrs = {'StaticPhoton', 'StaticPhoton_2', 'StaticPhoton_3', 'StaticPhoton_4', 'StaticPhoton_5', 'StaticPhoton_6'};
 
 %% Parameters of the calculation
 %
