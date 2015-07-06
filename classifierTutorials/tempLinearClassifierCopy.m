@@ -1,15 +1,8 @@
-% linearClassifierTutorial
-%
-% This is analogous to distanceBasedClassfierTutorial.m.  However, here we
-% will be using a SVM to explore the behavior of classification as a
-% function of dimensionality and noise factor.
-%
-% 6/XX/15  xd   Wrote it
-% 6/24/15  xd   Added header and organized like distanceBasedClassfierTutorial.m
-% 6/30/15  dhb  Rename for parallel structure and minor edits.
+function tempLinearClassifierCopy(testVectorDirection, trainPerNoiseLevel)
+
 
 %% Clear
-clear; close all;
+close all;
 
 %% Set rng seed for reproducibility
 rng(1);
@@ -69,7 +62,7 @@ nSimulations = 10;
 % The direction of the test vector relative to the comparison vector.  Set
 % this to 1 for positive extension along the comparison vector, 2 for a
 % negative, 3 for an orthogonal direction.
-testVectorDirection = 1;
+
 testDirectionName = {'Pos' 'Neg' 'Orth'};
 
 %% Define the parameters to use to train the SVM
@@ -89,7 +82,6 @@ SVMPred = @(s,d) predict(s,d);
 predictionFunctionList = {SVMPred};
 whichPredictionFunction = 1;
 
-trainPerNoiseLevel = true;
 
 %% Make directory for plots
 directoryName = [linearClassifierNames{whichClassifier} '_' testDirectionName{testVectorDirection}...
@@ -369,7 +361,7 @@ for ii = 1:length(dimensionalities)
     end
 end
 suptitle(['Mean percent correct for SVM ' testDirectionName{testVectorDirection}]); 
-% savefig(fullfile(directoryName, 'PercentCorrect'));
+savefig(fullfile(directoryName, 'PercentCorrect'));
 FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'pdf');
 
 figure;
@@ -392,7 +384,8 @@ for ii = 1:length(dimensionalities)
     end
 end
 suptitle(['p values for SVM ', testDirectionName{testVectorDirection}]);
-%savefig(fullfile(directoryName, 'pvalues'));
+savefig(fullfile(directoryName, 'pvalues'));
 FigureSave(fullfile(directoryName, 'pvalues'), gcf, 'pdf');
 
 save(fullfile(directoryName, 'data'));
+
