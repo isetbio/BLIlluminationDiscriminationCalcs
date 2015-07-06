@@ -244,50 +244,49 @@ for ii = 1:length(dimensionalities)
                     theSVM = trainedSVMList{ff};
                 end
                 
-                % Here create a figure of the splitting, in 2 dimensions,
-                % along with the mean data points.  The beta field is a
-                % vector orthogonal to the hyperplane.  We use this vector
-                % to calculate a transformation matrix which will change
-                % the basis of our testing data to that of the hyperplane.
-                beta = theSVM.Beta;
-                hyperplane = null(beta');
-                transformedTestData = normc([beta hyperplane])' * testData';
-                transformedTestData = transformedTestData';
-                
-                class0Mean = mean(transformedTestData(testClasses == 0,:));
-                class1Mean = mean(transformedTestData(testClasses == 1,:));
-                                
-                h = nan(1,4);
-                
-                subplot(2,length(noiseFuncList),ff);
-                h(1:2) = gscatter(transformedTestData(:,1), transformedTestData(:,2), classifiedData, 'mc', '**');
-                hold on;
-                h(3) = plot(class0Mean(1), class0Mean(2), 'r.', 'markersize', 50);
-                h(4) = plot(class1Mean(1), class1Mean(2), 'b.', 'markersize', 50);
-                legend(h, {'Class 0' 'Class 1' 'Mean 0' 'Mean 1'});
-                title(['SVM Classification ' noiseFuncNames{ff}], 'FontSize', 16);
-                box off;
-                
-                subplot(2,length(noiseFuncList),ff + length(noiseFuncList));
-                h(1:2) = gscatter(transformedTestData(:,1), transformedTestData(:,2), testClasses, 'mc', '**');
-                legend(h(1:2), {'Class 0' 'Class 1'});
-                title(['Actual Classes ' noiseFuncNames{ff}], 'FontSize', 16);
-                box off;
-                
-                theTitle = ['Noise factor: ' int2str(noiseFactorKs(jj)) ', dimentionality: ' int2str(theDimensionality)];
-                suptitle(theTitle);
-                savefig(fullfile(directoryName, 'HyperplaneFigs', theTitle));
-                close;
-                
                 % Calculate and store percent correct
                 numberCorrect = sum(classifiedData == testClasses);
                 percentCorrectRawMatrix(ii,jj,ff,ll) = numberCorrect / nSimulatedTrials * 100;
             end
             
+            % Here create a figure of the splitting, in 2 dimensions,
+            % along with the mean data points.  The beta field is a
+            % vector orthogonal to the hyperplane.  We use this vector
+            % to calculate a transformation matrix which will change
+            % the basis of our testing data to that of the hyperplane.
+            beta = theSVM.Beta;
+            hyperplane = null(beta');
+            transformedTestData = normc([beta hyperplane])' * testData';
+            transformedTestData = transformedTestData';
+            
+            class0Mean = mean(transformedTestData(testClasses == 0,:));
+            class1Mean = mean(transformedTestData(testClasses == 1,:));
+            
+            h = nan(1,4);
+            
+            subplot(2,length(noiseFuncList),ff);
+            h(1:2) = gscatter(transformedTestData(:,1), transformedTestData(:,2), classifiedData, 'mc', '**');
+            hold on;
+            h(3) = plot(class0Mean(1), class0Mean(2), 'r.', 'markersize', 50);
+            h(4) = plot(class1Mean(1), class1Mean(2), 'b.', 'markersize', 50);
+            legend(h, {'Class 0' 'Class 1' 'Mean 0' 'Mean 1'}, 'Location', 'southeast');
+            title(['SVM Classification \newline' noiseFuncNames{ff}], 'FontSize', 16);
+            box off;
+            
+            subplot(2,length(noiseFuncList),ff + length(noiseFuncList));
+            h(1:2) = gscatter(transformedTestData(:,1), transformedTestData(:,2), testClasses, 'mc', '**');
+            legend(h(1:2), {'Class 0' 'Class 1'}, 'Location', 'southeast');
+            title(['Actual Classes \newline' noiseFuncNames{ff}], 'FontSize', 16);
+            box off;
+          
             % Compute t-test from 50%
             theValues = squeeze(percentCorrectRawMatrix(ii,jj,ff,:));
             [~,ttestMatrix(ii,jj,ff)] = ttest(theValues,50);
         end
+        theTitle = ['Noise factor: ' int2str(noiseFactorKs(jj)) ', dimentionality: ' int2str(theDimensionality)];
+        suptitle(theTitle);
+        savefig(fullfile(directoryName, 'HyperplaneFigs', theTitle));
+        close;
     end
     
     if trainPerNoiseLevel

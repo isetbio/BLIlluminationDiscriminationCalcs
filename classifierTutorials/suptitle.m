@@ -99,5 +99,10 @@ if nargout,
     hout=ht;
 end
 
+% fix legend if one exists
+legH = legend;
+if ~isempty(legH)
+    axes(legH);
+end
 
 
