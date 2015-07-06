@@ -15,8 +15,8 @@ function runAllCalcFromQueue
 clear all; close all; ieInit;
 
 %% Control of what gets done in this function
-CACHE_SCENES = false; forceSceneCompute = false;
-CACHE_OIS = false; forceOICompute = false;
+CACHE_SCENES = true; forceSceneCompute = false;
+CACHE_OIS = true; forceOICompute = false;
 RUN_CHOOSER = true; chooserColorChoice = 0; overWriteFlag = 1;
 
 %% Get our project toolbox on the path

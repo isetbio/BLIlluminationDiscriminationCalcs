@@ -61,7 +61,7 @@ switch (calcParams.calcIDStr)
     case {'StaticPhoton_14'}
         calcParams.cacheFolderList = {'Neutral', 'Neutral_14'}; % [650 550 40 40]
     case {'StaticPhoton_15'}
-        calcParams.cacheFolderList = {'Neutral', 'Neutral_15'}; % [650 750 40 40]
+        calcParams.cacheFolderList = {'Neutral', 'Neutral_15'};
 
     otherwise
         error('Unknown calcIDStr set');
