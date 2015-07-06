@@ -1,4 +1,4 @@
-function meanThreshold = getMeanThresholdFromMultiSample(calcIDStrList)
+function getMeanThresholdFromMultiSample(calcIDStrList)
 % meanThreshold = getMeanThresholdFromMultiSample(calcIDStrList)
 % 
 % NOTE: THIS FUNCTION IS WORK IN PROGRESS
@@ -34,6 +34,8 @@ minEndGreen = min(cellfun(@(X) length(X.thresholdGreenTotal{1}), psychoData));
 minEndRed = min(cellfun(@(X) length(X.thresholdRedTotal{1}), psychoData));
 minEndYellow = min(cellfun(@(X) length(X.thresholdYellowTotal{1}), psychoData));
 
+
+%% Calculate mean thresholds
 tBlue = cellfun(@(X) X.thresholdBlueTotal{1}(maxUBlue:minEndBlue), psychoData,'UniformOutput', false);
 meanTBlue = mean(cell2mat(tBlue'), 2);
 
@@ -46,6 +48,7 @@ meanTRed = mean(cell2mat(tRed'), 2);
 tYellow = cellfun(@(X) X.thresholdYellowTotal{1}(maxUYellow:minEndYellow), psychoData,'UniformOutput', false);
 meanTYellow = mean(cell2mat(tYellow'), 2);
 
+%% Plot thresholds
 figParams = getFigureParameters;
 
 KInterval = min([maxUBlue maxURed maxUGreen maxUYellow]):max([minEndBlue minEndGreen minEndRed minEndYellow]);
