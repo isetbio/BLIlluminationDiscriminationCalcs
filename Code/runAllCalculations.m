@@ -16,9 +16,9 @@ function runAllCalculations
 close all; ieInit;
 
 %% Control of what gets done in this function
-CACHE_SCENES = false; forceSceneCompute = false;
-CACHE_OIS = false; forceOICompute = false;
-RUN_CHOOSER = false; chooserColorChoice = 0; overWriteFlag = 1;
+CACHE_SCENES = true; forceSceneCompute = true;
+CACHE_OIS = true; forceOICompute = true;
+RUN_CHOOSER = true; chooserColorChoice = 0; overWriteFlag = 1;
 CALC_THRESH = true; displayIndividualThreshold = false;
 
 %% Get our project toolbox on the path
@@ -30,8 +30,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 % Set identifiers to run
-calcIDStrs = {'StaticPhoton', 'StaticPhoton_2', 'StaticPhoton_3', 'StaticPhoton_4', 'StaticPhoton_5', 'StaticPhoton_6', 'StaticPhoton_7', 'StaticPhoton_8', 'StaticPhoton_9',...
- 'StaticPhoton_10', 'StaticPhoton_11', 'StaticPhoton_12', 'StaticPhoton_13', 'StaticPhoton_14', 'StaticPhoton_15'};
+calcIDStrs = {'StaticPhoton_NM1'};
 
 %% Parameters of the calculation
 %
@@ -76,9 +75,9 @@ for k1 = 1:length(calcIDStrs)
     % deviation of the Gaussian distribution is equal to the square root of
     % the mean photoisomerizations across the available target image
     % samples.
-    calcParams.numKgSamples = 5;
+    calcParams.numKgSamples = 1;
     calcParams.startKg = 0;
-    calcParams.KgInterval = 2;
+    calcParams.KgInterval = 1;
     
     % Specify the number of standard image samples available as well as the
     % number of test image samples available.  The chooser will randomly
