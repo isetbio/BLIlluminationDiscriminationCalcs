@@ -83,6 +83,46 @@ tBlueMatrix = cell2mat(tBlue')';
 tGreenMatrix = cell2mat(tGreen')';
 tRedMatrix = cell2mat(tRed')';
 tYellowMatrix = cell2mat(tYellow')'; % Each row is an entry, each column is a Kp value, -1 are filler values
+
+    function [theMean, stderr, usable] = calcMean(dataMatrix)
+        dataSize = size(dataMatrix);
+        usable = 1;
+        theMean = zeros(1, dataSize(2));
+        stderr = zeros(1, dataSize(2));
+        for jj = 1:dataSize(2)
+            theColumn = dataMatrix(:, jj);
+            theColumn = theColumn(theColumn ~= -1);        
+            if isempty(theColumn)
+                usable = usable + 1;
+            else
+                theMean(jj) = mean(theColumn);
+                stderr(jj) = std(theColumn)/sqrt(length(theColumn));
+            end
+        end
+        theMean = theMean(theMean ~= 0);
+        stderr = stderr(theMean ~= 0);
+    end
+
+[tBlueMean, tBlueStdErr, tBlueUsable] = calcMean(tBlueMatrix);
+[tGreenMean, tGreenStdErr, tGreenUsable] = calcMean(tGreenMatrix);
+[tRedMean, tRedStdErr, tRedUsable] = calcMean(tRedMatrix);
+[tYellowMean, tYellowStdErr, tYellowUsable] = calcMean(tYellowMatrix);
+
+figParams = getFigureParameters;
+KInterval = 1;
+KValsFine = 1:10;
+
+figure;
+box off;
+set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize);
+
+hold on;
+fitAndPlotToThreshold(tBlueUsable, tBlueMean', 'b', KInterval, KValsFine, figParams, tBlueStdErr);
+fitAndPlotToThreshold(tGreenUsable, tGreenMean', 'g', KInterval, KValsFine, figParams, tGreenStdErr);
+fitAndPlotToThreshold(tRedUsable, tRedMean', 'r', KInterval, KValsFine, figParams, tRedStdErr);
+fitAndPlotToThreshold(tYellowUsable, tYellowMean', 'y', KInterval, KValsFine, figParams, tYellowStdErr);
+
+
 %% Plot thresholds
 figParams = getFigureParameters;
 
