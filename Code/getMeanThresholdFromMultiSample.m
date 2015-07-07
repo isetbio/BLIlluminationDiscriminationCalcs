@@ -2,6 +2,7 @@ function getMeanThresholdFromMultiSample(calcIDStrList)
 % meanThreshold = getMeanThresholdFromMultiSample(calcIDStrList)
 % 
 % NOTE: THIS FUNCTION IS WORK IN PROGRESS
+% NEEDS PARAMETER TO DECIDE BETWEEN MEAN KP OR KG
 %
 % 7/3/15  xd  wrote it
 
@@ -29,11 +30,11 @@ maxUGreen = max(cellfun(@(X) max(X.uGreen), psychoData));
 maxURed = max(cellfun(@(X) max(X.uRed), psychoData));
 maxUYellow = max(cellfun(@(X) max(X.uYellow), psychoData));
 
-minEndBlue = min(cellfun(@(X) length(X.thresholdBlueTotal{1}), psychoData));
+fprintf('');
+minEndBlue = min(cellfun(@(X) cellfun(@(Y) length(Y), X.thresholdBlueTotal), psychoData));
 minEndGreen = min(cellfun(@(X) length(X.thresholdGreenTotal{1}), psychoData));
 minEndRed = min(cellfun(@(X) length(X.thresholdRedTotal{1}), psychoData));
 minEndYellow = min(cellfun(@(X) length(X.thresholdYellowTotal{1}), psychoData));
-
 
 %% Calculate mean thresholds
 tBlue = cellfun(@(X) X.thresholdBlueTotal{1}(maxUBlue:minEndBlue), psychoData,'UniformOutput', false);
@@ -54,6 +55,34 @@ errorRed = std(cell2mat(tRed'), [], 2) / sqrt(length(calcIDStrList));
 errorGreen = std(cell2mat(tGreen'), [], 2) / sqrt(length(calcIDStrList));
 errorYellow = std(cell2mat(tYellow'), [], 2) / sqrt(length(calcIDStrList));
 
+%% Here calc mean and std err using available data -> not necessarily having all 15 points
+tBlue = cellfun(@(X) X.thresholdBlueTotal{1}, psychoData,'UniformOutput', false);
+tGreen = cellfun(@(X) X.thresholdGreenTotal{1}, psychoData,'UniformOutput', false);
+tRed = cellfun(@(X) X.thresholdRedTotal{1}, psychoData,'UniformOutput', false);
+tYellow = cellfun(@(X) X.thresholdYellowTotal{1}, psychoData,'UniformOutput', false);
+
+    function l = maxLength(thresholds)
+        l = max(cellfun(@(X) length(X), thresholds));
+    end
+
+    function t = padEnd(threshold, maxL)
+        L = length(threshold);
+        if L < maxL
+            t = [threshold; zeros(maxL - L, 1) - 1];
+        else
+            t = threshold;
+        end
+    end
+
+tBlue = cellfun(@(X) padEnd(X, maxLength(tBlue)), tBlue,'UniformOutput', false);
+tGreen = cellfun(@(X) padEnd(X, maxLength(tGreen)), tGreen,'UniformOutput', false);
+tRed = cellfun(@(X) padEnd(X, maxLength(tRed)), tRed,'UniformOutput', false);
+tYellow = cellfun(@(X) padEnd(X, maxLength(tYellow)), tYellow,'UniformOutput', false);
+
+tBlueMatrix = cell2mat(tBlue')'; 
+tGreenMatrix = cell2mat(tGreen')';
+tRedMatrix = cell2mat(tRed')';
+tYellowMatrix = cell2mat(tYellow')'; % Each row is an entry, each column is a Kp value, -1 are filler values
 %% Plot thresholds
 figParams = getFigureParameters;
 
@@ -75,10 +104,10 @@ function resizeData = resizeAllThresholds(psychoData)
 
 resizeData = psychoData;
 
-resizeData.thresholdBlueTotal = cellfun(@(X,U) [zeros(U-1,1); X],psychoData.thresholdBlueTotal, num2cell(psychoData.uBlueTotal), 'Uniform', false);
-resizeData.thresholdRedTotal = cellfun(@(X,U) [zeros(U-1,1); X],psychoData.thresholdRedTotal, num2cell(psychoData.uRedTotal), 'Uniform', false);
-resizeData.thresholdGreenTotal = cellfun(@(X,U) [zeros(U-1,1); X],psychoData.thresholdGreenTotal, num2cell(psychoData.uGreenTotal), 'Uniform', false);
-resizeData.thresholdYellowTotal = cellfun(@(X,U) [zeros(U-1,1); X],psychoData.thresholdYellowTotal, num2cell(psychoData.uYellowTotal), 'Uniform', false);
+resizeData.thresholdBlueTotal = cellfun(@(X,U) [zeros(U-1,1) - 1; X],psychoData.thresholdBlueTotal, num2cell(psychoData.uBlueTotal), 'Uniform', false);
+resizeData.thresholdRedTotal = cellfun(@(X,U) [zeros(U-1,1) - 1; X],psychoData.thresholdRedTotal, num2cell(psychoData.uRedTotal), 'Uniform', false);
+resizeData.thresholdGreenTotal = cellfun(@(X,U) [zeros(U-1,1) - 1; X],psychoData.thresholdGreenTotal, num2cell(psychoData.uGreenTotal), 'Uniform', false);
+resizeData.thresholdYellowTotal = cellfun(@(X,U) [zeros(U-1,1) - 1; X],psychoData.thresholdYellowTotal, num2cell(psychoData.uYellowTotal), 'Uniform', false);
 end
 
 function fitAndPlotToThreshold (usableData, threshold, color, KpInterval, KpValsFine, figParams, error)
