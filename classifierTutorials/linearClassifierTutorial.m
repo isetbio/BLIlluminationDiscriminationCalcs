@@ -69,7 +69,7 @@ nSimulations = 10;
 % The direction of the test vector relative to the comparison vector.  Set
 % this to 1 for positive extension along the comparison vector, 2 for a
 % negative, 3 for an orthogonal direction.
-testVectorDirection = 1;
+testVectorDirection = 3;
 testDirectionName = {'Pos' 'Neg' 'Orth'};
 
 %% Define the parameters to use to train the SVM
@@ -89,7 +89,7 @@ SVMPred = @(s,d) predict(s,d);
 predictionFunctionList = {SVMPred};
 whichPredictionFunction = 1;
 
-trainPerNoiseLevel = true;
+trainPerNoiseLevel = false;
 
 %% Make directory for plots
 directoryName = [linearClassifierNames{whichClassifier} '_' testDirectionName{testVectorDirection}...
@@ -265,16 +265,16 @@ for ii = 1:length(dimensionalities)
             h = nan(1,4);
             
             subplot(2,length(noiseFuncList),ff);
-            h(1:2) = gscatter(transformedTestData(:,1), transformedTestData(:,2), classifiedData, 'mc', '**');
+            h(1:2) = gscatter(transformedTestData(:,1), transformedTestData(:,3), classifiedData, 'mc', '**');
             hold on;
-            h(3) = plot(class0Mean(1), class0Mean(2), 'r.', 'markersize', 50);
-            h(4) = plot(class1Mean(1), class1Mean(2), 'b.', 'markersize', 50);
+            h(3) = plot(class0Mean(1), class0Mean(3), 'r.', 'markersize', 50);
+            h(4) = plot(class1Mean(1), class1Mean(3), 'b.', 'markersize', 50);
             legend(h, {'Class 0' 'Class 1' 'Mean 0' 'Mean 1'}, 'Location', 'southeast');
             title(['SVM Classification \newline' noiseFuncNames{ff}], 'FontSize', 16);
             box off;
             
             subplot(2,length(noiseFuncList),ff + length(noiseFuncList));
-            h(1:2) = gscatter(transformedTestData(:,1), transformedTestData(:,2), testClasses, 'mc', '**');
+            h(1:2) = gscatter(transformedTestData(:,1), transformedTestData(:,3), testClasses, 'mc', '**');
             legend(h(1:2), {'Class 0' 'Class 1'}, 'Location', 'southeast');
             title(['Actual Classes \newline' noiseFuncNames{ff}], 'FontSize', 16);
             box off;
@@ -304,20 +304,15 @@ for ii = 1:length(dimensionalities)
             someSVMData{ii,1,ff} = data;
         end
     end
-    
-    %% Clear out for next dimension
-    clear trainedSVMList;
-    clear data;
-    clear class;
-    clear testData;
-    clear testClasses;
-    clear transformedTestData;
-    clear theSVM;
-    clear classifiedData;
-    clear hyperplane;
-    clear beta;
 end
 
+%% Clear out large data
+    clear trainedSVMList data class testData testClasses  transformedTestData ...
+        theSVM  classifiedData hyperplane beta comparisonPoissonNoise ...
+        class0Mean class1Mean testPoissonNoise comparisonVectorMean testVectorMean ...
+        testVectorDirection;
+
+%% Display results
 % Get mean results matrix
 percentCorrectMeanMatrix = mean(percentCorrectRawMatrix,4);
 percentCorrectStderrMatrix = std(percentCorrectRawMatrix,[],4)/sqrt(nSimulations);
