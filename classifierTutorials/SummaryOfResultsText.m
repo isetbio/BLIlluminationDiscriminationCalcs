@@ -63,24 +63,18 @@
 % other.  This results in extremely skewed accuracy results in high
 % dimensions where the growth of the noise is amplified due to the
 % dimensionality.
-% 
-% For the SVM, a training set of 2500 vectors comprising of half comparison
-% and half test vector was created for each combination of testing
-% conditions.  The training set consisted of vectors with noise draws of an
-% adjusted k = 1. Once trained, the SVM was tested with test sets also
-% consisting of half comparison and half test vectors.  The SVM approached
-% 50% accuracy at k = 10000 in all three directions and noise
-% distributions.  
-% 
-% Here are the links to the full figures of percents and p values:
-% 
-% Here is a comparison of when the dimensionality is 10000:
-% 
-% 
-% This result can explained by the SVM creating a hyperplane using support
-% vectors to classify the test sets.  Since this hyperplane is fixed, it is
-% expected that increasing the noise distribution will eventually result in
-% the case where the distance of the comparison and test vectors to the
-% hyperplane is small relative the size of their noise clouds.  In this
-% case, a series of random draws should result in an even amount of vectors
-% from both sides of the hyperplane.
+%
+% For the SVM, there were to methods to training.  One was to train the SVM
+% with data at the adjusted k = 1 value and use the same SVM for
+% classifying data from all noise levels.  The second method was to train a
+% new SVM for each noise level for classification.  In both the positive
+% and negative perturbation directions, the method of training a new SVM
+% for each noise level (TpN) performed worse in high dimensions of 1000 and
+% 10000.  This is noticeable at k = 100 and k = 10000.  Both the TpN and
+% non-TpN show a pattern of increasing classification accuracy as the
+% dimensionality increases.  The behavior of the TpN method relative to the
+% non-TpN method is different for the orthogonal case.  Here, the TpN
+% performs with high classification accuracy at k <= 100 for all
+% dimensions, a behavior not present in the positive and negative cases.
+% Additionally, while the TpN accuracy increases with dimensionality, the
+% non-TpN accuracy actually decreases with increased dimensionality.
