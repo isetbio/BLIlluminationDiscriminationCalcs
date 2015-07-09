@@ -16,8 +16,8 @@ function runAllCalculations
 close all; ieInit;
 
 %% Control of what gets done in this function
-CACHE_SCENES = true; forceSceneCompute = true;
-CACHE_OIS = true; forceOICompute = true;
+CACHE_SCENES = false; forceSceneCompute = true;
+CACHE_OIS = false; forceOICompute = true;
 RUN_CHOOSER = true; chooserColorChoice = 0; overWriteFlag = 1;
 CALC_THRESH = true; displayIndividualThreshold = false;
 
@@ -30,7 +30,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 % Set identifiers to run
-calcIDStrs = {'StaticPhoton_NM1'};
+calcIDStrs = {'StaticPhoton_KxMean'};
 
 %% Parameters of the calculation
 %
@@ -61,7 +61,7 @@ for k1 = 1:length(calcIDStrs)
     
     % Specify the number of trials for each combination of Kp Kg as well as
     % the highest illumination step (max 50) to go up to.
-    calcParams.numTrials = 500;
+    calcParams.numTrials = 100;
     calcParams.maxIllumTarget = 50;
     
     % Kp represents the scale factor for the Poisson noise.  This is the
