@@ -88,8 +88,8 @@ psycho.thresholdYellow = tYellow{1}; psycho.yellowPsychoFitParams = pYellow{1}; 
 
 %% Plot Thresholds
 
-% % Plot each threshold vector against its representative k-value of
-% % noise.  Also fit a line to it.
+% Plot each threshold vector against its representative k-value of
+% noise.  Also fit a line to it.
 plotAllThresholds(calcParams, psycho, figParams);
 
 % Save the threshold data for later plotting

@@ -32,8 +32,8 @@ calcParams = updateCacheFolderList(calcParams);
     % Code further on makes the most sense if the image is square (because we
     % define a square patch of cone mosaic when we build the sensor), so the
     % cropped region should always be square.
-    calcParams.cropRect = [500 600 40 40];              % [450 350 624 574] is the entire non-black region of our initial images with small border
-    calcParams.S = [380 8 51];                          % [489 393 535 480] will get image without any black border
+    calcParams = updateCropRect(calcParams);              % [450 350 624 574] is the entire non-black region of our initial images with small border
+    calcParams.S = [380 8 51];                            % [489 393 535 480] will get image without any black border
         
     % Parameters for creating the sensor
     calcParams.coneIntegrationTime = 0.050;
@@ -75,7 +75,7 @@ calcParams = updateCacheFolderList(calcParams);
     calcParams.numEMPositions = 5;
     calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
     calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
-    calcParams.tremorAmpFactor = 0;                     % This factor determines amplitude of tremors
+    calcParams.tremorAmpFactor = 1;                     % This factor determines amplitude of tremors
     
     % Specify cone adaptation parameters
     % The Isetbio code for cone adaptation is currently under reconstruction

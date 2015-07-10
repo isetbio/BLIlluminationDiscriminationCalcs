@@ -55,7 +55,7 @@ errorRed = std(cell2mat(tRed'), [], 2) / sqrt(length(calcIDStrList));
 errorGreen = std(cell2mat(tGreen'), [], 2) / sqrt(length(calcIDStrList));
 errorYellow = std(cell2mat(tYellow'), [], 2) / sqrt(length(calcIDStrList));
 
-%% Here calc mean and std err using available data -> not necessarily having all 15 points
+%% Here calc mean and std err using available data -> not necessarily having points in all simulations
 tBlue = cellfun(@(X) X.thresholdBlueTotal{1}, psychoData,'UniformOutput', false);
 tGreen = cellfun(@(X) X.thresholdGreenTotal{1}, psychoData,'UniformOutput', false);
 tRed = cellfun(@(X) X.thresholdRedTotal{1}, psychoData,'UniformOutput', false);
@@ -117,10 +117,10 @@ box off;
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize);
 
 hold on;
-fitAndPlotToThreshold(tBlueUsable, tBlueMean', 'b', KInterval, KValsFine, figParams, tBlueStdErr);
-fitAndPlotToThreshold(tGreenUsable, tGreenMean', 'g', KInterval, KValsFine, figParams, tGreenStdErr);
-fitAndPlotToThreshold(tRedUsable, tRedMean', 'r', KInterval, KValsFine, figParams, tRedStdErr);
-fitAndPlotToThreshold(tYellowUsable, tYellowMean', 'y', KInterval, KValsFine, figParams, tYellowStdErr);
+fitAndPlotToThreshold(tBlueUsable, tBlueMean', 'b', KInterval, KValsFine, figParams);
+fitAndPlotToThreshold(tGreenUsable, tGreenMean', 'g', KInterval, KValsFine, figParams);
+fitAndPlotToThreshold(tRedUsable, tRedMean', 'r', KInterval, KValsFine, figParams);
+fitAndPlotToThreshold(tYellowUsable, tYellowMean', 'y', KInterval, KValsFine, figParams);
 
 
 %% Plot thresholds
@@ -130,14 +130,13 @@ KInterval = min([maxUBlue maxURed maxUGreen maxUYellow]):max([minEndBlue minEndG
 KValsFine = min(KInterval):1/1000:max(KInterval);
 
 figure;
-box off;
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize);
 
 hold on;
-fitAndPlotToThreshold(maxUBlue, meanTBlue, 'b', KInterval, KValsFine, figParams, errorBlue);
-fitAndPlotToThreshold(maxURed, meanTRed, 'r', KInterval, KValsFine, figParams, errorRed);
-fitAndPlotToThreshold(maxUGreen, meanTGreen, 'g', KInterval, KValsFine, figParams, errorGreen);
-fitAndPlotToThreshold(maxUYellow, meanTYellow, 'y', KInterval, KValsFine, figParams, errorYellow);
+fitAndPlotToThreshold(maxUBlue, meanTBlue, 'b', KInterval, KValsFine, figParams);
+fitAndPlotToThreshold(maxURed, meanTRed, 'r', KInterval, KValsFine, figParams);
+fitAndPlotToThreshold(maxUGreen, meanTGreen, 'g', KInterval, KValsFine, figParams);
+fitAndPlotToThreshold(maxUYellow, meanTYellow, 'y', KInterval, KValsFine, figParams);
 end
 
 function resizeData = resizeAllThresholds(psychoData)
@@ -148,55 +147,4 @@ resizeData.thresholdBlueTotal = cellfun(@(X,U) [zeros(U-1,1) - 1; X],psychoData.
 resizeData.thresholdRedTotal = cellfun(@(X,U) [zeros(U-1,1) - 1; X],psychoData.thresholdRedTotal, num2cell(psychoData.uRedTotal), 'Uniform', false);
 resizeData.thresholdGreenTotal = cellfun(@(X,U) [zeros(U-1,1) - 1; X],psychoData.thresholdGreenTotal, num2cell(psychoData.uGreenTotal), 'Uniform', false);
 resizeData.thresholdYellowTotal = cellfun(@(X,U) [zeros(U-1,1) - 1; X],psychoData.thresholdYellowTotal, num2cell(psychoData.uYellowTotal), 'Uniform', false);
-end
-
-function fitAndPlotToThreshold (usableData, threshold, color, KpInterval, KpValsFine, figParams, error)
-% fitAndPlotToThreshold (usableData, threshold, color, kInterval, kValsFine, figParams)
-%
-% This function plots the thresholds against their respective k values of
-% noise.  Currently the data is fit to a linear line.
-%
-% Inputs:
-%   usableData  - The start index at which the data is usable for fitting
-%   threshold   - The threshold data to plot
-%   color       - The color to plot the data
-%   KpInterval  - The interval between k-Poisson samples
-%   KpValsFine  - The total range to plot the fit over.  This should be
-%                 subdivided into many small intervals (finely) to create
-%                 a line
-%   figParams   - Parameters to format the plot
-
-%% Define x-axis value range
-numOfData = size(threshold);
-dataStart = min(KpValsFine(:)) + (usableData - 1) * KpInterval;
-dataEnd = dataStart + (numOfData(1) - 1) * KpInterval;
-kVals = dataStart:KpInterval:dataEnd;
-
-%% Plot threshold points
-% plot(kVals, threshold, strcat(color,'.'), 'markersize', figParams.markerSize);
-errorbar(kVals, threshold, error, strcat(color, '.'), 'markersize', figParams.markerSize);
-
-%% Fit to line and get set of y values
-
-% This will start the fit as a linear line.  Then increase the target fit
-% and try again if the mean error is greater than the tolerance.
-errorTolerance = .5;
-delta = 1;
-polynomialToFit = 1;
-s = warning('error','MATLAB:polyval:ZeroDOF');
-while mean(delta) > errorTolerance && polynomialToFit < 4
-    try
-        [p, S] = polyfit(kVals, threshold', polynomialToFit);
-        [y, delta] = polyval(p, KpValsFine,S);
-        polynomialToFit = polynomialToFit + 1;
-    catch
-        [p, S] = polyfit(kVals, threshold', polynomialToFit - 1);
-        y = polyval(p, KpValsFine,S);
-        break;
-    end
-end
-warning(s);
-
-hold on;
-plot (KpValsFine, y, color, 'linewidth', figParams.lineWidth);
 end
