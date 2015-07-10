@@ -42,7 +42,7 @@ noiseFree = sensorGet(sensor, 'photons');
 nG = sqrt(calcParams.meanStandard) * randn(size(noiseFree));
 
 % Add noise back with k multipliers
-photons = noiseFree + Kg * nP + Kp * nG;
+photons = noiseFree + Kp * nP + Kg * nG;
 
 % Photons are whole numbers
 photons = round(photons);     % Disable rounding for bug testing
