@@ -18,14 +18,14 @@ switch (calcParams.calcIDStr)
             'StaticPhoton_5EM_10MS' 'StaticPhoton_10MS' 'StaticPhoton_5EM_10MS_SUM' ...
             'SensorFOV' 'StaticPhoton_DiffStandard' 'StaticPhoton_DiffStandardN' ...
             'StaticPhoton_DiffStandardN2' 'StaticPhoton_KxMean' 'StaticPhoton_NM1' ...
-            'StaticPhoton_NM2' 'PixelNoiseTest' 'PixelNoiseAffirm'}
+            'StaticPhoton_NM2' 'PixelNoiseTest' 'PixelNoiseAffirm' 'StaticPhoton_G'}
         calcParams.cropRect = [550 450 40 40];
     case {'StaticPhoton_2' ...
-            'StaticPhoton_2_UnifNoise' 'StaticPhoton_KxMean2'}
+            'StaticPhoton_2_UnifNoise' 'StaticPhoton_KxMean2' 'StaticPhoton_G2'}
         calcParams.cropRect = [750 650 40 40];
-    case {'StaticPhoton_3'  'StaticPhoton_KxMean3'}
+    case {'StaticPhoton_3' 'StaticPhoton_KxMean3' 'StaticPhoton_G3'}
         calcParams.cropRect = [550 700 40 40];
-    case {'StaticPhoton_4' 'StaticPhoton_KxMean4'}
+    case {'StaticPhoton_4' 'StaticPhoton_KxMean4' 'StaticPhoton_G4'}
         calcParams.cropRect = [500 400 40 40];
     case {'StaticPhoton_5' 'StaticPhoton_KxMean5'}
         calcParams.cropRect = [500 600 40 40];

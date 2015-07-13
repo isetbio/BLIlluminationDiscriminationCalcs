@@ -105,7 +105,7 @@ fitAndPlotToThreshold(usable.yellow, threshold.yellow, 'y', KInterval, KValsFine
 
 title(theTitle, 'interpreter', 'none');
 xlabel(theXAxis);
-ylabel('Threshold (E*)');
+ylabel('Threshold (\DeltaE*)');
 ylim([0 50]);
 xlim(theXLim);
 
