@@ -121,7 +121,7 @@ fitAndPlotToThreshold(tBlueUsable, tBlueMean', 'b', KInterval, KValsFine, figPar
 fitAndPlotToThreshold(tGreenUsable, tGreenMean', 'g', KInterval, KValsFine, figParams);
 fitAndPlotToThreshold(tRedUsable, tRedMean', 'r', KInterval, KValsFine, figParams);
 fitAndPlotToThreshold(tYellowUsable, tYellowMean', 'y', KInterval, KValsFine, figParams);
-
+title('Include Partial Samples');
 
 %% Plot thresholds
 figParams = getFigureParameters;
@@ -137,6 +137,7 @@ fitAndPlotToThreshold(maxUBlue, meanTBlue, 'b', KInterval, KValsFine, figParams)
 fitAndPlotToThreshold(maxURed, meanTRed, 'r', KInterval, KValsFine, figParams);
 fitAndPlotToThreshold(maxUGreen, meanTGreen, 'g', KInterval, KValsFine, figParams);
 fitAndPlotToThreshold(maxUYellow, meanTYellow, 'y', KInterval, KValsFine, figParams);
+title('Only all samples available');
 end
 
 function resizeData = resizeAllThresholds(psychoData)
