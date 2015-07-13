@@ -11,7 +11,7 @@ function thresholdPlotter
 % 6/30/15  xd  wrote it
 
 %% Clear
-clear; close all;
+clear;
 
 %% Load global parameters
 figParams = getFigureParameters;
@@ -63,38 +63,37 @@ while true
             data = loadChooserData(calcParams.calcIDStr, [Color 'IllumComparison' calcParams.calcIDStr]);
             switch Color
                 case 'green'
-                    fitToData(calcParams, data, psychoData.psycho.greenPsychoFitParamsTotal,psychoData.psycho.uGreenTotal, 'g', Kg, Kp);
+                    plotSingleData(calcParams, data, psychoData.psycho.greenPsychoFitParamsTotal,psychoData.psycho.uGreenTotal, 'g', Kg, Kp);
                 case 'blue'
-                    fitToData(calcParams, data, psychoData.psycho.bluePsychoFitParamsTotal,psychoData.psycho.uBlueTotal, 'b', Kg, Kp);
+                    plotSingleData(calcParams, data, psychoData.psycho.bluePsychoFitParamsTotal,psychoData.psycho.uBlueTotal, 'b', Kg, Kp);
                 case 'red'
-                    fitToData(calcParams, data, psychoData.psycho.redPsychoFitParamsTotal,psychoData.psycho.uRedTotal, 'r', Kg, Kp);
+                    plotSingleData(calcParams, data, psychoData.psycho.redPsychoFitParamsTotal,psychoData.psycho.uRedTotal, 'r', Kg, Kp);
                 case 'yellow'
-                    fitToData(calcParams, data, psychoData.psycho.yellowPsychoFitParamsTotal,psychoData.psycho.uYellowTotal, 'y', Kg, Kp);
+                    plotSingleData(calcParams, data, psychoData.psycho.yellowPsychoFitParamsTotal,psychoData.psycho.uYellowTotal, 'y', Kg, Kp);
             end
         case {'plot all' 'pa'}
+        case {'l p kg'}
+            targetDataFolder = input('Enter directory name: ','s');
+            psychoData = load(fullfile(dataBaseDir, 'SimpleChooserData',targetDataFolder, ['psychofitSummary' targetDataFolder]));
+            calcParams = psychoData.calcParams;
+            calcParams = updateCalcParamFields(calcParams);
+            plotAllThresholds(calcParams, psychoData.psycho, figParams, 'Kg', 0);
+        case {'l p kp'}
+            targetDataFolder = input('Enter directory name: ','s');
+            psychoData = load(fullfile(dataBaseDir, 'SimpleChooserData',targetDataFolder, ['psychofitSummary' targetDataFolder]));
+            calcParams = psychoData.calcParams;
+            calcParams = updateCalcParamFields(calcParams);
+            plotAllThresholds(calcParams, psychoData.psycho, figParams, 'Kp', 1);
         case {'exit'}
             break;
     end
 end
 end
 
-function fitToData (calcParams, data, fittedParams, usableDataTotal, color, Kg, Kp)
-% [threshold, paramsValues] = fitToData (data, paramsEstimate, color, toPlot)
+function plotSingleData (calcParams, data, fittedParams, usableDataTotal, color, Kg, Kp)
+% plotSingleData (calcParams, data, fittedParams, usableDataTotal, color, Kg, Kp)
 %
-% This function will fit input data to a Weibull curve.  The choice of
-% psychometric function can be changed manually here.  Set "toPlot" to
-% false to disable plotting of the fitted curves.  This function will
-% automatically calculate where to start fitting the data.  This is done by
-% looking at the first 5 entries in each column and setting the column
-% where the average of these 5 values are less than 70 the first time as
-% the usableData field.
-%
-% Inputs:
-%   calcParams     - A struct containing parameters used for the chooser calculation
-%   data           - The data with which to fit a Weibull curve.
-%   paramsEstimate - The initial estimates for the fitting function.
-%   toPlot         - Boolean flag to decide whether or not to plot all the
-%                    individual fitted curves
+% This function plots data for a single Kp-Kg combination
 
 %% Set common parameters
 sizeOfData = size(data);

@@ -139,7 +139,13 @@ for ii = 1:sizeOfData(2)
     end
 end
 
-if ~exist('usableDataStart','var'), error('No Usable Data'); end
+if ~exist('usableDataStart','var')
+    warning('No Usable Data'); 
+    threshold = 0;
+    paramsValues = [];
+    usableDataStart = sizeOfData(2) + 1;
+    return;
+end
 
 % If the average of the last 5 values is less than 70, this is the first
 % non usable column of data
