@@ -29,7 +29,7 @@ dimensionalities = [10 100 1000 10000];
 % Noise expansion factors to test. Each of these will be done in turn.
 % 
 % These k's are expressed in units of noise so that k == 1 correponds to
-% having the mean lenght of a noise draw about the same as the vector
+% having the mean length of a noise draw about the same as the vector
 % length between the mean comparison and test vectors.
 noiseFactorKs = [1 10 100 1000 10000 100000];
 
@@ -48,7 +48,7 @@ noiseFuncNames = {'Normal', 'PoissonApprox' 'Poisson'};
 
 %% Set up fixed parameters
 
-% Length of test vector, and distance from comparionVectorMean to testVectorMean.
+% Length of test vector, and distance from comparisonVectorMean to testVectorMean.
 % This distance is defined relative to the unit length of the comparison vector
 comparisonVectorLength = 1000;
 testDistanceFraction = 0.05;
