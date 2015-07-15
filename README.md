@@ -7,6 +7,8 @@ For more information, please see the project wiki: https://github.com/isetbio/BL
  - About Us: https://github.com/isetbio/BLIlluminationDiscriminationCalcs/wiki/About-Us
  - Join Us: https://github.com/setbio/BLIlluminationDiscriminationCalcs/wiki/Join-Us
 
+The BLIlluminationDiscriminationCalcs project is (c) 2015 by the developers.  The code is released under the MIT License.  See more here: http://opensource.org/licenses/MIT.
 
+If you make use of this code in a published research, should should cite this project. Please contact David Brainard (brainard@psych.upenn.edu) for the appropriate current citation.
 
 
