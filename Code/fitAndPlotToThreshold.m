@@ -1,4 +1,4 @@
-function fitAndPlotToThreshold (usableData, threshold, color, KpInterval, KpValsFine, figParams)
+function fitAndPlotToThreshold (usableData, threshold, color, KpInterval, KpValsFine, figParams, varargin)
 % fitAndPlotToThreshold (usableData, threshold, color, kInterval, kValsFine, figParams)
 %
 % This function plots the thresholds against their respective k values of
@@ -16,6 +16,12 @@ function fitAndPlotToThreshold (usableData, threshold, color, KpInterval, KpVals
 %
 % 7/10/15  xd  Moved to separate function from plotAllThresholds.m
 
+%% Create an input parser to decide whether or not to plot errorbars
+p = inputParser;
+p.addOptional('error', []);
+
+parse(p, varargin{:});
+
 %% Define x-axis value range
 numOfData = size(threshold);
 dataStart = min(KpValsFine(:)) + (usableData - 1) * KpInterval;
@@ -23,9 +29,11 @@ dataEnd = dataStart + (numOfData(1) - 1) * KpInterval;
 kVals = dataStart:KpInterval:dataEnd;
 
 %% Plot threshold points
-plot(kVals, threshold, strcat(color,'.'), 'markersize', figParams.markerSize);
-%errorbar(kVals, threshold, error, strcat(color, '.'), 'markersize', figParams.markerSize);
-
+if isempty(p.Results.error)
+    plot(kVals, threshold, strcat(color,'.'), 'markersize', figParams.markerSize);
+else
+    errorbar(kVals, threshold, error, strcat(color, '.'), 'markersize', figParams.markerSize);
+end
 %% Fit to line and get set of y values
 
 % This will start the fit as a linear line.  Then increase the target fit

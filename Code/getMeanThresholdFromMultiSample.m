@@ -148,6 +148,10 @@ figure;
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize);
 
 hold on;
+% fitAndPlotToThreshold(maxUBlue, meanTBlue, 'b', KInterval, KValsFine, figParams,errorBlue);
+% fitAndPlotToThreshold(maxURed, meanTRed, 'r', KInterval, KValsFine, figParams,errorRed);
+% fitAndPlotToThreshold(maxUGreen, meanTGreen, 'g', KInterval, KValsFine, figParams,errorGreen);
+% fitAndPlotToThreshold(maxUYellow, meanTYellow, 'y', KInterval, KValsFine, figParams,errorYellow);
 fitAndPlotToThreshold(maxUBlue, meanTBlue, 'b', KInterval, KValsFine, figParams);
 fitAndPlotToThreshold(maxURed, meanTRed, 'r', KInterval, KValsFine, figParams);
 fitAndPlotToThreshold(maxUGreen, meanTGreen, 'g', KInterval, KValsFine, figParams);
