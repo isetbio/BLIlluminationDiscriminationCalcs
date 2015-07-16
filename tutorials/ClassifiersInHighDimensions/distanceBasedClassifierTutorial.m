@@ -242,7 +242,8 @@ for ii = 1:length(dimensionalities)
         ylim(figParams.percentYLim);
     end
 end
-suptitle(['Mean percent correct for ' distMeasureNames{whichDistanceMeasure} ' ' testDirectionName{testVectorDirection}]);
+[ax, h] = suplabel(['Mean percent correct for ' distMeasureNames{whichDistanceMeasure} ' ' testDirectionName{testVectorDirection}], 't');
+% suptitle(['Mean percent correct for ' distMeasureNames{whichDistanceMeasure} ' ' testDirectionName{testVectorDirection}]);
 savefig(fullfile(directoryName, 'PercentCorrect'));
 FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'tiff');
 
@@ -264,7 +265,8 @@ for ii = 1:length(dimensionalities)
         ylim(figParams.pvalueYLim);
     end
 end
-suptitle(['p values for ' distMeasureNames{whichDistanceMeasure} ' ' testDirectionName{testVectorDirection}]);
+[ax, h] = suplabel(['p values for ' distMeasureNames{whichDistanceMeasure} ' ' testDirectionName{testVectorDirection}], 't');
+% suptitle(['p values for ' distMeasureNames{whichDistanceMeasure} ' ' testDirectionName{testVectorDirection}]);
 savefig(fullfile(directoryName, 'pvalues'));
 FigureSave(fullfile(directoryName, 'pvalues'), gcf, 'tiff');
 

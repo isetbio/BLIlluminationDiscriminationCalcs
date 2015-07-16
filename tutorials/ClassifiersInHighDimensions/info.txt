@@ -1,0 +1,1 @@
+This section contains tutorials script(s) that demonstrate the effects of high dimensions on classifiers.

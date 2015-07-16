@@ -1,1 +1,0 @@
-This section contains tutorials script(s) that demonstrate the linear classifier.

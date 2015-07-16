@@ -25,8 +25,7 @@ clear global; %close all;
 
 %% Get our project toolbox on the path
 myDir = fileparts(mfilename('fullpath'));
-pathDir = fullfile(myDir,'..','Toolbox','');
-AddToMatlabPathDynamically(pathDir);
+AddToMatlabPathDynamically(myDir);
 
 %% Load the data for each illumination matrix
 blueMatrix  = loadChooserData(calcIDStr,['blueIllumComparison' calcIDStr]);

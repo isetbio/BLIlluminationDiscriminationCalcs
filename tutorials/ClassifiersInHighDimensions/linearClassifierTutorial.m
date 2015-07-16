@@ -284,7 +284,8 @@ for ii = 1:length(dimensionalities)
             [~,ttestMatrix(ii,jj,ff)] = ttest(theValues,50);
         end
         theTitle = ['Noise factor: ' int2str(noiseFactorKs(jj)) ', dimentionality: ' int2str(theDimensionality)];
-        suptitle(theTitle);
+        suplabel(theTitle, 't');
+%         suptitle(theTitle);
         savefig(fullfile(directoryName, 'HyperplaneFigs', theTitle));
         close;
     end
@@ -305,17 +306,17 @@ for ii = 1:length(dimensionalities)
         end
     end
     
-    clear trainedSVMList data class testData testClasses  transformedTestData ...
-    theSVM  classifiedData hyperplane beta comparisonPoissonNoise ...
-    class0Mean class1Mean testPoissonNoise comparisonVectorMean testVectorMean ...
-    testVectorDirection theSVM;
+%     clear trainedSVMList data class testData testClasses  transformedTestData ...
+%     theSVM  classifiedData hyperplane beta comparisonPoissonNoise ...
+%     class0Mean class1Mean testPoissonNoise comparisonVectorMean testVectorMean ...
+%     testVectorDirection theSVM;
 end
 
 %% Clear out large data
 clear trainedSVMList data class testData testClasses  transformedTestData ...
     theSVM classifiedData hyperplane beta comparisonPoissonNoise ...
     class0Mean class1Mean testPoissonNoise comparisonVectorMean testVectorMean ...
-    testVectorDirection;
+    testVectorPerturbation;
 
 %% Display results
 % Get mean results matrix
@@ -368,7 +369,8 @@ for ii = 1:length(dimensionalities)
         ylim([0 100]);
     end
 end
-suptitle(['Mean percent correct for SVM ' testDirectionName{testVectorDirection}]); 
+[ax, h] = suplabel(['Mean percent correct for SVM ' testDirectionName{testVectorDirection}], 't');
+% suptitle(['Mean percent correct for SVM ' testDirectionName{testVectorDirection}]); 
 % savefig(fullfile(directoryName, 'PercentCorrect'));
 FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'pdf');
 
@@ -391,7 +393,8 @@ for ii = 1:length(dimensionalities)
         ylim([0 1]);
     end
 end
-suptitle(['p values for SVM ', testDirectionName{testVectorDirection}]);
+[ax, h] = suplabel(['p values for SVM ', testDirectionName{testVectorDirection}], 't');
+% suptitle(['p values for SVM ', testDirectionName{testVectorDirection}]);
 %savefig(fullfile(directoryName, 'pvalues'));
 FigureSave(fullfile(directoryName, 'pvalues'), gcf, 'pdf');
 
