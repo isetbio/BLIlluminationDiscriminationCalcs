@@ -235,17 +235,17 @@ for ii = 1:length(dimensionalities)
         hold on
         plot(xlim, [50 50], 'k--');
                 
-        title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))],'FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
+        title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))],'FontName',figParams.fontName,'FontSize',figParams.titleFontSize);
         xlabel('k','FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
         ylabel('% correct','FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
         xlim(figParams.percentXLim);
         ylim(figParams.percentYLim);
     end
 end
-[ax, h] = suplabel(['Mean percent correct for ' distMeasureNames{whichDistanceMeasure} ' ' testDirectionName{testVectorDirection}], 't');
-% suptitle(['Mean percent correct for ' distMeasureNames{whichDistanceMeasure} ' ' testDirectionName{testVectorDirection}]);
+[~, h] = suplabel(['Mean percent correct for ' distMeasureNames{whichDistanceMeasure} ' ' testDirectionName{testVectorDirection}], 't');
+set(h, 'FontSize', figParams.titleFontSize);
 savefig(fullfile(directoryName, 'PercentCorrect'));
-FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'tiff');
+FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'pdf');
 
 figure;
 set(gcf, 'position', [0 0 1500 1500]);
@@ -258,17 +258,17 @@ for ii = 1:length(dimensionalities)
         hold on
         plot(xlim, [0.05 0.05], 'k--');
         
-        title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))],'FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
+        title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))],'FontName',figParams.fontName,'FontSize',figParams.titleFontSize);
         xlabel('k','FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
         ylabel('p value','FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
         xlim(figParams.pvalueXLim);
         ylim(figParams.pvalueYLim);
     end
 end
-[ax, h] = suplabel(['p values for ' distMeasureNames{whichDistanceMeasure} ' ' testDirectionName{testVectorDirection}], 't');
-% suptitle(['p values for ' distMeasureNames{whichDistanceMeasure} ' ' testDirectionName{testVectorDirection}]);
+[~, h] = suplabel(['p values for ' distMeasureNames{whichDistanceMeasure} ' ' testDirectionName{testVectorDirection}], 't');
+set(h, 'FontSize', figParams.titleFontSize);
 savefig(fullfile(directoryName, 'pvalues'));
-FigureSave(fullfile(directoryName, 'pvalues'), gcf, 'tiff');
+FigureSave(fullfile(directoryName, 'pvalues'), gcf, 'pdf');
 
 % Save all the data in case we need it later.
 save(fullfile(directoryName, 'data'));

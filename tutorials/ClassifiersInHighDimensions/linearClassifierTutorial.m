@@ -284,8 +284,8 @@ for ii = 1:length(dimensionalities)
             [~,ttestMatrix(ii,jj,ff)] = ttest(theValues,50);
         end
         theTitle = ['Noise factor: ' int2str(noiseFactorKs(jj)) ', dimentionality: ' int2str(theDimensionality)];
-        suplabel(theTitle, 't');
-%         suptitle(theTitle);
+        [~, h] = suplabel(theTitle, 't');
+        set(h, 'FontSize', 20);
         savefig(fullfile(directoryName, 'HyperplaneFigs', theTitle));
         close;
     end
@@ -362,16 +362,16 @@ for ii = 1:length(dimensionalities)
         
         hold on
         plot(xlim, [50 50], 'k--');
-        title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))],'FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
+        title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))],'FontName',figParams.fontName,'FontSize',figParams.titleFontSize);
         xlabel('k','FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
         ylabel('% correct','FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
         xlim([min(noiseFactorKs)/10 10*max(noiseFactorKs)]);
         ylim([0 100]);
     end
 end
-[ax, h] = suplabel(['Mean percent correct for SVM ' testDirectionName{testVectorDirection}], 't');
-% suptitle(['Mean percent correct for SVM ' testDirectionName{testVectorDirection}]); 
-% savefig(fullfile(directoryName, 'PercentCorrect'));
+[~, h] = suplabel(['Mean percent correct for SVM ' testDirectionName{testVectorDirection}], 't');
+set(h, 'FontSize', figParams.titleFontSize);
+savefig(fullfile(directoryName, 'PercentCorrect'));
 FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'pdf');
 
 figure;
@@ -386,16 +386,16 @@ for ii = 1:length(dimensionalities)
         
         hold on
         plot(xlim, [0.05 0.05], 'k--');
-        title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))],'FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
+        title([noiseFuncNames{jj} ' ' int2str(dimensionalities(ii))],'FontName',figParams.fontName,'FontSize',figParams.titleFontSize);
         xlabel('k','FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
         ylabel('p value','FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
         xlim([min(noiseFactorKs)/10 10*max(noiseFactorKs)]);
         ylim([0 1]);
     end
 end
-[ax, h] = suplabel(['p values for SVM ', testDirectionName{testVectorDirection}], 't');
-% suptitle(['p values for SVM ', testDirectionName{testVectorDirection}]);
-%savefig(fullfile(directoryName, 'pvalues'));
+[~, h] = suplabel(['p values for SVM ', testDirectionName{testVectorDirection}], 't');
+set(h, 'FontSize', figParams.titleFontSize);
+savefig(fullfile(directoryName, 'pvalues'));
 FigureSave(fullfile(directoryName, 'pvalues'), gcf, 'pdf');
 
 save(fullfile(directoryName, 'data'));
