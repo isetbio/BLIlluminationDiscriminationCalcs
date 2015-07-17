@@ -1,12 +1,24 @@
 function plotAllThresholds(calcParams, psychoData, figParams, varargin)
-% plotAllThresholds(calcParams, psychoData, figParams, kType, kValue)
+% plotAllThresholds(calcParams, psychoData, figParams, varargin)
 %
 % This function will plot all the threshold fits.  The specified kType and
 % kValue are fixed and the opposing kType will be used as the x-axis.  For
 % example, the default values of 'Kg' and 0 will result in a plot of all
 % the Kp thresholds for which Kg == 0.
 %
+% Inputs:
+%    calcParams - The calcParams used in the calculation
+%    psychoData - The data saved through thresholdCalculation
+%    figParams  - The desired figure parameters for the plot
+%        
+%  {Optional} - These are not name-pair inputs and must be entered in order
+%    kType    - The k value type to hold constant.  If Kp is constant, then
+%               Kg will be the x-axis and vice versa.
+%    kValue   - The value at which to hold the kType constant.  Be sure
+%               that this is a valid value for the desired type.
+%
 % 6/30/15  xd  moved and updated from thresholdCalculation
+% 7/17/15  xd  updated the comment header
 
 %% Parse inputs 
 p = inputParser;

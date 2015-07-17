@@ -1,5 +1,5 @@
 function sensorImageSimpleChooserModel(calcParams, colorChoice, overWrite)
-%sensorImageSimpleChooserModel(calcParams, computeAll, colorChoice)
+% sensorImageSimpleChooserModel(calcParams, computeAll, colorChoice)
 %
 % This function will generate several noisy versions of the standard
 % image.  Then it will compare the standard with one of the noisy images
@@ -124,21 +124,22 @@ fprintf('Calculation complete\n');
 end
 
 function results = singleColorKValueComparison(calcParams, sensor, standardPath, folderName, prefix)
-%results = singleColorKValueComparison(calcParams, sensor, folderName, prefix)
+% results = singleColorKValueComparison(calcParams, sensor, standardPath, folderName, prefix)
 %
 % This function carries out the simple chooser model calculation.
 %
 % Inputs:
-%   calcParams - This struct should contain relevant parameters for the
-%                calculation, including the number of k-value samples, the
-%                number of trials, and the illumination number to go up to.
-%                These are specified by the fields 'numTrials',
-%                'maxIllumTarget', and 'numKValueSamples'
-%   sensor     - This is the sensor that will be used to generate each of the
-%                sensor images
-%   folderName - The folder that contains the target set of optical images
-%   prefix     - The color that matches the target folder, this will be used to
-%                generate the optical image name
+%   calcParams   - This struct should contain relevant parameters for the
+%                  calculation, including the number of k-value samples, the
+%                  number of trials, and the illumination number to go up to.
+%                  These are specified by the fields 'numTrials',
+%                  'maxIllumTarget', and 'numKValueSamples'
+%   sensor       - This is the sensor that will be used to generate each of the
+%                  sensor images
+%   standardPath - The path to where the target OI are stored
+%   folderName   - The folder that contains the target set of optical images
+%   prefix       - The color that matches the target folder, this will be used to
+%                  generate the optical image name
 % Outputs:
 %   results - A 2D matrix that contains percentages of 'correct' decisions
 %             made by the model
@@ -156,9 +157,9 @@ KgInterval = calcParams.KgInterval;
 % This will return the list of optical images in ascending illum number
 % order.  In addition, if a specific illumination number has more than one
 % copy, the file name should formatted like 'blue1L#-RGB...' where #
-% represents the copy number.  For consistancy, I believe these should also
+% represents the copy number.  For consistency, I believe these should also
 % be zero indexed like the standard are, except that the 0th term will not have a #. 
-% In this case # would start with 1. Code beyond this point will assume that this is so.
+% In this case # would start with 1. Code beyond this point will assume these conditions.
 dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
 folderPath = fullfile(dataBaseDir, 'OpticalImageData', calcParams.cacheFolderList{2}, folderName);
 data = what(folderPath);
@@ -280,7 +281,7 @@ results = accuracyMatrix;
 end
 
 function computeByColor(calcParams, sensor, colorChoice)
-%computeByColor(calcParams, sensor, colorChoice)
+% computeByColor(calcParams, sensor, colorChoice)
 %
 % This function will run the simple chooser model on the data set specified
 % by colorChoice.  This will save the results in the folder defined by

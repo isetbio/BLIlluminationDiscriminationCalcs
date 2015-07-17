@@ -1,7 +1,10 @@
 function photons = getNoisySensorImage(calcParams, sensor, Kp, Kg)
-%getNoisySensorImage(calcParams, folderName, imageName, sensor, k)
+% getNoisySensorImage(calcParams, folderName, imageName, sensor, k)
+%
 % Generate a single noisy sensor image of the input optical image location
-% using the given input sensor
+% using the given input sensor.  The noise can be a combination of Poisson
+% and Gaussian noise.  If Gaussian noise is desired, be sure to have the
+% field meanStandard specified in the calcParams.
 %
 % Inputs:
 %   calcParams - These parameters contains options defining whether or not

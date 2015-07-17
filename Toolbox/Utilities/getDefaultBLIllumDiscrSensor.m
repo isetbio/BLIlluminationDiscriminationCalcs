@@ -4,7 +4,8 @@ function sensor = getDefaultBLIllumDiscrSensor
 % This functions returns a default sensor used mainly for testing bugs in
 % the BLIlluminationDiscrimination Project
 %
-% 
+% 6/XX/15  xd  wrote it
+
 sensor = sensorCreate('human');
 
 sensorRows = sensorGet(sensor, 'rows');

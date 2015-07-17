@@ -4,7 +4,6 @@ function updatedParams = updateCropRect(calcParams)
 % This function will update the input calcParams so that its cropRect field
 % is assigned appropriately according to its calcID. 
 %
-%
 % Inputs:
 %    calcParams - A calcParam file with at least the calcIDStr field set.
 %
