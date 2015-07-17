@@ -76,7 +76,7 @@ testDirectionName = {'Pos' 'Neg' 'Orth'};
 %
 % This is set up as a function list so that alternate machine learning
 % algorithms can be added at ease without drastically altering the code.
-SVM = @(d,c) fitcsvm(d,c, 'Standardize', true);
+SVM = @(d,c) fitcsvm(d,c);
 
 linearClassifierList = {SVM};
 linearClassifierNames = {'MatlabSVM'};
@@ -265,16 +265,16 @@ for ii = 1:length(dimensionalities)
             h = nan(1,4);
             
             subplot(2,length(noiseFuncList),ff);
-            h(1:2) = gscatter(transformedTestData(:,1), transformedTestData(:,3), classifiedData, 'mc', '**');
+            h(1:2) = gscatter(transformedTestData(:,1), transformedTestData(:,2), classifiedData, 'mc', '**');
             hold on;
-            h(3) = plot(class0Mean(1), class0Mean(3), 'r.', 'markersize', 50);
-            h(4) = plot(class1Mean(1), class1Mean(3), 'b.', 'markersize', 50);
+            h(3) = plot(class0Mean(1), class0Mean(2), 'r.', 'markersize', 50);
+            h(4) = plot(class1Mean(1), class1Mean(2), 'b.', 'markersize', 50);
             legend(h, {'Class 0' 'Class 1' 'Mean 0' 'Mean 1'}, 'Location', 'southeast');
             title(['SVM Classification \newline' noiseFuncNames{ff}], 'FontSize', 16);
             box off;
             
             subplot(2,length(noiseFuncList),ff + length(noiseFuncList));
-            h(1:2) = gscatter(transformedTestData(:,1), transformedTestData(:,3), testClasses, 'mc', '**');
+            h(1:2) = gscatter(transformedTestData(:,1), transformedTestData(:,2), testClasses, 'mc', '**');
             legend(h(1:2), {'Class 0' 'Class 1'}, 'Location', 'southeast');
             title(['Actual Classes \newline' noiseFuncNames{ff}], 'FontSize', 16);
             box off;
