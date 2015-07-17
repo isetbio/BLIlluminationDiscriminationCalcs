@@ -8,9 +8,9 @@ function generateWikiFigures
 
 %% Set up some directory related things
 targetTutorialDirectory = 'ClassifiersInHighDimensions';
-projectDirectory = fileparts(fileparts(pwd));
-tutorialsDirectory = fullfile(projectDirectory, 'tutorials');
-targetTutorialPath = fullfile(tutorialsDirectory, targetTutorialDirectory);
+projectPath = fileparts(fileparts(pwd));
+tutorialsPath = fullfile(projectPath, 'tutorials');
+targetTutorialPath = fullfile(tutorialsPath, targetTutorialDirectory);
 
 %% Get list of folders from the directory
 allContents = dir(targetTutorialPath);
@@ -31,7 +31,7 @@ for ii = 1:length(folders)
     theFigureIndex = cellfun('isempty', theFigureIndex);
     theFigures = theFolderContents(~theFigureIndex);
     
-    savePath = fullfile(targetTutorialPath, 'WikiFigures', theFolderName);
+    savePath = fullfile(projectPath, 'WikiFigures', theFolderName);
     for jj = 1:length(theFigures)
         hgload(fullfile(targetTutorialPath, theFolderName, theFigures{jj}.name));
         FigureSave(fullfile(savePath, strtok(theFigures{jj}.name, '.fig')), gcf, 'png');

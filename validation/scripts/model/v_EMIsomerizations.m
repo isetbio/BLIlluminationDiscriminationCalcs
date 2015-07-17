@@ -1,7 +1,6 @@
 function varargout = v_EMIsomerizations(varargin)
 %
-% Validate that the photoisomerizations for a static sensor is the same as
-% a sensor with EM when the integration time is equivalent.
+% Validate that the photoisomerizations for a static sensor is the same as a sensor with EM when the integration time is equivalent.
 %
 
 varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
