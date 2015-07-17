@@ -237,7 +237,7 @@ for i = 1:numKValue
         plot(StimLevelsFine, Fit, color, 'linewidth', 4);
         plot([threshold(i) threshold(i)], [0, criterion], color, 'linewidth', 3);
         
-        currentK = calcParams.startK + calcParams.kInterval * (i + usableDataStart - 1 - 1);
+        currentK = calcParams.startKp + calcParams.KpInterval * (i + usableDataStart - 1 - 1);
         title(strcat('K-Value : ',int2str(currentK)));
         xlabel('Stimulus Difference (nominal)');
         ylabel('Percent Correct');
