@@ -19,7 +19,7 @@ close all; ieInit;
 CACHE_SCENES = false; forceSceneCompute = true;
 CACHE_OIS = false; forceOICompute = true;
 RUN_CHOOSER = false; chooserColorChoice = 0; overWriteFlag = 1;
-CALC_THRESH = true; displayIndividualThreshold = false;
+CALC_THRESH = true; displayIndividualThreshold = true;
 
 %% Get our project toolbox on the path
 myDir = fileparts(mfilename('fullpath'));
@@ -30,7 +30,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 % Set identifiers to run
-calcIDStrs = {'StaticPhoton' 'StaticPhoton_2' 'StaticPhoton_3' 'StaticPhoton_4'};
+calcIDStrs = {'StaticPhoton'};
 
 %% Parameters of the calculation
 %
