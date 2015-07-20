@@ -204,6 +204,7 @@ for ii = 1:length(dimensionalities)
             trainedSVMList{ff} = linearClassifierList{whichClassifier}(data, class);
         end
     end
+    
     % Test the SVMs on the set of noise levels/functions.
     for jj = 1:length(noiseFactorKs)
         % Get noise factor.  This scales the "natural" magnitude of
@@ -211,7 +212,8 @@ for ii = 1:length(dimensionalities)
         theAdjustedNoiseK = adjustedNoiseFactorKs(jj);
         fprintf('\tRunning classification tests for noise factor %d, adjusted to %g\n',noiseFactorKs(jj),theAdjustedNoiseK); 
         
-        figure;
+        % Set up figure to show classification boundaries.
+        boundaryFigure = figure; clf;
         set(gcf, 'position', [0 0 1500 1000]);
         
         % Loop over type of noise
@@ -249,21 +251,27 @@ for ii = 1:length(dimensionalities)
                 percentCorrectRawMatrix(ii,jj,ff,ll) = numberCorrect / nSimulatedTrials * 100;
             end
             
-            % Here create a figure of the splitting, in 2 dimensions,
-            % along with the mean data points.  The beta field is a
-            % vector orthogonal to the hyperplane.  We use this vector
-            % to calculate a transformation matrix which will change
-            % the basis of our testing data to that of the hyperplane.
+            % Here create a figure showing how the classifier behaves, in a
+            % well-chosen two dimensional plot. We can get the linear
+            % discriminant function out of the SVM object, which alows us
+            % to find a direction orthogonal to the classifying hyperplane.
+            % We make this the first (x) dimension of the plot, with the y
+            % dimension being something else (we don't really care what).
+            % The classication boundary should be a line parallel to the
+            % y-axis of the plot
             beta = theSVM.Beta;
             hyperplane = null(beta');
             transformedTestData = normc([beta hyperplane])' * testData';
             transformedTestData = transformedTestData';
             
+            % Compute the mean of each class in the trasnformed
+            % representation.
             class0Mean = mean(transformedTestData(testClasses == 0,:));
             class1Mean = mean(transformedTestData(testClasses == 1,:));
             
+            % Plot in the transformed space.  Upper panels show 
+            figure(boundaryFigure);
             h = nan(1,4);
-            
             subplot(2,length(noiseFuncList),ff);
             h(1:2) = gscatter(transformedTestData(:,1), transformedTestData(:,2), classifiedData, 'mc', '**');
             hold on;
@@ -279,7 +287,14 @@ for ii = 1:length(dimensionalities)
             title(['Actual Classes \newline' noiseFuncNames{ff}], 'FontSize', 16);
             box off;
           
-            % Compute t-test from 50%
+            % Compute t-test as to whether classification performance
+            % differs significantly from 50% This seemed way cooler to do
+            % when we first wrote it than it does now.  The idea was to
+            % verify that the non-asymptotic peformance really did differ
+            % significantly from 50% given the size of our simulations.
+            % But this became so obvious from the percent correct data once
+            % we understood things that the statistical testing just became
+            % a distraction.  We still do it, but don't use the plots.
             theValues = squeeze(percentCorrectRawMatrix(ii,jj,ff,:));
             [~,ttestMatrix(ii,jj,ff)] = ttest(theValues,50);
         end
@@ -287,7 +302,7 @@ for ii = 1:length(dimensionalities)
         [~, h] = suplabel(theTitle, 't');
         set(h, 'FontSize', 20);
         savefig(fullfile(directoryName, 'HyperplaneFigs', theTitle));
-        FigureSave(fullfile(directoryName, 'HyperplaneFigs', theTitle), gcf, 'pdf');
+        FigureSave(fullfile(directoryName, 'HyperplaneFigs', theTitle), boundaryFigure, 'pdf');
         close;
     end
     
@@ -306,11 +321,6 @@ for ii = 1:length(dimensionalities)
             someSVMData{ii,1,ff} = data;
         end
     end
-    
-%     clear trainedSVMList data class testData testClasses  transformedTestData ...
-%     theSVM  classifiedData hyperplane beta comparisonPoissonNoise ...
-%     class0Mean class1Mean testPoissonNoise comparisonVectorMean testVectorMean ...
-%     testVectorPerturbation theSVM;
 end
 
 %% Clear out large data
@@ -320,6 +330,7 @@ clear trainedSVMList data class testData testClasses  transformedTestData ...
     testVectorPerturbation;
 
 %% Display results
+%
 % Get mean results matrix
 percentCorrectMeanMatrix = mean(percentCorrectRawMatrix,4);
 percentCorrectStderrMatrix = std(percentCorrectRawMatrix,[],4)/sqrt(nSimulations);
