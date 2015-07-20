@@ -1,9 +1,12 @@
-function thresholdCalculation(calcIDStr,displayIndividualThreshold)
+function thresholdCalculation(calcIDStr,displayIndividualThreshold, varargin)
 % thresholdCalculation(calcIDStr,displayIndividualThreshold)
 %
 % This function passes the pre-calculated simple chooser model data to
 % fitToData to generate a fitted Weibull curve.  These curves are then
-% plotted together on one figure.
+% plotted together on one figure.  This function will plot the total
+% thresholds for Kg = 0, using Kp as the x axis.  If the run was only for
+% Kg values, include a name-pair argument 'OnlyKg' with the value set to
+% true.
 %
 % Inputs:
 %   calcIDStr                  - Identifier for this calculation set.  This
@@ -22,6 +25,11 @@ function thresholdCalculation(calcIDStr,displayIndividualThreshold)
 
 %% clear
 clear global; %close all;
+
+%% Setup the input parser
+p = inputParser;
+p.addParameter('OnlyKg', false, @islogical);
+p.parse(varargin{:});
 
 %% Get our project toolbox on the path
 myDir = fileparts(mfilename('fullpath'));
@@ -88,8 +96,11 @@ psycho.thresholdYellow = tYellow{1}; psycho.yellowPsychoFitParams = pYellow{1}; 
 %% Plot Thresholds
 
 % Plot each threshold vector against its representative k-value of
-% noise.  Also fit a line to it.
-plotAllThresholds(calcParams, psycho, figParams);
+% noise.  Also fit a line to it.  Only do this if Kp data is available
+
+if ~p.Results.OnlyKg
+    plotAllThresholds(calcParams, psycho, figParams);
+end
 
 % Save the threshold data for later plotting
 outputFile = fullfile(dataBaseDir, 'SimpleChooserData', calcIDStr, ['psychofitSummary' calcIDStr]);

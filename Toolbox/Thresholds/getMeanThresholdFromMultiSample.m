@@ -1,6 +1,13 @@
 function getMeanThresholdFromMultiSample(calcIDStrList)
 % meanThreshold = getMeanThresholdFromMultiSample(calcIDStrList)
 % 
+% This function will take the input list of calcID's and calculate the mean
+% thresholds for the list.  Only data points present in all sames will be
+% used, so that the data will not be skewed.
+%
+% Inputs:
+%    calcIDStrList - List of calcID's from which to calculate the mean
+%
 % NOTE: THIS FUNCTION IS WORK IN PROGRESS
 % NEEDS PARAMETER TO DECIDE BETWEEN MEAN KP OR KG
 %

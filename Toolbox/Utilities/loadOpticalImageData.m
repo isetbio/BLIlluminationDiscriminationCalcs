@@ -7,9 +7,9 @@ function opticalImage = loadOpticalImageData(folderName, imageName)
 % Inputs:
 % folderName - name of folder on ColorShare in which the data resides
 % imageNname - name of the original image used to create the scene, this is
-%   not the name of the optical image file
+%              not the name of the optical image file
 %
-%   3/12/2015   xd  wrote it
+% 3/12/2015   xd  wrote it
 
 %% Get path to OI data files
     dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');

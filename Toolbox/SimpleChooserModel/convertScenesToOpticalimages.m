@@ -5,7 +5,7 @@ function convertScenesToOpticalimages(calcParams, forceCompute)
 %
 % Inputs:
 %   calcParams   - A set of parameters used to specify parameters such as
-%                  target folder names and crop size
+%                  target folder names
 %   forceCompute - Setting this to true will cause this function to
 %                  compute a new optical image even if a cached version already exists
 %

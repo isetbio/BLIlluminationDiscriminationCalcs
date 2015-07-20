@@ -1,5 +1,6 @@
 function ChooserData = loadChooserData(folderName, fileName)
-%loadChooserData(fileName)
+% loadChooserData(fileName)
+%
 % This function loads the data acquired from the simple chooser model.
 % The data is currently stored on the ColorShare1 server.
 %
