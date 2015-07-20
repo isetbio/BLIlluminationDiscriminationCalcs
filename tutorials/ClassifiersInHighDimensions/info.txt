@@ -1,1 +1,1 @@
-This section contains tutorials script(s) that demonstrate the effects of high dimensions on classifiers.
+This section contains tutorials script(s) that demonstrate the effects of high dimensions on classifiers.  This tutorial is run with only dimensionality of 10000 and k values of 1 and 100000.  Full data on more rigorous runs are located in this repository as well as on the wiki.
