@@ -287,6 +287,7 @@ for ii = 1:length(dimensionalities)
         [~, h] = suplabel(theTitle, 't');
         set(h, 'FontSize', 20);
         savefig(fullfile(directoryName, 'HyperplaneFigs', theTitle));
+        FigureSave(fullfile(directoryName, 'HyperplaneFigs', theTitle), gcf, 'pdf');
         close;
     end
     
