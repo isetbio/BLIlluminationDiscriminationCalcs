@@ -9,11 +9,6 @@ function createCalcParams
 %
 % 6/4/15  xd  wrote it
 
-%% Get our project toolbox on the path
-myDir = fileparts(mfilename('fullpath'));
-pathDir = fullfile(myDir,'..','Toolbox','');
-AddToMatlabPathDynamically(pathDir);
-
 %% Make sure preferences are defined
 setPrefsForBLIlluminationDiscriminationCalcs;
 
@@ -23,7 +18,7 @@ BaseDir = getpref('BLIlluminationDiscriminationCalcs', 'QueueDir');
 %% Create a calcParam object
 
 % Set the name of this calculation set
-calcParams.calcIDStr = 'StaticPhoton_KxMean5';
+calcParams.calcIDStr = 'StaticPhoton';
 
 % Folder list to run over for conversions into isetbio format
 calcParams = updateCacheFolderList(calcParams);
@@ -41,7 +36,7 @@ calcParams.sensorFOV = 0.83;             % Visual angle defining the size of the
 
 % Specify the number of trials for each combination of Kp Kg as well as
 % the highest illumination step (max 50) to go up to.
-calcParams.numTrials = 500;
+calcParams.numTrials = 100;
 calcParams.maxIllumTarget = 50;
 
 % Kp represents the scale factor for the Poisson noise.  This is the

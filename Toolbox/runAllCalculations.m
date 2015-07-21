@@ -29,7 +29,7 @@ AddToMatlabPathDynamically(pathDir);
 %% Make sure preferences are defined
 setPrefsForBLIlluminationDiscriminationCalcs;
 
-% Set identifiers to run
+%% Set identifiers to run
 calcIDStrs = {'StaticPhoton'};
 
 %% Parameters of the calculation
