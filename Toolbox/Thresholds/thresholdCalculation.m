@@ -27,9 +27,9 @@ function thresholdCalculation(calcIDStr,displayIndividualThreshold, varargin)
 clear global; %close all;
 
 %% Setup the input parser
-p = inputParser;
-p.addParameter('OnlyKg', false, @islogical);
-p.parse(varargin{:});
+parser = inputParser;
+parser.addParameter('OnlyKg', false, @islogical);
+parser.parse(varargin{:});
 
 %% Get our project toolbox on the path
 myDir = fileparts(mfilename('fullpath'));
@@ -98,7 +98,7 @@ psycho.thresholdYellow = tYellow{1}; psycho.yellowPsychoFitParams = pYellow{1}; 
 % Plot each threshold vector against its representative k-value of
 % noise.  Also fit a line to it.  Only do this if Kp data is available
 
-if ~p.Results.OnlyKg
+if ~parser.Results.OnlyKg
     plotAllThresholds(calcParams, psycho, figParams);
 end
 
