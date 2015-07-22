@@ -30,8 +30,6 @@ for ii = 1:length(psychoData)
     psychoData{ii} = thisIsAnnoying(ii);
 end
 
-% Need to pad end?
-
 maxUBlue = max(cellfun(@(X) max(X.uBlue), psychoData));
 maxUGreen = max(cellfun(@(X) max(X.uGreen), psychoData));
 maxURed = max(cellfun(@(X) max(X.uRed), psychoData));
@@ -56,94 +54,25 @@ meanTRed = mean(cell2mat(tRed'), 2);
 tYellow = cellfun(@(X) X.thresholdYellowTotal{1}(maxUYellow:minEndYellow), psychoData,'UniformOutput', false);
 meanTYellow = mean(cell2mat(tYellow'), 2);
 
-psycho.thresholdBlue = meanTBlue;
-psycho.thresholdGreen = meanTGreen;
-psycho.thresholdRed = meanTRed;
-psycho.thresholdYellow = meanTYellow;
-
-psycho.uBlue = maxUBlue;
-psycho.uGreen = maxUGreen;
-psycho.uRed = maxURed;
-psycho.uYellow = maxUYellow;
-
-calcParams = {'test' 'placeholder'};
-
-save('Mean_Data', 'psycho', 'calcParams');
+% psycho.thresholdBlue = meanTBlue;
+% psycho.thresholdGreen = meanTGreen;
+% psycho.thresholdRed = meanTRed;
+% psycho.thresholdYellow = meanTYellow;
+% 
+% psycho.uBlue = maxUBlue;
+% psycho.uGreen = maxUGreen;
+% psycho.uRed = maxURed;
+% psycho.uYellow = maxUYellow;
+% 
+% calcParams = {'test' 'placeholder'};
+% 
+% save('Mean_Data', 'psycho', 'calcParams');
 
 %% Get standard error
 errorBlue = std(cell2mat(tBlue'), [], 2) / sqrt(length(calcIDStrList));
 errorRed = std(cell2mat(tRed'), [], 2) / sqrt(length(calcIDStrList));
 errorGreen = std(cell2mat(tGreen'), [], 2) / sqrt(length(calcIDStrList));
 errorYellow = std(cell2mat(tYellow'), [], 2) / sqrt(length(calcIDStrList));
-
-% %% Here calc mean and std err using available data -> not necessarily having points in all simulations
-% tBlue = cellfun(@(X) X.thresholdBlueTotal{1}, psychoData,'UniformOutput', false);
-% tGreen = cellfun(@(X) X.thresholdGreenTotal{1}, psychoData,'UniformOutput', false);
-% tRed = cellfun(@(X) X.thresholdRedTotal{1}, psychoData,'UniformOutput', false);
-% tYellow = cellfun(@(X) X.thresholdYellowTotal{1}, psychoData,'UniformOutput', false);
-% 
-%     function l = maxLength(thresholds)
-%         l = max(cellfun(@(X) length(X), thresholds));
-%     end
-% 
-%     function t = padEnd(threshold, maxL)
-%         L = length(threshold);
-%         if L < maxL
-%             t = [threshold; zeros(maxL - L, 1) - 1];
-%         else
-%             t = threshold;
-%         end
-%     end
-% 
-% tBlue = cellfun(@(X) padEnd(X, maxLength(tBlue)), tBlue,'UniformOutput', false);
-% tGreen = cellfun(@(X) padEnd(X, maxLength(tGreen)), tGreen,'UniformOutput', false);
-% tRed = cellfun(@(X) padEnd(X, maxLength(tRed)), tRed,'UniformOutput', false);
-% tYellow = cellfun(@(X) padEnd(X, maxLength(tYellow)), tYellow,'UniformOutput', false);
-% 
-% tBlueMatrix = cell2mat(tBlue')'; 
-% tGreenMatrix = cell2mat(tGreen')';
-% tRedMatrix = cell2mat(tRed')';
-% tYellowMatrix = cell2mat(tYellow')'; % Each row is an entry, each column is a Kp value, -1 are filler values
-% 
-%     function [theMean, stderr, usable] = calcMean(dataMatrix)
-%         dataSize = size(dataMatrix);
-%         usable = 1;
-%         theMean = zeros(1, dataSize(2));
-%         stderr = zeros(1, dataSize(2));
-%         for jj = 1:dataSize(2)
-%             theColumn = dataMatrix(:, jj);
-%             theColumn = theColumn(theColumn ~= -1);        
-%             if isempty(theColumn)
-%                 usable = usable + 1;
-%             else
-%                 theMean(jj) = mean(theColumn);
-%                 stderr(jj) = std(theColumn)/sqrt(length(theColumn));
-%             end
-%         end
-%         theMean = theMean(theMean ~= 0);
-%         stderr = stderr(theMean ~= 0);
-%     end
-% 
-% [tBlueMean, tBlueStdErr, tBlueUsable] = calcMean(tBlueMatrix);
-% [tGreenMean, tGreenStdErr, tGreenUsable] = calcMean(tGreenMatrix);
-% [tRedMean, tRedStdErr, tRedUsable] = calcMean(tRedMatrix);
-% [tYellowMean, tYellowStdErr, tYellowUsable] = calcMean(tYellowMatrix);
-% 
-% figParams = getFigureParameters;
-% KInterval = 1;
-% KValsFine = 1:10;
-% 
-% figure;
-% box off;
-% set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize);
-% 
-% hold on;
-% fitAndPlotToThreshold(tBlueUsable, tBlueMean', 'b', KInterval, KValsFine, figParams);
-% fitAndPlotToThreshold(tGreenUsable, tGreenMean', 'g', KInterval, KValsFine, figParams);
-% fitAndPlotToThreshold(tRedUsable, tRedMean', 'r', KInterval, KValsFine, figParams);
-% fitAndPlotToThreshold(tYellowUsable, tYellowMean', 'y', KInterval, KValsFine, figParams);
-% title('Include Partial Samples');
-% ylim([0 50]);
 
 %% Plot thresholds
 figParams = getFigureParameters;
