@@ -7,7 +7,7 @@ function generateWikiFigures
 % 7/16/15  xd  wrote it
 
 %% Set up some directory related things
-targetTutorialDirectory = 'ClassifiersInHighDimensions';
+targetTutorialDirectory = 'classifiers';
 projectPath = fileparts(fileparts(pwd));
 tutorialsPath = fullfile(projectPath, 'tutorials');
 targetTutorialPath = fullfile(tutorialsPath, targetTutorialDirectory);
@@ -31,7 +31,12 @@ for ii = 1:length(folders)
     theFigureIndex = cellfun('isempty', theFigureIndex);
     theFigures = theFolderContents(~theFigureIndex);
     
+    % Create the folder in the WikiFigures directory if it does not exist
     savePath = fullfile(projectPath, 'WikiFigures', theFolderName);
+    if ~exist(savePath, 'folder')
+        mkdir(savePath);
+    end
+    
     for jj = 1:length(theFigures)
         hgload(fullfile(targetTutorialPath, theFolderName, theFigures{jj}.name));
         FigureSave(fullfile(savePath, strtok(theFigures{jj}.name, '.fig')), gcf, 'png');
