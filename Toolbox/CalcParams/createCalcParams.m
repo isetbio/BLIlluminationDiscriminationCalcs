@@ -64,13 +64,18 @@ calcParams.targetImageSetSize = 7;
 calcParams.comparisonImageSetSize = 1;
 
 % Specify eye movement parameters
-% EMPositions represents the number of positions of eye movement to sample,
-% in this case it is 100
 calcParams.enableEM = false;
+
+% EMPositions represents the number of positions of eye movement to sample
 calcParams.numEMPositions = 5;
 calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
 calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
-calcParams.tremorAmpFactor = 1;                     % This factor determines amplitude of tremors
+
+
+
+% Define some eye movement parameters related to large saccades
+calcParams.numSaccades = 5;
+calcParams.saccadeInterval = 0.200;
 
 % Specify cone adaptation parameters
 % The Isetbio code for cone adaptation is currently under reconstruction
