@@ -1,8 +1,13 @@
 % linearClassifierTutorial
 %
-% This is analogous to distanceBasedClassfierTutorial.m.  However, here we
-% will be using a SVM to explore the behavior of classification as a
-% function of dimensionality and noise factor.
+% This is analogous to distanceBasedClassfierTutorial.m using a SVM instead of distance functions.  
+%
+% This script models classification for a particular type of psychophysical
+% experiment, in which the subject decides which of two comparison stimuli
+% is closest to a reference stimulus. 
+% 
+% In this tutorial, we will explore the behavior of SVM classification as a
+% function of dimensionality and noise.
 %
 % 6/XX/15  xd   Wrote it
 % 6/24/15  xd   Added header and organized like distanceBasedClassfierTutorial.m

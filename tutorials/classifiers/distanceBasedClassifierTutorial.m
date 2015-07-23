@@ -1,7 +1,6 @@
 % distanceBasedClassifierTutorial
 %
-% This walks through some classification techniques for deciding which
-% of two classes a random draw from one of two distributions come from.
+% This walks through some classification techniques for deciding which of two classes a random draw from one of two distributions come from.
 %
 % This script models classification for a particular type of psychophysical
 % experiment, in which the subject decides which of two comparison stimuli
