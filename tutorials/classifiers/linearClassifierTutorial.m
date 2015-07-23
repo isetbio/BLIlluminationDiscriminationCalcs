@@ -298,7 +298,7 @@ for ii = 1:length(dimensionalities)
             theValues = squeeze(percentCorrectRawMatrix(ii,jj,ff,:));
             [~,ttestMatrix(ii,jj,ff)] = ttest(theValues,50);
         end
-        theTitle = ['Noise factor: ' int2str(noiseFactorKs(jj)) ', dimentionality: ' int2str(theDimensionality)];
+        theTitle = ['Noise factor: ' int2str(noiseFactorKs(jj)) ', dimensionality: ' int2str(theDimensionality)];
         [~, h] = suplabel(theTitle, 't');
         set(h, 'FontSize', 20);
         savefig(fullfile(directoryName, 'HyperplaneFigs', theTitle));
