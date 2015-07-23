@@ -45,7 +45,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.CACHE_OIS = false;
     calcParams.forceOICompute = true;    % Will overwrite any existing data.
     
-    calcParams.RUN_CHOOSER = false;
+    calcParams.RUN_MODEL = false;
     calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
     calcParams.overWriteFlag = 1;        % Whether or not to overwrite existing data.
     
@@ -128,7 +128,7 @@ for k1 = 1:length(calcIDStrs)
     end
     
     %% Calculate threshholds using chooser model data
-    if (calcParams.CALC_THRESH)
+    if (calcParams.RUN_MODEL)
         thresholdCalculation(calcParams.calcIDStr,calcParams.displayIndividualThreshold);
     end
 end

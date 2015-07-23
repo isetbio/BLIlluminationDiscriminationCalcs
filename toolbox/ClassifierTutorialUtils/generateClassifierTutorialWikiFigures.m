@@ -1,5 +1,5 @@
 function generateClassifierTutorialWikiFigures
-% generateWikiFigures
+% generateClassifierTutorialWikiFigures
 % 
 % This function will pull various figures from this tutorial folder and
 % place them in the appropriate folder in WikiFigures.

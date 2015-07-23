@@ -36,7 +36,7 @@ if (calcParams.CACHE_OIS)
 end
 
 %% Create data sets using the simple chooser model
-if (calcParams.RUN_CHOOSER)
+if (calcParams.RUN_MODEL)
     firstOrderModel(calcParams, calcParams.chooserColorChoice, calcParams.overWriteFlag);
 end
 

@@ -24,7 +24,9 @@ calcParams.forceSceneCompute = true; % Will overwrite any existing data.
 calcParams.CACHE_OIS = false; 
 calcParams.forceOICompute = true;    % Will overwrite any existing data.
 
-calcParams.RUN_CHOOSER = false; 
+
+calcParams.RUN_MODEL = false;
+calcParams.MODEL_ORDER = 1;          % Which model to run
 calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
 calcParams.overWriteFlag = 1;        % Whether or not to overwrite existing data.
 
