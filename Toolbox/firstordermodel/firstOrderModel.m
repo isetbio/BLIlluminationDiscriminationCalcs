@@ -1,5 +1,5 @@
-function sensorImageSimpleChooserModel(calcParams, colorChoice, overWrite)
-% sensorImageSimpleChooserModel(calcParams, computeAll, colorChoice)
+function firstOrderModel(calcParams, colorChoice, overWrite)
+% firstOrderModel(calcParams, colorChoice, overWrite)
 %
 % This function will generate several noisy versions of the standard
 % image.  Then it will compare the standard with one of the noisy images
@@ -28,7 +28,9 @@ function sensorImageSimpleChooserModel(calcParams, colorChoice, overWrite)
 % 3/17/15  xd  wrote it
 % 4/17/15  xd  update to use human sensor
 % 6/4/15   xd  added overWrite flag
-% 6/25/16  xd  the standard and test now sample from a pool of images
+% 6/25/15  xd  the standard and test now sample from a pool of images
+% 7/23/15  xd  removed some things that now belong in the second order
+%              model
 
 %% Set defaults for inputs
 if notDefined('overWrite'), overWrite = 0; end
@@ -43,11 +45,6 @@ rng('shuffle');
 if calcParams.targetImageSetSize < 2
     error('Must have a standard image pool size of at least 2');
 end
-
-%% Put project toolbox onto path.
-myDir = fileparts(mfilename('fullpath'));
-pathDir = fullfile(myDir,'..','Toolbox','');
-AddToMatlabPathDynamically(pathDir);
 
 %% Check if destination folder exists and has files
 baseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
@@ -68,15 +65,6 @@ end
 coneIntegrationTime = calcParams.coneIntegrationTime;
 S = calcParams.S;
 
-%% Load scene to get FOV.
-% Scenes are precomputed from stimulus images and stored for our use here.
-% scene = loadSceneData('Standard', 'TestImage0');
-% fov = sceneGet(scene, 'fov');
-
-%% Load oi for FOV.
-% These are also precomputed.
-% oi = loadOpticalImageData('Standard', 'TestImage0');
-
 %% Create a sensor for human foveal vision
 sensor = sensorCreate('human');
 
@@ -93,29 +81,6 @@ sensor = sensorSetSizeToFOV(sensor,calcParams.sensorFOV,[],oi);
 
 % Set wavelength sampling
 sensor = sensorSet(sensor, 'wavelength', SToWls(S));
-
-%% If doing eye movements, set EM parameters
-if (calcParams.enableEM)
-    
-    % Create eye movement object
-    em = emCreate;
-    
-    % Set the sample time
-    em = emSet(em, 'sample time', calcParams.EMSampleTime);
-    
-    % Set tremor amplitude
-    amplitude = emGet(em, 'tremor amplitude');
-    em = emSet(em, 'tremor amplitude', amplitude * calcParams.tremorAmpFactor);
-    
-    % Attach it to the sensor
-    sensor = sensorSet(sensor,'eyemove',em);
-    
-    % This is the position every sample time interval
-    sensor = sensorSet(sensor,'positions',calcParams.EMPositions);
-    
-    % Create the sequence
-    sensor = emGenSequence(sensor);
-end
 
 %% Compute according to the input color choice
 computeByColor(calcParams, sensor, colorChoice);
