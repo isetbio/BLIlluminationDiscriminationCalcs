@@ -14,11 +14,6 @@ function runAllCalcFromQueue
 %% Clear and initialize
 clear all; close all; ieInit;
 
-%% Control of what gets done in this function
-CACHE_SCENES = true; forceSceneCompute = false;
-CACHE_OIS = true; forceOICompute = false;
-RUN_CHOOSER = true; chooserColorChoice = 0; overWriteFlag = 1;
-
 %% Get our project toolbox on the path
 myDir = fileparts(fileparts(mfilename('fullpath')));
 pathDir = fullfile(myDir,'..','Toolbox','');
@@ -69,18 +64,18 @@ while ~KEY_IS_PRESSED
             calcParams = calcParams.calcParams;
             
             %% Convert the images to cached scenes for more analysis
-            if (CACHE_SCENES)
-                convertRBGImagesToSceneFiles(calcParams,forceSceneCompute);
+            if (calcParams.CACHE_SCENES)
+                convertRBGImagesToSceneFiles(calcParams,calcParams.forceSceneCompute);
             end
             
             %% Convert cached scenes to optical images
-            if (CACHE_OIS)
-                convertScenesToOpticalimages(calcParams, forceOICompute);
+            if (calcParams.CACHE_OIS)
+                convertScenesToOpticalimages(calcParams,calcParams.forceOICompute);
             end
             
             %% Create data sets using the simple chooser model
-            if (RUN_CHOOSER)
-                firstOrderModel(calcParams, chooserColorChoice, overWriteFlag);
+            if (calcParams.RUN_CHOOSER)
+                firstOrderModel(calcParams,calcParams.chooserColorChoice,calcParams.overWriteFlag);
             end
         end
         

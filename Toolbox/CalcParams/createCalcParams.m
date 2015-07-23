@@ -17,6 +17,20 @@ BaseDir = getpref('BLIlluminationDiscriminationCalcs', 'QueueDir');
 
 %% Create a calcParam object
 
+% Define the steps of the calculation that should be carried out.
+calcParams.CACHE_SCENES = false;
+calcParams.forceSceneCompute = true; % Will overwrite any existing data.
+
+calcParams.CACHE_OIS = false; 
+calcParams.forceOICompute = true;    % Will overwrite any existing data.
+
+calcParams.RUN_CHOOSER = false; 
+calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
+calcParams.overWriteFlag = 1;        % Whether or not to overwrite existing data.
+
+calcParams.CALC_THRESH = false; 
+calcParams.displayIndividualThreshold = true;
+
 % Set the name of this calculation set
 calcParams.calcIDStr = 'StaticPhoton';
 
@@ -70,8 +84,6 @@ calcParams.enableEM = false;
 calcParams.numEMPositions = 5;
 calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
 calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
-
-
 
 % Define some eye movement parameters related to large saccades
 calcParams.numSaccades = 5;

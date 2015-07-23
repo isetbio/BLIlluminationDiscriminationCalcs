@@ -15,12 +15,6 @@ function runAllCalculations
 %% Clear and initialize
 close all; ieInit;
 
-%% Control of what gets done in this function
-CACHE_SCENES = false; forceSceneCompute = true;
-CACHE_OIS = false; forceOICompute = true;
-RUN_CHOOSER = false; chooserColorChoice = 0; overWriteFlag = 1;
-CALC_THRESH = false; displayIndividualThreshold = true;
-
 %% Get our project toolbox on the path
 myDir = fileparts(fileparts(mfilename('fullpath')));
 pathDir = fullfile(myDir,'..','Toolbox','');
@@ -43,6 +37,22 @@ calcIDStrs = {'StaticPhoton'};
 %
 % This part loops through the calculations for all caldIDStrs specified
 for k1 = 1:length(calcIDStrs)
+    
+    % Define the steps of the calculation that should be carried out.
+    calcParams.CACHE_SCENES = false;
+    calcParams.forceSceneCompute = true; % Will overwrite any existing data.
+    
+    calcParams.CACHE_OIS = false;
+    calcParams.forceOICompute = true;    % Will overwrite any existing data.
+    
+    calcParams.RUN_CHOOSER = false;
+    calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
+    calcParams.overWriteFlag = 1;        % Whether or not to overwrite existing data.
+    
+    calcParams.CALC_THRESH = false;
+    calcParams.displayIndividualThreshold = true;
+    
+    % Set the calcID
     calcParams.calcIDStr = calcIDStrs{k1};
     
     % Folder list to run over for conversions into isetbio format
@@ -103,23 +113,23 @@ for k1 = 1:length(calcIDStrs)
     calcParams.coneAdaptType = 4;
     
     %% Convert the images to cached scenes for more analysis
-    if (CACHE_SCENES)
-        convertRBGImagesToSceneFiles(calcParams,forceSceneCompute);
+    if (calcParams.CACHE_SCENES)
+        convertRBGImagesToSceneFiles(calcParams,calcParams.forceSceneCompute);
     end
     
     %% Convert cached scenes to optical images
-    if (CACHE_OIS)
-        convertScenesToOpticalimages(calcParams, forceOICompute);
+    if (calcParams.CACHE_OIS)
+        convertScenesToOpticalimages(calcParams,calcParams.forceOICompute);
     end
     
     %% Create data sets using the simple chooser model
-    if (RUN_CHOOSER)
-        firstOrderModel(calcParams, chooserColorChoice, overWriteFlag);
+    if (calcParams.RUN_CHOOSER)
+        firstOrderModel(calcParams,calcParams.chooserColorChoice,calcParams.overWriteFlag);
     end
     
     %% Calculate threshholds using chooser model data
-    if (CALC_THRESH)
-        thresholdCalculation(calcParams.calcIDStr, displayIndividualThreshold);
+    if (calcParams.CALC_THRESH)
+        thresholdCalculation(calcParams.calcIDStr,calcParams.displayIndividualThreshold);
     end
 end
 
