@@ -22,8 +22,8 @@ RUN_CHOOSER = false; chooserColorChoice = 0; overWriteFlag = 1;
 CALC_THRESH = true; displayIndividualThreshold = true;
 
 %% Get our project toolbox on the path
-myDir = fileparts(fileparts(mfilename('fullpath')));
-pathDir = fullfile(myDir,'..','Toolbox','');
+myDir = fileparts(fileparts(mfilename('fullpath')))
+pathDir = fullfile(myDir,'..','Toolbox','')
 AddToMatlabPathDynamically(pathDir);
 
 %% Make sure preferences are defined
@@ -114,7 +114,7 @@ for k1 = 1:length(calcIDStrs)
     
     %% Create data sets using the simple chooser model
     if (RUN_CHOOSER)
-        sensorImageSimpleChooserModel(calcParams, chooserColorChoice, overWriteFlag);
+        firstOrderModel(calcParams, chooserColorChoice, overWriteFlag);
     end
     
     %% Calculate threshholds using chooser model data

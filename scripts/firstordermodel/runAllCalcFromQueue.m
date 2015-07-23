@@ -20,7 +20,7 @@ CACHE_OIS = true; forceOICompute = false;
 RUN_CHOOSER = true; chooserColorChoice = 0; overWriteFlag = 1;
 
 %% Get our project toolbox on the path
-myDir = fileparts(mfilename('fullpath'));
+myDir = fileparts(fileparts(mfilename('fullpath')));
 pathDir = fullfile(myDir,'..','Toolbox','');
 AddToMatlabPathDynamically(pathDir);
 
@@ -80,7 +80,7 @@ while ~KEY_IS_PRESSED
             
             %% Create data sets using the simple chooser model
             if (RUN_CHOOSER)
-                sensorImageSimpleChooserModel(calcParams, chooserColorChoice, overWriteFlag);
+                firstOrderModel(calcParams, chooserColorChoice, overWriteFlag);
             end
         end
         

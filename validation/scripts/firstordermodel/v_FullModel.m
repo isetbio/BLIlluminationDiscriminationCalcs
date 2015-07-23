@@ -37,7 +37,7 @@ end
 
 %% Create data sets using the simple chooser model
 if (calcParams.RUN_CHOOSER)
-    sensorImageSimpleChooserModel(calcParams, calcParams.chooserColorChoice, calcParams.overWriteFlag);
+    firstOrderModel(calcParams, calcParams.chooserColorChoice, calcParams.overWriteFlag);
 end
 
 %% Calculate threshholds using chooser model data
