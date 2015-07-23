@@ -1,4 +1,4 @@
-function generateWikiFigures
+function generateClassifierTutorialWikiFigures
 % generateWikiFigures
 % 
 % This function will pull various figures from this tutorial folder and
