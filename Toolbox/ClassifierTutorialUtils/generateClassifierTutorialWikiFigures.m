@@ -33,7 +33,7 @@ for ii = 1:length(folders)
     
     % Create the folder in the WikiFigures directory if it does not exist
     savePath = fullfile(projectPath, 'WikiFigures', theFolderName);
-    if ~exist(savePath, 'folder')
+    if ~exist(savePath, 'dir')
         mkdir(savePath);
     end
     

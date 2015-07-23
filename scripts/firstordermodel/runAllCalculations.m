@@ -19,11 +19,11 @@ close all; ieInit;
 CACHE_SCENES = false; forceSceneCompute = true;
 CACHE_OIS = false; forceOICompute = true;
 RUN_CHOOSER = false; chooserColorChoice = 0; overWriteFlag = 1;
-CALC_THRESH = true; displayIndividualThreshold = true;
+CALC_THRESH = false; displayIndividualThreshold = true;
 
 %% Get our project toolbox on the path
-myDir = fileparts(fileparts(mfilename('fullpath')))
-pathDir = fullfile(myDir,'..','Toolbox','')
+myDir = fileparts(fileparts(mfilename('fullpath')));
+pathDir = fullfile(myDir,'..','Toolbox','');
 AddToMatlabPathDynamically(pathDir);
 
 %% Make sure preferences are defined
