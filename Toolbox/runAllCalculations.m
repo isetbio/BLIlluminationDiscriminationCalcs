@@ -22,7 +22,7 @@ RUN_CHOOSER = false; chooserColorChoice = 0; overWriteFlag = 1;
 CALC_THRESH = true; displayIndividualThreshold = true;
 
 %% Get our project toolbox on the path
-myDir = pwd;
+myDir = fileparts(fileparts(mfilename('fullpath')));
 pathDir = fullfile(myDir,'..','Toolbox','');
 AddToMatlabPathDynamically(pathDir);
 
