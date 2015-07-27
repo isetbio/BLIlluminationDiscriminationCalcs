@@ -12,6 +12,7 @@ function ValidationFunction(runTimeParams)
 myDir = fileparts(fileparts(fileparts(fileparts(mfilename('fullpath')))));
 pathDir = fullfile(myDir,'..','Toolbox','');
 AddToMatlabPathDynamically(pathDir);
+setPrefsForBLIlluminationDiscriminationCalcs;
 
 %% Validation
 ieSessionSet('wait bar','off');
@@ -19,11 +20,6 @@ ieSessionSet('wait bar','off');
 %% Load desired params
 calcParams = load('scripts/model/validationCalcParams');
 calcParams = calcParams.calcParams;
-
-%% Add path and set pref
-rootDir = fileparts(pwd);
-AddToMatlabPathDynamically(fullfile(rootDir, 'ToolBox'));
-setPrefsForBLIlluminationDiscriminationCalcs;
 
 %% Convert the images to cached scenes for more analysis
 if (calcParams.CACHE_SCENES)
