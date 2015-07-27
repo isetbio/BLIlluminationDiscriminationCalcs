@@ -98,20 +98,6 @@ for k1 = 1:length(calcIDStrs)
     calcParams.targetImageSetSize = 7;
     calcParams.comparisonImageSetSize = 1;
     
-    % Specify eye movement parameters
-    % EMPositions represents the number of positions of eye movement to sample,
-    % in this case it is 100
-    calcParams.enableEM = false;
-    calcParams.numEMPositions = 5;
-    calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
-    calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
-    calcParams.tremorAmpFactor = 0;                     % This factor determines amplitude of tremors
-    
-    % Specify cone adaptation parameters
-    % The Isetbio code for cone adaptation is currently under reconstruction
-    calcParams.coneAdaptEnable = false;
-    calcParams.coneAdaptType = 4;
-    
     %% Convert the images to cached scenes for more analysis
     if (calcParams.CACHE_SCENES)
         convertRBGImagesToSceneFiles(calcParams,calcParams.forceSceneCompute);
