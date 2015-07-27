@@ -17,14 +17,14 @@ close all; ieInit;
 
 %% Get our project toolbox on the path
 myDir = fileparts(fileparts(mfilename('fullpath')));
-pathDir = fullfile(myDir,'..','Toolbox','');
+pathDir = fullfile(myDir,'..','toolbox','');
 AddToMatlabPathDynamically(pathDir);
 
 %% Make sure preferences are defined
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 %% Set identifiers to run
-calcIDStrs = {'StaticPhoton'};
+calcIDStrs = {'StaticPhoton' 'StaticPhoton_NM1' 'StaticPhoton_NM2'};
 
 %% Parameters of the calculation
 %
@@ -49,8 +49,8 @@ for k1 = 1:length(calcIDStrs)
     calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
     calcParams.overWriteFlag = 1;        % Whether or not to overwrite existing data.
     
-    calcParams.CALC_THRESH = false;
-    calcParams.displayIndividualThreshold = true;
+    calcParams.CALC_THRESH = true;
+    calcParams.displayIndividualThreshold = false;
     
     % Set the calcID
     calcParams.calcIDStr = calcIDStrs{k1};
@@ -123,12 +123,12 @@ for k1 = 1:length(calcIDStrs)
     end
     
     %% Create data sets using the simple chooser model
-    if (calcParams.RUN_CHOOSER)
+    if (calcParams.RUN_MODEL)
         firstOrderModel(calcParams,calcParams.chooserColorChoice,calcParams.overWriteFlag);
     end
     
     %% Calculate threshholds using chooser model data
-    if (calcParams.RUN_MODEL)
+    if (calcParams.CALC_THRESH)
         thresholdCalculation(calcParams.calcIDStr,calcParams.displayIndividualThreshold);
     end
 end

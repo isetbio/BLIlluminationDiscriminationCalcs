@@ -24,7 +24,6 @@ calcParams.forceSceneCompute = true; % Will overwrite any existing data.
 calcParams.CACHE_OIS = false; 
 calcParams.forceOICompute = true;    % Will overwrite any existing data.
 
-
 calcParams.RUN_MODEL = false;
 calcParams.MODEL_ORDER = 1;          % Which model to run
 calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
@@ -86,6 +85,12 @@ calcParams.enableEM = false;
 calcParams.numEMPositions = 5;
 calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
 calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
+calcParams.enableTremor = true;
+calcParams.enableDrift = true;
+calcParams.enableMSaccades = true;
+
+% Whether or not to recreate a new eye movement path for the target and two comparisons 
+calcParams.useSameEMPath = false;
 
 % Define some eye movement parameters related to large saccades
 calcParams.numSaccades = 5;
