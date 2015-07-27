@@ -18,7 +18,7 @@ setPrefsForBLIlluminationDiscriminationCalcs;
 ieSessionSet('wait bar','off');
 
 %% Load desired params
-calcParams = load('scripts/model/validationCalcParams');
+calcParams = load('scripts/firstordermodel/validationCalcParams');
 calcParams = calcParams.calcParams;
 
 %% Convert the images to cached scenes for more analysis
