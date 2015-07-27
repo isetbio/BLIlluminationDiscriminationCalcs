@@ -77,14 +77,13 @@ sensor = sensorSetSizeToFOV(sensor,calcParams.sensorFOV,[],oi);
 % Set wavelength sampling
 sensor = sensorSet(sensor, 'wavelength', SToWls(S));
 
-%% Adjust eye movements
-if calcParams.enableEM
-    em = emCreate;
-    em = emSet(em, 'emFlag', [calcParams.enableTremor calcParams.enableDrift calcParams.enableMSaccades]);
-    
-    sensor = sensorSet(sensor, 'eye move', em);
-    sensor = sensorSet(sensor, 'positions', calcParams.EMPositions);
-end
+% Adjust eye movements
+em = emCreate;
+em = emSet(em, 'emFlag', [calcParams.enableTremor calcParams.enableDrift calcParams.enableMSaccades]);
+
+sensor = sensorSet(sensor, 'eye move', em);
+sensor = sensorSet(sensor, 'positions', calcParams.EMPositions);
+
 
 %% Compute according to the input color choice
 computeByColor(calcParams, sensor, colorChoice);
@@ -149,7 +148,7 @@ for ii = 1:calcParams.targetImageSetSize
     opticalImageName = ['TestImage' int2str(ii - 1)];
     oi = loadOpticalImageData(standardPath, opticalImageName);
     sensorStandard = sensorSet(sensor, 'noise flag', 0);
-    standardPool{ii} = [sensorStandard; oi; -1; -1];
+    standardPool{ii} = {sensorStandard; oi; -1; -1};
 end
 
 % % Compute the mean of the standardPool isomerizations.  This will serve as
@@ -162,6 +161,7 @@ end
 % calcParams.meanStandard = mean(cat(1,photonCellArray{:}));
 % 
 % CHANGE THIS TO THE MEAN OF THE LMS???? or perhaps mask at 0,0
+calcParams.meanStandard = 0;
 
 % Loop through the illumination number
 for ii = 1:maxImageIllumNumber
@@ -182,6 +182,8 @@ for ii = 1:maxImageIllumNumber
     minEM = min(pathsForThisSet);
     minEM = reshape(minEM, pathSize(2:3))';
     LMSpath = [maxEM; minEM];
+    rows = [-min([LMSpath(:,2); 0]) max([LMSpath(:,2); 0])];
+    cols = [max([LMSpath(:,1); 0]) -min([LMSpath(:,1); 0])];
     for qq = 1:length(standardPool)
         sensorTemp = sensorSet(standardPool{qq}{1}, 'positions', LMSpath);
         [standardPool{qq}{3}, standardPool{qq}{4}] = coneAbsorptionsLMS(sensorTemp, standardPool{qq}{2});
@@ -202,7 +204,7 @@ for ii = 1:maxImageIllumNumber
         testPool{oo} = {sensorTest; LMS; msk};
     end
     
-    pathIndex = 1;
+%     pathIndex = 1;
     
     % Loop through the k values
     for jj = 1:KpSampleNum
@@ -212,15 +214,19 @@ for ii = 1:maxImageIllumNumber
             Kg = calcParams.startKg + KgInterval * (kk - 1);
             correct = 0;
             % Simulate out over calcNumber simulated trials
+
+            
             tic
             for tt = 1:numTrials
                 
                 if calcParams.useSameEMPath
-                    thePaths = [pathIndex pathIndex pathIndex];
-                    pathIndex = pathIndex + 1;
+%                     thePaths = [pathIndex pathIndex pathIndex];
+                    thePaths = randsample(numTrials, 1);
+%                     pathIndex = pathIndex + 1;
                 else
-                    thePaths = [pathIndex pathIndex+1 pathIndex+2];
-                    pathIndex = pathIndex + 3;
+%                     thePaths = [pathIndex pathIndex+1 pathIndex+2];
+                    thePaths = randsample(3 * numTrials, 3);
+%                     pathIndex = pathIndex + 3;
                 end
                 
                 % We choose 2 images without replacement from the standard image pool.
@@ -236,9 +242,9 @@ for ii = 1:maxImageIllumNumber
                 test1 = sensorSet(testPool{testChoice}{1}, 'positions', pathsForThisSet(:,:, thePaths(3)));
                 
                 % Get absorptions
-                standard1 = coneAbsorptionsApplyPath(standard1, standardPool{standardChoice(1)}{3}, standardPool{standardChoice(1)}{4});
-                standard2 = coneAbsorptionsApplyPath(standard2, standardPool{standardChoice(2)}{3}, standardPool{standardChoice(2)}{4});
-                test1 = coneAbsorptionsApplyPath(test1, testPool{testChoice}{2}, testPool{testChoice}{3});
+                standard1 = coneAbsorptionsApplyPath(standard1, standardPool{standardChoice(1)}{3}, standardPool{standardChoice(1)}{4}, rows, cols);
+                standard2 = coneAbsorptionsApplyPath(standard2, standardPool{standardChoice(2)}{3}, standardPool{standardChoice(2)}{4}, rows, cols);
+                test1 = coneAbsorptionsApplyPath(test1, testPool{testChoice}{2}, testPool{testChoice}{3}, rows, cols);
                 
                 % Get inital noisy ref image
                 photonsStandardRef = getNoisySensorImage(calcParams,standard1,Kp,Kg);
