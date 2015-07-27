@@ -45,15 +45,16 @@ for k1 = 1:length(calcIDStrs)
     calcParams.CACHE_OIS = false;
     calcParams.forceOICompute = true;    % Will overwrite any existing data.
     
-    calcParams.RUN_MODEL = false;
+    calcParams.RUN_MODEL = true;
+    calcParams.MODEL_ORDER = 2;          % Which model to run
     calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
     calcParams.overWriteFlag = 1;        % Whether or not to overwrite existing data.
     
-    calcParams.CALC_THRESH = true;
-    calcParams.displayIndividualThreshold = false;
+    calcParams.CALC_THRESH = false;
+    calcParams.displayIndividualThreshold = true;
     
-    % Set the calcID
-    calcParams.calcIDStr = calcIDStrs{k1};
+    % Set the name of this calculation set
+    calcParams.calcIDStr = 'StaticPhoton';
     
     % Folder list to run over for conversions into isetbio format
     calcParams = updateCacheFolderList(calcParams);
@@ -62,16 +63,16 @@ for k1 = 1:length(calcIDStrs)
     % Code further on makes the most sense if the image is square (because we
     % define a square patch of cone mosaic when we build the sensor), so the
     % cropped region should always be square.
-    calcParams = updateCropRect(calcParams);              % [450 350 624 574] is the entire non-black region of our initial images
-    calcParams.S = [380 8 51];
-        
+    calcParams = updateCropRect(calcParams);              % [450 350 624 574] is the entire non-black region of our initial images with small border
+    calcParams.S = [380 8 51];                            % [489 393 535 480] will get image without any black border
+    
     % Parameters for creating the sensor
     calcParams.coneIntegrationTime = 0.050;
-    calcParams.sensorFOV = 0.83;             % Visual angle defining the size of the sensor
+    calcParams.sensorFOV = 0.07;             % Visual angle defining the size of the sensor
     
     % Specify the number of trials for each combination of Kp Kg as well as
     % the highest illumination step (max 50) to go up to.
-    calcParams.numTrials = 500;
+    calcParams.numTrials = 100;
     calcParams.maxIllumTarget = 50;
     
     % Kp represents the scale factor for the Poisson noise.  This is the
@@ -97,6 +98,21 @@ for k1 = 1:length(calcIDStrs)
     
     calcParams.targetImageSetSize = 7;
     calcParams.comparisonImageSetSize = 1;
+
+    % EMPositions represents the number of positions of eye movement to sample
+    calcParams.numEMPositions = 100;
+    calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
+    calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
+    calcParams.enableTremor = true;
+    calcParams.enableDrift = true;
+    calcParams.enableMSaccades = true;
+    
+    % Whether or not to recreate a new eye movement path for the target and two comparisons
+    calcParams.useSameEMPath = false;
+    
+    % Define some eye movement parameters related to large saccades
+    calcParams.numSaccades = 5;
+    calcParams.saccadeInterval = 0.200;
     
     %% Convert the images to cached scenes for more analysis
     if (calcParams.CACHE_SCENES)
@@ -110,7 +126,7 @@ for k1 = 1:length(calcIDStrs)
     
     %% Create data sets using the simple chooser model
     if (calcParams.RUN_MODEL)
-        firstOrderModel(calcParams,calcParams.chooserColorChoice,calcParams.overWriteFlag);
+        secondOrderModel(calcParams,calcParams.chooserColorChoice,calcParams.overWriteFlag);
     end
     
     %% Calculate threshholds using chooser model data
