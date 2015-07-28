@@ -21,6 +21,7 @@ dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
 fprintf('*********Threshold Plotter*********\n');
 while true
     outerLoopCommand = input('Enter command: ', 's');
+    outerLoopCommand = strtrim(outerLoopCommand);
     switch outerLoopCommand
         case {'Load' 'load' 'l'}
             targetDataFolder = input('Enter directory name: ','s');
@@ -84,6 +85,14 @@ while true
             calcParams = psychoData.calcParams;
             calcParams = updateCalcParamFields(calcParams);
             plotAllThresholds(calcParams, psychoData.psycho, figParams, 'Kp', 1);
+        case {'plot many' 'pm'}
+            calcIDList = input('Enter desired calcIDs delineated by spaces: ', 's');
+            calcIDList = textscan(calcIDList, '%s');
+            calcIDList = calcIDList{1};
+            for ii = 1:length(calcIDList)
+                theData = load(fullfile(dataBaseDir, 'SimpleChooserData',calcIDList{ii}, ['psychofitSummary' calcIDList{ii}]));
+                plotAllThresholds(theData.calcParams, theData.psycho, figParams, 'Kg', 0);
+            end
         case {'exit'}
             break;
     end
