@@ -25,6 +25,12 @@ setPrefsForBLIlluminationDiscriminationCalcs;
 %% Get the queue directory
 BaseDir = getpref('BLIlluminationDiscriminationCalcs', 'QueueDir');
 
+%% Define the model functions
+FirstOrder = @(cp, cc, fl) firstOrderModel(cp, cc, fl);
+SecondOrder = @(cp, cc, fl) secondOrderModel(cp, cc, fl);
+
+Models = {FirstOrder, SecondOrder};
+
 %% Create a cell array to hold calcParams that have been run
 % This is in case a deletion/permission error occurs on ColorShare
 usedParams = cell(1,10);
@@ -73,9 +79,9 @@ while ~KEY_IS_PRESSED
                 convertScenesToOpticalimages(calcParams,calcParams.forceOICompute);
             end
             
-            %% Create data sets using the simple chooser model
+            %% Create data sets using the appropriate model
             if (calcParams.RUN_MODEL)
-                firstOrderModel(calcParams,calcParams.chooserColorChoice,calcParams.overWriteFlag);
+                Models{calcParams.MODEL_ORDER}(calcParams,calcParams.chooserColorChoice,calcParams.overWriteFlag);
             end
         end
         
