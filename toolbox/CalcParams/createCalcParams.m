@@ -98,7 +98,7 @@ calcParams.saccadeInterval = 0.200;
 
 % Specify cone adaptation parameters
 % The Isetbio code for cone adaptation is currently under reconstruction
-calcParams.coneAdaptType = 1;  % 1 for linear, 2 for biophysical
+calcParams.osType = 1;  % 1 for linear, 2 for biophysical
 
 % Define parameters for outer segment noise
 calcParams.numKosSamples = 10;

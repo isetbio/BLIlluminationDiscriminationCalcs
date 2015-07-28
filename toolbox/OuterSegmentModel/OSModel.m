@@ -120,6 +120,14 @@ KpInterval = calcParams.KpInterval;
 KgSampleNum = calcParams.numKgSamples;
 KgInterval = calcParams.KgInterval;
 
+%% Create outersegment object
+switch(calcParams.osType)
+    case 1
+        OS = osLinear('noiseflag', 1);
+    case 2
+        OS = osBioPhys('noiseflag', 1);
+end
+
 %% Get a list of images
 
 % This will return the list of optical images in ascending illum number
@@ -213,9 +221,8 @@ for ii = 1:maxImageIllumNumber
         for kk = 1:KgSampleNum
             Kg = calcParams.startKg + KgInterval * (kk - 1);
             correct = 0;
-            % Simulate out over calcNumber simulated trials
-
             
+            % Simulate out over calcNumber simulated trials
             tic
             for tt = 1:numTrials
                 
@@ -237,23 +244,23 @@ for ii = 1:maxImageIllumNumber
                 testChoice = randsample(calcParams.comparisonImageSetSize, 1);
                 
                 % Set the paths
-                standard1 = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', pathsForThisSet(:,:, thePaths(1)));
-                standard2 = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', pathsForThisSet(:,:, thePaths(2)));
-                test1 = sensorSet(testPool{testChoice}{1}, 'positions', pathsForThisSet(:,:, thePaths(3)));
+                standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', pathsForThisSet(:,:, thePaths(1)));
+                standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', pathsForThisSet(:,:, thePaths(2)));
+                testComp = sensorSet(testPool{testChoice}{1}, 'positions', pathsForThisSet(:,:, thePaths(3)));
                 
                 % Get absorptions
-                standard1 = coneAbsorptionsApplyPath(standard1, standardPool{standardChoice(1)}{3}, standardPool{standardChoice(1)}{4}, rows, cols);
-                standard2 = coneAbsorptionsApplyPath(standard2, standardPool{standardChoice(2)}{3}, standardPool{standardChoice(2)}{4}, rows, cols);
-                test1 = coneAbsorptionsApplyPath(test1, testPool{testChoice}{2}, testPool{testChoice}{3}, rows, cols);
+                standardRef = coneAbsorptionsApplyPath(standardRef, standardPool{standardChoice(1)}{3}, standardPool{standardChoice(1)}{4}, rows, cols);
+                standardComp = coneAbsorptionsApplyPath(standardComp, standardPool{standardChoice(2)}{3}, standardPool{standardChoice(2)}{4}, rows, cols);
+                testComp = coneAbsorptionsApplyPath(testComp, testPool{testChoice}{2}, testPool{testChoice}{3}, rows, cols);
                 
-                % Get inital noisy ref image
-                photonsStandardRef = getNoisySensorImage(calcParams,standard1,Kp,Kg);
-                
-                % Get noisy version of standard image
-                photonsStandardComp = getNoisySensorImage(calcParams,standard2,Kp,Kg);
-                
-                % Get noisy version of test image
-                photonsTestComp = getNoisySensorImage(calcParams,test1,Kp,Kg);
+                % Calculate the os response
+                params.bgVolts = 0;
+                os.compute(standardRef, params);
+                currentStandardRef = os.ConeCurrentSignalPlusNoise;
+                os.compute(standardComp, params);
+                currentStandardComp = os.ConeCurrentSignalPlusNoise;
+                os.compute(testComp, params);
+                currentTestComp = os.ConeCurrentSignalPlusNoise;
                 
 %                 % Check if result is 3D, in that case take sum of slices
 %                 if calcParams.enableEM
@@ -264,8 +271,8 @@ for ii = 1:maxImageIllumNumber
                 
                 % Calculate vector distance from the test image and
                 % standard image to the reference image
-                distToStandard = norm(photonsStandardRef(:)-photonsStandardComp(:));
-                distToTest = norm(photonsStandardRef(:)-photonsTestComp(:));
+                distToStandard = norm(currentStandardRef(:)-currentStandardComp(:));
+                distToTest = norm(currentStandardRef(:)-currentTestComp(:));
                 
                 % Decide if 'subject' was correct on this trial
                 if (distToStandard < distToTest)
