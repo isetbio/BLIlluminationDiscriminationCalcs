@@ -1,4 +1,4 @@
-function runAllCalculations
+function runSecondOrderModel
 % runAllCalculations
 %
 % Run the full set of calculations in the BLIlluminationDiscrimination
@@ -24,7 +24,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 %% Set identifiers to run
-calcIDStrs = {'StaticPhoton' 'StaticPhoton_NM1' 'StaticPhoton_NM2'};
+calcIDStrs = {'SecondOrderModelTestSum'};
 
 %% Parameters of the calculation
 %
@@ -50,11 +50,11 @@ for k1 = 1:length(calcIDStrs)
     calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
     calcParams.overWriteFlag = 1;        % Whether or not to overwrite existing data.
     
-    calcParams.CALC_THRESH = false;
-    calcParams.displayIndividualThreshold = true;
+    calcParams.CALC_THRESH = true;
+    calcParams.displayIndividualThreshold = false;
     
     % Set the name of this calculation set
-    calcParams.calcIDStr = 'StaticPhoton';
+    calcParams.calcIDStr = calcIDStrs{k1};
     
     % Folder list to run over for conversions into isetbio format
     calcParams = updateCacheFolderList(calcParams);
@@ -67,7 +67,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.S = [380 8 51];                            % [489 393 535 480] will get image without any black border
     
     % Parameters for creating the sensor
-    calcParams.coneIntegrationTime = 0.050;
+    calcParams.coneIntegrationTime = 0.001;
     calcParams.sensorFOV = 0.07;             % Visual angle defining the size of the sensor
     
     % Specify the number of trials for each combination of Kp Kg as well as
@@ -95,7 +95,6 @@ for k1 = 1:length(calcIDStrs)
     % choose two images out of the target set and one image out of the
     % comparison set.  This is in order to reduce the effect of pixel noise
     % cause by the image renderer.
-    
     calcParams.targetImageSetSize = 7;
     calcParams.comparisonImageSetSize = 1;
 
