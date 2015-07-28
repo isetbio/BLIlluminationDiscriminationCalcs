@@ -1,5 +1,5 @@
-function firstOrderModel(calcParams, colorChoice, overWrite)
-% firstOrderModel(calcParams, colorChoice, overWrite)
+function OSModel(calcParams, colorChoice, overWrite)
+% secondOrderModel(calcParams, colorChoice, overWrite)
 %
 % This function will generate several noisy versions of the standard
 % image.  Then it will compare the standard with one of the noisy images
@@ -25,12 +25,7 @@ function firstOrderModel(calcParams, colorChoice, overWrite)
 %                     write over any existing files in a target directory.
 %                     Set this to 1 to write over, 0 to avoid doing so.
 %
-% 3/17/15  xd  wrote it
-% 4/17/15  xd  update to use human sensor
-% 6/4/15   xd  added overWrite flag
-% 6/25/15  xd  the standard and test now sample from a pool of images
-% 7/23/15  xd  removed some things that now belong in the second order
-%              model
+% 7/28/15  xd  copied base code from second order model
 
 %% Set defaults for inputs
 if notDefined('overWrite'), overWrite = 0; end
@@ -82,6 +77,14 @@ sensor = sensorSetSizeToFOV(sensor,calcParams.sensorFOV,[],oi);
 % Set wavelength sampling
 sensor = sensorSet(sensor, 'wavelength', SToWls(S));
 
+% Adjust eye movements
+em = emCreate;
+em = emSet(em, 'emFlag', [calcParams.enableTremor calcParams.enableDrift calcParams.enableMSaccades]);
+
+sensor = sensorSet(sensor, 'eye move', em);
+sensor = sensorSet(sensor, 'positions', calcParams.EMPositions);
+
+
 %% Compute according to the input color choice
 computeByColor(calcParams, sensor, colorChoice);
 
@@ -117,6 +120,14 @@ KpInterval = calcParams.KpInterval;
 KgSampleNum = calcParams.numKgSamples;
 KgInterval = calcParams.KgInterval;
 
+%% Create outersegment object
+switch(calcParams.osType)
+    case 1
+        OS = osLinear('noiseflag', 1);
+    case 2
+        OS = osBioPhys('noiseflag', 1);
+end
+
 %% Get a list of images
 
 % This will return the list of optical images in ascending illum number
@@ -139,33 +150,54 @@ accuracyMatrix = zeros(maxImageIllumNumber, KpSampleNum, KgSampleNum);
 
 %% Run calculations up to illumination number and k-value limits
 
-% Precompute all the images from the standard pool to save computational
-% time later on
+% Load the pool of standard OI and their sensors
 standardPool = cell(1, calcParams.targetImageSetSize);
 for ii = 1:calcParams.targetImageSetSize
     opticalImageName = ['TestImage' int2str(ii - 1)];
     oi = loadOpticalImageData(standardPath, opticalImageName);
     sensorStandard = sensorSet(sensor, 'noise flag', 0);
-    sensorStandard = coneAbsorptions(sensorStandard, oi);
-    standardPool{ii} = sensorStandard;
+    standardPool{ii} = {sensorStandard; oi; -1; -1};
 end
 
-% Compute the mean of the standardPool isomerizations.  This will serve as
-% the standard deviation of an optional Gaussian noise factor Kg.
-photonCellArray = cell(1, length(standardPool));
-for ii = 1:length(photonCellArray)
-    photonCellArray{ii} = sensorGet(standardPool{ii}, 'photons');
-end
-photonCellArray = cellfun(@(x)mean2(x),photonCellArray, 'UniformOutput', 0);
-calcParams.meanStandard = mean(cat(1,photonCellArray{:}));
+% % Compute the mean of the standardPool isomerizations.  This will serve as
+% % the standard deviation of an optional Gaussian noise factor Kg.
+% photonCellArray = cell(1, length(standardPool));
+% for ii = 1:length(photonCellArray)
+%     photonCellArray{ii} = sensorGet(standardPool{ii}, 'photons');
+% end
+% photonCellArray = cellfun(@(x)mean2(x),photonCellArray, 'UniformOutput', 0);
+% calcParams.meanStandard = mean(cat(1,photonCellArray{:}));
+% 
+% CHANGE THIS TO THE MEAN OF THE LMS???? or perhaps mask at 0,0
+calcParams.meanStandard = 0;
 
 % Loop through the illumination number
 for ii = 1:maxImageIllumNumber
     fprintf('Running trials for %s illumination step %u\n', prefix, ii);
-%     fprintf('Estimated time for this step: ');
-%     toDelete = 0;
     
-    % Precompute the test image pool to save computational time.
+    % Get all the eye movements to be used for these trials
+    if calcParams.useSameEMPath
+        pathsForThisSet = getEMPaths(sensor, numTrials);
+    else
+        pathsForThisSet = getEMPaths(sensor, 3 * numTrials);
+    end
+    
+    % We calculate the LMS by getting the max and min eye positions from
+    % every possible path for this trial.
+    pathSize = size(pathsForThisSet);
+    maxEM = max(pathsForThisSet);
+    maxEM = reshape(maxEM, pathSize(2:3))';
+    minEM = min(pathsForThisSet);
+    minEM = reshape(minEM, pathSize(2:3))';
+    LMSpath = [maxEM; minEM];
+    rows = [-min([LMSpath(:,2); 0]) max([LMSpath(:,2); 0])];
+    cols = [max([LMSpath(:,1); 0]) -min([LMSpath(:,1); 0])];
+    for qq = 1:length(standardPool)
+        sensorTemp = sensorSet(standardPool{qq}{1}, 'positions', LMSpath);
+        [standardPool{qq}{3}, standardPool{qq}{4}] = coneAbsorptionsLMS(sensorTemp, standardPool{qq}{2});
+    end
+    
+    % Precompute the LMS for the test pool as well.
     imageName = fileList{ii};
     imageName = strrep(imageName, 'OpticalImage.mat', '');
     testPool = cell(1, calcParams.comparisonImageSetSize);
@@ -175,9 +207,12 @@ for ii = 1:maxImageIllumNumber
         end
         oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' folderName], imageName);
         sensorTest = sensorSet(sensor, 'noise flag', 0);
-        sensorTest = coneAbsorptions(sensorTest, oiTest);
-        testPool{oo} = sensorTest;
+        sensorTest = sensorSet(sensorTest, 'positions', LMSpath);
+        [LMS, msk] = coneAbsorptionsLMS(sensorTest, oiTest);
+        testPool{oo} = {sensorTest; LMS; msk};
     end
+    
+%     pathIndex = 1;
     
     % Loop through the k values
     for jj = 1:KpSampleNum
@@ -186,9 +221,20 @@ for ii = 1:maxImageIllumNumber
         for kk = 1:KgSampleNum
             Kg = calcParams.startKg + KgInterval * (kk - 1);
             correct = 0;
+            
             % Simulate out over calcNumber simulated trials
             tic
             for tt = 1:numTrials
+                
+                if calcParams.useSameEMPath
+%                     thePaths = [pathIndex pathIndex pathIndex];
+                    thePaths = randsample(numTrials, 1);
+%                     pathIndex = pathIndex + 1;
+                else
+%                     thePaths = [pathIndex pathIndex+1 pathIndex+2];
+                    thePaths = randsample(3 * numTrials, 3);
+%                     pathIndex = pathIndex + 3;
+                end
                 
                 % We choose 2 images without replacement from the standard image pool.
                 % This is in order to account for the pixel noise present from the renderer.
@@ -197,19 +243,36 @@ for ii = 1:maxImageIllumNumber
                 % Randomly choose one image from the test pool
                 testChoice = randsample(calcParams.comparisonImageSetSize, 1);
                 
-                % Get inital noisy ref image
-                photonsStandardRef = getNoisySensorImage(calcParams,standardPool{standardChoice(1)},Kp,Kg);
+                % Set the paths
+                standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', pathsForThisSet(:,:, thePaths(1)));
+                standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', pathsForThisSet(:,:, thePaths(2)));
+                testComp = sensorSet(testPool{testChoice}{1}, 'positions', pathsForThisSet(:,:, thePaths(3)));
                 
-                % Get noisy version of standard image
-                photonsStandardComp = getNoisySensorImage(calcParams,standardPool{standardChoice(2)},Kp,Kg);
+                % Get absorptions
+                standardRef = coneAbsorptionsApplyPath(standardRef, standardPool{standardChoice(1)}{3}, standardPool{standardChoice(1)}{4}, rows, cols);
+                standardComp = coneAbsorptionsApplyPath(standardComp, standardPool{standardChoice(2)}{3}, standardPool{standardChoice(2)}{4}, rows, cols);
+                testComp = coneAbsorptionsApplyPath(testComp, testPool{testChoice}{2}, testPool{testChoice}{3}, rows, cols);
                 
-                % Get noisy version of test image
-                photonsTestComp = getNoisySensorImage(calcParams,testPool{testChoice},Kp,Kg);
-
+                % Calculate the os response
+                params.bgVolts = 0;
+                os.compute(standardRef, params);
+                currentStandardRef = os.ConeCurrentSignalPlusNoise;
+                os.compute(standardComp, params);
+                currentStandardComp = os.ConeCurrentSignalPlusNoise;
+                os.compute(testComp, params);
+                currentTestComp = os.ConeCurrentSignalPlusNoise;
+                
+%                 % Check if result is 3D, in that case take sum of slices
+%                 if calcParams.enableEM
+%                     photonsStandardRef = sum(photonsStandardRef,3);
+%                     photonsStandardComp = sum(photonsStandardComp,3);
+%                     photonsTestComp = sum(photonsTestComp,3);
+%                 end
+                
                 % Calculate vector distance from the test image and
                 % standard image to the reference image
-                distToStandard = norm(photonsStandardRef(:)-photonsStandardComp(:));
-                distToTest = norm(photonsStandardRef(:)-photonsTestComp(:));
+                distToStandard = norm(currentStandardRef(:)-currentStandardComp(:));
+                distToTest = norm(currentStandardRef(:)-currentTestComp(:));
                 
                 % Decide if 'subject' was correct on this trial
                 if (distToStandard < distToTest)
@@ -219,17 +282,6 @@ for ii = 1:maxImageIllumNumber
             
             % Print the time the calculation took
             fprintf('Calculation time for Kp %.2f, Kg %.2f = %2.1f\n', Kp, Kg, toc);
-%             for dd = 1:toDelete
-%                 fprintf('\b');
-%             end
-%             totalSecondsRemaining = ((KpSampleNum - jj + 1)*KgSampleNum + kk - 1) * toc;
-%             hours = totalSecondsRemaining / 3600;
-%             minutes = mod(totalSecondsRemaining, 3600) / 60;
-%             seconds = mod(mod(totalSecondsRemaining, 3600),60);
-%             output = [int2str(hours) ' hrs ' int2str(minutes) ' min ' int2str(seconds) ' s'];
-%             fprintf('%s', output);
-%             toDelete = numel(output);
-
             accuracyMatrix(ii,jj,kk) = correct / numTrials * 100;
         end
     end
