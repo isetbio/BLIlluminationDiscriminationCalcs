@@ -24,7 +24,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 %% Set identifiers to run
-calcIDStrs = {'StaticPhoton' 'StaticPhoton_NM1' 'StaticPhoton_NM2'};
+calcIDStrs = {'StaticPhoton_10x10' 'SecondOrderModelTestSum' 'SecondOrderModelTest'};
 
 %% Parameters of the calculation
 %
