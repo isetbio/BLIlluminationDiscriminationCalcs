@@ -1,6 +1,6 @@
-function varargout = v_FullModel(varargin)
+function varargout = v_FirstOrderModel(varargin)
 %
-% Script to run through all the calculations once.
+% Script to run through all the calculations once for the first order model.
 %
 
 varargout = UnitTest.runValidationRun(@ValidationFunction, nargout, varargin);
