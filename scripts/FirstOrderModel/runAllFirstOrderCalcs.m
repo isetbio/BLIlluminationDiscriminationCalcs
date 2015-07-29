@@ -1,5 +1,5 @@
-function runAllCalculations
-% runAllCalculations
+function runAllFirstOrderCalcs
+% runAllFirstOrderCalcs
 %
 % Run the full set of calculations in the BLIlluminationDiscrimination
 % project, for one set of parameters.
@@ -11,6 +11,7 @@ function runAllCalculations
 %
 % 4/29/15  dhb, xd           Wrote it.
 % 5/31/15  dhb               Tuning for multiple calculations
+% 7/29/15  xd                Renamed.
 
 %% Clear and initialize
 close all; ieInit;
