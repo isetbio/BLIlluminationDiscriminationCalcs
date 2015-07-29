@@ -20,7 +20,8 @@ dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
 %% While loop that takes in commands for certain plots parameters
 fprintf('*********Threshold Plotter*********\n');
 while true
-    outerLoopCommand = input('Enter command: ', 's');
+    cprintf('keywords','Enter command: ');
+    outerLoopCommand = input('', 's');
     outerLoopCommand = strtrim(outerLoopCommand);
     switch outerLoopCommand
         case {'Load' 'load' 'l'}
