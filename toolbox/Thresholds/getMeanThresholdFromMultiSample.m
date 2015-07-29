@@ -54,19 +54,19 @@ meanTRed = mean(cell2mat(tRed'), 2);
 tYellow = cellfun(@(X) X.thresholdYellowTotal{1}(maxUYellow:minEndYellow), psychoData,'UniformOutput', false);
 meanTYellow = mean(cell2mat(tYellow'), 2);
 
-% psycho.thresholdBlue = meanTBlue;
-% psycho.thresholdGreen = meanTGreen;
-% psycho.thresholdRed = meanTRed;
-% psycho.thresholdYellow = meanTYellow;
-% 
-% psycho.uBlue = maxUBlue;
-% psycho.uGreen = maxUGreen;
-% psycho.uRed = maxURed;
-% psycho.uYellow = maxUYellow;
-% 
-% calcParams = {'test' 'placeholder'};
-% 
-% save('Mean_Data', 'psycho', 'calcParams');
+psycho.thresholdBlue = meanTBlue;
+psycho.thresholdGreen = meanTGreen;
+psycho.thresholdRed = meanTRed;
+psycho.thresholdYellow = meanTYellow;
+
+psycho.uBlue = maxUBlue;
+psycho.uGreen = maxUGreen;
+psycho.uRed = maxURed;
+psycho.uYellow = maxUYellow;
+
+calcParams = {'test' 'placeholder'};
+
+save('Mean_Data', 'psycho', 'calcParams');
 
 %% Get standard error
 errorBlue = std(cell2mat(tBlue'), [], 2) / sqrt(length(calcIDStrList));
