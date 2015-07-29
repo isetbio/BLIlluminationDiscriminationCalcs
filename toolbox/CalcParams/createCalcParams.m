@@ -24,8 +24,8 @@ calcParams.forceSceneCompute = true; % Will overwrite any existing data.
 calcParams.CACHE_OIS = false; 
 calcParams.forceOICompute = true;    % Will overwrite any existing data.
 
-calcParams.RUN_MODEL = false;
-calcParams.MODEL_ORDER = 1;          % Which model to run
+calcParams.RUN_MODEL = true;
+calcParams.MODEL_ORDER = 2;          % Which model to run
 calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
 calcParams.overWriteFlag = 1;        % Whether or not to overwrite existing data.
 
@@ -33,7 +33,7 @@ calcParams.CALC_THRESH = false;
 calcParams.displayIndividualThreshold = true;
 
 % Set the name of this calculation set
-calcParams.calcIDStr = 'StaticPhoton';
+calcParams.calcIDStr = 'SOM_movingSum';
 
 % Folder list to run over for conversions into isetbio format
 calcParams = updateCacheFolderList(calcParams);
@@ -46,8 +46,8 @@ calcParams = updateCropRect(calcParams);              % [450 350 624 574] is the
 calcParams.S = [380 8 51];                            % [489 393 535 480] will get image without any black border
 
 % Parameters for creating the sensor
-calcParams.coneIntegrationTime = 0.050;
-calcParams.sensorFOV = 0.83;             % Visual angle defining the size of the sensor
+calcParams.coneIntegrationTime = 0.001;
+calcParams.sensorFOV = 0.07;             % Visual angle defining the size of the sensor
 
 % Specify the number of trials for each combination of Kp Kg as well as
 % the highest illumination step (max 50) to go up to.
@@ -78,11 +78,8 @@ calcParams.KgInterval = 1;
 calcParams.targetImageSetSize = 7;
 calcParams.comparisonImageSetSize = 1;
 
-% Specify eye movement parameters
-calcParams.enableEM = false;
-
 % EMPositions represents the number of positions of eye movement to sample
-calcParams.numEMPositions = 5;
+calcParams.numEMPositions = 100;
 calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
 calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
 calcParams.enableTremor = true;
@@ -90,7 +87,10 @@ calcParams.enableDrift = true;
 calcParams.enableMSaccades = true;
 
 % Whether or not to recreate a new eye movement path for the target and two comparisons 
-calcParams.useSameEMPath = false;
+calcParams.useSameEMPath = true;
+
+% Use sum or individual data
+calcParams.sumEM = true;
 
 % Define some eye movement parameters related to large saccades
 calcParams.numSaccades = 5;

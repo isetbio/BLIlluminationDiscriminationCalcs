@@ -24,7 +24,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 %% Set identifiers to run
-calcIDStrs = {'SecondOrderModelTestSum'};
+calcIDStrs = {'SOM_movingDiffPathSum'};
 
 %% Parameters of the calculation
 %
@@ -108,6 +108,9 @@ for k1 = 1:length(calcIDStrs)
     
     % Whether or not to recreate a new eye movement path for the target and two comparisons
     calcParams.useSameEMPath = false;
+    
+    % Use sum or individual data
+    calcParams.sumEM = true;
     
     % Define some eye movement parameters related to large saccades
     calcParams.numSaccades = 5;
