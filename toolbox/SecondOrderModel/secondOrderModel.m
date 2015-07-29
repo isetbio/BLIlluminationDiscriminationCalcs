@@ -221,11 +221,12 @@ for ii = 1:maxImageIllumNumber
                 
                 if calcParams.useSameEMPath
 %                     thePaths = [pathIndex pathIndex pathIndex];
-                    thePaths = randsample(numTrials, 1);
+                    thePaths = repmat(randsample(numTrials, 1), [1,3]);
 %                     pathIndex = pathIndex + 1;
                 else
 %                     thePaths = [pathIndex pathIndex+1 pathIndex+2];
                     thePaths = randsample(3 * numTrials, 3);
+
 %                     pathIndex = pathIndex + 3;
                 end
                 
@@ -255,11 +256,12 @@ for ii = 1:maxImageIllumNumber
                 % Get noisy version of test image
                 photonsTestComp = getNoisySensorImage(calcParams,test1,Kp,Kg);
                 
-                % Check if result is 3D, in that case take sum of slices
-                photonsStandardRef = sum(photonsStandardRef,3);
-                photonsStandardComp = sum(photonsStandardComp,3);
-                photonsTestComp = sum(photonsTestComp,3);
-                
+                if calcParams.sumEM
+                    % Check if result is 3D, in that case take sum of slices
+                    photonsStandardRef = sum(photonsStandardRef,3);
+                    photonsStandardComp = sum(photonsStandardComp,3);
+                    photonsTestComp = sum(photonsTestComp,3);
+                end
                 % Calculate vector distance from the test image and
                 % standard image to the reference image
                 distToStandard = norm(photonsStandardRef(:)-photonsStandardComp(:));
