@@ -1,5 +1,5 @@
-function runSecondOrderModel
-% runAllCalculations
+function runAllSecondOrderCalcs
+% runAllSecondOrderCalcs
 %
 % Run the full set of calculations in the BLIlluminationDiscrimination
 % project, for one set of parameters.
@@ -9,8 +9,8 @@ function runSecondOrderModel
 % this documents for us the flow of the whole calculation, and also lets us
 % gather all of the parameters together in one place.
 %
-% 4/29/15  dhb, xd           Wrote it.
-% 5/31/15  dhb               Tuning for multiple calculations
+% 7/27/15  xd  copied base code from runAllFirstOrderCalcs
+% 7/29/15  xd  renamed
 
 %% Clear and initialize
 close all; ieInit;
