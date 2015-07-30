@@ -166,22 +166,11 @@ calcParams.meanStandard = 0;
 % Loop through the illumination number
 for ii = 1:maxImageIllumNumber
     fprintf('Running trials for %s illumination step %u\n', prefix, ii);
-    
-    % Get all the eye movements to be used for these trials
-    if calcParams.useSameEMPath
-        pathsForThisSet = getEMPaths(sensor, numTrials);
-    else
-        pathsForThisSet = getEMPaths(sensor, 3 * numTrials);
-    end
-    
+        
     % We calculate the LMS by getting the max and min eye positions from
-    % every possible path for this trial.
-    pathSize = size(pathsForThisSet);
-    maxEM = max(pathsForThisSet);
-    maxEM = reshape(maxEM, pathSize(2:3))';
-    minEM = min(pathsForThisSet);
-    minEM = reshape(minEM, pathSize(2:3))';
-    LMSpath = [maxEM; minEM];
+    % every possible path for this trial using the input boundaries.
+    b = calcParams.boundary;
+    LMSpath = [b(1) b(3); b(2) b(4)];
     rows = [-min([LMSpath(:,2); 0]) max([LMSpath(:,2); 0])];
     cols = [max([LMSpath(:,1); 0]) -min([LMSpath(:,1); 0])];
     for qq = 1:length(standardPool)
@@ -203,9 +192,7 @@ for ii = 1:maxImageIllumNumber
         [LMS, msk] = coneAbsorptionsLMS(sensorTest, oiTest);
         testPool{oo} = {sensorTest; LMS; msk};
     end
-    
-%     pathIndex = 1;
-    
+        
     % Loop through the k values
     for jj = 1:KpSampleNum
         Kp = calcParams.startKp + KpInterval * (jj - 1);
@@ -213,21 +200,15 @@ for ii = 1:maxImageIllumNumber
         for kk = 1:KgSampleNum
             Kg = calcParams.startKg + KgInterval * (kk - 1);
             correct = 0;
-            % Simulate out over calcNumber simulated trials
-
             
+            % Simulate out over calcNumber simulated trials
             tic
             for tt = 1:numTrials
-                
                 if calcParams.useSameEMPath
-%                     thePaths = [pathIndex pathIndex pathIndex];
-                    thePaths = repmat(randsample(numTrials, 1), [1,3]);
-%                     pathIndex = pathIndex + 1;
+                    thePaths = getEMPaths(sensor, 1, 'bound', b);
+                    thePaths = repmat(thePaths, [1 1 3]);
                 else
-%                     thePaths = [pathIndex pathIndex+1 pathIndex+2];
-                    thePaths = randsample(3 * numTrials, 3);
-
-%                     pathIndex = pathIndex + 3;
+                    thePaths = getEMPaths(sensor, 3, 'bound', b);
                 end
                 
                 % We choose 2 images without replacement from the standard image pool.
@@ -238,9 +219,9 @@ for ii = 1:maxImageIllumNumber
                 testChoice = randsample(calcParams.comparisonImageSetSize, 1);
                 
                 % Set the paths
-                standard1 = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', pathsForThisSet(:,:, thePaths(1)));
-                standard2 = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', pathsForThisSet(:,:, thePaths(2)));
-                test1 = sensorSet(testPool{testChoice}{1}, 'positions', pathsForThisSet(:,:, thePaths(3)));
+                standard1 = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', thePaths(:,:, 1));
+                standard2 = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', thePaths(:,:, 2));
+                test1 = sensorSet(testPool{testChoice}{1}, 'positions', thePaths(:,:, 3));
                 
                 % Get absorptions
                 standard1 = coneAbsorptionsApplyPath(standard1, standardPool{standardChoice(1)}{3}, standardPool{standardChoice(1)}{4}, rows, cols);
@@ -257,10 +238,18 @@ for ii = 1:maxImageIllumNumber
                 photonsTestComp = getNoisySensorImage(calcParams,test1,Kp,Kg);
                 
                 if calcParams.sumEM
+                    if calcParams.sumEMInterval <= calcParams.totalTime
+                        samples = calcParams.totalTime/calcParams.sumEMInterval;
+                        if rem(100, 1)
+                            error('sumEMInterval does not divide total integration time')
+                        end
+                        dS = size(photonsStandardComp);
+                        
+                        photonsStandardRef = sum(reshape(photonsStandardRef, dS(1), dS(2), samples, []), 4);
+                        photonsStandardComp = sum(reshape(photonsStandardComp, dS(1), dS(2), samples, []), 4);
+                        photonsTestComp = sum(reshape(photonsTestComp, dS(1), dS(2), samples, []), 4);
+                    end
                     % Check if result is 3D, in that case take sum of slices
-                    photonsStandardRef = sum(photonsStandardRef,3);
-                    photonsStandardComp = sum(photonsStandardComp,3);
-                    photonsTestComp = sum(photonsTestComp,3);
                 end
                 % Calculate vector distance from the test image and
                 % standard image to the reference image
