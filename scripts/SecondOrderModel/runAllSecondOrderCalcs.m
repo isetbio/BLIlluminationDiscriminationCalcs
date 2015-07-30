@@ -101,16 +101,18 @@ for k1 = 1:length(calcIDStrs)
     % EMPositions represents the number of positions of eye movement to sample
     calcParams.numEMPositions = 100;
     calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
-    calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
     calcParams.enableTremor = true;
     calcParams.enableDrift = true;
     calcParams.enableMSaccades = true;
+    calcParams.totalTime = calcParams.numEMPositions * calcParams.coneIntegrationTime;
     
     % Whether or not to recreate a new eye movement path for the target and two comparisons
     calcParams.useSameEMPath = false;
     
     % Use sum or individual data
     calcParams.sumEM = true;
+    calcParams.sumEMInterval = 0.010;
+    calcParams.boundary = [10 -10 10 -10];
     
     % Define some eye movement parameters related to large saccades
     calcParams.numSaccades = 5;
