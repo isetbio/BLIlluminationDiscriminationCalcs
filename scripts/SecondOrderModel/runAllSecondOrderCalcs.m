@@ -117,6 +117,7 @@ for k1 = 1:length(calcIDStrs)
     % Define some eye movement parameters related to large saccades
     calcParams.numSaccades = 5;
     calcParams.saccadeInterval = 0.200;
+    calcParams.minSaccadeDistance = 40;
     
     %% Convert the images to cached scenes for more analysis
     if (calcParams.CACHE_SCENES)

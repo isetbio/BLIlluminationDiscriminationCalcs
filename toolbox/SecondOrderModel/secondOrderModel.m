@@ -251,6 +251,7 @@ for ii = 1:maxImageIllumNumber
                     end
                     % Check if result is 3D, in that case take sum of slices
                 end
+                
                 % Calculate vector distance from the test image and
                 % standard image to the reference image
                 distToStandard = norm(photonsStandardRef(:)-photonsStandardComp(:));
