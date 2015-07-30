@@ -23,10 +23,10 @@ tolerance = 200;
 sensor = getDefaultBLIllumDiscrSensor;
 
 oi1 = loadOpticalImageData('Neutral/Standard', 'TestImage0');
-oi2 = loadOpticalImageData('PixelNoise/Standard', 'blue0L1-RGB');
-oi3 = loadOpticalImageData('PixelNoise/Standard', 'blue0L2-RGB');
-oi4 = loadOpticalImageData('PixelNoise2/Standard', 'blue0L1-RGB');
-oi5 = loadOpticalImageData('PixelNoise2/Standard', 'blue0L3-RGB');
+oi2 = loadOpticalImageData('Neutral/Standard', 'TestImage1');
+oi3 = loadOpticalImageData('Neutral/Standard', 'TestImage2');
+oi4 = loadOpticalImageData('Neutral/Standard', 'TestImage4');
+oi5 = loadOpticalImageData('Neutral/Standard', 'TestImage5');
 
 s1 = coneAbsorptions(sensor, oi1);
 s2 = coneAbsorptions(sensor, oi2);
