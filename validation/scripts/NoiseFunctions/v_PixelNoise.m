@@ -8,6 +8,8 @@ end
 
 %% Function implementing the isetbio validation code
 function ValidationFunction(runTimeParams)
+close all;
+
 %% Add ToolBox to Matlab path
 myDir = fileparts(fileparts(fileparts(fileparts(mfilename('fullpath')))));
 pathDir = fullfile(myDir,'..','Toolbox','');
