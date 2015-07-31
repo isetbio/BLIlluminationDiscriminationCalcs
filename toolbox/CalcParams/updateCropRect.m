@@ -22,34 +22,37 @@ switch (calcParams.calcIDStr)
             'StaticPhoton_CompareToEM' 'SOM_FrozenPosition' 'SOM_FrozenSum'...
             'SOM_moving' 'SOM_movingSum' 'SOM_movingDiffPathSum'}
         calcParams.cropRect = [550 450 40 40];
-    case {'StaticPhoton_2' 'StaticPhoton_NM1_2'...
+    case {'StaticPhoton_2' 'StaticPhoton_NM1_2' 'StaticPhoton_NM2_2'...
             'StaticPhoton_2_UnifNoise' 'StaticPhoton_KxMean2' 'StaticPhoton_G2'}
         calcParams.cropRect = [750 650 40 40];
-    case {'StaticPhoton_3' 'StaticPhoton_KxMean3' 'StaticPhoton_G3'}
+    case {'StaticPhoton_3' 'StaticPhoton_KxMean3' 'StaticPhoton_G3' 'StaticPhoton_NM1_3'...
+             'StaticPhoton_NM2_3'}
         calcParams.cropRect = [550 700 40 40];
-    case {'StaticPhoton_4' 'StaticPhoton_KxMean4' 'StaticPhoton_G4'}
+    case {'StaticPhoton_4' 'StaticPhoton_KxMean4' 'StaticPhoton_G4' 'StaticPhoton_NM1_4'...
+             'StaticPhoton_NM2_4'}
         calcParams.cropRect = [500 400 40 40];
-    case {'StaticPhoton_5' 'StaticPhoton_KxMean5'}
+    case {'StaticPhoton_5' 'StaticPhoton_KxMean5' 'StaticPhoton_NM1_5'...
+            'StaticPhoton_NM2_5'}
         calcParams.cropRect = [500 600 40 40];
-    case {'StaticPhoton_6'}
+    case {'StaticPhoton_6' 'StaticPhoton_NM1_6' 'StaticPhoton_NM2_6'}
         calcParams.cropRect = [700 750 40 40];
-    case {'StaticPhoton_7'}
+    case {'StaticPhoton_7' 'StaticPhoton_NM1_7' 'StaticPhoton_NM2_7'}
         calcParams.cropRect = [600 600 40 40];
-    case {'StaticPhoton_8'}
+    case {'StaticPhoton_8' 'StaticPhoton_NM1_8' 'StaticPhoton_NM2_8'}
         calcParams.cropRect = [615 665 40 40];
-    case {'StaticPhoton_9'}
+    case {'StaticPhoton_9' 'StaticPhoton_NM1_9' 'StaticPhoton_NM2_9'}
         calcParams.cropRect = [500 675 40 40];
-    case {'StaticPhoton_10'}
+    case {'StaticPhoton_10' 'StaticPhoton_NM1_10' 'StaticPhoton_NM2_10'}
         calcParams.cropRect = [725 625 40 40];
-    case {'StaticPhoton_11'}
+    case {'StaticPhoton_11' 'StaticPhoton_NM1_11' 'StaticPhoton_NM2_11'}
         calcParams.cropRect = [550 500 40 40];
-    case {'StaticPhoton_12'}
+    case {'StaticPhoton_12' 'StaticPhoton_NM1_12' 'StaticPhoton_NM2_12'}
         calcParams.cropRect = [550 550 40 40];
-    case {'StaticPhoton_13'}
+    case {'StaticPhoton_13' 'StaticPhoton_NM1_13' 'StaticPhoton_NM2_13'}
         calcParams.cropRect = [550 600 40 40];
-    case {'StaticPhoton_14'}
+    case {'StaticPhoton_14' 'StaticPhoton_NM1_14' 'StaticPhoton_NM2_14'}
         calcParams.cropRect = [650 550 40 40];
-    case {'StaticPhoton_15'}
+    case {'StaticPhoton_15' 'StaticPhoton_NM1_15' 'StaticPhoton_NM2_15'}
         calcParams.cropRect = [650 750 40 40];
         
     otherwise

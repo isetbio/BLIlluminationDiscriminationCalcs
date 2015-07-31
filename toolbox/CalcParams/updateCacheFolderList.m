@@ -1,8 +1,8 @@
 function updatedParams = updateCacheFolderList(calcParams)
 % updatedParams = updateCacheFolderList(calcParams)
-% 
+%
 % This function will update the input calcParams so that its
-% cacheFolderList appropriate matches its calcIDStr.  
+% cacheFolderList appropriate matches its calcIDStr.
 %
 % Inputs:
 %    calcParams - A calcParam file with at least the calcIDStr field set.
@@ -38,7 +38,7 @@ switch (calcParams.calcIDStr)
     case {'StaticPhoton_5' 'StaticPhoton_KxMean5'}
         calcParams.cacheFolderList = {'Neutral', 'Neutral_5'}; % [500 600 40 40]
     case {'StaticPhoton_6'}
-        calcParams.cacheFolderList = {'Neutral', 'Neutral_6'}; % [700 750 40 40]        
+        calcParams.cacheFolderList = {'Neutral', 'Neutral_6'}; % [700 750 40 40]
     case {'StaticPhoton_7'}
         calcParams.cacheFolderList = {'Neutral', 'Neutral_7'}; % [600 600 40 40]
     case {'StaticPhoton_8'}
@@ -59,6 +59,60 @@ switch (calcParams.calcIDStr)
         calcParams.cacheFolderList = {'Neutral', 'Neutral_15'}; % [650 750 40 40]
     case {'StaticPhoton_NM1_2'}
         calcParams.cacheFolderList = {'NM1', 'NM1_2'};
+    case {'StaticPhoton_NM1_3'}
+        calcParams.cacheFolderList = {'NM1', 'NM1_3'};
+    case {'StaticPhoton_NM1_4'}
+        calcParams.cacheFolderList = {'NM1', 'NM1_4'};
+    case {'StaticPhoton_NM1_5'}
+        calcParams.cacheFolderList = {'NM1', 'NM1_5'};
+    case {'StaticPhoton_NM1_6'}
+        calcParams.cacheFolderList = {'NM1', 'NM1_6'};
+    case {'StaticPhoton_NM1_7'}
+        calcParams.cacheFolderList = {'NM1', 'NM1_7'};
+    case {'StaticPhoton_NM1_8'}
+        calcParams.cacheFolderList = {'NM1', 'NM1_8'};
+    case {'StaticPhoton_NM1_9'}
+        calcParams.cacheFolderList = {'NM1', 'NM1_9'};
+    case {'StaticPhoton_NM1_10'}
+        calcParams.cacheFolderList = {'NM1', 'NM1_10'};
+    case {'StaticPhoton_NM1_11'}
+        calcParams.cacheFolderList = {'NM1', 'NM1_11'};
+    case {'StaticPhoton_NM1_12'}
+        calcParams.cacheFolderList = {'NM1', 'NM1_12'};
+    case {'StaticPhoton_NM1_13'}
+        calcParams.cacheFolderList = {'NM1', 'NM1_13'};
+    case {'StaticPhoton_NM1_14'}
+        calcParams.cacheFolderList = {'NM1', 'NM1_14'};
+    case {'StaticPhoton_NM1_15'}
+        calcParams.cacheFolderList = {'NM1', 'NM1_15'};
+    case {'StaticPhoton_NM2_2'}
+        calcParams.cacheFolderList = {'NM2', 'NM2_2'};
+    case {'StaticPhoton_NM2_3'}
+        calcParams.cacheFolderList = {'NM2', 'NM2_3'};
+    case {'StaticPhoton_NM2_4'}
+        calcParams.cacheFolderList = {'NM2', 'NM2_4'};
+    case {'StaticPhoton_NM2_5'}
+        calcParams.cacheFolderList = {'NM2', 'NM2_5'};
+    case {'StaticPhoton_NM2_6'}
+        calcParams.cacheFolderList = {'NM2', 'NM2_6'};
+    case {'StaticPhoton_NM2_7'}
+        calcParams.cacheFolderList = {'NM2', 'NM2_7'};
+    case {'StaticPhoton_NM2_8'}
+        calcParams.cacheFolderList = {'NM2', 'NM2_8'};
+    case {'StaticPhoton_NM2_9'}
+        calcParams.cacheFolderList = {'NM2', 'NM2_9'};
+    case {'StaticPhoton_NM2_10'}
+        calcParams.cacheFolderList = {'NM2', 'NM2_10'};
+    case {'StaticPhoton_NM2_11'}
+        calcParams.cacheFolderList = {'NM2', 'NM2_11'};
+    case {'StaticPhoton_NM2_12'}
+        calcParams.cacheFolderList = {'NM2', 'NM2_12'};
+    case {'StaticPhoton_NM2_13'}
+        calcParams.cacheFolderList = {'NM2', 'NM2_13'};
+    case {'StaticPhoton_NM2_14'}
+        calcParams.cacheFolderList = {'NM2', 'NM2_14'};
+    case {'StaticPhoton_NM2_15'}
+        calcParams.cacheFolderList = {'NM2', 'NM2_15'};
     otherwise
         error('Unknown calcIDStr set');
 end
