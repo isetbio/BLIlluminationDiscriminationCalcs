@@ -25,7 +25,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 %% Set identifiers to run
-calcIDStrs = {'StaticPhoton_10x10' 'SecondOrderModelTestSum' 'SecondOrderModelTest'};
+calcIDStrs = {'StaticPhoton_NM1_2'};
 
 %% Parameters of the calculation
 %
@@ -40,13 +40,14 @@ calcIDStrs = {'StaticPhoton_10x10' 'SecondOrderModelTestSum' 'SecondOrderModelTe
 for k1 = 1:length(calcIDStrs)
     
     % Define the steps of the calculation that should be carried out.
-    calcParams.CACHE_SCENES = false;
+    calcParams.CACHE_SCENES = true;
     calcParams.forceSceneCompute = true; % Will overwrite any existing data.
     
-    calcParams.CACHE_OIS = false;
+    calcParams.CACHE_OIS = true;
     calcParams.forceOICompute = true;    % Will overwrite any existing data.
     
-    calcParams.RUN_MODEL = false;
+    calcParams.RUN_MODEL = true;
+    calcParams.MODEL_ORDER = 1; 
     calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
     calcParams.overWriteFlag = 1;        % Whether or not to overwrite existing data.
     
