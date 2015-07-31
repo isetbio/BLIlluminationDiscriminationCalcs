@@ -21,7 +21,7 @@ BaseDir = getpref('BLIlluminationDiscriminationCalcs', 'QueueDir');
 calcParams.CACHE_SCENES = false;
 calcParams.forceSceneCompute = true; % Will overwrite any existing data.
 
-calcParams.CACHE_OIS = false; 
+calcParams.CACHE_OIS = false;
 calcParams.forceOICompute = true;    % Will overwrite any existing data.
 
 calcParams.RUN_MODEL = true;
@@ -29,7 +29,7 @@ calcParams.MODEL_ORDER = 2;          % Which model to run
 calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
 calcParams.overWriteFlag = 1;        % Whether or not to overwrite existing data.
 
-calcParams.CALC_THRESH = false; 
+calcParams.CALC_THRESH = false;
 calcParams.displayIndividualThreshold = true;
 
 % Set the name of this calculation set
@@ -78,32 +78,42 @@ calcParams.KgInterval = 1;
 calcParams.targetImageSetSize = 7;
 calcParams.comparisonImageSetSize = 1;
 
-% EMPositions represents the number of positions of eye movement to sample
-calcParams.numEMPositions = 100;
-calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
-calcParams.EMSampleTime = 0.001;                    % Setting sample time to 1 ms
-calcParams.enableTremor = true;
-calcParams.enableDrift = true;
-calcParams.enableMSaccades = true;
-
-% Whether or not to recreate a new eye movement path for the target and two comparisons 
-calcParams.useSameEMPath = true;
-
-% Use sum or individual data
-calcParams.sumEM = true;
-
-% Define some eye movement parameters related to large saccades
-calcParams.numSaccades = 5;
-calcParams.saccadeInterval = 0.200;
+% Specify parameters related to eye movement
+if calcParams.MODEL_ORDER > 1
+    % Define some eye movement parameters related to large saccades
+    calcParams.numSaccades = 1;            % Set this to 1 for only fixational eye movements
+    calcParams.saccadeInterval = 0.200;
+    calcParams.saccadeMu = 10;             % These are in units of cones
+    calcParams.saccadeSigma = 5;
+    
+    % EMPositions represents the number of positions of eye movement to sample.
+    calcParams.numEMPositions = calcParams.numSaccades * calcParams.saccadeInterval / calcParams.coneIntegrationTime;
+    calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
+    calcParams.totalTime = calcParams.numEMPositions * calcParams.coneIntegrationTime;
+    
+    % Enable or disable certain aspects of fixational eye movement
+    calcParams.enableTremor = true;
+    calcParams.enableDrift = true;
+    calcParams.enableMSaccades = true;
+    
+    % Whether or not to recreate a new eye movement path for the target and two comparisons
+    calcParams.useSameEMPath = false;
+    
+    % Use sum or individual data
+    calcParams.sumEM = true;
+    calcParams.sumEMInterval = 0.010;
+end
 
 % Specify cone adaptation parameters
 % The Isetbio code for cone adaptation is currently under reconstruction
-calcParams.osType = 1;  % 1 for linear, 2 for biophysical
-
-% Define parameters for outer segment noise
-calcParams.numKosSamples = 10;
-calcParams.startKos = 1;
-calcParams.KosInterval = 1;
+if calcParams.MODEL_ORDER > 2
+    calcParams.osType = 1;  % 1 for linear, 2 for biophysical
+    
+    % Define parameters for outer segment noise
+    calcParams.numKosSamples = 10;
+    calcParams.startKos = 1;
+    calcParams.KosInterval = 1;
+end
 
 %% Save the parameter in the queue directory
 savePath = fullfile(BaseDir, ['calcParams' calcParams.calcIDStr]);

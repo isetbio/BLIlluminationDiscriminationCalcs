@@ -53,6 +53,8 @@ function path = getSaccades(n, mu, sigma, b)
 
 tolerance = 2.75;
 
+% If b is not empty, boundaries have been defined and the path will be
+% recreated until it fits inside the bounds.
 loop = true;
 while loop
     path = zeros(n,2);
