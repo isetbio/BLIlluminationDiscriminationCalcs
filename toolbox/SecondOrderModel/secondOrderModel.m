@@ -31,7 +31,7 @@ function secondOrderModel(calcParams, colorChoice, overWrite)
 if notDefined('overWrite'), overWrite = 0; end
 
 %% Set RNG seed to be time dependent
-% 
+%
 % For some reason, the RNG does the same thing everytime when run on the
 % blocks computer
 rng('shuffle');
@@ -80,10 +80,10 @@ sensor = sensorSet(sensor, 'wavelength', SToWls(S));
 % Adjust eye movements
 em = emCreate;
 em = emSet(em, 'emFlag', [calcParams.enableTremor calcParams.enableDrift calcParams.enableMSaccades]);
+em = emSet(em, 'sample time', calcParams.coneIntegrationTime);
 
 sensor = sensorSet(sensor, 'eye move', em);
 sensor = sensorSet(sensor, 'positions', calcParams.EMPositions);
-
 
 %% Compute according to the input color choice
 computeByColor(calcParams, sensor, colorChoice);
@@ -126,7 +126,7 @@ KgInterval = calcParams.KgInterval;
 % order.  In addition, if a specific illumination number has more than one
 % copy, the file name should formatted like 'blue1L#-RGB...' where #
 % represents the copy number.  For consistency, I believe these should also
-% be zero indexed like the standard are, except that the 0th term will not have a #. 
+% be zero indexed like the standard are, except that the 0th term will not have a #.
 % In this case # would start with 1. Code beyond this point will assume these conditions.
 dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
 folderPath = fullfile(dataBaseDir, 'OpticalImageData', calcParams.cacheFolderList{2}, folderName);
@@ -159,25 +159,39 @@ end
 % end
 % photonCellArray = cellfun(@(x)mean2(x),photonCellArray, 'UniformOutput', 0);
 % calcParams.meanStandard = mean(cat(1,photonCellArray{:}));
-% 
+%
 % CHANGE THIS TO THE MEAN OF THE LMS???? or perhaps mask at 0,0
 calcParams.meanStandard = 0;
+
+if calcParams.numSaccades > 1
+    s.n = calcParams.numSaccades;
+    s.mu = calcParams.saccadeMu;
+    s.sigma = calcParams.saccadeSigma;
+else
+    s = [];
+end
+boundaryPaths = getEMPaths(sensor, 1000, 'saccade', s);
+% We calculate the LMS by getting the max and min eye positions from
+% every possible path for this trial using the input boundaries.
+pathSize = size(boundaryPaths);
+maxEM = max(boundaryPaths);
+maxEM = reshape(maxEM, pathSize(2:3))';
+minEM = min(boundaryPaths);
+minEM = reshape(minEM, pathSize(2:3))';
+LMSpath = [maxEM; minEM];
+b = [max(LMSpath(:,1)) min(LMSpath(:,1)) max(LMSpath(:,2)) min(LMSpath(:,2))];
+%     LMSpath = [b(1) b(3); b(2) b(4)];
+rows = round([-min([LMSpath(:,2); 0]) max([LMSpath(:,2); 0])]);
+cols = round([max([LMSpath(:,1); 0]) -min([LMSpath(:,1); 0])]);
+for qq = 1:length(standardPool)
+    sensorTemp = sensorSet(standardPool{qq}{1}, 'positions', LMSpath);
+    [standardPool{qq}{3}, standardPool{qq}{4}] = coneAbsorptionsLMS(sensorTemp, standardPool{qq}{2});
+end
 
 % Loop through the illumination number
 for ii = 1:maxImageIllumNumber
     fprintf('Running trials for %s illumination step %u\n', prefix, ii);
-        
-    % We calculate the LMS by getting the max and min eye positions from
-    % every possible path for this trial using the input boundaries.
-    b = calcParams.boundary;
-    LMSpath = [b(1) b(3); b(2) b(4)];
-    rows = [-min([LMSpath(:,2); 0]) max([LMSpath(:,2); 0])];
-    cols = [max([LMSpath(:,1); 0]) -min([LMSpath(:,1); 0])];
-    for qq = 1:length(standardPool)
-        sensorTemp = sensorSet(standardPool{qq}{1}, 'positions', LMSpath);
-        [standardPool{qq}{3}, standardPool{qq}{4}] = coneAbsorptionsLMS(sensorTemp, standardPool{qq}{2});
-    end
-    
+
     % Precompute the LMS for the test pool as well.
     imageName = fileList{ii};
     imageName = strrep(imageName, 'OpticalImage.mat', '');
@@ -192,7 +206,7 @@ for ii = 1:maxImageIllumNumber
         [LMS, msk] = coneAbsorptionsLMS(sensorTest, oiTest);
         testPool{oo} = {sensorTest; LMS; msk};
     end
-        
+    
     % Loop through the k values
     for jj = 1:KpSampleNum
         Kp = calcParams.startKp + KpInterval * (jj - 1);
@@ -205,10 +219,10 @@ for ii = 1:maxImageIllumNumber
             tic
             for tt = 1:numTrials
                 if calcParams.useSameEMPath
-                    thePaths = getEMPaths(sensor, 1, 'bound', b);
+                    thePaths = getEMPaths(sensor, 1, 'bound', b, 'saccade', s);
                     thePaths = repmat(thePaths, [1 1 3]);
                 else
-                    thePaths = getEMPaths(sensor, 3, 'bound', b);
+                    thePaths = getEMPaths(sensor, 3, 'bound', b, 'saccade', s);
                 end
                 
                 % We choose 2 images without replacement from the standard image pool.
@@ -243,8 +257,7 @@ for ii = 1:maxImageIllumNumber
                         if rem(100, 1)
                             error('sumEMInterval does not divide total integration time')
                         end
-                        dS = size(photonsStandardComp);
-                        
+                        dS = size(photonsStandardComp);        
                         photonsStandardRef = sum(reshape(photonsStandardRef, dS(1), dS(2), samples, []), 4);
                         photonsStandardComp = sum(reshape(photonsStandardComp, dS(1), dS(2), samples, []), 4);
                         photonsTestComp = sum(reshape(photonsTestComp, dS(1), dS(2), samples, []), 4);

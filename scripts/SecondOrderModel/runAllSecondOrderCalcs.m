@@ -98,13 +98,21 @@ for k1 = 1:length(calcIDStrs)
     calcParams.targetImageSetSize = 7;
     calcParams.comparisonImageSetSize = 1;
 
-    % EMPositions represents the number of positions of eye movement to sample
-    calcParams.numEMPositions = 100;
+    % Define some eye movement parameters related to large saccades
+    calcParams.numSaccades = 1;            % Set this to 1 for only fixational eye movements
+    calcParams.saccadeInterval = 0.200;
+    calcParams.saccadeMu = 10;             % These are in units of cones
+    calcParams.saccadeSigma = 5;
+    
+    % EMPositions represents the number of positions of eye movement to sample.  
+    calcParams.numEMPositions = calcParams.numSaccades * calcParams.saccadeInterval / calcParams.coneIntegrationTime;
     calcParams.EMPositions = zeros(calcParams.numEMPositions, 2);
+    calcParams.totalTime = calcParams.numEMPositions * calcParams.coneIntegrationTime;
+    
+    % Enable or disable certain aspects of fixational eye movement
     calcParams.enableTremor = true;
     calcParams.enableDrift = true;
     calcParams.enableMSaccades = true;
-    calcParams.totalTime = calcParams.numEMPositions * calcParams.coneIntegrationTime;
     
     % Whether or not to recreate a new eye movement path for the target and two comparisons
     calcParams.useSameEMPath = false;
@@ -112,12 +120,6 @@ for k1 = 1:length(calcIDStrs)
     % Use sum or individual data
     calcParams.sumEM = true;
     calcParams.sumEMInterval = 0.010;
-    calcParams.boundary = [10 -10 10 -10];
-    
-    % Define some eye movement parameters related to large saccades
-    calcParams.numSaccades = 5;
-    calcParams.saccadeInterval = 0.200;
-    calcParams.minSaccadeDistance = 40;
     
     %% Convert the images to cached scenes for more analysis
     if (calcParams.CACHE_SCENES)
