@@ -233,23 +233,23 @@ for ii = 1:maxImageIllumNumber
                 testChoice = randsample(calcParams.comparisonImageSetSize, 1);
                 
                 % Set the paths
-                standard1 = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', thePaths(:,:, 1));
-                standard2 = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', thePaths(:,:, 2));
-                test1 = sensorSet(testPool{testChoice}{1}, 'positions', thePaths(:,:, 3));
+                standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', thePaths(:,:, 1));
+                standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', thePaths(:,:, 2));
+                testComp = sensorSet(testPool{testChoice}{1}, 'positions', thePaths(:,:, 3));
                 
                 % Get absorptions
-                standard1 = coneAbsorptionsApplyPath(standard1, standardPool{standardChoice(1)}{3}, standardPool{standardChoice(1)}{4}, rows, cols);
-                standard2 = coneAbsorptionsApplyPath(standard2, standardPool{standardChoice(2)}{3}, standardPool{standardChoice(2)}{4}, rows, cols);
-                test1 = coneAbsorptionsApplyPath(test1, testPool{testChoice}{2}, testPool{testChoice}{3}, rows, cols);
-                
+                standardRef = coneAbsorptionsApplyPath(standardRef, standardPool{standardChoice(1)}{3}, standardPool{standardChoice(1)}{4}, rows, cols);
+                standardComp = coneAbsorptionsApplyPath(standardComp, standardPool{standardChoice(2)}{3}, standardPool{standardChoice(2)}{4}, rows, cols);
+                testComp = coneAbsorptionsApplyPath(testComp, testPool{testChoice}{2}, testPool{testChoice}{3}, rows, cols);
+                               
                 % Get inital noisy ref image
-                photonsStandardRef = getNoisySensorImage(calcParams,standard1,Kp,Kg);
+                photonsStandardRef = getNoisySensorImage(calcParams,standardRef,Kp,Kg);
                 
                 % Get noisy version of standard image
-                photonsStandardComp = getNoisySensorImage(calcParams,standard2,Kp,Kg);
+                photonsStandardComp = getNoisySensorImage(calcParams,standardComp,Kp,Kg);
                 
                 % Get noisy version of test image
-                photonsTestComp = getNoisySensorImage(calcParams,test1,Kp,Kg);
+                photonsTestComp = getNoisySensorImage(calcParams,testComp,Kp,Kg);
                 
                 if calcParams.sumEM
                     if calcParams.sumEMInterval <= calcParams.totalTime
