@@ -47,7 +47,7 @@ errorTolerance = .5;
 delta = 1;
 polynomialToFit = 1;
 s = warning('error','MATLAB:polyval:ZeroDOF');
-while mean(delta) > errorTolerance && polynomialToFit < 4
+while mean(delta) > errorTolerance && polynomialToFit < 2
     try
         [p, S] = polyfit(kVals, threshold', polynomialToFit);
         [y, delta] = polyval(p, kValsFine,S);
