@@ -122,12 +122,7 @@ for k1 = 1:length(calcIDStrs)
     
     % Parameters for the outer segment code
     calcParams.osType = 2;  % 1 for linear, 2 for biophysical
-    
-    % Define parameters for outer segment noise
-    calcParams.numKosSamples = 10;
-    calcParams.startKos = 1;
-    calcParams.KosInterval = 1;
-    
+        
     %% Convert the images to cached scenes for more analysis
     if (calcParams.CACHE_SCENES)
         convertRBGImagesToSceneFiles(calcParams,calcParams.forceSceneCompute);
