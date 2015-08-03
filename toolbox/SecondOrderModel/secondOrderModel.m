@@ -219,10 +219,12 @@ for ii = 1:maxImageIllumNumber
             tic
             for tt = 1:numTrials
                 if calcParams.useSameEMPath
-                    thePaths = getEMPaths(sensor, 1, 'bound', b, 'saccade', s);
-                    thePaths = repmat(thePaths, [1 1 3]);
+%                     thePaths = getEMPaths(sensor, 1, 'bound', b, 'saccade', s);
+%                     thePaths = repmat(thePaths, [1 1 3]);
+                    thePaths = repmat(randsample(1000, 1),1,3);
                 else
-                    thePaths = getEMPaths(sensor, 3, 'bound', b, 'saccade', s);
+                    %                     thePaths = getEMPaths(sensor, 3, 'bound', b, 'saccade', s);
+                    thePaths = randsample(1000, 3);
                 end
                 
                 % We choose 2 images without replacement from the standard image pool.
@@ -233,9 +235,12 @@ for ii = 1:maxImageIllumNumber
                 testChoice = randsample(calcParams.comparisonImageSetSize, 1);
                 
                 % Set the paths
-                standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', thePaths(:,:, 1));
-                standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', thePaths(:,:, 2));
-                testComp = sensorSet(testPool{testChoice}{1}, 'positions', thePaths(:,:, 3));
+%                 standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', thePaths(:,:, 1));
+%                 standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', thePaths(:,:, 2));
+%                 testComp = sensorSet(testPool{testChoice}{1}, 'positions', thePaths(:,:, 3));
+                standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', boundaryPaths(:,:,thePaths(1)));
+                standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', boundaryPaths(:,:,thePaths(2)));
+                testComp = sensorSet(testPool{testChoice}{1}, 'positions', boundaryPaths(:,:,thePaths(3)));
                 
                 % Get absorptions
                 standardRef = coneAbsorptionsApplyPath(standardRef, standardPool{standardChoice(1)}{3}, standardPool{standardChoice(1)}{4}, rows, cols);
