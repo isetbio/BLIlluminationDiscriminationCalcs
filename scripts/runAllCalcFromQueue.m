@@ -15,8 +15,8 @@ function runAllCalcFromQueue
 clear all; close all; ieInit;
 
 %% Get our project toolbox on the path
-myDir = fileparts(fileparts(mfilename('fullpath')));
-pathDir = fullfile(myDir,'..','Toolbox','');
+myDir = fileparts(mfilename('fullpath'));
+pathDir = fullfile(myDir,'..','toolbox','');
 AddToMatlabPathDynamically(pathDir);
 
 %% Make sure preferences are defined

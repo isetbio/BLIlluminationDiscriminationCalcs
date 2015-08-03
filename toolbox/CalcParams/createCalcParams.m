@@ -33,7 +33,7 @@ calcParams.CALC_THRESH = false;
 calcParams.displayIndividualThreshold = true;
 
 % Set the name of this calculation set
-calcParams.calcIDStr = 'SOM_movingSum';
+calcParams.calcIDStr = 'SOM_sum100';
 
 % Folder list to run over for conversions into isetbio format
 calcParams = updateCacheFolderList(calcParams);
@@ -74,15 +74,15 @@ calcParams.KgInterval = 1;
 % choose two images out of the target set and one image out of the
 % comparison set.  This is in order to reduce the effect of pixel noise
 % cause by the image renderer.
-
 calcParams.targetImageSetSize = 7;
 calcParams.comparisonImageSetSize = 1;
 
 % Specify parameters related to eye movement
 if calcParams.MODEL_ORDER > 1
-    % Define some eye movement parameters related to large saccades
+    % Define some eye movement parameters related to large saccades.  The
+    % total time of the simulation is equal to numSaccades*saccadeInterval.
     calcParams.numSaccades = 1;            % Set this to 1 for only fixational eye movements
-    calcParams.saccadeInterval = 0.200;
+    calcParams.saccadeInterval = 0.100;
     calcParams.saccadeMu = 10;             % These are in units of cones
     calcParams.saccadeSigma = 5;
     
@@ -97,11 +97,11 @@ if calcParams.MODEL_ORDER > 1
     calcParams.enableMSaccades = true;
     
     % Whether or not to recreate a new eye movement path for the target and two comparisons
-    calcParams.useSameEMPath = false;
+    calcParams.useSameEMPath = true;
     
     % Use sum or individual data
     calcParams.sumEM = true;
-    calcParams.sumEMInterval = 0.010;
+    calcParams.sumEMInterval = 0.100;
 end
 
 % Specify cone adaptation parameters
