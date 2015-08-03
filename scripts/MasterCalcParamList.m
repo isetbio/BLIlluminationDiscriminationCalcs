@@ -14,6 +14,11 @@
 %% Clear and close
 clear; close all;
 
+%% Get our project toolbox on the path
+myDir = fileparts(mfilename('fullpath'));
+pathDir = fullfile(myDir,'..','toolbox','');
+AddToMatlabPathDynamically(pathDir);
+
 %% Set preferences
 setPrefsForBLIlluminationDiscriminationCalcs;
 
@@ -21,7 +26,7 @@ setPrefsForBLIlluminationDiscriminationCalcs;
 BaseDir = getpref('BLIlluminationDiscriminationCalcs', 'QueueDir');
 
 %% Boolean options for which sets of calcParams to generate
-CREATE_StaticPhoton_Neutral = true;
+CREATE_StaticPhoton_Neutral = false;
 CREATE_StaticPhoton_NM1 = true;
 CREATE_StaticPhoton_NM2 = true;
 
@@ -87,11 +92,11 @@ if (CREATE_StaticPhoton_NM1)
     for ii = 1:length(calcIDStrList)
         
         % Define the steps of the calculation that should be carried out.
-        calcParams.CACHE_SCENES = false;
-        calcParams.forceSceneCompute = true; % Will overwrite any existing data.
+        calcParams.CACHE_SCENES = true;
+        calcParams.forceSceneCompute = false; % Will overwrite any existing data.
         
-        calcParams.CACHE_OIS = false;
-        calcParams.forceOICompute = true;    % Will overwrite any existing data.
+        calcParams.CACHE_OIS = true;
+        calcParams.forceOICompute = false;    % Will overwrite any existing data.
         
         calcParams.RUN_MODEL = true;
         calcParams.MODEL_ORDER = 1;          % Which model to run
@@ -139,11 +144,11 @@ if (CREATE_StaticPhoton_NM2)
     for ii = 1:length(calcIDStrList)
         
         % Define the steps of the calculation that should be carried out.
-        calcParams.CACHE_SCENES = false;
-        calcParams.forceSceneCompute = true; % Will overwrite any existing data.
+        calcParams.CACHE_SCENES = true;
+        calcParams.forceSceneCompute = false; % Will overwrite any existing data.
         
-        calcParams.CACHE_OIS = false;
-        calcParams.forceOICompute = true;    % Will overwrite any existing data.
+        calcParams.CACHE_OIS = true;
+        calcParams.forceOICompute = false;    % Will overwrite any existing data.
         
         calcParams.RUN_MODEL = true;
         calcParams.MODEL_ORDER = 1;          % Which model to run

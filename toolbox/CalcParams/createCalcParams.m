@@ -9,6 +9,11 @@ function createCalcParams
 %
 % 6/4/15  xd  wrote it
 
+%% Get our project toolbox on the path
+myDir = fileparts(fileparts(mfilename('fullpath')));
+pathDir = fullfile(myDir,'..','toolbox','');
+AddToMatlabPathDynamically(pathDir);
+
 %% Make sure preferences are defined
 setPrefsForBLIlluminationDiscriminationCalcs;
 
