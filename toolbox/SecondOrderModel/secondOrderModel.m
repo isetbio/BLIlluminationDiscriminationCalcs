@@ -170,13 +170,14 @@ if calcParams.numSaccades > 1
 else
     s = [];
 end
-boundaryPaths = getEMPaths(sensor, 1000, 'saccade', s);
+pathPool = getEMPaths(sensor, 1000, 'saccade', s);
+
 % We calculate the LMS by getting the max and min eye positions from
 % every possible path for this trial using the input boundaries.
-pathSize = size(boundaryPaths);
-maxEM = max(boundaryPaths);
+pathSize = size(pathPool);
+maxEM = max(pathPool);
 maxEM = reshape(maxEM, pathSize(2:3))';
-minEM = min(boundaryPaths);
+minEM = min(pathPool);
 minEM = reshape(minEM, pathSize(2:3))';
 LMSpath = [maxEM; minEM];
 b = [max(LMSpath(:,1)) min(LMSpath(:,1)) max(LMSpath(:,2)) min(LMSpath(:,2))];
@@ -238,9 +239,9 @@ for ii = 1:maxImageIllumNumber
 %                 standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', thePaths(:,:, 1));
 %                 standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', thePaths(:,:, 2));
 %                 testComp = sensorSet(testPool{testChoice}{1}, 'positions', thePaths(:,:, 3));
-                standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', boundaryPaths(:,:,thePaths(1)));
-                standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', boundaryPaths(:,:,thePaths(2)));
-                testComp = sensorSet(testPool{testChoice}{1}, 'positions', boundaryPaths(:,:,thePaths(3)));
+                standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', pathPool(:,:,thePaths(1)));
+                standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', pathPool(:,:,thePaths(2)));
+                testComp = sensorSet(testPool{testChoice}{1}, 'positions', pathPool(:,:,thePaths(3)));
                 
                 % Get absorptions
                 standardRef = coneAbsorptionsApplyPath(standardRef, standardPool{standardChoice(1)}{3}, standardPool{standardChoice(1)}{4}, rows, cols);
