@@ -133,7 +133,6 @@ function [threshold, paramsValues, usableDataStart] = fitToData (calcParams, dat
 %                  for fitting
 
 %% Find usable data range based on Kp
-
 sizeOfData = size(data);
 
 % To find the start of the usable data, take average of 1st 5 values
@@ -216,6 +215,7 @@ options.MaxIter = 500*100;
                 colorFull = 'yellow';
         end
     end
+
 %% Set max subplots per figure
 maxSubplot = 6;
 
@@ -249,7 +249,7 @@ for i = 1:numKValue
         plot([threshold(i) threshold(i)], [0, criterion], color, 'linewidth', 3);
         
         currentK = calcParams.startKp + calcParams.KpInterval * (i + usableDataStart - 1 - 1);
-        title(strcat('K-Value : ',int2str(currentK)));
+        title(['Kp: ' int2str(currentK) ' Kg: 0']);
         xlabel('Stimulus Difference (nominal)');
         ylabel('Percent Correct');
         ylim([0 1.0]);
