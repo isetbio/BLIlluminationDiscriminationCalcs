@@ -46,6 +46,7 @@ xImgMeters = xImgPixels*0.0254/display.dpi;
 fov = 2*rad2deg(atan2(xImgMeters/2,display.dist));
 scene = sceneSet(scene, 'fov', fov);
 scene = sceneSet(scene, 'name', strcat(imageName, 'Scene'));
+scene = sceneSet(scene, 'filename', []);
 
 %% Save scene object
 dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
