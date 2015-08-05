@@ -16,9 +16,7 @@ function updatedParams = updateCacheFolderList(calcParams)
 % is the subdirectory in which the scene data and oi data will be stored.
 % If the second directory does not exist, it will be created.
 switch (calcParams.calcIDStr)
-    case {'StaticPhoton', 'ThreeFrameEM','BugTests', ...
-            'StaticPhoton_5EM_10MS','StaticPhoton_10MS','StaticPhoton_5EM_10MS_SUM',...
-            'SensorFOV' 'StaticPhoton_KxMean', 'StaticPhoton_G' ...
+    case {'StaticPhoton' 'BugTests' 'StaticPhoton_G' ...
             'SecondOrderModelTest' 'SecondOrderModelTestSum' 'StaticPhoton_10x10'...
             'StaticPhoton_CompareToEM' 'SOM_FrozenPosition' 'SOM_FrozenSum'...
             'SOM_moving' 'SOM_movingSum' 'SOM_movingDiffPathSum' 'SOM_sum1'...
@@ -28,14 +26,13 @@ switch (calcParams.calcIDStr)
         calcParams.cacheFolderList = {'NM1', 'NM1'};
     case {'StaticPhoton_NM2'}
         calcParams.cacheFolderList = {'NM2', 'NM2'};
-    case {'StaticPhoton_2' ...
-            'StaticPhoton_2_UnifNoise' 'StaticPhoton_KxMean2' 'StaticPhoton_G2'}
+    case {'StaticPhoton_2' 'StaticPhoton_G2'}
         calcParams.cacheFolderList = {'Neutral', 'Neutral_2'}; % [750 650 40 40]
-    case {'StaticPhoton_3' 'StaticPhoton_KxMean3' 'StaticPhoton_G3'}
+    case {'StaticPhoton_3' 'StaticPhoton_G3'}
         calcParams.cacheFolderList = {'Neutral', 'Neutral_3'}; % [550 700 40 40]
-    case {'StaticPhoton_4' 'StaticPhoton_KxMean4' 'StaticPhoton_G4'}
+    case {'StaticPhoton_4' 'StaticPhoton_G4'}
         calcParams.cacheFolderList = {'Neutral', 'Neutral_4'}; % [500 400 40 40]
-    case {'StaticPhoton_5' 'StaticPhoton_KxMean5'}
+    case {'StaticPhoton_5'}
         calcParams.cacheFolderList = {'Neutral', 'Neutral_5'}; % [500 600 40 40]
     case {'StaticPhoton_6'}
         calcParams.cacheFolderList = {'Neutral', 'Neutral_6'}; % [700 750 40 40]
