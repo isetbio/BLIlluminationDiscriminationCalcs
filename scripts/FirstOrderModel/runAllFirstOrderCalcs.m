@@ -25,7 +25,10 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 %% Set identifiers to run
-calcIDStrs = {'SOM_sum1' 'SOM_sum2' 'SOM_sum4' 'SOM_sum25' 'SOM_sum100'};
+calcIDStrs = {'StaticPhoton_NM1' 'StaticPhoton_NM1_2' 'StaticPhoton_NM1_3' 'StaticPhoton_NM1_4'...
+    'StaticPhoton_NM1_5' 'StaticPhoton_NM1_6' 'StaticPhoton_NM1_7' 'StaticPhoton_NM1_8'...
+    'StaticPhoton_NM1_9' 'StaticPhoton_NM1_10' 'StaticPhoton_NM1_11' 'StaticPhoton_NM1_12'...
+    'StaticPhoton_NM1_13' 'StaticPhoton_NM1_14' 'StaticPhoton_NM1_15'};
 
 %% Parameters of the calculation
 %

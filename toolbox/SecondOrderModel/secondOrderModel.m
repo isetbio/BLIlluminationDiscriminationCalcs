@@ -351,6 +351,4 @@ end
 
 saveDir = fullfile(TargetPath, ['calcParams' calcParams.calcIDStr]);
 save(saveDir, 'calcParams');
-fprintf('Current calculation complete');
-
 end
