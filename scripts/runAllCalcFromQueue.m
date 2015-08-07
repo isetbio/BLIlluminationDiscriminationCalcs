@@ -54,7 +54,7 @@ while ~KEY_IS_PRESSED
     % Load all the calcParam files present in the directory
     data = what(BaseDir);
     toDoList = data.mat;
-
+    
     % Remove any matches between usedParams and toDoList
     if usedIndex > 1
         toDoList = setdiff(usedParams, toDoList);
@@ -64,40 +64,44 @@ while ~KEY_IS_PRESSED
     % parameters.  Otherwise, wait until there are files in the queue.
     if ~isempty(toDoList)
         toDoList = toDoList(1);  % Only process one file at a time, this way many computers can draw from the same queue
-        pause(10);
+        pause(5 * rand + 5);
+        
+        
         
         % Perform calculations on the present files
         for ii=1:length(toDoList)
-            currentFile = toDoList{ii};
-            calcParams = load(fullfile(BaseDir, currentFile));
-            calcParams = calcParams.calcParams;
-            delete(fullfile(BaseDir, currentFile));
-            finishup = onCleanup(@() globalSave(fullfile(BaseDir, currentFile)));
-            try
-                %% Convert the images to cached scenes for more analysis
-                if (calcParams.CACHE_SCENES)
-                    convertRBGImagesToSceneFiles(calcParams,calcParams.forceSceneCompute);
+            if exist(fullpath(BaseDir, toDoList{ii}), 'file')
+                currentFile = toDoList{ii};
+                calcParams = load(fullfile(BaseDir, currentFile));
+                calcParams = calcParams.calcParams;
+                delete(fullfile(BaseDir, currentFile));
+                finishup = onCleanup(@() globalSave(fullfile(BaseDir, currentFile)));
+                try
+                    %% Convert the images to cached scenes for more analysis
+                    if (calcParams.CACHE_SCENES)
+                        convertRBGImagesToSceneFiles(calcParams,calcParams.forceSceneCompute);
+                    end
+                    
+                    %% Convert cached scenes to optical images
+                    if (calcParams.CACHE_OIS)
+                        convertScenesToOpticalimages(calcParams,calcParams.forceOICompute);
+                    end
+                    
+                    %% Create data sets using the appropriate model
+                    if (calcParams.RUN_MODEL)
+                        Models{calcParams.MODEL_ORDER}(calcParams,calcParams.chooserColorChoice,calcParams.overWriteFlag);
+                    end
+                    
+                    %                 fprintf('This is working fine: %s\n', calcParams.calcIDStr);
+                catch
+                    err = lasterror;
+                    disp(err);
+                    disp(err.message);
+                    disp(err.stack);
+                    disp(err.identifier);
+                    %                 save(fullfile(BaseDir, currentFile), 'calcParams'); % Restore the calcParams file if anything occurs
+                    error('Something bad happened, but the calcParam has been restored to the queue');
                 end
-                
-                %% Convert cached scenes to optical images
-                if (calcParams.CACHE_OIS)
-                    convertScenesToOpticalimages(calcParams,calcParams.forceOICompute);
-                end
-                
-                %% Create data sets using the appropriate model
-                if (calcParams.RUN_MODEL)
-                    Models{calcParams.MODEL_ORDER}(calcParams,calcParams.chooserColorChoice,calcParams.overWriteFlag);
-                end
-
-%                 fprintf('This is working fine: %s\n', calcParams.calcIDStr);
-            catch
-                err = lasterror;
-                disp(err);
-                disp(err.message);
-                disp(err.stack);
-                disp(err.identifier);
-%                 save(fullfile(BaseDir, currentFile), 'calcParams'); % Restore the calcParams file if anything occurs
-                error('Something bad happened, but the calcParam has been restored to the queue');
             end
         end
         

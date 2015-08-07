@@ -1,8 +1,8 @@
 function updatedParams = updateCropRect(calcParams)
 % updatedCalcParams = updateCropRect(calcParams)
-% 
+%
 % This function will update the input calcParams so that its cropRect field
-% is assigned appropriately according to its calcID. 
+% is assigned appropriately according to its calcID.
 %
 % Inputs:
 %    calcParams - A calcParam file with at least the calcIDStr field set.
@@ -23,10 +23,10 @@ switch (calcParams.calcIDStr)
     case {'StaticPhoton_2' 'StaticPhoton_NM1_2' 'StaticPhoton_NM2_2'}
         calcParams.cropRect = [750 650 40 40];
     case {'StaticPhoton_3' 'StaticPhoton_G3' 'StaticPhoton_NM1_3'...
-             'StaticPhoton_NM2_3'}
+            'StaticPhoton_NM2_3'}
         calcParams.cropRect = [550 700 40 40];
     case {'StaticPhoton_4' 'StaticPhoton_G4' 'StaticPhoton_NM1_4'...
-             'StaticPhoton_NM2_4'}
+            'StaticPhoton_NM2_4'}
         calcParams.cropRect = [500 400 40 40];
     case {'StaticPhoton_5' 'StaticPhoton_NM1_5' 'StaticPhoton_NM2_5'}
         calcParams.cropRect = [500 600 40 40];
@@ -50,7 +50,36 @@ switch (calcParams.calcIDStr)
         calcParams.cropRect = [650 550 40 40];
     case {'StaticPhoton_15' 'StaticPhoton_NM1_15' 'StaticPhoton_NM2_15'}
         calcParams.cropRect = [650 750 40 40];
-        
+    case {'StaticPhoton_S2_1' 'StaticPhoton_NM1_S2_1' 'StaticPhoton_NM2_S2_1'}
+        calcParams.cropRect = [850 800 40 40];
+    case {'StaticPhoton_S2_2' 'StaticPhoton_NM1_S2_2' 'StaticPhoton_NM2_S2_2'}
+        calcParams.cropRect = [850 750 40 40];
+    case {'StaticPhoton_S2_3' 'StaticPhoton_NM1_S2_3' 'StaticPhoton_NM2_S2_3'}
+        calcParams.cropRect = [850 700 40 40];
+    case {'StaticPhoton_S2_4' 'StaticPhoton_NM1_S2_4' 'StaticPhoton_NM2_S2_4'}
+        calcParams.cropRect = [800 800 40 40];
+    case {'StaticPhoton_S2_5' 'StaticPhoton_NM1_S2_5' 'StaticPhoton_NM2_S2_5'}
+        calcParams.cropRect = [800 750 40 40];
+    case {'StaticPhoton_S2_6' 'StaticPhoton_NM1_S2_6' 'StaticPhoton_NM2_S2_6'}
+        calcParams.cropRect = [800 700 40 40];
+    case {'StaticPhoton_S2_7' 'StaticPhoton_NM1_S2_7' 'StaticPhoton_NM2_S2_7'}
+        calcParams.cropRect = [850 500 40 40];
+    case {'StaticPhoton_S2_8' 'StaticPhoton_NM1_S2_8' 'StaticPhoton_NM2_S2_8'}
+        calcParams.cropRect = [800 500 40 40];
+    case {'StaticPhoton_S2_9' 'StaticPhoton_NM1_S2_9' 'StaticPhoton_NM2_S2_9'}
+        calcParams.cropRect = [700 500 40 40];
+    case {'StaticPhoton_S2_10' 'StaticPhoton_NM1_S2_10' 'StaticPhoton_NM2_S2_10'}
+        calcParams.cropRect = [600 700 40 40];
+    case {'StaticPhoton_S2_11' 'StaticPhoton_NM1_S2_11' 'StaticPhoton_NM2_S2_11'}
+        calcParams.cropRect = [600 750 40 40];
+    case {'StaticPhoton_S2_12' 'StaticPhoton_NM1_S2_12' 'StaticPhoton_NM2_S2_12'}
+        calcParams.cropRect = [600 800 40 40];
+    case {'StaticPhoton_S2_13' 'StaticPhoton_NM1_S2_13' 'StaticPhoton_NM2_S2_13'}
+        calcParams.cropRect = [600 400 40 40];
+    case {'StaticPhoton_S2_14' 'StaticPhoton_NM1_S2_14' 'StaticPhoton_NM2_S2_14'}
+        calcParams.cropRect = [700 400 40 40];
+    case {'StaticPhoton_S2_15' 'StaticPhoton_NM1_S2_15' 'StaticPhoton_NM2_S2_15'}
+        calcParams.cropRect = [800 400 40 40];
     otherwise
         error('Unknown calcIDStr set');
 end

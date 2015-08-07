@@ -38,7 +38,7 @@ calcParams.CALC_THRESH = false;
 calcParams.displayIndividualThreshold = true;
 
 % Set the name of this calculation set
-calcParams.calcIDStr = 'SOM_sum100';
+calcParams.calcIDStr = 'StaticPhoton_NM2';
 
 % Folder list to run over for conversions into isetbio format
 calcParams = updateCacheFolderList(calcParams);
