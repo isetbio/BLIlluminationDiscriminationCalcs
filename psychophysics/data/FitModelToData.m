@@ -6,8 +6,8 @@
 % 7/23/15  xd  adapted from IllumDiscrimPlots
 
 %% Clear and close
-clear;
-close all;
+% clear;
+% close all;
 
 %% Load the data.
 ALL_BACKGROUNDS = true;
@@ -27,6 +27,7 @@ end
 %% Load the mean data
 compObserverSummaryNeutral = load('FirstOrderModelMeanData');
 compObserverSummaryNM1 = load('FirstOrderModelNM1');
+compObserverSummaryNM2 = load('FirstOrderModelNM2');
 
 %% Figure parameters
 curDir = pwd;
@@ -124,7 +125,7 @@ title('Average Over Subjects','FontName',figParams.fontName,'FontSize',figParams
 
 %% Add theory to this plot
 figParams.figName = 'AverageOverSubjectsWithTheory';
-useK = 3.2;
+useK = 3;
 useK1 = floor(useK);
 useK2 = ceil(useK);
 lambda = abs(useK2-useK);
@@ -136,5 +137,51 @@ dataTheoryGreen = lambda*compObserverSummaryNM1.psycho.thresholdGreen(useK1-comp
     (1-lambda)*compObserverSummaryNM1.psycho.thresholdGreen(useK2-compObserverSummaryNM1.psycho.uGreen+1);
 dataTheoryRed = lambda*compObserverSummaryNM1.psycho.thresholdRed(useK1-compObserverSummaryNM1.psycho.uRed+1) + ...
     (1-lambda)*compObserverSummaryNM1.psycho.thresholdRed(useK2-compObserverSummaryNM1.psycho.uRed+1);
+plot([1 2 3 4],[dataTheoryBlue dataTheoryYellow dataTheoryGreen dataTheoryRed],'k', 'LineWidth',figParams.lineWidth,'MarkerSize',50);
+title({'Average Over Subjects NM1' ; ['Fit Kp Factor ',num2str(useK)]},'FontName',figParams.fontName,'FontSize',figParams.titleFontSize);
+
+%% Plot NM2 data
+theFig = figure; clf; hold on
+set(gcf,'Position',[100 100 figParams.size figParams.sqSize]);
+set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
+
+errorbar(1,allSubjects.meanNonMatched2Blue, allSubjects.SEMNonMatched2Blue, 's', 'MarkerFaceColor',figParams.plotBlue, 'color', figParams.plotBlue,'MarkerSize', figParams.markerSize);
+errorbar(2,allSubjects.meanNonMatched2Yellow, allSubjects.SEMNonMatched2Yellow,'s', 'MarkerFaceColor',figParams.plotYellow, 'color', figParams.plotYellow,'MarkerSize', figParams.markerSize);
+errorbar(3,allSubjects.meanNonMatched2Green, allSubjects.SEMNonMatched2Green,'s', 'MarkerFaceColor',figParams.plotGreen, 'color', figParams.plotGreen,'MarkerSize', figParams.markerSize);
+errorbar(4,allSubjects.meanNonMatched2Red, allSubjects.SEMNonMatched2Red, 's', 'MarkerFaceColor',figParams.plotRed,'color', figParams.plotRed,'MarkerSize', figParams.markerSize);
+
+xlim([figParams.xLimLow figParams.xLimHigh]);
+set(gca,'XTick',figParams.xTicks);
+set(gca,'XTickLabel',figParams.xTickLabels);
+xlabel({'Illumination Direction'},'FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
+ylim([figParams.yLimLow figParams.yLimHigh]);
+ylabel('Threshold (\DeltaE*)','FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
+set(gca,'YTick',figParams.yTicks);
+set(gca,'YTickLabel',figParams.yTickLabels);
+title('Average Over Subjects','FontName',figParams.fontName,'FontSize',figParams.titleFontSize);
+%legend({' L cones ' ' M cones ' ' S cones '},'Location','NorthEast','FontSize',figParams.legendFontSize);
+%axis('square');
+%set(gca,'XMinorTick','on');
+%FigureSave(fullfile(figParams.figName),theFig,figParams.figType);
+
+%% Add theory to this plot
+figParams.figName = 'AverageOverSubjectsWithTheory';
+useK = 4;
+useK1 = floor(useK);
+useK2 = ceil(useK);
+lambda = abs(useK2-useK);
+dataTheoryBlue = lambda*compObserverSummaryNM2.psycho.thresholdBlue(useK1-compObserverSummaryNM2.psycho.uBlue+1) + ...
+    (1-lambda)*compObserverSummaryNM2.psycho.thresholdBlue(useK2-compObserverSummaryNM2.psycho.uBlue+1);
+dataTheoryYellow = lambda*compObserverSummaryNM2.psycho.thresholdYellow(useK1-compObserverSummaryNM2.psycho.uYellow+1) + ...
+    (1-lambda)*compObserverSummaryNM2.psycho.thresholdYellow(useK2-compObserverSummaryNM2.psycho.uYellow+1);
+if useK < 4
+    dataTheoryGreen = lambda*4.2069 + ...
+    (1-lambda)*compObserverSummaryNM2.psycho.thresholdGreen(useK2-compObserverSummaryNM2.psycho.uGreen+1);
+else
+dataTheoryGreen = lambda*compObserverSummaryNM2.psycho.thresholdGreen(useK1-compObserverSummaryNM2.psycho.uGreen+1) + ...
+    (1-lambda)*compObserverSummaryNM2.psycho.thresholdGreen(useK2-compObserverSummaryNM2.psycho.uGreen+1);
+end
+dataTheoryRed = lambda*compObserverSummaryNM2.psycho.thresholdRed(useK1-compObserverSummaryNM2.psycho.uRed+1) + ...
+    (1-lambda)*compObserverSummaryNM2.psycho.thresholdRed(useK2-compObserverSummaryNM2.psycho.uRed+1);
 plot([1 2 3 4],[dataTheoryBlue dataTheoryYellow dataTheoryGreen dataTheoryRed],'k', 'LineWidth',figParams.lineWidth,'MarkerSize',50);
 title({'Average Over Subjects NM1' ; ['Fit Kp Factor ',num2str(useK)]},'FontName',figParams.fontName,'FontSize',figParams.titleFontSize);
