@@ -70,7 +70,7 @@ while ~KEY_IS_PRESSED
         
         % Perform calculations on the present files
         for ii=1:length(toDoList)
-            if exist(fullpath(BaseDir, toDoList{ii}), 'file')
+            if exist(fullfile(BaseDir, toDoList{ii}), 'file')
                 currentFile = toDoList{ii};
                 calcParams = load(fullfile(BaseDir, currentFile));
                 calcParams = calcParams.calcParams;
