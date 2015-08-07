@@ -123,7 +123,7 @@ while ~KEY_IS_PRESSED
     end
     
 end
-finishup = onCleanup(@() cleanUpFunction());
+finishup = onCleanup(@() cleanUpFunction(fullfile(BaseDir, currentFile)));
 close all;
 
 end
@@ -144,6 +144,9 @@ close all;
 clearvars -global calcParams;
 end
 
-function cleanUpFunction()
+function cleanUpFunction(path)
+if exist(path, 'file')
+    delete(path)
+end
 disp('Exiting function, no errors occurred')
 end
