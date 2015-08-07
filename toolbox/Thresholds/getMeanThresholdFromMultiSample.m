@@ -1,4 +1,4 @@
-function getMeanThresholdFromMultiSample(calcIDStrList)
+function [psycho, calcParams] = getMeanThresholdFromMultiSample(calcIDStrList)
 % meanThreshold = getMeanThresholdFromMultiSample(calcIDStrList)
 % 
 % This function will take the input list of calcID's and calculate the mean
@@ -64,15 +64,21 @@ psycho.uGreen = maxUGreen;
 psycho.uRed = maxURed;
 psycho.uYellow = maxUYellow;
 
-calcParams = {'test' 'placeholder'};
-
-save('Mean_Data', 'psycho', 'calcParams');
+calcParams = {'test' 'placeholder'};  % This really isn't needed for this function but some functions might make a call to it
 
 %% Get standard error
 errorBlue = std(cell2mat(tBlue'), [], 2) / sqrt(length(calcIDStrList));
 errorRed = std(cell2mat(tRed'), [], 2) / sqrt(length(calcIDStrList));
 errorGreen = std(cell2mat(tGreen'), [], 2) / sqrt(length(calcIDStrList));
 errorYellow = std(cell2mat(tYellow'), [], 2) / sqrt(length(calcIDStrList));
+
+psycho.errorBlue = errorBlue;
+psycho.errorRed = errorRed;
+psycho.errorGreen = errorGreen;
+psycho.errorYellow = errorYellow;
+
+save('Mean_Data', 'psycho', 'calcParams');
+
 
 %% Plot thresholds
 figParams = getFigureParameters;
