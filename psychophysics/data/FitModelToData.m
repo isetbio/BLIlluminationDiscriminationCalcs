@@ -95,7 +95,18 @@ dataTheoryGreen = lambda*compObserverSummaryNeutral.psycho.thresholdGreen(useK1-
     (1-lambda)*compObserverSummaryNeutral.psycho.thresholdGreen(useK2-compObserverSummaryNeutral.psycho.uGreen+1);
 dataTheoryRed = lambda*compObserverSummaryNeutral.psycho.thresholdRed(useK1-compObserverSummaryNeutral.psycho.uRed+1) + ...
     (1-lambda)*compObserverSummaryNeutral.psycho.thresholdRed(useK2-compObserverSummaryNeutral.psycho.uRed+1);
-plot([1 2 3 4],[dataTheoryBlue dataTheoryYellow dataTheoryGreen dataTheoryRed],'k', 'LineWidth',figParams.lineWidth,'MarkerSize',50);
+errorTheoryBlue = lambda*compObserverSummaryNeutral.psycho.errorBlue(useK1-compObserverSummaryNeutral.psycho.uBlue+1) + ...
+    (1-lambda)*compObserverSummaryNeutral.psycho.errorBlue(useK2-compObserverSummaryNeutral.psycho.uBlue+1);
+errorTheoryYellow = lambda*compObserverSummaryNeutral.psycho.errorYellow(useK1-compObserverSummaryNeutral.psycho.uYellow+1) + ...
+    (1-lambda)*compObserverSummaryNeutral.psycho.errorYellow(useK2-compObserverSummaryNeutral.psycho.uYellow+1);
+errorTheoryRed = lambda*compObserverSummaryNeutral.psycho.errorBlue(useK1-compObserverSummaryNeutral.psycho.uBlue+1) + ...
+    (1-lambda)*compObserverSummaryNeutral.psycho.errorRed(useK2-compObserverSummaryNeutral.psycho.uRed+1);
+errorTheoryGreen = lambda*compObserverSummaryNeutral.psycho.errorGreen(useK1-compObserverSummaryNeutral.psycho.uGreen+1) + ...
+    (1-lambda)*compObserverSummaryNeutral.psycho.errorGreen(useK2-compObserverSummaryNeutral.psycho.uGreen+1);
+
+% plot([1 2 3 4],[dataTheoryBlue dataTheoryYellow dataTheoryGreen dataTheoryRed],'k', 'LineWidth',figParams.lineWidth,'MarkerSize',50);
+h = errorbar([1 2 3 4],[dataTheoryBlue dataTheoryYellow dataTheoryGreen dataTheoryRed], [errorTheoryBlue errorTheoryYellow errorTheoryGreen errorTheoryRed], 'k', 'LineWidth',figParams.lineWidth,'MarkerSize',50);
+set(get(h,'Children'),{'LineWidth'},{figParams.lineWidth; 3})
 title({'Average Over Subjects Neutral' ; ['Fit Kp Factor ',num2str(useK)]},'FontName',figParams.fontName,'FontSize',figParams.titleFontSize);
 %FigureSave(fullfile(figParams.figName),theFig,figParams.figType);
 
@@ -125,7 +136,7 @@ title('Average Over Subjects','FontName',figParams.fontName,'FontSize',figParams
 
 %% Add theory to this plot
 figParams.figName = 'AverageOverSubjectsWithTheory';
-useK = 3;
+useK = 3.2;
 useK1 = floor(useK);
 useK2 = ceil(useK);
 lambda = abs(useK2-useK);
@@ -137,7 +148,18 @@ dataTheoryGreen = lambda*compObserverSummaryNM1.psycho.thresholdGreen(useK1-comp
     (1-lambda)*compObserverSummaryNM1.psycho.thresholdGreen(useK2-compObserverSummaryNM1.psycho.uGreen+1);
 dataTheoryRed = lambda*compObserverSummaryNM1.psycho.thresholdRed(useK1-compObserverSummaryNM1.psycho.uRed+1) + ...
     (1-lambda)*compObserverSummaryNM1.psycho.thresholdRed(useK2-compObserverSummaryNM1.psycho.uRed+1);
-plot([1 2 3 4],[dataTheoryBlue dataTheoryYellow dataTheoryGreen dataTheoryRed],'k', 'LineWidth',figParams.lineWidth,'MarkerSize',50);
+errorTheoryBlue = lambda*compObserverSummaryNM1.psycho.errorBlue(useK1-compObserverSummaryNM1.psycho.uBlue+1) + ...
+    (1-lambda)*compObserverSummaryNM1.psycho.errorBlue(useK2-compObserverSummaryNM1.psycho.uBlue+1);
+errorTheoryYellow = lambda*compObserverSummaryNM1.psycho.errorYellow(useK1-compObserverSummaryNM1.psycho.uYellow+1) + ...
+    (1-lambda)*compObserverSummaryNM1.psycho.errorYellow(useK2-compObserverSummaryNM1.psycho.uYellow+1);
+errorTheoryRed = lambda*compObserverSummaryNM1.psycho.errorBlue(useK1-compObserverSummaryNM1.psycho.uBlue+1) + ...
+    (1-lambda)*compObserverSummaryNM1.psycho.errorRed(useK2-compObserverSummaryNM1.psycho.uRed+1);
+errorTheoryGreen = lambda*compObserverSummaryNM1.psycho.errorGreen(useK1-compObserverSummaryNM1.psycho.uGreen+1) + ...
+    (1-lambda)*compObserverSummaryNM1.psycho.errorGreen(useK2-compObserverSummaryNM1.psycho.uGreen+1);
+
+% plot([1 2 3 4],[dataTheoryBlue dataTheoryYellow dataTheoryGreen dataTheoryRed],'k', 'LineWidth',figParams.lineWidth,'MarkerSize',50);
+h = errorbar([1 2 3 4],[dataTheoryBlue dataTheoryYellow dataTheoryGreen dataTheoryRed], [errorTheoryBlue errorTheoryYellow errorTheoryGreen errorTheoryRed], 'k', 'LineWidth',figParams.lineWidth,'MarkerSize',50);
+set(get(h,'Children'),{'LineWidth'},{figParams.lineWidth; 3})
 title({'Average Over Subjects NM1' ; ['Fit Kp Factor ',num2str(useK)]},'FontName',figParams.fontName,'FontSize',figParams.titleFontSize);
 
 %% Plot NM2 data
@@ -166,7 +188,7 @@ title('Average Over Subjects','FontName',figParams.fontName,'FontSize',figParams
 
 %% Add theory to this plot
 figParams.figName = 'AverageOverSubjectsWithTheory';
-useK = 4;
+useK = 3.2;
 useK1 = floor(useK);
 useK2 = ceil(useK);
 lambda = abs(useK2-useK);
@@ -174,8 +196,8 @@ dataTheoryBlue = lambda*compObserverSummaryNM2.psycho.thresholdBlue(useK1-compOb
     (1-lambda)*compObserverSummaryNM2.psycho.thresholdBlue(useK2-compObserverSummaryNM2.psycho.uBlue+1);
 dataTheoryYellow = lambda*compObserverSummaryNM2.psycho.thresholdYellow(useK1-compObserverSummaryNM2.psycho.uYellow+1) + ...
     (1-lambda)*compObserverSummaryNM2.psycho.thresholdYellow(useK2-compObserverSummaryNM2.psycho.uYellow+1);
-if useK < 4
-    dataTheoryGreen = lambda*4.2069 + ...
+if useK < 4 && useK >= 3
+    dataTheoryGreen = lambda*compObserverSummaryNM2.psycho.tGreen3 + ...
     (1-lambda)*compObserverSummaryNM2.psycho.thresholdGreen(useK2-compObserverSummaryNM2.psycho.uGreen+1);
 else
 dataTheoryGreen = lambda*compObserverSummaryNM2.psycho.thresholdGreen(useK1-compObserverSummaryNM2.psycho.uGreen+1) + ...
@@ -183,5 +205,21 @@ dataTheoryGreen = lambda*compObserverSummaryNM2.psycho.thresholdGreen(useK1-comp
 end
 dataTheoryRed = lambda*compObserverSummaryNM2.psycho.thresholdRed(useK1-compObserverSummaryNM2.psycho.uRed+1) + ...
     (1-lambda)*compObserverSummaryNM2.psycho.thresholdRed(useK2-compObserverSummaryNM2.psycho.uRed+1);
-plot([1 2 3 4],[dataTheoryBlue dataTheoryYellow dataTheoryGreen dataTheoryRed],'k', 'LineWidth',figParams.lineWidth,'MarkerSize',50);
-title({'Average Over Subjects NM1' ; ['Fit Kp Factor ',num2str(useK)]},'FontName',figParams.fontName,'FontSize',figParams.titleFontSize);
+errorTheoryBlue = lambda*compObserverSummaryNM2.psycho.errorBlue(useK1-compObserverSummaryNM2.psycho.uBlue+1) + ...
+    (1-lambda)*compObserverSummaryNM2.psycho.errorBlue(useK2-compObserverSummaryNM2.psycho.uBlue+1);
+errorTheoryYellow = lambda*compObserverSummaryNM2.psycho.errorYellow(useK1-compObserverSummaryNM2.psycho.uYellow+1) + ...
+    (1-lambda)*compObserverSummaryNM2.psycho.errorYellow(useK2-compObserverSummaryNM2.psycho.uYellow+1);
+errorTheoryRed = lambda*compObserverSummaryNM2.psycho.errorBlue(useK1-compObserverSummaryNM2.psycho.uBlue+1) + ...
+    (1-lambda)*compObserverSummaryNM2.psycho.errorRed(useK2-compObserverSummaryNM2.psycho.uRed+1);
+if useK < 4 && useK >= 3
+    dataTheoryGreen = lambda*compObserverSummaryNM2.psycho.eGreen3 + ...
+    (1-lambda)*compObserverSummaryNM2.psycho.thresholdGreen(useK2-compObserverSummaryNM2.psycho.uGreen+1);
+else
+errorTheoryGreen = lambda*compObserverSummaryNM2.psycho.errorGreen(useK1-compObserverSummaryNM2.psycho.uGreen+1) + ...
+    (1-lambda)*compObserverSummaryNM2.psycho.errorGreen(useK2-compObserverSummaryNM2.psycho.uGreen+1);
+end
+
+% plot([1 2 3 4],[dataTheoryBlue dataTheoryYellow dataTheoryGreen dataTheoryRed],'k', 'LineWidth',figParams.lineWidth,'MarkerSize',50);
+h = errorbar([1 2 3 4],[dataTheoryBlue dataTheoryYellow dataTheoryGreen dataTheoryRed], [errorTheoryBlue errorTheoryYellow errorTheoryGreen errorTheoryRed], 'k', 'LineWidth',figParams.lineWidth,'MarkerSize',50);
+set(get(h,'Children'),{'LineWidth'},{figParams.lineWidth; 3})
+title({'Average Over Subjects NM2' ; ['Fit Kp Factor ',num2str(useK)]},'FontName',figParams.fontName,'FontSize',figParams.titleFontSize);
