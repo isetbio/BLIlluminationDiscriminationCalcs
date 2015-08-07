@@ -39,12 +39,14 @@ usedIndex  = 1;                             % Next position in usedParams to fil
 %% Set up an infinite loop
 global KEY_IS_PRESSED
 KEY_IS_PRESSED = 0;
-gcf
-set(gcf, 'KeyPressFcn', @myKeyPressFcn)
+gcf;
+set(gcf, 'KeyPressFcn', @myKeyPressFcn);
 a = annotation('textbox', [0.2,0.6,0.1,0.1], ...
     'String','Press a button \newlineto exit program');
 set(a, 'FontSize', 20);
 set(a, 'LineStyle', 'none');
+
+global calcParams;
 
 while ~KEY_IS_PRESSED
     drawnow
@@ -70,6 +72,7 @@ while ~KEY_IS_PRESSED
             calcParams = load(fullfile(BaseDir, currentFile));
             calcParams = calcParams.calcParams;
             delete(fullfile(BaseDir, currentFile));
+            finishup = onCleanup(@() globalSave(fullfile(BaseDir, currentFile)));
             try
                 %% Convert the images to cached scenes for more analysis
                 if (calcParams.CACHE_SCENES)
@@ -85,10 +88,16 @@ while ~KEY_IS_PRESSED
                 if (calcParams.RUN_MODEL)
                     Models{calcParams.MODEL_ORDER}(calcParams,calcParams.chooserColorChoice,calcParams.overWriteFlag);
                 end
+
 %                 fprintf('This is working fine: %s\n', calcParams.calcIDStr);
             catch
-                save(fullfile(BaseDir, currentFile), 'calcParams'); % Restore the calcParams file if anything occurs
-                error('Something bad happened, but the calcParam has been restored to the queue\n');
+                err = lasterror;
+                disp(err);
+                disp(err.message);
+                disp(err.stack);
+                disp(err.identifier);
+%                 save(fullfile(BaseDir, currentFile), 'calcParams'); % Restore the calcParams file if anything occurs
+                error('Something bad happened, but the calcParam has been restored to the queue');
             end
         end
         
@@ -114,7 +123,7 @@ while ~KEY_IS_PRESSED
     end
     
 end
-disp('exiting function')
+finishup = onCleanup(@() cleanUpFunction());
 close all;
 
 end
@@ -126,4 +135,15 @@ function myKeyPressFcn(hObject, event)
 
 global KEY_IS_PRESSED
 KEY_IS_PRESSED  = 1;
+end
+
+function globalSave(path)
+global calcParams;
+save(path, 'calcParams');
+close all;
+clearvars -global calcParams;
+end
+
+function cleanUpFunction()
+disp('Exiting function, no errors occurred')
 end
