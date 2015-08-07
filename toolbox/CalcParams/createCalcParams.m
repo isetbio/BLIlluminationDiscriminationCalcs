@@ -113,11 +113,6 @@ end
 % The Isetbio code for cone adaptation is currently under reconstruction
 if calcParams.MODEL_ORDER > 2
     calcParams.osType = 1;  % 1 for linear, 2 for biophysical
-    
-    % Define parameters for outer segment noise
-    calcParams.numKosSamples = 10;
-    calcParams.startKos = 1;
-    calcParams.KosInterval = 1;
 end
 
 %% Save the parameter in the queue directory

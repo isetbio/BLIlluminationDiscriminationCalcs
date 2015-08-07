@@ -77,8 +77,8 @@ errorYellow = std(cell2mat(tYellow'), [], 2) / sqrt(length(calcIDStrList));
 %% Plot thresholds
 figParams = getFigureParameters;
 
-KInterval = min([maxUBlue maxURed maxUGreen maxUYellow]):max([minEndBlue minEndGreen minEndRed minEndYellow]);
-KValsFine = min(KInterval):1/1000:max(KInterval);
+% KInterval = min([maxUBlue maxURed maxUGreen maxUYellow]):max([minEndBlue minEndGreen minEndRed minEndYellow]);
+KValsFine = 1:1/1000:10;
 
 figure;
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize);
@@ -88,10 +88,10 @@ hold on;
 % fitAndPlotToThreshold(maxURed, meanTRed, 'r', KInterval, KValsFine, figParams,errorRed);
 % fitAndPlotToThreshold(maxUGreen, meanTGreen, 'g', KInterval, KValsFine, figParams,errorGreen);
 % fitAndPlotToThreshold(maxUYellow, meanTYellow, 'y', KInterval, KValsFine, figParams,errorYellow);
-fitAndPlotToThreshold(maxUBlue, meanTBlue, 'b', KInterval, KValsFine, figParams);
-fitAndPlotToThreshold(maxURed, meanTRed, 'r', KInterval, KValsFine, figParams);
-fitAndPlotToThreshold(maxUGreen, meanTGreen, 'g', KInterval, KValsFine, figParams);
-fitAndPlotToThreshold(maxUYellow, meanTYellow, 'y', KInterval, KValsFine, figParams);
+fitAndPlotToThreshold(maxUBlue, meanTBlue, 'b', 1, KValsFine, figParams);
+fitAndPlotToThreshold(maxURed, meanTRed, 'r', 1, KValsFine, figParams);
+fitAndPlotToThreshold(maxUGreen, meanTGreen, 'g', 1, KValsFine, figParams);
+fitAndPlotToThreshold(maxUYellow, meanTYellow, 'y', 1, KValsFine, figParams);
 title('Only all samples available');
 ylim([0 50]);
 end
