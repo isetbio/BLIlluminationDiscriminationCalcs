@@ -52,7 +52,7 @@ while ~KEY_IS_PRESSED
     % Load all the calcParam files present in the directory
     data = what(BaseDir);
     toDoList = data.mat;
-    
+
     % Remove any matches between usedParams and toDoList
     if usedIndex > 1
         toDoList = setdiff(usedParams, toDoList);
@@ -61,6 +61,7 @@ while ~KEY_IS_PRESSED
     % If there are files present, run the calculations with those
     % parameters.  Otherwise, wait until there are files in the queue.
     if ~isempty(toDoList)
+        toDoList = toDoList(1);  % Only process one file at a time, this way many computers can draw from the same queue
         pause(10);
         
         % Perform calculations on the present files
@@ -68,40 +69,46 @@ while ~KEY_IS_PRESSED
             currentFile = toDoList{ii};
             calcParams = load(fullfile(BaseDir, currentFile));
             calcParams = calcParams.calcParams;
-            
-            %% Convert the images to cached scenes for more analysis
-            if (calcParams.CACHE_SCENES)
-                convertRBGImagesToSceneFiles(calcParams,calcParams.forceSceneCompute);
-            end
-            
-            %% Convert cached scenes to optical images
-            if (calcParams.CACHE_OIS)
-                convertScenesToOpticalimages(calcParams,calcParams.forceOICompute);
-            end
-            
-            %% Create data sets using the appropriate model
-            if (calcParams.RUN_MODEL)
-                Models{calcParams.MODEL_ORDER}(calcParams,calcParams.chooserColorChoice,calcParams.overWriteFlag);
+            delete(fullfile(BaseDir, currentFile));
+            try
+                %% Convert the images to cached scenes for more analysis
+                if (calcParams.CACHE_SCENES)
+                    convertRBGImagesToSceneFiles(calcParams,calcParams.forceSceneCompute);
+                end
+                
+                %% Convert cached scenes to optical images
+                if (calcParams.CACHE_OIS)
+                    convertScenesToOpticalimages(calcParams,calcParams.forceOICompute);
+                end
+                
+                %% Create data sets using the appropriate model
+                if (calcParams.RUN_MODEL)
+                    Models{calcParams.MODEL_ORDER}(calcParams,calcParams.chooserColorChoice,calcParams.overWriteFlag);
+                end
+%                 fprintf('This is working fine: %s\n', calcParams.calcIDStr);
+            catch
+                save(fullfile(BaseDir, currentFile), 'calcParams'); % Restore the calcParams file if anything occurs
+                error('Something bad happened, but the calcParam has been restored to the queue\n');
             end
         end
         
-        % Delete these files from the queue.  If an error occurs, add the
-        % file name to a cell array so that the file is not processed again.
-        % This cell array doubles in size whenever it is full.
-        for ii=1:length(toDoList)
-            currentFile = toDoList{ii};
-            try
-                delete(fullfile(BaseDir, currentFile));
-            catch
-                usedParams{usedIndex} = currentFile;
-                if usedIndex == length(usedParams)
-                    temp = cell(1, 2 * usedIndex);
-                    temp(1:usedIndex) = usedParams;
-                    usedParams = temp;
-                end
-                usedIndex = usedIndex + 1;
-            end
-        end
+        %         % Delete these files from the queue.  If an error occurs, add the
+        %         % file name to a cell array so that the file is not processed again.
+        %         % This cell array doubles in size whenever it is full.
+        %         for ii=1:length(toDoList)
+        %             currentFile = toDoList{ii};
+        %             try
+        %                 delete(fullfile(BaseDir, currentFile));
+        %             catch
+        %                 usedParams{usedIndex} = currentFile;
+        %                 if usedIndex == length(usedParams)
+        %                     temp = cell(1, 2 * usedIndex);
+        %                     temp(1:usedIndex) = usedParams;
+        %                     usedParams = temp;
+        %                 end
+        %                 usedIndex = usedIndex + 1;
+        %             end
+        %         end
     else
         disp('waiting...')
     end
