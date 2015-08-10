@@ -21,8 +21,8 @@ theFigures = files(~theFigureIndex);
 
 %% Make new folder in wikiFigures
 [~, folderName] = fileparts(targetDirectory);
-dir = fileparts(fileparts(mfilename('fullfile')));
-wikiPath = fullfile(dir, '..', 'wikiFigures',folderName);
+theDir = fileparts(fileparts(mfilename('fullpath')));
+wikiPath = fullfile(theDir, '..', 'wikiFigures',folderName);
 
 if ~exist(wikiPath, 'dir')
     mkdir(wikiPath);
@@ -31,7 +31,7 @@ end
 %% Save PNG to wikiFigures
 for ii = 1:length(theFigures)
     hgload(fullfile(targetDirectory, theFigures{ii}.name));
-    FigureSave(fullfile(wikipath, theFigures{ii}.name), gcf, 'png');
+    FigureSave(fullfile(wikiPath, theFigures{ii}.name(1:end-4)), gcf, 'png');
     close;
 end
 

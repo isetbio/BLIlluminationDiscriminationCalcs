@@ -57,7 +57,7 @@ figParams.xTickLabels = {'', 'Blue', 'Yellow', 'Green', 'Red'};
 figParams.yLimLow = 0;
 figParams.yLimHigh = 25;
 figParams.yTicks = [0 5 10 15 20 25];
-figParams.yTickLabels = {' 0 ' ' 0 ' ' 10 ' ' 15 ' ' 20 ' ' 25 '};
+figParams.yTickLabels = {' 0 ' ' 5 ' ' 10 ' ' 15 ' ' 20 ' ' 25 '};
 theFig = figure; clf; hold on
 set(gcf,'Position',[100 100 figParams.size figParams.sqSize]);
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
