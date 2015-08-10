@@ -75,7 +75,7 @@ while ~KEY_IS_PRESSED
                 calcParams = load(fullfile(BaseDir, currentFile));
                 calcParams = calcParams.calcParams;
                 delete(fullfile(BaseDir, currentFile));
-                finishup = onCleanup(@() globalSave(fullfile(BaseDir, currentFile)));
+%                 finishup = onCleanup(@() globalSave(fullfile(BaseDir, currentFile)));
                 try
                     %% Convert the images to cached scenes for more analysis
                     if (calcParams.CACHE_SCENES)
@@ -99,7 +99,7 @@ while ~KEY_IS_PRESSED
                     disp(err.message);
                     disp(err.stack);
                     disp(err.identifier);
-                    %                 save(fullfile(BaseDir, currentFile), 'calcParams'); % Restore the calcParams file if anything occurs
+                    save(fullfile(BaseDir, currentFile), 'calcParams'); % Restore the calcParams file if anything occurs
                     error('Something bad happened, but the calcParam has been restored to the queue');
                 end
             end
