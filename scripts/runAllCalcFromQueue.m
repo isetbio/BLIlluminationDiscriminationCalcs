@@ -145,7 +145,6 @@ function globalSave(path)
 global calcParams;
 save(path, 'calcParams');
 close all;
-clearvars -global calcParams;
 end
 
 function cleanUpFunction(path)
