@@ -8,8 +8,7 @@ function [psycho, calcParams] = getMeanThresholdFromMultiSample(calcIDStrList)
 % Inputs:
 %    calcIDStrList - List of calcID's from which to calculate the mean
 %
-% NOTE: THIS FUNCTION IS WORK IN PROGRESS
-% NEEDS PARAMETER TO DECIDE BETWEEN MEAN KP OR KG
+% NOTE: This function will only plot the means when Kp is varying
 %
 % 7/3/15  xd  wrote it
 
