@@ -11,8 +11,8 @@ function ValidationFunction(runTimeParams)
 close all;
 
 %% Add ToolBox to Matlab path
-myDir = fileparts(fileparts(fileparts(fileparts(mfilename('fullpath')))));
-pathDir = fullfile(myDir,'..','Toolbox','');
+myDir = fileparts(fileparts(fileparts(mfilename('fullpath'))));
+pathDir = fullfile(myDir,'..','toolbox','');
 AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
@@ -20,8 +20,13 @@ setPrefsForBLIlluminationDiscriminationCalcs;
 ieSessionSet('wait bar','off');
 
 %% Load desired params
-calcParams = load('scripts/firstordermodel/validationCalcParams');
+calcParams = load(fullfile(myDir, 'scripts/FirstOrderModel/validationCalcParams'));
 calcParams = calcParams.calcParams;
+
+%% Check if necessary data exists
+if ~exist(fullfile(getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir'), 'ImageData', 'Neutral'), 'dir')
+    error('Please set up the data file directories approriately.  Consult the project wiki on GitHub for instructions.');
+end
 
 %% Convert the images to cached scenes for more analysis
 if (calcParams.CACHE_SCENES)

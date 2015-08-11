@@ -21,7 +21,9 @@ rng(1);
 tolerance = 200;
 sensor = getDefaultBLIllumDiscrSensor;
 
-oi = loadOpticalImageData('Neutral/Standard', 'TestImage0');
+data = load('TestImage0OpticalImage');
+oi = data.opticalimage;
+
 sensor = coneAbsorptions(sensor, oi);
 
 photons = sensorGet(sensor, 'photons');
@@ -36,6 +38,10 @@ UnitTest.validationRecord('SIMPLE_MESSAGE', '***** Noise Functions *****');
 A = norm(noiseShotRes(:) - poissrndRes(:));
 B = norm(noiseShotRes(:) - approx(:));
 C = norm(poissrndRes(:) - approx(:));
+
+UnitTest.validationData('noiseShot', noiseShotRes);
+UnitTest.validationData('poissrnd', poissrndRes);
+UnitTest.validationData('approx', approx);
 
 UnitTest.assertIsZero(A - B, 'DIFFERENCE from noiseShot to poissrnd', tolerance);
 UnitTest.assertIsZero(B - C, 'DIFFERENCE from noiseShot to approx', tolerance);

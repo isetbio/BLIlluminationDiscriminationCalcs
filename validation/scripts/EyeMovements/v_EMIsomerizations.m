@@ -22,7 +22,8 @@ tolerance = 1;
 
 sensor = getDefaultBLIllumDiscrSensor;
 
-oi = loadOpticalImageData('Neutral/Standard', 'TestImage0');
+data = load('TestImage0OpticalImage');
+oi = data.opticalimage;
 
 % Create eye movement object
 em = emCreate;
