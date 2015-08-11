@@ -22,12 +22,15 @@ tolerance = 200;
 
 sensor = getDefaultBLIllumDiscrSensor;
 
-oi1 = loadOpticalImageData('Neutral/Standard', 'TestImage0');
-oi2 = loadOpticalImageData('Neutral/Standard', 'TestImage1');
-oi3 = loadOpticalImageData('Neutral/Standard', 'TestImage2');
-oi4 = loadOpticalImageData('Neutral/Standard', 'TestImage4');
-oi5 = loadOpticalImageData('Neutral/Standard', 'TestImage5');
-
+try
+    oi1 = loadOpticalImageData('Neutral/Standard', 'TestImage0');
+    oi2 = loadOpticalImageData('Neutral/Standard', 'TestImage1');
+    oi3 = loadOpticalImageData('Neutral/Standard', 'TestImage2');
+    oi4 = loadOpticalImageData('Neutral/Standard', 'TestImage4');
+    oi5 = loadOpticalImageData('Neutral/Standard', 'TestImage6');
+catch
+    error('It seems that you do not have the OI required for this validation. Please contact the project developers to obtain it');
+end
 s1 = coneAbsorptions(sensor, oi1);
 s2 = coneAbsorptions(sensor, oi2);
 s3 = coneAbsorptions(sensor, oi3);
