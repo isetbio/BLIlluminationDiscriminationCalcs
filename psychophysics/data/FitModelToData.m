@@ -14,7 +14,8 @@ clear;
 close all;
 
 %% Make plots directory
-plotDir = 'plots';
+curDir = pwd;
+plotDir = fullfile(curDir,'plots',[]);
 if (~exist(plotDir,'dir'))
     mkdir(plotDir);
 end
@@ -88,8 +89,8 @@ ylim([figParams.yLimLow figParams.yLimHigh]);
 ylabel('Threshold (\DeltaE*)','FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
 set(gca,'YTick',figParams.yTicks);
 set(gca,'YTickLabel',figParams.yTickLabels);
-title('Average Over Subjects','FontName',figParams.fontName,'FontSize',figParams.titleFontSize);;
-FigureSave(fullfile(plotDir,[figParams.figName '.' figParams.figType]),theFig,figParams.figType);
+title('Average Over Subjects','FontName',figParams.fontName,'FontSize',figParams.titleFontSize);
+cd(plotDir); FigureSave(fullfile(figParams.figName),theFig,figParams.figType); cd (curDir);
 
 % Add theory to the plot
 figParams.figName = ['AverageOverSubjectsNeutral_' num2str(10*useKp)];
@@ -116,7 +117,7 @@ errorTheoryGreen = lambda*compObserverSummaryNeutral.psycho.errorGreen(useK1-com
 h = errorbar([1 2 3 4],[dataTheoryBlue dataTheoryYellow dataTheoryGreen dataTheoryRed], [errorTheoryBlue errorTheoryYellow errorTheoryGreen errorTheoryRed], 'k', 'LineWidth',figParams.lineWidth,'MarkerSize',50);
 set(get(h,'Children'),{'LineWidth'},{figParams.lineWidth; 3})
 title({'Average Over Subjects Neutral' ; ['Fit Kp Factor ',num2str(useKp)]},'FontName',figParams.fontName,'FontSize',figParams.titleFontSize);
-FigureSave(fullfile(plotDir,[figParams.figName '.' figParams.figType]),theFig,figParams.figType);
+cd(plotDir); FigureSave(fullfile(figParams.figName),theFig,figParams.figType); cd (curDir);
 
 if (ALL_BACKGROUNDS)
     
@@ -140,7 +141,7 @@ if (ALL_BACKGROUNDS)
     set(gca,'YTick',figParams.yTicks);
     set(gca,'YTickLabel',figParams.yTickLabels);
     title('Average Over Subjects','FontName',figParams.fontName,'FontSize',figParams.titleFontSize);
-    FigureSave(fullfile(plotDir,[figParams.figName '.' figParams.figType]),theFig,figParams.figType);
+    cd(plotDir); FigureSave(fullfile(figParams.figName),theFig,figParams.figType); cd (curDir);
     
     % Add theory to this plot
     figParams.figName = ['AverageOverSubjectsNM1_' num2str(10*useKp)];
@@ -167,7 +168,7 @@ if (ALL_BACKGROUNDS)
     h = errorbar([1 2 3 4],[dataTheoryBlue dataTheoryYellow dataTheoryGreen dataTheoryRed], [errorTheoryBlue errorTheoryYellow errorTheoryGreen errorTheoryRed], 'k', 'LineWidth',figParams.lineWidth,'MarkerSize',50);
     set(get(h,'Children'),{'LineWidth'},{figParams.lineWidth; 3})
     title({'Average Over Subjects NM1' ; ['Fit Kp Factor ',num2str(useKp)]},'FontName',figParams.fontName,'FontSize',figParams.titleFontSize);
-    FigureSave(fullfile(plotDir,[figParams.figName '.' figParams.figType]),theFig,figParams.figType);
+    cd(plotDir); FigureSave(fullfile(figParams.figName),theFig,figParams.figType); cd (curDir);
     
     %% Plot NM2 data
     figParams.figName = 'AverageOverSubjectsNM2';
@@ -189,7 +190,7 @@ if (ALL_BACKGROUNDS)
     set(gca,'YTick',figParams.yTicks);
     set(gca,'YTickLabel',figParams.yTickLabels);
     title('Average Over Subjects','FontName',figParams.fontName,'FontSize',figParams.titleFontSize);
-    FigureSave(fullfile(plotDir,[figParams.figName '.' figParams.figType]),theFig,figParams.figType);
+    cd(plotDir); FigureSave(fullfile(figParams.figName),theFig,figParams.figType); cd (curDir);
     
     % Add theory to the plot
     figParams.figName = ['AverageOverSubjectsNM2_' num2str(10*useKp)];
@@ -226,6 +227,6 @@ if (ALL_BACKGROUNDS)
     h = errorbar([1 2 3 4],[dataTheoryBlue dataTheoryYellow dataTheoryGreen dataTheoryRed], [errorTheoryBlue errorTheoryYellow errorTheoryGreen errorTheoryRed], 'k', 'LineWidth',figParams.lineWidth,'MarkerSize',50);
     set(get(h,'Children'),{'LineWidth'},{figParams.lineWidth; 3})
     title({'Average Over Subjects NM2' ; ['Fit Kp Factor ',num2str(useKp)]},'FontName',figParams.fontName,'FontSize',figParams.titleFontSize);
-    FigureSave(fullfile(plotDir,[figParams.figName '.' figParams.figType]),theFig,figParams.figType);
+    cd(plotDir); FigureSave(fullfile(figParams.figName),theFig,figParams.figType); cd (curDir);
     
 end
