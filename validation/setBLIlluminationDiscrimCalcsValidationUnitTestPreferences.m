@@ -14,7 +14,7 @@ function setBLIlluminationDiscrimCalcsValidationUnitTestPreferences
             'clonedGhPagesLocation',               '/Users/Shared/Matlab/Analysis/BLIlluminationDiscrimCalcsGhPages/BLIlluminationDiscriminationCalcs', ... 	 % Local path to the directory where the gh-pages repository is cloned. Only relevant for publishing tutorials.
             'githubRepoURL',                       'http://isetbio.github.io/BLIlluminationDiscriminationCalcs', ... 	 % Github URL for the project. This is only used for publishing tutorials.
             'generateGroundTruthDataIfNotFound',   true, ...  	 % Flag indicating whether to generate ground truth if one is not found
-            'listingScript',                       'validateListAllValidationDirsForBLIllumDiscrimCalcsValidation' ...
+            'listingScript',                       'validateListAllValidationDirs' ...
       );
  
     generatePreferenceGroup(p); 
