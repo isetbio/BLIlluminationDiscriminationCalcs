@@ -15,9 +15,8 @@ function ValidationFunction(runTimeParams)
 close all
 
 % Load the imageData and generate the calibrationData object
-calStructOBJ = loadCalibrationData('StereoLCDLeft')
+calStructOBJ = loadCalibrationData('StereoLCDLeft');
 calStructOBJ.cal.describe
-
 
 % Retrieve the display primaries SPD data from the calibration
 wavelengthSampling = SToWls(calStructOBJ.get('S'));
@@ -224,12 +223,8 @@ end
 end
 
 function calStructOBJ = loadCalibrationData(calFile)
-% Assemble calFileName
-dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-calDir = fullfile(dataBaseDir, 'CalData', filesep);
-
 % Load the calibration data
-cal = LoadCalFile(calFile, [], calDir);
+cal = LoadCalFile(calFile, [], []);
 % generate calStructOBJ to access the calibration data
 calStructOBJ = ObjectToHandleCalOrCalStruct(cal);
 clear 'cal'
