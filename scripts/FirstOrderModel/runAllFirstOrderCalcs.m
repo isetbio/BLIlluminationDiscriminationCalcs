@@ -25,11 +25,8 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 %% Set identifiers to run
-calcIDStrs  = {'StaticPhoton_NM2_S2_1' 'StaticPhoton_NM2_S2_2' 'StaticPhoton_NM2_S2_3' 'StaticPhoton_NM2_S2_4' ...
-        'StaticPhoton_NM2_S2_5' 'StaticPhoton_NM2_S2_6'  ...
-        'StaticPhoton_NM2_S2_10' 'StaticPhoton_NM2_S2_11' 'StaticPhoton_NM2_S2_12' ...
-        'StaticPhoton_NM2_S2_13' 'StaticPhoton_NM2_S2_14' 'StaticPhoton_NM2_S2_15'};
-
+calcIDStrs  = {'SOM_SNRMulti'};
+    
 %% Parameters of the calculation
 %
 % We'll define this as a structure, with the fields providing the name of
