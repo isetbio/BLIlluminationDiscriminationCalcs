@@ -10,6 +10,9 @@ end
 function ValidationFunction(runTimeParams)
 close all;
 
+%% Set a seed to make things run nicely
+rng(1);
+
 %% Add ToolBox to Matlab path
 myDir = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 pathDir = fullfile(myDir,'..','toolbox','');
@@ -40,7 +43,7 @@ end
 
 %% Create data sets using the simple chooser model
 if (calcParams.RUN_MODEL)
-    firstOrderModel(calcParams, calcParams.chooserColorChoice, calcParams.overWriteFlag);
+    results = firstOrderModel(calcParams, calcParams.chooserColorChoice, calcParams.overWriteFlag);
 end
 
 %% Calculate threshholds using chooser model data
@@ -48,4 +51,5 @@ if (calcParams.CALC_THRESH)
     thresholdCalculation(calcParams.calcIDStr, calcParams.displayIndividualThreshold);
 end
     
+UnitTest.validationData('FirstOrderModelResults', results);
 end
