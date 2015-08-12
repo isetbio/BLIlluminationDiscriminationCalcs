@@ -16,7 +16,7 @@ close all
 
 % Load the imageData and generate the calibrationData object
 calStructOBJ = loadCalibrationData('StereoLCDLeft');
-calStructOBJ.cal.describe
+calStructOBJ.cal.describe;
 
 % Retrieve the display primaries SPD data from the calibration
 wavelengthSampling = SToWls(calStructOBJ.get('S'));
