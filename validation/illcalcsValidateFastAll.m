@@ -1,4 +1,4 @@
-function validateFastAll
+function illcalcsValidateFastAll
 %
 % Fast run (no figures, hash data check, no publish) of all of our
 % validation functions.

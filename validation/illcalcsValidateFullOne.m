@@ -1,4 +1,4 @@
-function validateFullOne(varargin)
+function illcalcsValidateFullOne(varargin)
     
     %% We will use preferences for the project at hand
     UnitTest.usePreferencesForProject('BLIlluminationDiscrimCalcsValidation', 'reset');

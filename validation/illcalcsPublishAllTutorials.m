@@ -1,4 +1,4 @@
-function publishAllTutorials
+function illcalcsPublishAllTutorials
  
     % ------- script customization - adapt to your environment/project -----
  
