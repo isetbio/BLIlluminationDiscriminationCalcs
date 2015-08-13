@@ -1,4 +1,4 @@
-function firstOrderModel(calcParams, colorChoice, overWrite)
+function results = firstOrderModel(calcParams, colorChoice, overWrite)
 % firstOrderModel(calcParams, colorChoice, overWrite)
 %
 % This function will generate several noisy versions of the standard
@@ -83,7 +83,7 @@ sensor = sensorSetSizeToFOV(sensor,calcParams.sensorFOV,[],oi);
 sensor = sensorSet(sensor, 'wavelength', SToWls(S));
 
 %% Compute according to the input color choice
-computeByColor(calcParams, sensor, colorChoice);
+results = computeByColor(calcParams, sensor, colorChoice);
 
 fprintf('Calculation complete\n');
 end
@@ -238,7 +238,7 @@ end
 results = accuracyMatrix;
 end
 
-function computeByColor(calcParams, sensor, colorChoice)
+function results = computeByColor(calcParams, sensor, colorChoice)
 % computeByColor(calcParams, sensor, colorChoice)
 %
 % This function will run the simple chooser model on the data set specified
@@ -280,13 +280,20 @@ folderList = [folderList(1:3) folderList(5)];
 BaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
 TargetPath = fullfile(BaseDir, 'SimpleChooserData', calcParams.calcIDStr);
 
-if (colorChoice == 0)
+if colorChoice == 0
+    results = cell(4,1);
+else
+    results = cell(1,1);
+end
+
+if colorChoice == 0
     for i=1:length(folderList)
         matrix = singleColorKValueComparison(calcParams, sensor, ...
             fullfile(targetFolder, standard), folderList{i}, prefix{i});
         fileName = strcat(prefix{i}, ['IllumComparison' calcParams.calcIDStr]);
         saveDir = fullfile(TargetPath, fileName);
         save(saveDir, 'matrix');
+        results{i} = matrix;
     end
 else
     matrix = singleColorKValueComparison(calcParams, sensor, ...
@@ -294,6 +301,7 @@ else
     fileName = strcat(prefix{colorChoice}, ['IllumComparison' calcParams.calcIDStr]);
     saveDir = fullfile(TargetPath, fileName);
     save(saveDir, 'matrix');
+    results = matrix;
 end
 
 saveDir = fullfile(TargetPath, ['calcParams' calcParams.calcIDStr]);
