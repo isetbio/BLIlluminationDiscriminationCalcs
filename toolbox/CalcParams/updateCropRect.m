@@ -81,7 +81,7 @@ switch (calcParams.calcIDStr)
         calcParams.cropRect = [700 400 40 40];
     case {'StaticPhoton_S2_15' 'StaticPhoton_NM1_S2_15' 'StaticPhoton_NM2_S2_15'}
         calcParams.cropRect = [800 400 40 40];
-    case {'FullImageTest' 'FullImageTest2' 'FullImageTest3'}
+    case {'FullImageTest' 'FullImageTest2' 'FullImageTest3' 'FullImageTest4'}
         calcParams.cropRect = [489 393 535 480];
     otherwise
         error('Unknown calcIDStr set');
