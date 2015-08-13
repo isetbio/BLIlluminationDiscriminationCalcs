@@ -24,7 +24,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 %% Set identifiers to run
-calcIDStrs = {'SOM_SNRMulti'};
+calcIDStrs = {'FullImageTest3'};
 
 %% Parameters of the calculation
 %
@@ -99,8 +99,8 @@ for k1 = 1:length(calcIDStrs)
     calcParams.comparisonImageSetSize = 1;
 
     % Define some eye movement parameters related to large saccades
-    calcParams.numSaccades = 3;            % Set this to 1 for only fixational eye movements
-    calcParams.saccadeInterval = 0.100;
+    calcParams.numSaccades = 1;            % Set this to 1 for only fixational eye movements
+    calcParams.saccadeInterval = 0.050;
     calcParams.saccadeMu = 100;             % These are in units of cones
     calcParams.saccadeSigma = 50;
     
@@ -116,11 +116,11 @@ for k1 = 1:length(calcIDStrs)
     calcParams.enableMSaccades = true;
     
     % Whether or not to recreate a new eye movement path for the target and two comparisons
-    calcParams.useSameEMPath = false;
+    calcParams.useSameEMPath = true;
     
     % Use sum or individual data
-    calcParams.sumEM = false;
-    calcParams.sumEMInterval = 0.010;
+    calcParams.sumEM = true;
+    calcParams.sumEMInterval = calcParams.totalTime;
     
     % Whether to use OS code
     calcParams.enableOS = true;

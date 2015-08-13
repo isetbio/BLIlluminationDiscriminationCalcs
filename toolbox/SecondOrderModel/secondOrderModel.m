@@ -256,7 +256,7 @@ for ii = 1:maxImageIllumNumber
                 standardRef = coneAbsorptionsApplyPath(standardRef, standardPool{standardChoice(1)}{3}, standardPool{standardChoice(1)}{4}, rows, cols);
                 standardComp = coneAbsorptionsApplyPath(standardComp, standardPool{standardChoice(2)}{3}, standardPool{standardChoice(2)}{4}, rows, cols);
                 testComp = coneAbsorptionsApplyPath(testComp, testPool{testChoice}{2}, testPool{testChoice}{3}, rows, cols);
-                
+
                 % Get inital noisy ref image
                 photonsStandardRef = getNoisySensorImage(calcParams,standardRef,Kp,Kg);
                 
@@ -270,9 +270,9 @@ for ii = 1:maxImageIllumNumber
                 % naming is extremely confusing and should be fixed at some
                 % point.
                 if calcParams.enableOS
-                    photonsStandardRef = temporaryConeAdapt(standardRef);
-                    photonsStandardComp = temporaryConeAdapt(standardComp);
-                    photonsTestComp = temporaryConeAdapt(testComp);
+                    [~,photonsStandardRef] = coneAdapt(standardRef, 4);
+                    [~,photonsStandardComp] = coneAdapt(standardComp, 4);
+                    [~,photonsTestComp] = coneAdapt(testComp, 4);
                 end
                 
                 if calcParams.sumEM

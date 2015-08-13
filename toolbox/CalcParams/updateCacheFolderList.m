@@ -201,7 +201,7 @@ switch (calcParams.calcIDStr)
         calcParams.cacheFolderList = {'NM2', 'Neutral_NM2_S2_14'};
     case {'StaticPhoton_NM2_S2_15'}
         calcParams.cacheFolderList = {'NM2', 'Neutral_NM2_S2_15'};
-    case {'FullImageTest'}
+    case {'FullImageTest' 'FullImageTest2' 'FullImageTest3'}
         calcParams.cacheFolderList = {'Neutral', 'Neutral_FullImage'};
     otherwise
         error('Unknown calcIDStr set');
