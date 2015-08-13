@@ -167,10 +167,19 @@ if calcParams.numSaccades > 1
     s.n = calcParams.numSaccades;
     s.mu = calcParams.saccadeMu;
     s.sigma = calcParams.saccadeSigma;
+    if exist(['Path' calcParams.calcIDStr], 'file')
+        sPath = load(['Path' calcParams.calcIDStr]);
+        sPath = sPath.sPath;
+    else
+        sPath = getSaccades(s.n, s.mu, s.sigma, []);
+        save(['Path' calcParams.calcIDStr], 'sPath');
+    end
+    
+    pathPool = getEMPaths(sensor, 1000, 'sPath', sPath, 'saccades', s);
 else
-    s = [];
+    pathPool = getEMPaths(sensor, 1000);
 end
-pathPool = getEMPaths(sensor, 1000, 'saccade', s);
+
 
 % We calculate the LMS by getting the max and min eye positions from
 % every possible path for this trial using the input boundaries.
@@ -192,7 +201,7 @@ end
 % Loop through the illumination number
 for ii = 1:maxImageIllumNumber
     fprintf('Running trials for %s illumination step %u\n', prefix, ii);
-
+    
     % Precompute the LMS for the test pool as well.
     imageName = fileList{ii};
     imageName = strrep(imageName, 'OpticalImage.mat', '');
@@ -220,8 +229,8 @@ for ii = 1:maxImageIllumNumber
             tic
             for tt = 1:numTrials
                 if calcParams.useSameEMPath
-%                     thePaths = getEMPaths(sensor, 1, 'bound', b, 'saccade', s);
-%                     thePaths = repmat(thePaths, [1 1 3]);
+                    %                     thePaths = getEMPaths(sensor, 1, 'bound', b, 'saccade', s);
+                    %                     thePaths = repmat(thePaths, [1 1 3]);
                     thePaths = repmat(randsample(1000, 1),1,3);
                 else
                     %                     thePaths = getEMPaths(sensor, 3, 'bound', b, 'saccade', s);
@@ -236,9 +245,9 @@ for ii = 1:maxImageIllumNumber
                 testChoice = randsample(calcParams.comparisonImageSetSize, 1);
                 
                 % Set the paths
-%                 standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', thePaths(:,:, 1));
-%                 standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', thePaths(:,:, 2));
-%                 testComp = sensorSet(testPool{testChoice}{1}, 'positions', thePaths(:,:, 3));
+                %                 standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', thePaths(:,:, 1));
+                %                 standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', thePaths(:,:, 2));
+                %                 testComp = sensorSet(testPool{testChoice}{1}, 'positions', thePaths(:,:, 3));
                 standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', pathPool(:,:,thePaths(1)));
                 standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', pathPool(:,:,thePaths(2)));
                 testComp = sensorSet(testPool{testChoice}{1}, 'positions', pathPool(:,:,thePaths(3)));
@@ -247,7 +256,7 @@ for ii = 1:maxImageIllumNumber
                 standardRef = coneAbsorptionsApplyPath(standardRef, standardPool{standardChoice(1)}{3}, standardPool{standardChoice(1)}{4}, rows, cols);
                 standardComp = coneAbsorptionsApplyPath(standardComp, standardPool{standardChoice(2)}{3}, standardPool{standardChoice(2)}{4}, rows, cols);
                 testComp = coneAbsorptionsApplyPath(testComp, testPool{testChoice}{2}, testPool{testChoice}{3}, rows, cols);
-                               
+                
                 % Get inital noisy ref image
                 photonsStandardRef = getNoisySensorImage(calcParams,standardRef,Kp,Kg);
                 
@@ -257,13 +266,22 @@ for ii = 1:maxImageIllumNumber
                 % Get noisy version of test image
                 photonsTestComp = getNoisySensorImage(calcParams,testComp,Kp,Kg);
                 
+                % This is in case we want to use the OS code.  Variabl
+                % naming is extremely confusing and should be fixed at some
+                % point.
+                if calcParams.enableOS
+                    photonsStandardRef = temporaryConeAdapt(standardRef);
+                    photonsStandardComp = temporaryConeAdapt(standardComp);
+                    photonsTestComp = temporaryConeAdapt(testComp);
+                end
+                
                 if calcParams.sumEM
                     if calcParams.sumEMInterval <= calcParams.totalTime
                         samples = calcParams.totalTime/calcParams.sumEMInterval;
                         if rem(100, 1)
                             error('sumEMInterval does not divide total integration time')
                         end
-                        dS = size(photonsStandardComp);        
+                        dS = size(photonsStandardComp);
                         photonsStandardRef = sum(reshape(photonsStandardRef, dS(1), dS(2), samples, []), 4);
                         photonsStandardComp = sum(reshape(photonsStandardComp, dS(1), dS(2), samples, []), 4);
                         photonsTestComp = sum(reshape(photonsTestComp, dS(1), dS(2), samples, []), 4);
@@ -348,6 +366,10 @@ else
     fileName = strcat(prefix{colorChoice}, ['IllumComparison' calcParams.calcIDStr]);
     saveDir = fullfile(TargetPath, fileName);
     save(saveDir, 'matrix');
+end
+
+if exist(['Path' calcParams.calcIDStr], 'file')
+    delete(['Path' calcParams.calcIDStr]);
 end
 
 saveDir = fullfile(TargetPath, ['calcParams' calcParams.calcIDStr]);
