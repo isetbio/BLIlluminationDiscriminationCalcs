@@ -2,19 +2,19 @@
 % Generally, this function should be edited for your site and then run once.
 %
  
-function setBLIlluminationDiscrimCalcsValidationUnitTestPreferences
+function illcalcsSetUnitTestPreferences
  
     % Specify project-specific preferences
     p = struct(...
             'projectName',                         'BLIlluminationDiscrimCalcsValidation', ... 	 % The project name (also the preferences group name)
             'validationRootDir',                   '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcs/validation', ... 	 % Directory location where the 'scripts' subdirectory resides.
             'alternateFastDataDir',                '',  ...  	 % Alternate FAST (hash) data directory location. Specify '' to use the default location, i.e., $validationRootDir/data/fast
-            'alternateFullDataDir',                '',  ...  	 % Alternate FAST (hash) data directory location. Specify '' to use the default location, i.e., $validationRootDir/data/full
+            'alternateFullDataDir',                '/Volumes/ColorShare1/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcs/Validation/data/full',  ...  	 % Alternate FULL (hash) data directory location. Specify '' to use the default location, i.e., $validationRootDir/data/full
             'clonedWikiLocation',                  '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcsWiki/BLIlluminationDiscriminationCalcs.wiki', ... 	 % Local path to the directory where the wiki is cloned. Only relevant for publishing tutorials.
             'clonedGhPagesLocation',               '/Users/Shared/Matlab/Analysis/BLIlluminationDiscrimCalcsGhPages/BLIlluminationDiscriminationCalcs', ... 	 % Local path to the directory where the gh-pages repository is cloned. Only relevant for publishing tutorials.
             'githubRepoURL',                       'http://isetbio.github.io/BLIlluminationDiscriminationCalcs', ... 	 % Github URL for the project. This is only used for publishing tutorials.
             'generateGroundTruthDataIfNotFound',   true, ...  	 % Flag indicating whether to generate ground truth if one is not found
-            'listingScript',                       'validateListAllValidationDirsForBLIllumDiscrimCalcsValidation' ...
+            'listingScript',                       'illcalcsListAllValidationDirs' ...
       );
  
     generatePreferenceGroup(p); 

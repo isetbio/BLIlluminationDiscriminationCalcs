@@ -107,12 +107,9 @@ if calcParams.MODEL_ORDER > 1
     % Use sum or individual data
     calcParams.sumEM = true;
     calcParams.sumEMInterval = 0.100;
-end
-
-% Specify cone adaptation parameters
-% The Isetbio code for cone adaptation is currently under reconstruction
-if calcParams.MODEL_ORDER > 2
-    calcParams.osType = 1;  % 1 for linear, 2 for biophysical
+    
+    % Whether to use OS code
+    calcParams.enableOS = true;
 end
 
 %% Save the parameter in the queue directory

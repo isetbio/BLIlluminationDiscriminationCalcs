@@ -1,4 +1,4 @@
-function validateFullAndPublishOne(varargin)
+function illcalcsValidateFullOne(varargin)
     
     %% We will use preferences for the project at hand
     UnitTest.usePreferencesForProject('BLIlluminationDiscrimCalcsValidation', 'reset');
@@ -25,6 +25,6 @@ function validateFullAndPublishOne(varargin)
     singleScriptToValidate = UnitTest.selectScriptFromExistingOnes();
     
     %% Validate
-    UnitTest.runValidationSession({{singleScriptToValidate, []}}, 'PUBLISH');
+    UnitTest.runValidationSession({{singleScriptToValidate, []}}, 'FULL');
     
 end

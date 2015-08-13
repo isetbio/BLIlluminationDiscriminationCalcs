@@ -127,7 +127,6 @@ while ~KEY_IS_PRESSED
     end
     
 end
-finishup = onCleanup(@() cleanUpFunction(fullfile(BaseDir, currentFile)));
 close all;
 
 end

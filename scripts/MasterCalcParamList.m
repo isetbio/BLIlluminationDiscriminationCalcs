@@ -243,7 +243,7 @@ if (CREATE_StaticPhoton_Neutral_S2)
     end
 end
 
-%% StaticPhoton in the NM2 case 2nd image set
+%% StaticPhoton in the NM1 case 2nd image set
 if (CREATE_StaticPhoton_NM1_S2)
     calcIDStrList = {'StaticPhoton_NM1_S2_1' 'StaticPhoton_NM1_S2_2' 'StaticPhoton_NM1_S2_3' 'StaticPhoton_NM1_S2_4' ...
         'StaticPhoton_NM1_S2_5' 'StaticPhoton_NM1_S2_6' 'StaticPhoton_NM1_S2_7' 'StaticPhoton_NM1_S2_8' ...
