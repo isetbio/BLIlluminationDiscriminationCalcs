@@ -31,6 +31,8 @@ if ~exist(fullfile(getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir'), 
     error('Please set up the data file directories approriately.  Consult the project wiki on GitHub for instructions.');
 end
 
+fprintf('Please note that the first order model validation script will take 6-7 minutes to run\n');
+
 %% Convert the images to cached scenes for more analysis
 if (calcParams.CACHE_SCENES)
     convertRBGImagesToSceneFiles(calcParams,calcParams.forceSceneCompute);
