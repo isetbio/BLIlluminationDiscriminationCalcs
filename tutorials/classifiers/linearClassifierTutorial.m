@@ -23,14 +23,14 @@ rng(1);
 
 % A vector of stimulus dimensions to test for.  Each of these
 % will be done in turn.
-dimensionalities = [10 100 1000 10000];
+dimensionalities = [10 100 1000];
 
 % Noise expansion factors to test. Each of these will be done in turn.
 %
 % These k's are expressed in units of noise so that k == 1 correponds to
 % having the mean lenght of a noise draw about the same as the vector
 % length between the mean comparison and test vectors.
-noiseFactorKs = [1 10 100 1000 10000 100000];
+noiseFactorKs = [1 10 100 1000];
 
 % Define function handles to specify noise type. Each of these
 % will be done in turn.
@@ -68,8 +68,8 @@ testDistance = testDistanceFraction*comparisonVectorLength;
 % so that we can decide about reliability.  nSimulatedTrials represents 
 % the size of the test set.  The test set will be split 50% to both
 % classes.
-nSimulatedTrials = 1000;
-nSimulations = 10;
+nSimulatedTrials = 500;
+nSimulations = 3;
 
 % The direction of the test vector relative to the comparison vector.  Set
 % this to 1 for positive extension along the comparison vector, 2 for a
