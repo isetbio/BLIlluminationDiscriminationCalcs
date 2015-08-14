@@ -1,13 +1,8 @@
 function runAllSecondOrderCalcs
 % runAllSecondOrderCalcs
 %
-% Run the full set of calculations in the BLIlluminationDiscrimination
-% project, for one set of parameters.
-%
-% Typically, we will only execute pieces of this at any given time, because
-% certain parts are cached and need not be redone each time through.  But,
-% this documents for us the flow of the whole calculation, and also lets us
-% gather all of the parameters together in one place.
+% Run the full set of calculations for the second order model in the
+% BLIlluminationDiscrimination project, for one set of parameters.
 %
 % 7/27/15  xd  copied base code from runAllFirstOrderCalcs
 % 7/29/15  xd  renamed
@@ -34,7 +29,7 @@ calcIDStrs = {'OS3Step'};
 % some sensible manner in a database.  We could also run some sort of check
 % on the structure at runtime to make sure our caches are consistent with
 % the current parameters being used.
-%
+
 % This part loops through the calculations for all caldIDStrs specified
 for k1 = 1:length(calcIDStrs)
     
@@ -99,11 +94,10 @@ for k1 = 1:length(calcIDStrs)
     calcParams.comparisonImageSetSize = 1;
 
     % Define some eye movement parameters related to large saccades
-    calcParams.numSaccades = 1;            % Set this to 1 for only fixational eye movements
+    calcParams.numSaccades = 1;             % Set this to 1 for only fixational eye movements
     calcParams.saccadeInterval = 0.050;
     calcParams.saccadeMu = 100;             % These are in units of cones
     calcParams.saccadeSigma = 50;
-    
     
     % EMPositions represents the number of positions of eye movement to sample.  
     calcParams.numEMPositions = calcParams.numSaccades * calcParams.saccadeInterval / calcParams.coneIntegrationTime;

@@ -1,11 +1,14 @@
 function results = firstOrderModel(calcParams, colorChoice, overWrite)
 % firstOrderModel(calcParams, colorChoice, overWrite)
 %
-% This function will generate several noisy versions of the standard
-% image.  Then it will compare the standard with one of the noisy images
-% and a test image and choose the one closest to the standard image.
-% Success rate will be defined as how many times it chooses the noisy
-% standard image.
+% This function will build a sensor according to the calcParams fields.
+% This sensor will then be used for the first order model calculations. The
+% model compares noisy versions of the target and comparison images and
+% chooses the comparison that is closest to the target in terms of
+% Euclidian distance.  One of the comparisons is an alternate rendering of
+% the target. The performance is defined as how accurately the model
+% chooses the alternate target image.  This calculation is done in the
+% function singleColorKValueComparison.
 %
 % It is likely that calculating all four color directions in one run is
 % preferable since the sensor object is not saved, and thus the cone mosaic
@@ -36,12 +39,21 @@ function results = firstOrderModel(calcParams, colorChoice, overWrite)
 if notDefined('overWrite'), overWrite = 0; end
 
 %% Set RNG seed to be time dependent
-% 
-% For some reason, the RNG does the same thing everytime when run on the
-% blocks computer
+%
+% We set the seed to be time dependent so that the model doesn't do the
+% same thing repeatedly.  This should not induce any significant
+% variability since we run many trials in our model.  However, if you would
+% like to generate repoducible data sets, change this seed to a constant
+% number.
 rng('shuffle');
 
 %% Check for faulty parameters
+%
+% A standard image pool of at least 2 is required.  This is because
+% rendering noise will introduce bias into the model.  Even two is rather
+% low because of possible bias introduced from the relationship between the
+% two renderings.  Currently, we are running the model with 7 copies of the
+% standard.
 if calcParams.targetImageSetSize < 2
     error('Must have a standard image pool size of at least 2');
 end
@@ -50,8 +62,8 @@ end
 baseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
 targetPath = fullfile(baseDir, 'SimpleChooserData', calcParams.calcIDStr);
 
-% Make a new directory if target is non-existant, otherwise follow the
-% overWrite flag
+% Make a new directory if target is non-existant.  If it does not exist,
+% create it. Otherwise, follow the overWrite flag.
 if exist(targetPath, 'dir')
     if ~overWrite
         return;
@@ -84,7 +96,6 @@ sensor = sensorSet(sensor, 'wavelength', SToWls(S));
 
 %% Compute according to the input color choice
 results = computeByColor(calcParams, sensor, colorChoice);
-
 fprintf('Calculation complete\n');
 end
 
@@ -139,8 +150,8 @@ accuracyMatrix = zeros(maxImageIllumNumber, KpSampleNum, KgSampleNum);
 
 %% Run calculations up to illumination number and k-value limits
 
-% Precompute all the images from the standard pool to save computational
-% time later on
+% Precompute all the sensor images from the standard pool to save
+% computational time later on.
 standardPool = cell(1, calcParams.targetImageSetSize);
 for ii = 1:calcParams.targetImageSetSize
     opticalImageName = ['TestImage' int2str(ii - 1)];
@@ -150,8 +161,9 @@ for ii = 1:calcParams.targetImageSetSize
     standardPool{ii} = sensorStandard;
 end
 
-% Compute the mean of the standardPool isomerizations.  This will serve as
-% the standard deviation of an optional Gaussian noise factor Kg.
+% Compute the mean of the standardPool isomerizations.  The square root of
+% this mean will serve as the standard deviation of an optional Gaussian
+% noise factor Kg.
 photonCellArray = cell(1, length(standardPool));
 for ii = 1:length(photonCellArray)
     photonCellArray{ii} = sensorGet(standardPool{ii}, 'photons');
@@ -162,8 +174,6 @@ calcParams.meanStandard = mean(cat(1,photonCellArray{:}));
 % Loop through the illumination number
 for ii = 1:maxImageIllumNumber
     fprintf('Running trials for %s illumination step %u\n', prefix, ii);
-%     fprintf('Estimated time for this step: ');
-%     toDelete = 0;
     
     % Precompute the test image pool to save computational time.
     imageName = fileList{ii};
@@ -186,12 +196,14 @@ for ii = 1:maxImageIllumNumber
         for kk = 1:KgSampleNum
             Kg = calcParams.startKg + KgInterval * (kk - 1);
             correct = 0;
-            % Simulate out over calcNumber simulated trials
+            
+            % Run the desired number of trials
             tic
             for tt = 1:numTrials
                 
-                % We choose 2 images without replacement from the standard image pool.
-                % This is in order to account for the pixel noise present from the renderer.
+                % We choose 2 images without replacement from the standard
+                % image pool. This is in order to account for the rendering
+                % noise.
                 standardChoice = randsample(calcParams.targetImageSetSize, 2);
                 
                 % Randomly choose one image from the test pool
@@ -219,17 +231,6 @@ for ii = 1:maxImageIllumNumber
             
             % Print the time the calculation took
             fprintf('Calculation time for Kp %.2f, Kg %.2f = %2.1f\n', Kp, Kg, toc);
-%             for dd = 1:toDelete
-%                 fprintf('\b');
-%             end
-%             totalSecondsRemaining = ((KpSampleNum - jj + 1)*KgSampleNum + kk - 1) * toc;
-%             hours = totalSecondsRemaining / 3600;
-%             minutes = mod(totalSecondsRemaining, 3600) / 60;
-%             seconds = mod(mod(totalSecondsRemaining, 3600),60);
-%             output = [int2str(hours) ' hrs ' int2str(minutes) ' min ' int2str(seconds) ' s'];
-%             fprintf('%s', output);
-%             toDelete = numel(output);
-
             accuracyMatrix(ii,jj,kk) = correct / numTrials * 100;
         end
     end
@@ -251,14 +252,13 @@ function results = computeByColor(calcParams, sensor, colorChoice)
 %   sensor      - The desired sensor to be used for the calculation
 %   colorChoice - This defines the color on which to run the calculation
 
-%     folderList = {'BlueIllumination', 'GreenIllumination', ...
-%         'RedIllumination', 'YellowIllumination'};
+%% This is the first part of the OI file names
 prefix = {'blue' , 'green', 'red', 'yellow'};
 
-%% Point at where input data live
+%% Point at where the input data lives
 dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
 
-%% List of where the images will be stored on ColorShare1
+%% List where the images will be stored on ColorShare1
 targetFolder = calcParams.cacheFolderList{2};
 
 imageDir = fullfile(dataBaseDir, 'OpticalImageData', targetFolder);
@@ -273,19 +273,20 @@ for ii = 1:length(contents)
     end
 end
 
-% The list is alphabetical and standard is fourth
+% The list is alphabetical and 'standard' is fourth
 standard = folderList{4};
 folderList = [folderList(1:3) folderList(5)];
-
 BaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
 TargetPath = fullfile(BaseDir, 'SimpleChooserData', calcParams.calcIDStr);
 
+%% Allocate space for the results
 if colorChoice == 0
     results = cell(4,1);
 else
     results = cell(1,1);
 end
 
+%% Run the model based on the calcParam specifications
 if colorChoice == 0
     for i=1:length(folderList)
         matrix = singleColorKValueComparison(calcParams, sensor, ...

@@ -18,7 +18,6 @@ dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
 
 %% List of where the images will be stored on ColorShare1
 targetFolderList = calcParams.cacheFolderList;
-
 imageDir = fullfile(dataBaseDir, 'ImageData', targetFolderList{1});
 contents = dir(imageDir);
 imageFolderList = cell(1,5);
@@ -32,7 +31,7 @@ for ii = 1:length(contents)
 end
 
 %% Create isetbio display object from BL calibration file
-%
+
 % Get calibration file
 calStructOBJ = loadCalibrationData('StereoLCDLeft');
 

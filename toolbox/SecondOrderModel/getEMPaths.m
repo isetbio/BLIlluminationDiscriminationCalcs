@@ -6,9 +6,29 @@ function allPaths = getEMPaths(sensor, numPaths, varargin)
 % This function helps implement the second order model for the
 % BLIlluminationDiscriminationCalcs
 %
+% Inputs:
+%    sensor  - The sensor with which to generate the eye movement paths.
+%    numPaths - The total number of paths desired
+%
+%  {name-value pairs}
+%    'bound'    - A boundary box for the paths.  If this is set, the paths
+%                 will not exceed to boundary.  The format is [minX maxX minY maxY]
+%
+%    'saccades' - A struct containing information relevant for generating
+%                 saccadic eye movement.  This will used along with the 
+%                 fixational eye movements if specified.
+%       {fields}
+%            n     - The total number of positions (there will be n-1 saccades)
+%            mu    - The mean length of each saccade.
+%            sigma - The standard deviation of the saccades.
+%
+%    'sPath'    - A pre-generated saccadic eye movement path.  This will
+%                 used along with the fixational eye movements if specified.
+%
 % 7/27/15  xd  wrote it
 % 8/5/15   xd  added optional sPath parameter
 
+%% Set up the input parser
 p = inputParser;
 p.addParameter('bound', []);
 p.addParameter('saccades', []);
@@ -20,9 +40,11 @@ b = p.Results.bound;
 s = p.Results.saccades;
 sPath = p.Results.sPath;
 
+%% Get path size and allocate room for the desired number of paths
 pathSize = size(sensorGet(sensor, 'positions'));
 allPaths = zeros([pathSize numPaths]);
 
+%% Calculate the paths based on the input parameters
 for ii = 1:numPaths
     sensor = emGenSequence(sensor);
     pos = sensorGet(sensor, 'positions');
@@ -33,6 +55,7 @@ for ii = 1:numPaths
 %         end
 %     end
     
+    % If there are large saccades, they will be used or implemented here.
     if ~isempty(s) || ~isempty(sPath)
         if isempty(sPath)
             sPath = getSaccades(s.n, s.mu, s.sigma, b);
