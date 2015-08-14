@@ -267,12 +267,13 @@ for ii = 1:maxImageIllumNumber
                 % naming is extremely confusing and should be fixed at some
                 % point.
                 if calcParams.enableOS
+                    params.addNoise = calcParams.enableOSNoise;
                     standardRef = sensorSet(standardRef, 'photons', photonsStandardRef);
                     standardComp = sensorSet(standardComp, 'photons', photonsStandardComp);
                     testComp = sensorSet(testComp, 'photons', photonsTestComp);
-                    [~,photonsStandardRef] = coneAdapt(standardRef, 4);
-                    [~,photonsStandardComp] = coneAdapt(standardComp, 4);
-                    [~,photonsTestComp] = coneAdapt(testComp, 4);
+                    [~,photonsStandardRef] = coneAdapt(standardRef, 4, params);
+                    [~,photonsStandardComp] = coneAdapt(standardComp, 4, params);
+                    [~,photonsTestComp] = coneAdapt(testComp, 4, params);
                 end
                 
                 % We make sure that the summing interval divides evenly

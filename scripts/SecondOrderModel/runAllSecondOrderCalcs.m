@@ -19,7 +19,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 %% Set identifiers to run
-calcIDStrs = {'OS3Step'};
+calcIDStrs = {'OSWithNoise'};
 
 %% Parameters of the calculation
 %
@@ -35,12 +35,12 @@ for k1 = 1:length(calcIDStrs)
     
     % Define the steps of the calculation that should be carried out.
     calcParams.CACHE_SCENES = false;
-    calcParams.forceSceneCompute = true; % Will overwrite any existing data.
+    calcParams.forceSceneCompute = false; % Will overwrite any existing data.
     
     calcParams.CACHE_OIS = false;
-    calcParams.forceOICompute = true;    % Will overwrite any existing data.
+    calcParams.forceOICompute = false;    % Will overwrite any existing data.
     
-    calcParams.RUN_MODEL = false;
+    calcParams.RUN_MODEL = true;
     calcParams.MODEL_ORDER = 2;          % Which model to run
     calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
     calcParams.overWriteFlag = 1;        % Whether or not to overwrite existing data.
@@ -118,6 +118,7 @@ for k1 = 1:length(calcIDStrs)
     
     % Whether to use OS code
     calcParams.enableOS = true;
+    calcParams.enableOSNoise = true;
     
     %% Convert the images to cached scenes for more analysis
     if (calcParams.CACHE_SCENES)
