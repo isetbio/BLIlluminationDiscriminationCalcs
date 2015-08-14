@@ -270,6 +270,9 @@ for ii = 1:maxImageIllumNumber
                 % naming is extremely confusing and should be fixed at some
                 % point.
                 if calcParams.enableOS
+                    standardRef = sensorSet(standardRef, 'photons', photonsStandardRef);
+                    standardComp = sensorSet(standardComp, 'photons', photonsStandardComp);
+                    testComp = sensorSet(testComp, 'photons', photonsTestComp);
                     [~,photonsStandardRef] = coneAdapt(standardRef, 4);
                     [~,photonsStandardComp] = coneAdapt(standardComp, 4);
                     [~,photonsTestComp] = coneAdapt(testComp, 4);
@@ -368,9 +371,9 @@ else
     save(saveDir, 'matrix');
 end
 
-if exist(['Path' calcParams.calcIDStr], 'file')
-    delete(['Path' calcParams.calcIDStr]);
-end
+% if exist(['Path' calcParams.calcIDStr], 'file')
+%     delete(['Path' calcParams.calcIDStr]);
+% end
 
 saveDir = fullfile(TargetPath, ['calcParams' calcParams.calcIDStr]);
 save(saveDir, 'calcParams');
