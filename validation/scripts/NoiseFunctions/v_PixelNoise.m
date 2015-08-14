@@ -17,11 +17,14 @@ AddToMatlabPathDynamically(pathDir);
 
 %% Validation
 rng(1);
-
 tolerance = 200;
 
+% Generate a default sensor that will be used in many of the validation
+% scripts.
 sensor = getDefaultBLIllumDiscrSensor;
 
+% Load several different renderings of the target image from the
+% experiment.
 try
     oi1 = loadOpticalImageData('Neutral/Standard', 'TestImage0');
     oi2 = loadOpticalImageData('Neutral/Standard', 'TestImage1');
@@ -31,6 +34,8 @@ try
 catch
     error('It seems that you do not have the OI required for this validation. Please contact the project developers to obtain it');
 end
+
+% Calculate the photon absorptions
 s1 = coneAbsorptions(sensor, oi1);
 s2 = coneAbsorptions(sensor, oi2);
 s3 = coneAbsorptions(sensor, oi3);
@@ -45,6 +50,9 @@ p5 = sensorGet(s5, 'photons');
 
 UnitTest.validationRecord('SIMPLE_MESSAGE', '***** Photon Distances *****');
 
+% We want to validate that the Euclidian distance between all of these
+% renderings are within a certain distance of each other, as well as the
+% absolute value of the distances.
 p1p2 = norm(p1(:) - p2(:));
 p1p3 = norm(p1(:) - p3(:));
 p1p4 = norm(p1(:) - p4(:));
@@ -56,5 +64,8 @@ UnitTest.assertIsZero(p1p3 - p1p4,'DISTANCE DIFFERENCE for p1p3 to p1p4',toleran
 UnitTest.assertIsZero(p1p3 - p1p5,'DISTANCE DIFFERENCE for p1p3 to p1p5',tolerance);
 
 UnitTest.validationData('p1p2', p1p2);
+UnitTest.validationData('p1p3', p1p3);
+UnitTest.validationData('p1p4', p1p4);
+UnitTest.validationData('p1p5', p1p5);
 
 end
