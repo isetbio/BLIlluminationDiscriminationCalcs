@@ -1,15 +1,9 @@
 function secondOrderModel(calcParams, colorChoice, overWrite)
 % secondOrderModel(calcParams, colorChoice, overWrite)
 %
-% This function will generate several noisy versions of the standard
-% image.  Then it will compare the standard with one of the noisy images
-% and a test image and choose the one closest to the standard image.
-% Success rate will be defined as how many times it chooses the noisy
-% standard image.
-%
-% It is likely that calculating all four color directions in one run is
-% preferable since the sensor object is not saved, and thus the cone mosaic
-% which is randomly generated is not preserved across calculations.
+% This function is analogous to firstOrderModel.  Here, some additional
+% features are implemented into our model.  They include fixational eye
+% movements and cone adaptation code from ISETBIO.
 %
 % Inputs:
 %       calcParams  - parameters for the calculation, contains the number of
@@ -32,11 +26,20 @@ if notDefined('overWrite'), overWrite = 0; end
 
 %% Set RNG seed to be time dependent
 %
-% For some reason, the RNG does the same thing everytime when run on the
-% blocks computer
+% We set the seed to be time dependent so that the model doesn't do the
+% same thing repeatedly.  This should not induce any significant
+% variability since we run many trials in our model.  However, if you would
+% like to generate repoducible data sets, change this seed to a constant
+% number.
 rng('shuffle');
 
 %% Check for faulty parameters
+%
+% A standard image pool of at least 2 is required.  This is because
+% rendering noise will introduce bias into the model.  Even two is rather
+% low because of possible bias introduced from the relationship between the
+% two renderings.  Currently, we are running the model with 7 copies of the
+% standard.
 if calcParams.targetImageSetSize < 2
     error('Must have a standard image pool size of at least 2');
 end
@@ -45,8 +48,8 @@ end
 baseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
 targetPath = fullfile(baseDir, 'SimpleChooserData', calcParams.calcIDStr);
 
-% Make a new directory if target is non-existant, otherwise follow the
-% overWrite flag
+% Make a new directory if target is non-existant.  If it does not exist,
+% create it. Otherwise, follow the overWrite flag.
 if exist(targetPath, 'dir')
     if ~overWrite
         return;
@@ -87,7 +90,6 @@ sensor = sensorSet(sensor, 'positions', calcParams.EMPositions);
 
 %% Compute according to the input color choice
 computeByColor(calcParams, sensor, colorChoice);
-
 fprintf('Calculation complete\n');
 end
 
@@ -135,7 +137,7 @@ fileList = data.mat;
 fileList = sort(fileList);
 [~,b] = sort(cellfun(@numel, fileList));
 fileList = fileList(b);
-fileList = fileList((cellfun(@(x)any(isempty(regexp(x,'L[\d]','once'))),fileList) == 1)); % Removes any copies of test images
+fileList = fileList((cellfun(@(x)any(isempty(regexp(x,'L[\d]','once'))),fileList) == 1)); % Removes any additional renderings of test images, they will be used later
 
 %% Preallocate space for the accuracy matrix which will store the results of the calculations
 accuracyMatrix = zeros(maxImageIllumNumber, KpSampleNum, KgSampleNum);
@@ -163,6 +165,11 @@ end
 % CHANGE THIS TO THE MEAN OF THE LMS???? or perhaps mask at 0,0
 calcParams.meanStandard = 0;
 
+% Generate a pool of 1000 eye movement paths.  This is because code further
+% down will require knowledge of the bounds of the eye movements.  It seems
+% computationally more sound to use a large number of predetermined paths
+% to simulate random path generation rather than risk the case of a faulty
+% boundary causing an infinite loop.
 if calcParams.numSaccades > 1
     s.n = calcParams.numSaccades;
     s.mu = calcParams.saccadeMu;
@@ -180,7 +187,6 @@ else
     pathPool = getEMPaths(sensor, 1000);
 end
 
-
 % We calculate the LMS by getting the max and min eye positions from
 % every possible path for this trial using the input boundaries.
 pathSize = size(pathPool);
@@ -189,8 +195,6 @@ maxEM = reshape(maxEM, pathSize(2:3))';
 minEM = min(pathPool);
 minEM = reshape(minEM, pathSize(2:3))';
 LMSpath = [maxEM; minEM];
-b = [max(LMSpath(:,1)) min(LMSpath(:,1)) max(LMSpath(:,2)) min(LMSpath(:,2))];
-%     LMSpath = [b(1) b(3); b(2) b(4)];
 rows = round([-min([LMSpath(:,2); 0]) max([LMSpath(:,2); 0])]);
 cols = round([max([LMSpath(:,1); 0]) -min([LMSpath(:,1); 0])]);
 for qq = 1:length(standardPool)
@@ -229,11 +233,8 @@ for ii = 1:maxImageIllumNumber
             tic
             for tt = 1:numTrials
                 if calcParams.useSameEMPath
-                    %                     thePaths = getEMPaths(sensor, 1, 'bound', b, 'saccade', s);
-                    %                     thePaths = repmat(thePaths, [1 1 3]);
                     thePaths = repmat(randsample(1000, 1),1,3);
                 else
-                    %                     thePaths = getEMPaths(sensor, 3, 'bound', b, 'saccade', s);
                     thePaths = randsample(1000, 3);
                 end
                 
@@ -245,9 +246,6 @@ for ii = 1:maxImageIllumNumber
                 testChoice = randsample(calcParams.comparisonImageSetSize, 1);
                 
                 % Set the paths
-                %                 standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', thePaths(:,:, 1));
-                %                 standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', thePaths(:,:, 2));
-                %                 testComp = sensorSet(testPool{testChoice}{1}, 'positions', thePaths(:,:, 3));
                 standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', pathPool(:,:,thePaths(1)));
                 standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', pathPool(:,:,thePaths(2)));
                 testComp = sensorSet(testPool{testChoice}{1}, 'positions', pathPool(:,:,thePaths(3)));
@@ -266,7 +264,7 @@ for ii = 1:maxImageIllumNumber
                 % Get noisy version of test image
                 photonsTestComp = getNoisySensorImage(calcParams,testComp,Kp,Kg);
                 
-                % This is in case we want to use the OS code.  Variabl
+                % This is in case we want to use the OS code.  Variable
                 % naming is extremely confusing and should be fixed at some
                 % point.
                 if calcParams.enableOS
@@ -278,18 +276,20 @@ for ii = 1:maxImageIllumNumber
                     [~,photonsTestComp] = coneAdapt(testComp, 4);
                 end
                 
+                % We make sure that the summing interval divides evenly
+                % into our total integration time.  If it does, we sum the
+                % data accordingly.  Otherwise, throw an error.
                 if calcParams.sumEM
                     if calcParams.sumEMInterval <= calcParams.totalTime
                         samples = calcParams.totalTime/calcParams.sumEMInterval;
                         if rem(100, 1)
-                            error('sumEMInterval does not divide total integration time')
+                            error('sumEMInterval does not divide total integration time evenly')
                         end
                         dS = size(photonsStandardComp);
                         photonsStandardRef = sum(reshape(photonsStandardRef, dS(1), dS(2), samples, []), 4);
                         photonsStandardComp = sum(reshape(photonsStandardComp, dS(1), dS(2), samples, []), 4);
                         photonsTestComp = sum(reshape(photonsTestComp, dS(1), dS(2), samples, []), 4);
                     end
-                    % Check if result is 3D, in that case take sum of slices
                 end
                 
                 % Calculate vector distance from the test image and
@@ -297,7 +297,7 @@ for ii = 1:maxImageIllumNumber
                 distToStandard = norm(photonsStandardRef(:)-photonsStandardComp(:));
                 distToTest = norm(photonsStandardRef(:)-photonsTestComp(:));
                 
-                % Decide if 'subject' was correct on this trial
+                % Decide if the model was correct on this trial
                 if (distToStandard < distToTest)
                     correct  = correct + 1;
                 end
@@ -328,6 +328,8 @@ function computeByColor(calcParams, sensor, colorChoice)
 
 %     folderList = {'BlueIllumination', 'GreenIllumination', ...
 %         'RedIllumination', 'YellowIllumination'};
+
+%% This is the first part of the OI file names
 prefix = {'blue' , 'green', 'red', 'yellow'};
 
 %% Point at where input data live
@@ -371,9 +373,9 @@ else
     save(saveDir, 'matrix');
 end
 
-% if exist(['Path' calcParams.calcIDStr], 'file')
-%     delete(['Path' calcParams.calcIDStr]);
-% end
+if exist(['Path' calcParams.calcIDStr], 'file')
+    delete(['Path' calcParams.calcIDStr]);
+end
 
 saveDir = fullfile(TargetPath, ['calcParams' calcParams.calcIDStr]);
 save(saveDir, 'calcParams');

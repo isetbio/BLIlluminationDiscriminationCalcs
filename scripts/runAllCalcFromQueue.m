@@ -1,13 +1,13 @@
 function runAllCalcFromQueue
 % runAllCalcFromQueue
 %
-% This function reads in calcParam mat files from the CalcParamQueue on
+% This function reads in calcParam files from the CalcParamQueue on
 % ColorShare and runs the chooser model over using these parameters.  As
 % long as this function is running on a computer connected to ColorShare,
 % the user can use the function calcParamCreator to save a calcParam file
 % to the queue, which will then be processed here.  Once a calcParam file
 % has been used, it will be deleted from the queue.  It can be found in its
-% respective data folder for later access.
+% respective model data folder for later access.
 %
 % 6/4/15  xd  wrote it
 
@@ -32,7 +32,8 @@ SecondOrder = @(cp, cc, fl) secondOrderModel(cp, cc, fl);
 Models = {FirstOrder, SecondOrder};
 
 %% Create a cell array to hold calcParams that have been run
-% This is in case a deletion/permission error occurs on ColorShare
+% This is in case a deletion/permission error occurs on ColorShare.
+% Currently code associated with these variables are not being used.
 usedParams = cell(1,10);
 usedIndex  = 1;                             % Next position in usedParams to fill in terms of visual angle
 
@@ -45,8 +46,6 @@ a = annotation('textbox', [0.2,0.6,0.1,0.1], ...
     'String','Press a button \newlineto exit program');
 set(a, 'FontSize', 20);
 set(a, 'LineStyle', 'none');
-
-global calcParams;
 
 while ~KEY_IS_PRESSED
     drawnow
@@ -64,18 +63,15 @@ while ~KEY_IS_PRESSED
     % parameters.  Otherwise, wait until there are files in the queue.
     if ~isempty(toDoList)
         toDoList = toDoList(1);  % Only process one file at a time, this way many computers can draw from the same queue
-        pause(5 * rand + 5);
+        pause(5 * rand + 5);     % Pause a random time so that if two computers are running this, file processing conflicts are less likely to occur
         
-        
-        
-        % Perform calculations on the present files
+        % Perform calculations on the current file
         for ii=1:length(toDoList)
             if exist(fullfile(BaseDir, toDoList{ii}), 'file')
                 currentFile = toDoList{ii};
                 calcParams = load(fullfile(BaseDir, currentFile));
                 calcParams = calcParams.calcParams;
-                delete(fullfile(BaseDir, currentFile));
-%                 finishup = onCleanup(@() globalSave(fullfile(BaseDir, currentFile)));
+                delete(fullfile(BaseDir, currentFile));  % Delete the file so that other computers won't run the same simulation
                 try
                     %% Convert the images to cached scenes for more analysis
                     if (calcParams.CACHE_SCENES)
@@ -138,17 +134,4 @@ function myKeyPressFcn(hObject, event)
 
 global KEY_IS_PRESSED
 KEY_IS_PRESSED  = 1;
-end
-
-function globalSave(path)
-global calcParams;
-save(path, 'calcParams');
-close all;
-end
-
-function cleanUpFunction(path)
-if exist(path, 'file')
-    delete(path)
-end
-disp('Exiting function, no errors occurred')
 end

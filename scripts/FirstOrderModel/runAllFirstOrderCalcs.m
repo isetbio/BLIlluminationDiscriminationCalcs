@@ -1,8 +1,11 @@
 function runAllFirstOrderCalcs
 % runAllFirstOrderCalcs
 %
-% Run the full set of calculations in the BLIlluminationDiscrimination
-% project, for one set of parameters.
+% Run the full set of calculations for the first order model in the
+% BLIlluminationDiscrimination project, for one set of parameters.  The
+% calcParam fields detailed in this function are only the ones relevant to
+% the first order model.  To see all the fields, refer to the
+% createCalcParams function in the toolbox.
 %
 % Typically, we will only execute pieces of this at any given time, because
 % certain parts are cached and need not be redone each time through.  But,
@@ -35,7 +38,7 @@ calcIDStrs  = {'SOM_SNRMulti'};
 % some sensible manner in a database.  We could also run some sort of check
 % on the structure at runtime to make sure our caches are consistent with
 % the current parameters being used.
-%
+
 % This part loops through the calculations for all caldIDStrs specified
 for k1 = 1:length(calcIDStrs)
     
@@ -96,7 +99,6 @@ for k1 = 1:length(calcIDStrs)
     % choose two images out of the target set and one image out of the
     % comparison set.  This is in order to reduce the effect of pixel noise
     % cause by the image renderer.
-    
     calcParams.targetImageSetSize = 7;
     calcParams.comparisonImageSetSize = 1;
     

@@ -2,7 +2,8 @@ function path = getSaccades(n, mu, sigma, b)
 % path = getSaccades(n, mu, sigma)
 %
 % This function generates saccadic eye movement by randomly sampling from
-% a Gaussian with defined mu and sigma.
+% a Gaussian with defined mu and sigma.  The eye position always starts at
+% x = 0, y = 0.
 %
 % 8/5/15  xd  moved from getEMPaths
 
@@ -14,16 +15,24 @@ tolerance = 2.75;
 % recreated until it fits inside the bounds.
 loop = true;
 while loop
+    
+    % Calculate the position of the eye after the first saccade.
     path = zeros(n,2);
     path(2:n,:) = sigma * randn(n - 1, 2);
     path = mu * sign(path) + path;
+    
+    % We fill in the rest of the positions, while making sure that the
+    % minimum angle tolerance is adhered to.
     for ii = 2:n
         while  acos(dot(path(ii-1,:), path(ii,:))/(norm(path(ii-1,:))*norm(path(ii,:)))) > tolerance
             path(ii,:) = sigma * randn(1,2);
             path(ii,:) = mu * sign(path(ii,:)) + path(ii,:);
         end
     end
-    path = cumsum (path);
+    path = cumsum(path);
+    
+    % If no boundary is defined, we are done.  Otherwise, check if the path
+    % is in bounds and repeat the process if it is not.
     if isempty(b)
         break;
     end
