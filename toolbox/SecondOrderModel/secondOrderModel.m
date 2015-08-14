@@ -181,7 +181,6 @@ if calcParams.numSaccades > 1
         sPath = getSaccades(s.n, s.mu, s.sigma, []);
         save(['Path' calcParams.calcIDStr], 'sPath');
     end
-    
     pathPool = getEMPaths(sensor, 1000, 'sPath', sPath, 'saccades', s);
 else
     pathPool = getEMPaths(sensor, 1000);
@@ -325,9 +324,6 @@ function computeByColor(calcParams, sensor, colorChoice)
 %   calcParams  - This contains parameters for the model
 %   sensor      - The desired sensor to be used for the calculation
 %   colorChoice - This defines the color on which to run the calculation
-
-%     folderList = {'BlueIllumination', 'GreenIllumination', ...
-%         'RedIllumination', 'YellowIllumination'};
 
 %% This is the first part of the OI file names
 prefix = {'blue' , 'green', 'red', 'yellow'};
