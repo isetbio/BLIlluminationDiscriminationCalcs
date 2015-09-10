@@ -7,15 +7,16 @@ function path = getSaccades(n, mu, sigma, b)
 %
 % 8/5/15  xd  moved from getEMPaths
 
+%% Set the desired tolerance here
 % (pi - tolerance) represents the minimum angle in radians between any two
 % segments of the saccade path.
 tolerance = 2.75;
 
+%% Generate the path
 % If b is not empty, boundaries have been defined and the path will be
 % recreated until it fits inside the bounds.
 loop = true;
-while loop
-    
+while loop 
     % Calculate the position of the eye after the first saccade.
     path = zeros(n,2);
     path(2:n,:) = sigma * randn(n - 1, 2);

@@ -110,6 +110,7 @@ if calcParams.MODEL_ORDER > 1
     
     % Whether to use OS code
     calcParams.enableOS = true;
+    calcParams.enableOSNoise = false;
 end
 
 %% Save the parameter in the queue directory
