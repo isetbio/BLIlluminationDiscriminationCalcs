@@ -19,7 +19,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 %% Set identifiers to run
-calcIDStrs = {'OSWithNoise'};
+calcIDStrs = {'SOM_linear'};
 
 %% Parameters of the calculation
 %
@@ -42,7 +42,7 @@ for k1 = 1:length(calcIDStrs)
     
     calcParams.RUN_MODEL = true;
     calcParams.MODEL_ORDER = 2;          % Which model to run
-    calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
+    calcParams.chooserColorChoice = 4;   % Which color direction to use (0 means all)
     calcParams.overWriteFlag = 1;        % Whether or not to overwrite existing data.
     
     calcParams.CALC_THRESH = true;
@@ -118,7 +118,7 @@ for k1 = 1:length(calcIDStrs)
     
     % Whether to use OS code
     calcParams.enableOS = true;
-    calcParams.enableOSNoise = true;
+    calcParams.enableOSNoise = false;
     
     %% Convert the images to cached scenes for more analysis
     if (calcParams.CACHE_SCENES)

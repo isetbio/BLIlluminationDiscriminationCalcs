@@ -197,6 +197,8 @@ minEM = reshape(minEM, pathSize(2:3))';
 LMSpath = [maxEM; minEM];
 rows = round([-min([LMSpath(:,2); 0]) max([LMSpath(:,2); 0])]);
 cols = round([max([LMSpath(:,1); 0]) -min([LMSpath(:,1); 0])]);
+rows = [max(rows) max(rows)];
+cols = [max(cols) max(cols)];
 for qq = 1:length(standardPool)
     sensorTemp = sensorSet(standardPool{qq}{1}, 'positions', LMSpath);
     [standardPool{qq}{3}, standardPool{qq}{4}] = coneAbsorptionsLMS(sensorTemp, standardPool{qq}{2});
@@ -269,12 +271,13 @@ for ii = 1:maxImageIllumNumber
                 % point.
                 if calcParams.enableOS
                     params.addNoise = calcParams.enableOSNoise;
+                    params.Compress = false;
                     standardRef = sensorSet(standardRef, 'photons', photonsStandardRef);
                     standardComp = sensorSet(standardComp, 'photons', photonsStandardComp);
                     testComp = sensorSet(testComp, 'photons', photonsTestComp);
-                    [~,photonsStandardRef] = coneAdapt(standardRef, 4, params);
-                    [~,photonsStandardComp] = coneAdapt(standardComp, 4, params);
-                    [~,photonsTestComp] = coneAdapt(testComp, 4, params);
+                    [~,photonsStandardRef] = coneAdapt(standardRef, 5, params);
+                    [~,photonsStandardComp] = coneAdapt(standardComp, 5, params);
+                    [~,photonsTestComp] = coneAdapt(testComp, 5, params);
                 end
                 
                 % We make sure that the summing interval divides evenly
