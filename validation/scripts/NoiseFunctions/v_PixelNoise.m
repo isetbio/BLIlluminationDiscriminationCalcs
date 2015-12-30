@@ -10,12 +10,14 @@ end
 function ValidationFunction(runTimeParams)
 close all;
 
-%% Add ToolBox to Matlab path
+%% Add Toolbox for this project dynamically to Matlab path
 myDir = fileparts(fileparts(fileparts(fileparts(mfilename('fullpath')))));
-pathDir = fullfile(myDir,'..','Toolbox','');
+pathDir = fullfile(myDir,'Toolbox','');
 AddToMatlabPathDynamically(pathDir);
 
-%% Validation
+%% Validation.
+%
+% Fix random number generator seed 
 rng(1);
 tolerance = 200;
 
@@ -23,8 +25,7 @@ tolerance = 200;
 % scripts.
 sensor = getDefaultBLIllumDiscrSensor;
 
-% Load several different renderings of the target image from the
-% experiment.
+% Load several different renderings of the target image from the experiment.
 try
     oi1 = loadOpticalImageData('Neutral/Standard', 'TestImage0');
     oi2 = loadOpticalImageData('Neutral/Standard', 'TestImage1');
@@ -51,12 +52,12 @@ p5 = sensorGet(s5, 'photons');
 UnitTest.validationRecord('SIMPLE_MESSAGE', '***** Photon Distances *****');
 
 % We want to validate that the Euclidian distance between all of these
-% renderings are within a certain distance of each other, as well as the
-% absolute value of the distances.
-p1p2 = norm(p1(:) - p2(:));
-p1p3 = norm(p1(:) - p3(:));
-p1p4 = norm(p1(:) - p4(:));
-p1p5 = norm(p1(:) - p5(:));
+% renderings are within a tolerance of each other.  This is to confirm
+% that the different renderings are similar to each other.
+p1p2 = norm(p1(:) - p2(:))
+p1p3 = norm(p1(:) - p3(:))
+p1p4 = norm(p1(:) - p4(:))
+p1p5 = norm(p1(:) - p5(:))
 
 UnitTest.assertIsZero(p1p2 - p1p3,'DISTANCE DIFFERENCE for p1p2 to p1p3',tolerance);
 UnitTest.assertIsZero(p1p2 - p1p4,'DISTANCE DIFFERENCE for p1p2 to p1p4',tolerance);

@@ -1,7 +1,7 @@
 function sensor = getDefaultBLIllumDiscrSensor
 % sensor = getDefaultBLIllumDiscrSensor
 % 
-% This functions returns a default sensor used mainly for testing bugs in
+% This functions returns a default sensor used mainly for testing in
 % the BLIlluminationDiscrimination Project
 %
 % 6/XX/15  xd  wrote it
