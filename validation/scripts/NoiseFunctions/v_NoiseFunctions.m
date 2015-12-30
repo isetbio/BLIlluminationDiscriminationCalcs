@@ -12,7 +12,7 @@ close all;
 
 %% Add ToolBox to Matlab path
 myDir = fileparts(fileparts(fileparts(fileparts(mfilename('fullpath')))));
-pathDir = fullfile(myDir,'..','Toolbox','');
+pathDir = fullfile(myDir,'Toolbox','');
 AddToMatlabPathDynamically(pathDir);
 
 %% Validation
@@ -29,12 +29,12 @@ oi = data.opticalimage;
 
 % Calculate the cone absorptions to get the mean photons absorbed
 sensor = coneAbsorptions(sensor, oi);
-
 photons = sensorGet(sensor, 'photons');
 
-% Apply the three different noise functions.  noiseShot is found in ISETBIO
-% and uses iePoisson, the Poisson generator found in ISETBIO.  poissrnd is
-% the Poisson generator that comes in MATLAB's Statistics Toolbox.  
+% Apply the three different noise functions.
+%   noiseShot is found in ISETBIO and uses iePoisson, the Poisson generator found in ISETBIO.
+%   poissrnd is the Poisson generator that comes in MATLAB's Statistics Toolbox. 
+%   approx is a normal approximation to the Poisson.
 [~, noiseShotRes] = noiseShot(sensor);
 noiseShotRes = photons + noiseShotRes;
 poissrndRes = poissrnd(photons);
@@ -45,9 +45,9 @@ UnitTest.validationRecord('SIMPLE_MESSAGE', '***** Noise Functions *****');
 % Calculate the Euclidian distance between the results of the different
 % types of noise.  We want to validate that this values are within a
 % certain range, specified by the tolerance, of each other.
-A = norm(noiseShotRes(:) - poissrndRes(:));
-B = norm(noiseShotRes(:) - approx(:));
-C = norm(poissrndRes(:) - approx(:));
+A = norm(noiseShotRes(:) - poissrndRes(:))
+B = norm(noiseShotRes(:) - approx(:))
+C = norm(poissrndRes(:) - approx(:))
 
 UnitTest.validationData('noiseShot', noiseShotRes);
 UnitTest.validationData('poissrnd', poissrndRes);

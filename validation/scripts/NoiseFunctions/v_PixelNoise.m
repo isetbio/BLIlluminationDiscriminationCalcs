@@ -54,10 +54,10 @@ UnitTest.validationRecord('SIMPLE_MESSAGE', '***** Photon Distances *****');
 % We want to validate that the Euclidian distance between all of these
 % renderings are within a tolerance of each other.  This is to confirm
 % that the different renderings are similar to each other.
-p1p2 = norm(p1(:) - p2(:))
-p1p3 = norm(p1(:) - p3(:))
-p1p4 = norm(p1(:) - p4(:))
-p1p5 = norm(p1(:) - p5(:))
+p1p2 = norm(p1(:) - p2(:));
+p1p3 = norm(p1(:) - p3(:));
+p1p4 = norm(p1(:) - p4(:));
+p1p5 = norm(p1(:) - p5(:));
 
 UnitTest.assertIsZero(p1p2 - p1p3,'DISTANCE DIFFERENCE for p1p2 to p1p3',tolerance);
 UnitTest.assertIsZero(p1p2 - p1p4,'DISTANCE DIFFERENCE for p1p2 to p1p4',tolerance);
