@@ -8,10 +8,12 @@ end
 
 %% Function implementing the isetbio validation code
 function ValidationFunction(runTimeParams)
+
+%% Close any figures
 close all;
 
-%% Set a seed to make things run nicely
-rng(1);
+%% Set a seed to make things run repeatably
+rng(101);
 
 %% Add ToolBox to Matlab path
 myDir = fileparts(fileparts(fileparts(mfilename('fullpath'))));
@@ -30,7 +32,6 @@ calcParams = calcParams.calcParams;
 if ~exist(fullfile(getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir'), 'ImageData', 'Neutral'), 'dir')
     error('Please set up the data file directories approriately.  Consult the project wiki on GitHub for instructions.');
 end
-
 fprintf('Please note that the first order model validation script will take 6-7 minutes to run\n');
 
 %% Convert the images to cached scenes for more analysis
