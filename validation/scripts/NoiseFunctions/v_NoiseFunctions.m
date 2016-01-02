@@ -45,9 +45,9 @@ UnitTest.validationRecord('SIMPLE_MESSAGE', '***** Noise Functions *****');
 % Calculate the Euclidian distance between the results of the different
 % types of noise.  We want to validate that this values are within a
 % certain range, specified by the tolerance, of each other.
-A = norm(noiseShotRes(:) - poissrndRes(:))
-B = norm(noiseShotRes(:) - approx(:))
-C = norm(poissrndRes(:) - approx(:))
+A = norm(noiseShotRes(:) - poissrndRes(:));
+B = norm(noiseShotRes(:) - approx(:));
+C = norm(poissrndRes(:) - approx(:));
 
 UnitTest.validationData('noiseShot', noiseShotRes);
 UnitTest.validationData('poissrnd', poissrndRes);
