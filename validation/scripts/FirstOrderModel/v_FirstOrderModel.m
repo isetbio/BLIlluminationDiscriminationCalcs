@@ -13,7 +13,7 @@ function ValidationFunction(runTimeParams)
 close all;
 
 %% Set a seed to make things run repeatably
-rng(101);
+rng(1);
 
 %% Add ToolBox to Matlab path
 myDir = fileparts(fileparts(fileparts(mfilename('fullpath'))));
