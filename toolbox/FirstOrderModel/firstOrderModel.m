@@ -49,7 +49,7 @@ if notDefined('frozen'), frozen = false; end
 % variability since we run many trials in our model.  However, if you would
 % like to generate repoducible data sets, change this seed to a constant
 % number.
-if (frozen)
+if (~frozen)
     rng('shuffle');
 end
 

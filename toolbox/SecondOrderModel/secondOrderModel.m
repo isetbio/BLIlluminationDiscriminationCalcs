@@ -1,5 +1,5 @@
-function secondOrderModel(calcParams, colorChoice, overWrite)
-% secondOrderModel(calcParams, colorChoice, overWrite)
+function secondOrderModel(calcParams, colorChoice, overWrite, frozen)
+% secondOrderModel(calcParams, colorChoice, overWrite, frozen)
 %
 % This function is analogous to firstOrderModel.  Here, some additional
 % features are implemented into our model.  They include fixational eye
@@ -17,12 +17,16 @@ function secondOrderModel(calcParams, colorChoice, overWrite)
 %                     4 = yellow
 %       overWrite   - This flag determines whether this function will
 %                     write over any existing files in a target directory.
-%                     Set this to 1 to write over, 0 to avoid doing so.
+%                     Set this to true to write over, false (default) to avoid doing so.
+%       frozen      - Don't seed the rng, so that it stays nice and fixed
+%                     (default false, so that rng is set via time on each call.)
 %
 % 7/27/15  xd  copied base code from first order model
+% 1/5/15   dhb Allow frozen calculation, which doesn't reinitialize the rng.
 
 %% Set defaults for inputs
-if notDefined('overWrite'), overWrite = 0; end
+if notDefined('overWrite'), overWrite = false; end
+if notDefined('frozen'), frozen = false; end
 
 %% Set RNG seed to be time dependent
 %
@@ -31,8 +35,9 @@ if notDefined('overWrite'), overWrite = 0; end
 % variability since we run many trials in our model.  However, if you would
 % like to generate repoducible data sets, change this seed to a constant
 % number.
-rng('shuffle');
-
+if (~frozen)
+    rng('shuffle');
+end
 %% Check for faulty parameters
 %
 % A standard image pool of at least 2 is required.  This is because

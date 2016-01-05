@@ -1,5 +1,5 @@
-function OSModel(calcParams, colorChoice, overWrite)
-% secondOrderModel(calcParams, colorChoice, overWrite)
+function OSModel(calcParams, colorChoice, overWrite, frozen)
+% secondOrderModel(calcParams, colorChoice, overWrite, frozen)
 %
 % This function will generate several noisy versions of the standard
 % image.  Then it will compare the standard with one of the noisy images
@@ -23,18 +23,27 @@ function OSModel(calcParams, colorChoice, overWrite)
 %                     4 = yellow
 %       overWrite   - This flag determines whether this function will
 %                     write over any existing files in a target directory.
-%                     Set this to 1 to write over, 0 to avoid doing so.
+%                     Set this to true to write over, false (default) to avoid doing so.
+%       frozen      - Don't seed the rng, so that it stays nice and fixed
+%                     (default false, so that rng is set via time on each call.)
 %
 % 7/28/15  xd  copied base code from second order model
+% 1/5/15   dhb Allow frozen calculation, which doesn't reinitialize the rng.
 
 %% Set defaults for inputs
-if notDefined('overWrite'), overWrite = 0; end
+if notDefined('overWrite'), overWrite = false; end
+if notDefined('frozen'), frozen = false; end
 
 %% Set RNG seed to be time dependent
 %
-% For some reason, the RNG does the same thing everytime when run on the
-% blocks computer
-rng('shuffle');
+% We set the seed to be time dependent so that the model doesn't do the
+% same thing repeatedly.  This should not induce any significant
+% variability since we run many trials in our model.  However, if you would
+% like to generate repoducible data sets, change this seed to a constant
+% number.
+if (~frozen)
+    rng('shuffle');
+end
 
 %% Check for faulty parameters
 if calcParams.targetImageSetSize < 2
