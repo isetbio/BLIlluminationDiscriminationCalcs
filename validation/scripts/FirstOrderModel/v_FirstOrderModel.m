@@ -12,9 +12,6 @@ function ValidationFunction(runTimeParams)
 %% Close any figures
 close all;
 
-%% Set a seed to make things run repeatably
-rng(1);
-
 %% Add ToolBox to Matlab path
 myDir = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 pathDir = fullfile(myDir,'..','toolbox','');
@@ -27,6 +24,10 @@ ieSessionSet('wait bar','off');
 %% Load desired params
 calcParams = load(fullfile(myDir, 'scripts/FirstOrderModel/validationCalcParams'));
 calcParams = calcParams.calcParams;
+
+%% Set a seed to make things run repeatably
+rng(1);
+calcParams.frozen = true;
 
 %% Check if necessary data exists
 if ~exist(fullfile(getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir'), 'ImageData', 'Neutral'), 'dir')
@@ -46,7 +47,7 @@ end
 
 %% Create data sets using the simple chooser model
 if (calcParams.RUN_MODEL)
-    results = firstOrderModel(calcParams, calcParams.chooserColorChoice, calcParams.overWriteFlag);
+    results = firstOrderModel(calcParams, calcParams.chooserColorChoice, calcParams.overWriteFlag,calcParams.frozen);
 end
 
 %% Calculate threshholds using chooser model data

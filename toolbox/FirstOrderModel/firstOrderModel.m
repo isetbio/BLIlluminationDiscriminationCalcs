@@ -1,5 +1,5 @@
-function results = firstOrderModel(calcParams, colorChoice, overWrite)
-% firstOrderModel(calcParams, colorChoice, overWrite)
+function results = firstOrderModel(calcParams, colorChoice, overWrite, frozen)
+% firstOrderModel(calcParams, colorChoice, overWrite, frozen)
 %
 % This function will build a sensor according to the calcParams fields.
 % This sensor will then be used for the first order model calculations. The
@@ -26,7 +26,9 @@ function results = firstOrderModel(calcParams, colorChoice, overWrite)
 %                     4 = yellow
 %       overWrite   - This flag determines whether this function will
 %                     write over any existing files in a target directory.
-%                     Set this to 1 to write over, 0 to avoid doing so.
+%                     Set this to true to write over, false (default) to avoid doing so.
+%       frozen      - Don't seed the rng, so that it stays nice and fixed
+%                     (default false, so that rng is set via time on each call.)
 %
 % 3/17/15  xd  wrote it
 % 4/17/15  xd  update to use human sensor
@@ -34,9 +36,11 @@ function results = firstOrderModel(calcParams, colorChoice, overWrite)
 % 6/25/15  xd  the standard and test now sample from a pool of images
 % 7/23/15  xd  removed some things that now belong in the second order
 %              model
+% 1/5/15   dhb Allow frozen calculation, which doesn't reinitialize the rng.
 
 %% Set defaults for inputs
-if notDefined('overWrite'), overWrite = 0; end
+if notDefined('overWrite'), overWrite = false; end
+if notDefined('frozen'), frozen = false; end
 
 %% Set RNG seed to be time dependent
 %
@@ -45,7 +49,9 @@ if notDefined('overWrite'), overWrite = 0; end
 % variability since we run many trials in our model.  However, if you would
 % like to generate repoducible data sets, change this seed to a constant
 % number.
-rng('shuffle');
+if (frozen)
+    rng('shuffle');
+end
 
 %% Check for faulty parameters
 %
