@@ -272,16 +272,19 @@ for ii = 1:maxImageIllumNumber
                 
                 % This is in case we want to use the OS code.  Variable
                 % naming is extremely confusing and should be fixed at some
-                % point.
+                % point.  
+                %% TODO: Just changed this is to use outer segment code, should test if broken???
                 if calcParams.enableOS
-                    params.addNoise = calcParams.enableOSNoise;
-                    params.Compress = false;
+%                     params.addNoise = calcParams.enableOSNoise;
+%                     params.Compress = false;
                     standardRef = sensorSet(standardRef, 'photons', photonsStandardRef);
                     standardComp = sensorSet(standardComp, 'photons', photonsStandardComp);
                     testComp = sensorSet(testComp, 'photons', photonsTestComp);
-                    [~,photonsStandardRef] = coneAdapt(standardRef, 5, params);
-                    [~,photonsStandardComp] = coneAdapt(standardComp, 5, params);
-                    [~,photonsTestComp] = coneAdapt(testComp, 5, params);
+                    os = osCreate('biophys');
+                    os = osSet(os, 'noiseFlag', calcParams.enableOSNoise);
+                    [~,photonsStandardRef] = osCompute(os, standardRef);
+                    [~,photonsStandardComp] = osCompute(os,standardComp);
+                    [~,photonsTestComp] = osCompute(os,testComp);
                 end
                 
                 % We make sure that the summing interval divides evenly
