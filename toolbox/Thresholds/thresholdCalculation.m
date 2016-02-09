@@ -186,7 +186,6 @@ paramsValues = zeros(numKValue, 4);
 
 %% Define functions to fit to
 PF = @PAL_Weibull;
-PFI = @PAL_inverseWeibull;
 
 %% Some optimization settings for the fit
 options = optimset('fminsearch');
@@ -229,7 +228,7 @@ for i = 1:numKValue
         paramsEstimate, paramsFree, PF, 'SearchOptions', options);
     
     % Get threshold value for current level of noise
-    threshold(i) = PFI(paramsValues(i,:), criterion);
+    threshold(i) = PF(paramsValues(i,:), criterion, 'inverse');
     
     % Plot fitted curves
     if (toPlot)

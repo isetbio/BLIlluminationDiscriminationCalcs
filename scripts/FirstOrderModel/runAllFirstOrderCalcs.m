@@ -44,10 +44,10 @@ for k1 = 1:length(calcIDStrs)
     
     % Define the steps of the calculation that should be carried out.
     calcParams.CACHE_SCENES = false;
-    calcParams.forceSceneCompute = true; % Will overwrite any existing data.
+    calcParams.forceSceneCompute = false; % Will overwrite any existing data.
     
     calcParams.CACHE_OIS = false;
-    calcParams.forceOICompute = true;    % Will overwrite any existing data.
+    calcParams.forceOICompute = false;    % Will overwrite any existing data.
     
     calcParams.RUN_MODEL = false;
     calcParams.MODEL_ORDER = 1; 
