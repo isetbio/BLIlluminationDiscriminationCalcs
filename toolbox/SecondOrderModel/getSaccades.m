@@ -37,7 +37,7 @@ while loop
     if isempty(b)
         break;
     end
-    loop = max(path(:,1)) > b(1) || min(path(:,1)) < b(2) || max(path(:,2)) > b(3) || min(path(:,2)) < b(4);
+    loop = max(path(:,1)) < b(1) || min(path(:,1)) > b(2) || max(path(:,2)) < b(3) || min(path(:,2)) > b(4);
 end
 % plot(path(:,1), path(:,2))
 end

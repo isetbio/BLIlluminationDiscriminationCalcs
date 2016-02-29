@@ -19,7 +19,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 %% Set identifiers to run
-calcIDStrs = {'SOM_linear'};
+calcIDStrs = {'SOM_linear2'};
 
 %% Parameters of the calculation
 %
@@ -40,10 +40,10 @@ for k1 = 1:length(calcIDStrs)
     calcParams.CACHE_OIS = false;
     calcParams.forceOICompute = false;    % Will overwrite any existing data.
     
-    calcParams.RUN_MODEL = true;
+    calcParams.RUN_MODEL = false;
     calcParams.MODEL_ORDER = 2;          % Which model to run
-    calcParams.chooserColorChoice = 4;   % Which color direction to use (0 means all)
-    calcParams.overWriteFlag = 1;        % Whether or not to overwrite existing data.
+    calcParams.chooserColorChoice = 1;   % Which color direction to use (0 means all)
+    calcParams.overWriteFlag = true;    % Whether or not to overwrite existing data. An overwrite is required to run the same calculation name again.
     
     calcParams.CALC_THRESH = true;
     calcParams.displayIndividualThreshold = false;
@@ -73,8 +73,8 @@ for k1 = 1:length(calcIDStrs)
     % Kp represents the scale factor for the Poisson noise.  This is the
     % realistic noise representation of the photons arriving at the retina.
     % Therefore, startKp should always be kept at 1.
-    calcParams.numKpSamples = 10;
-    calcParams.KpInterval = 1;
+    calcParams.numKpSamples = 5;
+    calcParams.KpInterval = 2;
     calcParams.startKp = 1;
     
     % Kg is the scale factor for an optional Gaussian noise.  The standard

@@ -282,9 +282,12 @@ for ii = 1:maxImageIllumNumber
                     testComp = sensorSet(testComp, 'photons', photonsTestComp);
                     os = osCreate('biophys');
                     os = osSet(os, 'noiseFlag', calcParams.enableOSNoise);
-                    [~,photonsStandardRef] = osCompute(os, standardRef);
-                    [~,photonsStandardComp] = osCompute(os,standardComp);
-                    [~,photonsTestComp] = osCompute(os,testComp);
+                    os1 = osCompute(os, standardRef);
+                    photonsStandardRef = os1.coneCurrentSignal;
+                    os2 = osCompute(os,standardComp);
+                    photonsStandardComp = os2.coneCurrentSignal;
+                    os3 = osCompute(os,testComp);
+                    photonsTestComp = os3.coneCurrentSignal;
                 end
                 
                 % We make sure that the summing interval divides evenly
