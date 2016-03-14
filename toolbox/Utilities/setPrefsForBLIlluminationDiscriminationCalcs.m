@@ -12,9 +12,17 @@ function setPrefsForBLIlluminationDiscriminationCalcs
 %     dataBaseDir   = fullfile(sharedRootDir, 'Data');
     queueDir      = fullfile(sharedRootDir, 'CalcParamQueue');
     
+    sysInfo = GetComputerInfo();
+    switch(sysInfo.userShortName)
+        case 'xiaomaoding'
+            sharedRootDir = fullfile(filesep, 'Users', 'xiaomaoding', 'Dropbox (Aguirre-Brainard Lab)');
+        otherwise 
+            error('Non identified user.  Please edit setPrefsForBLIlluminationDiscriminationCalcs.m to set local DropBox path.');
+    end
+
     % Use this for DropBox data path, might need to change based on local
     % settings
-    sharedRootDir = fullfile(filesep, 'Users', 'xiaomaoding', 'Dropbox (Aguirre-Brainard Lab)');
+    
     analysisBaseDir = fullfile(sharedRootDir, 'IBIO_analysis', 'BLIlluminationDiscrimination');
     dataBaseDir = fullfile(sharedRootDir, 'IBIO_data', 'BLIlluminationDiscrimination');
     
