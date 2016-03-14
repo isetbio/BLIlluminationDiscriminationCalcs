@@ -135,8 +135,8 @@ KgInterval = calcParams.KgInterval;
 % represents the copy number.  For consistency, I believe these should also
 % be zero indexed like the standard are, except that the 0th term will not have a #.
 % In this case # would start with 1. Code beyond this point will assume these conditions.
-dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-folderPath = fullfile(dataBaseDir, 'OpticalImageData', calcParams.cacheFolderList{2}, folderName);
+analysisDir = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
+folderPath = fullfile(analysisDir, 'OpticalImageData', calcParams.cacheFolderList{2}, folderName);
 data = what(folderPath);
 fileList = data.mat;
 fileList = sort(fileList);
@@ -175,34 +175,45 @@ calcParams.meanStandard = 0;
 % computationally more sound to use a large number of predetermined paths
 % to simulate random path generation rather than risk the case of a faulty
 % boundary causing an infinite loop.
+
+% if calcParams.numSaccades > 1
+%     s.n = calcParams.numSaccades;
+%     s.mu = calcParams.saccadeMu;
+%     s.sigma = calcParams.saccadeSigma;
+%     if exist(['Path' calcParams.calcIDStr], 'file')
+%         sPath = load(['Path' calcParams.calcIDStr]);
+%         sPath = sPath.sPath;
+%     else
+%         sPath = getSaccades(s.n, s.mu, s.sigma, []);
+%         save(['Path' calcParams.calcIDStr], 'sPath');
+%     end
+%     pathPool = getEMPaths(sensor, 1000, 'sPath', sPath, 'saccades', s);
+% else
+%     pathPool = getEMPaths(sensor, 1000);
+% end
+
 if calcParams.numSaccades > 1
     s.n = calcParams.numSaccades;
-    s.mu = calcParams.saccadeMu;
-    s.sigma = calcParams.saccadeSigma;
-    if exist(['Path' calcParams.calcIDStr], 'file')
-        sPath = load(['Path' calcParams.calcIDStr]);
-        sPath = sPath.sPath;
-    else
-        sPath = getSaccades(s.n, s.mu, s.sigma, []);
-        save(['Path' calcParams.calcIDStr], 'sPath');
-    end
-    pathPool = getEMPaths(sensor, 1000, 'sPath', sPath, 'saccades', s);
-else
-    pathPool = getEMPaths(sensor, 1000);
+%     s.mu = calcParams.saccadeMu;
+%     s.sigma = calcParams.saccadeSigma;
+    ss = oiGet(standardPool{1}{2}, 'size');
+    bound = [-round(ss(1)/2) round(ss(1)/2) -round(ss(2)/2) round(ss(2)/2)];
 end
 
 % We calculate the LMS by getting the max and min eye positions from
 % every possible path for this trial using the input boundaries.
-pathSize = size(pathPool);
-maxEM = max(pathPool);
-maxEM = reshape(maxEM, pathSize(2:3))';
-minEM = min(pathPool);
-minEM = reshape(minEM, pathSize(2:3))';
-LMSpath = [maxEM; minEM];
-rows = round([-min([LMSpath(:,2); 0]) max([LMSpath(:,2); 0])]);
-cols = round([max([LMSpath(:,1); 0]) -min([LMSpath(:,1); 0])]);
-rows = [max(rows) max(rows)];
-cols = [max(cols) max(cols)];
+
+% pathSize = size(pathPool);
+% maxEM = max(pathPool);
+% maxEM = reshape(maxEM, pathSize(2:3))';
+% minEM = min(pathPool);
+% minEM = reshape(minEM, pathSize(2:3))';
+% LMSpath = [maxEM; minEM];
+% rows = round([-min([LMSpath(:,2); 0]) max([LMSpath(:,2); 0])]);
+% cols = round([max([LMSpath(:,1); 0]) -min([LMSpath(:,1); 0])]);
+rows = [bound(4) bound(4)];
+cols = [bound(2) bound(2)];
+LMSpath = [bound(2) bound(4); bound(1) bound(3)];
 for qq = 1:length(standardPool)
     sensorTemp = sensorSet(standardPool{qq}{1}, 'positions', LMSpath);
     [standardPool{qq}{3}, standardPool{qq}{4}] = coneAbsorptionsLMS(sensorTemp, standardPool{qq}{2});
@@ -239,9 +250,12 @@ for ii = 1:maxImageIllumNumber
             tic
             for tt = 1:numTrials
                 if calcParams.useSameEMPath
-                    thePaths = repmat(randsample(1000, 1),1,3);
+%                     thePaths = repmat(randsample(1000, 1),1,3);
+                      thePaths = getEMPaths(sensor, 3, 'saccades', s, 'bound', bound);
+                      thePaths = repmat(thePaths, [1 1 3]);
                 else
-                    thePaths = randsample(1000, 3);
+%                     thePaths = randsample(1000, 3);
+                      thePaths = getEMPaths(sensor, 3, 'saccades', s, 'bound', bound);
                 end
                 
                 % We choose 2 images without replacement from the standard image pool.
@@ -252,9 +266,12 @@ for ii = 1:maxImageIllumNumber
                 testChoice = randsample(calcParams.comparisonImageSetSize, 1);
                 
                 % Set the paths
-                standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', pathPool(:,:,thePaths(1)));
-                standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', pathPool(:,:,thePaths(2)));
-                testComp = sensorSet(testPool{testChoice}{1}, 'positions', pathPool(:,:,thePaths(3)));
+%                 standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', pathPool(:,:,thePaths(1)));
+%                 standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', pathPool(:,:,thePaths(2)));
+%                 testComp = sensorSet(testPool{testChoice}{1}, 'positions', pathPool(:,:,thePaths(3)));
+                standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', thePaths(:,:,1));
+                standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', thePaths(:,:,2));
+                testComp = sensorSet(testPool{testChoice}{1}, 'positions', thePaths(:,:,3));
                 
                 % Get absorptions
                 standardRef = coneAbsorptionsApplyPath(standardRef, standardPool{standardChoice(1)}{3}, standardPool{standardChoice(1)}{4}, rows, cols);
@@ -273,14 +290,13 @@ for ii = 1:maxImageIllumNumber
                 % This is in case we want to use the OS code.  Variable
                 % naming is extremely confusing and should be fixed at some
                 % point.  
-                %% TODO: Just changed this is to use outer segment code, should test if broken???
                 if calcParams.enableOS
 %                     params.addNoise = calcParams.enableOSNoise;
 %                     params.Compress = false;
                     standardRef = sensorSet(standardRef, 'photons', photonsStandardRef);
                     standardComp = sensorSet(standardComp, 'photons', photonsStandardComp);
                     testComp = sensorSet(testComp, 'photons', photonsTestComp);
-                    os = osCreate('biophys');
+                    os = osCreate(calcParams.OSType);
                     os = osSet(os, 'noiseFlag', calcParams.enableOSNoise);
                     os1 = osCompute(os, standardRef);
                     photonsStandardRef = os1.coneCurrentSignal;
@@ -344,12 +360,12 @@ function computeByColor(calcParams, sensor, colorChoice)
 prefix = {'blue' , 'green', 'red', 'yellow'};
 
 %% Point at where input data live
-dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+analysisDir = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
 
 %% List of where the images will be stored on ColorShare1
 targetFolder = calcParams.cacheFolderList{2};
 
-imageDir = fullfile(dataBaseDir, 'OpticalImageData', targetFolder);
+imageDir = fullfile(analysisDir, 'OpticalImageData', targetFolder);
 contents = dir(imageDir);
 folderList = cell(1,5);
 for ii = 1:length(contents)
@@ -365,8 +381,7 @@ end
 standard = folderList{4};
 folderList = [folderList(1:3) folderList(5)];
 
-BaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-TargetPath = fullfile(BaseDir, 'SimpleChooserData', calcParams.calcIDStr);
+TargetPath = fullfile(analysisDir, 'SimpleChooserData', calcParams.calcIDStr);
 
 if (colorChoice == 0)
     for i=1:length(folderList)

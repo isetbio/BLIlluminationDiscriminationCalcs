@@ -42,9 +42,9 @@ redMatrix = loadChooserData(calcIDStr,['redIllumComparison' calcIDStr]);
 yellowMatrix = loadChooserData(calcIDStr,['yellowIllumComparison' calcIDStr]);
 
 %% Load the calcParams used for this set of data
-dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-dataFilePath = fullfile(dataBaseDir, 'SimpleChooserData', calcIDStr, ['calcParams' calcIDStr]);
-p = load(dataFilePath);
+analysisDir   = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
+analysisPath = fullfile(analysisDir, 'SimpleChooserData', calcIDStr, ['calcParams' calcIDStr]);
+p = load(analysisPath);
 calcParams = p.calcParams;
 calcParams = updateCalcParamFields(calcParams);
 
@@ -103,7 +103,7 @@ if ~parser.Results.OnlyKg
 end
 
 % Save the threshold data for later plotting
-outputFile = fullfile(dataBaseDir, 'SimpleChooserData', calcIDStr, ['psychofitSummary' calcIDStr]);
+outputFile = fullfile(analysisDir, 'SimpleChooserData', calcIDStr, ['psychofitSummary' calcIDStr]);
 save(outputFile,'calcParams','psycho');
 end
 

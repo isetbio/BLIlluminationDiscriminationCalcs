@@ -27,6 +27,8 @@ function allPaths = getEMPaths(sensor, numPaths, varargin)
 %
 % 7/27/15  xd  wrote it
 % 8/5/15   xd  added optional sPath parameter
+% 3/14/16  xd  mu and sigma removed as saccade parameters, may add a max
+%              distance parameter later on, so left saccades as struct
 
 %% Set up the input parser
 p = inputParser;
@@ -44,16 +46,17 @@ sPath = p.Results.sPath;
 pathSize = size(sensorGet(sensor, 'positions'));
 allPaths = zeros([pathSize numPaths]);
 
+% if b is not specified as a parameter, use the size of the sensor as the
+% boundary
+if isempty(b)
+    ss = sensorGet(sensor, 'size');
+    b = [round(-ss(1)/2) round(ss(1)/2) round(-ss(2)/2) round(ss(2)/2)];
+end
+
 %% Calculate the paths based on the input parameters
 for ii = 1:numPaths
     sensor = emGenSequence(sensor);
     pos = sensorGet(sensor, 'positions');
-%     if ~isempty(b)
-%         while max(pos(:,1)) > b(1) || min(pos(:,1)) < b(2) || max(pos(:,2)) > b(3) || min(pos(:,2)) < b(4)
-%             sensor = emGenSequence(sensor);
-%             pos = sensorGet(sensor, 'positions');
-%         end
-%     end
     
     % If there are large saccades, they will be used or implemented here.
     if ~isempty(s) || ~isempty(sPath)

@@ -8,13 +8,14 @@ function ChooserData = loadChooserData(folderName, fileName)
 %   fileName - name of the data file to be loaded
 %
 % 5/18/2015   xd  wrote it
+% 3/14/2016   xd  editted to use DropBox paths
 
 % Get the directory find the image
-dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-dataFilePath = fullfile(dataBaseDir, 'SimpleChooserData', folderName, fileName);
+analysisDir   = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
+analysisPath = fullfile(analysisDir, 'SimpleChooserData', folderName, fileName);
 
 % Load the image
-data = load(dataFilePath);
+data = load(analysisPath);
 ChooserData = data.matrix;
 
 end

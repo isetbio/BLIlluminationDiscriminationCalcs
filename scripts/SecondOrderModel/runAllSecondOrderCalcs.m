@@ -19,7 +19,7 @@ AddToMatlabPathDynamically(pathDir);
 setPrefsForBLIlluminationDiscriminationCalcs;
 
 %% Set identifiers to run
-calcIDStrs = {'SOM_linear2'};
+calcIDStrs = {'OS3StepConeAbsorb'};
 
 %% Parameters of the calculation
 %
@@ -42,7 +42,7 @@ for k1 = 1:length(calcIDStrs)
     
     calcParams.RUN_MODEL = false;
     calcParams.MODEL_ORDER = 2;          % Which model to run
-    calcParams.chooserColorChoice = 1;   % Which color direction to use (0 means all)
+    calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
     calcParams.overWriteFlag = true;    % Whether or not to overwrite existing data. An overwrite is required to run the same calculation name again.
     
     calcParams.CALC_THRESH = true;
@@ -73,8 +73,8 @@ for k1 = 1:length(calcIDStrs)
     % Kp represents the scale factor for the Poisson noise.  This is the
     % realistic noise representation of the photons arriving at the retina.
     % Therefore, startKp should always be kept at 1.
-    calcParams.numKpSamples = 5;
-    calcParams.KpInterval = 2;
+    calcParams.numKpSamples = 10;
+    calcParams.KpInterval = 1;
     calcParams.startKp = 1;
     
     % Kg is the scale factor for an optional Gaussian noise.  The standard
@@ -94,10 +94,10 @@ for k1 = 1:length(calcIDStrs)
     calcParams.comparisonImageSetSize = 1;
 
     % Define some eye movement parameters related to large saccades
-    calcParams.numSaccades = 1;             % Set this to 1 for only fixational eye movements
-    calcParams.saccadeInterval = 0.050;
-    calcParams.saccadeMu = 100;             % These are in units of cones
-    calcParams.saccadeSigma = 50;
+    calcParams.numSaccades = 3;             % Set this to 1 for only fixational eye movements
+    calcParams.saccadeInterval = 0.150;
+%     calcParams.saccadeMu = 100;             % These are in units of cones
+%     calcParams.saccadeSigma = 50;
     
     % EMPositions represents the number of positions of eye movement to sample.  
     calcParams.numEMPositions = calcParams.numSaccades * calcParams.saccadeInterval / calcParams.coneIntegrationTime;
@@ -118,6 +118,7 @@ for k1 = 1:length(calcIDStrs)
     
     % Whether to use OS code
     calcParams.enableOS = true;
+    calcParams.OSType = 'biophys'; %alternative option is 'linear'
     calcParams.enableOSNoise = false;
     
     %% Convert the images to cached scenes for more analysis

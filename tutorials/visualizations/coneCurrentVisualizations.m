@@ -16,15 +16,17 @@ imageName = 'TestImage0';
 scene = loadSceneData('Neutral_FullImage/Standard', imageName);
 oi = loadOpticalImageData('Neutral_FullImage/Standard', imageName);
 
+sampleTime = 0.00001;
+
 % Create a sensor of the size used in the 2nd order model
 sensor = getDefaultBLIllumDiscrSensor;
 sensor = sensorSetSizeToFOV(sensor, 0.07, [], oiCreate('human'));
 em = emCreate;
-em = emSet(em, 'sample time', 0.001);
+em = emSet(em, 'sample time', sampleTime);
 sensor = sensorSet(sensor, 'eye move', em);
-sensor = sensorSet(sensor, 'time interval', 0.001);
-sensor = sensorSet(sensor, 'integration time', 2);
-sensor = sensorSet(sensor, 'positions', zeros(2000, 2));
+sensor = sensorSet(sensor, 'time interval', sampleTime);
+sensor = sensorSet(sensor, 'integration time', 0.050);
+sensor = sensorSet(sensor, 'positions', zeros(int32(0.75 / sampleTime), 2));
 
 %% Generate an eye movement sequence
 s.n = 5;
@@ -32,7 +34,7 @@ s.mu = 200;
 s.sigma = 50;
 
 % Find bounds from image
-d = size(oi.data.photons);
+d = oiGet(oi, 'size');
 b = [-round(d(1)/2) round(d(1)/2) -round(d(2)/2) round(d(2)/2)];
 
 thePath = getEMPaths(sensor, 1, 'saccades', s, 'bound', b);
