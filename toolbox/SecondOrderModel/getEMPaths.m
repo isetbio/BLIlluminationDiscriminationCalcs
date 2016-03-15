@@ -61,7 +61,7 @@ for ii = 1:numPaths
     % If there are large saccades, they will be used or implemented here.
     if ~isempty(s) || ~isempty(sPath)
         if isempty(sPath)
-            sPath = getSaccades(s.n, s.mu, s.sigma, b);
+            sPath = getSaccades(s.n, b);
         end
         sExpand = zeros(pathSize);
         expansionFactor = pathSize(1)/s.n;
