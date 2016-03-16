@@ -170,47 +170,17 @@ end
 % CHANGE THIS TO THE MEAN OF THE LMS???? or perhaps mask at 0,0
 calcParams.meanStandard = 0;
 
-% Generate a pool of 1000 eye movement paths.  This is because code further
-% down will require knowledge of the bounds of the eye movements.  It seems
-% computationally more sound to use a large number of predetermined paths
-% to simulate random path generation rather than risk the case of a faulty
-% boundary causing an infinite loop.
-
-% if calcParams.numSaccades > 1
-%     s.n = calcParams.numSaccades;
-%     s.mu = calcParams.saccadeMu;
-%     s.sigma = calcParams.saccadeSigma;
-%     if exist(['Path' calcParams.calcIDStr], 'file')
-%         sPath = load(['Path' calcParams.calcIDStr]);
-%         sPath = sPath.sPath;
-%     else
-%         sPath = getSaccades(s.n, s.mu, s.sigma, []);
-%         save(['Path' calcParams.calcIDStr], 'sPath');
-%     end
-%     pathPool = getEMPaths(sensor, 1000, 'sPath', sPath, 'saccades', s);
-% else
-%     pathPool = getEMPaths(sensor, 1000);
-% end
-
+% If saccadic movement is desired, the boundary of possible movement
+% locations will be set to the size of the optical image, allowing for
+% saccadic movement over the whole image.
 if calcParams.numSaccades > 1
     s.n = calcParams.numSaccades;
-%     s.mu = calcParams.saccadeMu;
-%     s.sigma = calcParams.saccadeSigma;
     ss = oiGet(standardPool{1}{2}, 'size');
     bound = [-round(ss(1)/2) round(ss(1)/2) -round(ss(2)/2) round(ss(2)/2)];
 end
 
-% We calculate the LMS by getting the max and min eye positions from
-% every possible path for this trial using the input boundaries.
-
-% pathSize = size(pathPool);
-% maxEM = max(pathPool);
-% maxEM = reshape(maxEM, pathSize(2:3))';
-% minEM = min(pathPool);
-% minEM = reshape(minEM, pathSize(2:3))';
-% LMSpath = [maxEM; minEM];
-% rows = round([-min([LMSpath(:,2); 0]) max([LMSpath(:,2); 0])]);
-% cols = round([max([LMSpath(:,1); 0]) -min([LMSpath(:,1); 0])]);
+% The LMS mask thus is the whole image.  Here we precompute it for the
+% standard image pool.
 rows = [bound(4) bound(4)];
 cols = [bound(2) bound(2)];
 LMSpath = [bound(2) bound(4); bound(1) bound(3)];
@@ -246,16 +216,16 @@ for ii = 1:maxImageIllumNumber
             Kg = calcParams.startKg + KgInterval * (kk - 1);
             correct = 0;
             
-            % Simulate out over calcNumber simulated trials
+            % Simulate out over numTrials simulated trials
             tic
             for tt = 1:numTrials
                 if calcParams.useSameEMPath
-%                     thePaths = repmat(randsample(1000, 1),1,3);
-                      thePaths = getEMPaths(sensor, 3, 'saccades', s, 'bound', bound);
-                      thePaths = repmat(thePaths, [1 1 3]);
+                    % If the same path is to be used for all three images,
+                    % we generate one path and duplicate it three times.
+                    thePaths = getEMPaths(sensor, 1, 'saccades', s, 'bound', bound);
+                    thePaths = repmat(thePaths, [1 1 3]);
                 else
-%                     thePaths = randsample(1000, 3);
-                      thePaths = getEMPaths(sensor, 3, 'saccades', s, 'bound', bound);
+                    thePaths = getEMPaths(sensor, 3, 'saccades', s, 'bound', bound);
                 end
                 
                 % We choose 2 images without replacement from the standard image pool.
@@ -266,9 +236,6 @@ for ii = 1:maxImageIllumNumber
                 testChoice = randsample(calcParams.comparisonImageSetSize, 1);
                 
                 % Set the paths
-%                 standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', pathPool(:,:,thePaths(1)));
-%                 standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', pathPool(:,:,thePaths(2)));
-%                 testComp = sensorSet(testPool{testChoice}{1}, 'positions', pathPool(:,:,thePaths(3)));
                 standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', thePaths(:,:,1));
                 standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', thePaths(:,:,2));
                 testComp = sensorSet(testPool{testChoice}{1}, 'positions', thePaths(:,:,3));
@@ -291,8 +258,6 @@ for ii = 1:maxImageIllumNumber
                 % naming is extremely confusing and should be fixed at some
                 % point.  
                 if calcParams.enableOS
-%                     params.addNoise = calcParams.enableOSNoise;
-%                     params.Compress = false;
                     standardRef = sensorSet(standardRef, 'photons', photonsStandardRef);
                     standardComp = sensorSet(standardComp, 'photons', photonsStandardComp);
                     testComp = sensorSet(testComp, 'photons', photonsTestComp);

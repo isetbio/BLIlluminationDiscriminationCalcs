@@ -49,5 +49,22 @@ for ii = 1:length(locations)
     locations(ii,:) = [locations(ii,1) - xOffset locations(ii,2) - yOffset];
 end
 
+%% Scale location values from scene pos to sensor pos
+% Load the scene and oi for the full image to readjust the sensor size
+scene = loadSceneData('Neutral_FullImage/Standard', 'TestImage0');
+oi = loadOpticalImageData('Neutral_FullImage/Standard', 'TestImage0');
+sensor = sensorCreate('human');
+sensor = sensorSetSizeToFOV(sensor, oiGet(oi, 'fov'), scene, oi);
+
+% Take the ratio of sensor size to scene size and multiply these by
+% locations to get the appropriate sensor location values. Round before
+% returning since only integer index values are accepted. The scene
+% positions are multiplied by the negative size factor because images are
+% flipped when entering eye.
+sizeFactor = sensorGet(sensor, 'size') ./ sceneGet(scene, 'size');
+locations(:,1) = locations(:,1) * -sizeFactor(1);
+locations(:,2) = locations(:,2) * -sizeFactor(2);
+locations = round(locations);
+
 end
 

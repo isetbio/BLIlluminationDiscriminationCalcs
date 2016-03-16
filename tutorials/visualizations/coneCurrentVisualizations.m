@@ -30,14 +30,14 @@ sensor = sensorSet(sensor, 'positions', zeros(int32(0.75 / sampleTime), 2));
 
 %% Generate an eye movement sequence
 s.n = 5;
-s.mu = 200;
-s.sigma = 50;
 
 % Find bounds from image
-d = oiGet(oi, 'size');
+d = sensorGet(sensor, 'size');
+d = round(d * oiGet(oi, 'fov') / sensorGet(sensor, 'fov'));
 b = [-round(d(1)/2) round(d(1)/2) -round(d(2)/2) round(d(2)/2)];
 
-thePath = getEMPaths(sensor, 1, 'saccades', s, 'bound', b);
+thePath = getEMPaths(sensor, 1, 'saccades', s, 'bound', b, 'loc', getLocationsUsedInFirstOrderModel);
+% thePath = getEMPaths(sensor, 1, 'sPath', testL);
 sensor = sensorSet(sensor, 'positions', thePath);
 
 %% Calculate absorptions
