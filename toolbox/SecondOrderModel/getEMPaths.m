@@ -12,18 +12,21 @@ function allPaths = getEMPaths(sensor, numPaths, varargin)
 %
 %  {name-value pairs}
 %    'bound'    - A boundary box for the paths.  If this is set, the paths
-%                 will not exceed to boundary.  The format is [minX maxX minY maxY]
+%                 will not exceed to boundary.  The format is [minX maxX
+%                 minY maxY].
 %
 %    'saccades' - A struct containing information relevant for generating
 %                 saccadic eye movement.  This will used along with the 
 %                 fixational eye movements if specified.
 %       {fields}
 %            n     - The total number of positions (there will be n-1 saccades)
-%            mu    - The mean length of each saccade.
-%            sigma - The standard deviation of the saccades.
 %
 %    'sPath'    - A pre-generated saccadic eye movement path.  This will
 %                 used along with the fixational eye movements if specified.
+% 
+%    'loc'      - A n-by-2 matrix containing n preselected locations as
+%                 saccade targets. This is passed into the getSaccades
+%                 function.
 %
 % 7/27/15  xd  wrote it
 % 8/5/15   xd  added optional sPath parameter
@@ -35,12 +38,14 @@ p = inputParser;
 p.addParameter('bound', []);
 p.addParameter('saccades', []);
 p.addParameter('sPath', []);
+p.addParameter('loc', []);
 
 p.parse(varargin{:});
 
 b = p.Results.bound;
 s = p.Results.saccades;
 sPath = p.Results.sPath;
+loc = p.Results.loc;
 
 %% Get path size and allocate room for the desired number of paths
 pathSize = size(sensorGet(sensor, 'positions'));
@@ -61,11 +66,11 @@ for ii = 1:numPaths
     % If there are large saccades, they will be used or implemented here.
     if ~isempty(s) || ~isempty(sPath)
         if isempty(sPath)
-            sPath = getSaccades(s.n, b);
+            sPath = getSaccades(s.n, b, 'loc', loc);
         end
         sExpand = zeros(pathSize);
-        expansionFactor = pathSize(1)/s.n;
-        for jj = 1:s.n
+        expansionFactor = pathSize(1)/length(sPath);
+        for jj = 1:length(sPath)
             sExpand((jj-1)*expansionFactor+1:expansionFactor*jj,:) = repmat(sPath(jj,:), expansionFactor, 1);
         end
         pos = pos + sExpand;
