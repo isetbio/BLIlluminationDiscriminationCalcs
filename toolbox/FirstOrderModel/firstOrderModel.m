@@ -142,8 +142,8 @@ KgInterval = calcParams.KgInterval;
 % represents the copy number.  For consistency, I believe these should also
 % be zero indexed like the standard are, except that the 0th term will not have a #. 
 % In this case # would start with 1. Code beyond this point will assume these conditions.
-dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-folderPath = fullfile(dataBaseDir, 'OpticalImageData', calcParams.cacheFolderList{2}, folderName);
+analysisDir = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
+folderPath = fullfile(analysisDir, 'OpticalImageData', calcParams.cacheFolderList{2}, folderName);
 data = what(folderPath);
 fileList = data.mat;
 fileList = sort(fileList);
@@ -262,12 +262,12 @@ function results = computeByColor(calcParams, sensor, colorChoice)
 prefix = {'blue' , 'green', 'red', 'yellow'};
 
 %% Point at where the input data lives
-dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+analysisDir = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
 
 %% List where the images will be stored on ColorShare1
 targetFolder = calcParams.cacheFolderList{2};
 
-imageDir = fullfile(dataBaseDir, 'OpticalImageData', targetFolder);
+imageDir = fullfile(analysisDir, 'OpticalImageData', targetFolder);
 contents = dir(imageDir);
 folderList = cell(1,5);
 for ii = 1:length(contents)
@@ -282,8 +282,7 @@ end
 % The list is alphabetical and 'standard' is fourth
 standard = folderList{4};
 folderList = [folderList(1:3) folderList(5)];
-BaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-TargetPath = fullfile(BaseDir, 'SimpleChooserData', calcParams.calcIDStr);
+TargetPath = fullfile(analysisDir, 'SimpleChooserData', calcParams.calcIDStr);
 
 %% Allocate space for the results
 if colorChoice == 0
