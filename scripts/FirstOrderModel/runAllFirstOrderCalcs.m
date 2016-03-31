@@ -24,8 +24,8 @@ myDir = fileparts(fileparts(mfilename('fullpath')));
 pathDir = fullfile(myDir,'..','toolbox','');
 AddToMatlabPathDynamically(pathDir);
 
-%% Make sure preferences are defined
-setPrefsForBLIlluminationDiscriminationCalcs;
+% %% Make sure preferences are defined
+% setPrefsForBLIlluminationDiscriminationCalcs;
 
 %% Set identifiers to run
 calcIDStrs  = {'SOM_SNRMulti'};

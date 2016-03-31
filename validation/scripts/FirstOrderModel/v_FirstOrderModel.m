@@ -16,7 +16,6 @@ close all;
 myDir = fileparts(fileparts(fileparts(mfilename('fullpath'))));
 pathDir = fullfile(myDir,'..','toolbox','');
 AddToMatlabPathDynamically(pathDir);
-setPrefsForBLIlluminationDiscriminationCalcs;
 
 %% Validation
 ieSessionSet('wait bar','off');

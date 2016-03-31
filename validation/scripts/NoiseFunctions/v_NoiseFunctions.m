@@ -34,7 +34,7 @@ photons = sensorGet(sensor, 'photons');
 % Apply the three different noise functions.
 %   noiseShot is found in ISETBIO and uses iePoisson, the Poisson generator found in ISETBIO.
 %   poissrnd is the Poisson generator that comes in MATLAB's Statistics Toolbox. 
-%   approx is a normal approximation to the Poisson.
+%   approx is a Gaussian approximation to the Poisson.
 [~, noiseShotRes] = noiseShot(sensor);
 noiseShotRes = photons + noiseShotRes;
 poissrndRes = poissrnd(photons);

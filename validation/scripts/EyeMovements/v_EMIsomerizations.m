@@ -19,9 +19,6 @@ myDir = fileparts(fileparts(fileparts(fileparts(mfilename('fullpath')))));
 pathDir = fullfile(myDir,'Toolbox','');
 AddToMatlabPathDynamically(pathDir);
 
-%% Set tolerance
-
-
 %% Generate a default sensor
 sensor = getDefaultBLIllumDiscrSensor;
 
