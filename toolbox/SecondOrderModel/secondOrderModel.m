@@ -175,7 +175,7 @@ calcParams.meanStandard = 0;
 % saccadic movement over the whole image.
 if calcParams.numSaccades > 1
     s.n = calcParams.numSaccades;
-    ss = oiGet(standardPool{1}{2}, 'size');
+    ss = oiGet(standardPool{1}{2}, 'size')/ sensorGet(standardPool{1}{1}, 'fov');
     bound = [-round(ss(1)/2) round(ss(1)/2) -round(ss(2)/2) round(ss(2)/2)];
 end
 
@@ -186,7 +186,9 @@ cols = [bound(2) bound(2)];
 LMSpath = [bound(2) bound(4); bound(1) bound(3)];
 for qq = 1:length(standardPool)
     sensorTemp = sensorSet(standardPool{qq}{1}, 'positions', LMSpath);
+    tic
     [standardPool{qq}{3}, standardPool{qq}{4}] = coneAbsorptionsLMS(sensorTemp, standardPool{qq}{2});
+    toc
 end
 
 % Loop through the illumination number
