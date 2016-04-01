@@ -110,7 +110,7 @@ for k1 = 1:length(calcIDStrs)
     
     % Whether to use OS code
     calcParams.enableOS = true;
-    calcParams.OSType = 'biophys'; %alternative option is 'linear'
+    calcParams.OSType = 'biophys'; %alternative option is 'linear' or 'identity'
     calcParams.enableOSNoise = false;
     
     %% Convert the images to cached scenes for more analysis

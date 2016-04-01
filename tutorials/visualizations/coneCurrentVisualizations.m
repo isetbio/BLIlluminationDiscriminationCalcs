@@ -55,3 +55,9 @@ osL = osSet(osL, 'noiseFlag', 1);
 osL = osCompute(osL, sensor);
 
 osLwindow = osWindow(2, 'linear outer segment', 'horizontalLayout', osL, sensor, oi, scene);
+
+% osI = osIdentity();
+% osI = osSet(osI, 'noiseFlag', 1);
+% osI = osCompute(osI, sensor);
+% 
+% osIwindow = osWindow(3, 'identity outer segment', 'horizontalLayout', osI, sensor, oi, scene);
