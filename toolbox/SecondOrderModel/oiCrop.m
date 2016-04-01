@@ -39,6 +39,9 @@ oldFOV = oiGet(oi, 'fov');
 oldDim = size(oldData);
 oldW = oldDim(1);
 
+% The field of view should linearly scale with the dimensions of the area
+% being viewed. Therefore, we scale the old FOV by the new width divided by
+% the old width to get an appropriate FOV for the cropped optical image.
 newFOV = oldFOV * w / oldW;
 
 %% Create cropped oi with newData and newFOV
