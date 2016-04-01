@@ -102,9 +102,13 @@ for k1 = 1:length(calcIDStrs)
     % Whether or not to recreate a new eye movement path for the target and
     % two comparisons. We can also give the location to a matlab data file
     % that contains pre-generated paths for the model to use. If no path
-    % file is desired, set the value to [];
-    calcParams.useSameEMPath = true;
-    calcParams.pathFile = 'samplePathData.mat';
+    % file is desired, set the value to [].  A set of locations can also be
+    % specified, in which the saccades will be randomly chosen from the
+    % provided list.  If this is left empty, the saccades will be randomly
+    % chosen from across the entire optical image.
+    calcParams.useSameEMPath = false;
+    calcParams.pathFile = [];
+    calcParams.EMLoc = [];
     
     % Use sum or individual data
     calcParams.sumEM = true;
@@ -112,7 +116,7 @@ for k1 = 1:length(calcIDStrs)
     
     % Whether to use OS code
     calcParams.enableOS = true;
-    calcParams.OSType = 'biophys'; %alternative option is 'linear' or 'identity'
+    calcParams.OSType = 'biophys'; % alternative option is 'linear' or 'identity'
     calcParams.enableOSNoise = false;
     
     %% Convert the images to cached scenes for more analysis
