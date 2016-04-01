@@ -16,17 +16,22 @@ function allPaths = getEMPaths(sensor, numPaths, varargin)
 %                 minY maxY].
 %
 %    'saccades' - A struct containing information relevant for generating
-%                 saccadic eye movement.  This will used along with the 
+%                 saccadic eye movement.  This will used along with the
 %                 fixational eye movements if specified.
 %       {fields}
 %            n     - The total number of positions (there will be n-1 saccades)
 %
 %    'sPath'    - A pre-generated saccadic eye movement path.  This will
 %                 used along with the fixational eye movements if specified.
-% 
+%
 %    'loc'      - A n-by-2 matrix containing n preselected locations as
 %                 saccade targets. This is passed into the getSaccades
 %                 function.
+%
+%    'fullPath' - A full path matrix with each (x,y) represented as a row
+%                 entry. If this is set as an input, this function will
+%                 only generate a set of fixation eye movements and add it
+%                 to the fullPath variable.
 %
 % 7/27/15  xd  wrote it
 % 8/5/15   xd  added optional sPath parameter
@@ -39,6 +44,7 @@ p.addParameter('bound', []);
 p.addParameter('saccades', []);
 p.addParameter('sPath', []);
 p.addParameter('loc', []);
+p.addParameter('fullPath', []);
 
 p.parse(varargin{:});
 
@@ -46,6 +52,7 @@ b = p.Results.bound;
 s = p.Results.saccades;
 sPath = p.Results.sPath;
 loc = p.Results.loc;
+fullPath = p.Results.fullPath;
 
 %% Get path size and allocate room for the desired number of paths
 pathSize = size(sensorGet(sensor, 'positions'));
@@ -53,9 +60,11 @@ allPaths = zeros([pathSize numPaths]);
 
 % if b is not specified as a parameter, use the size of the sensor as the
 % boundary
+ss = sensorGet(sensor, 'size');
 if isempty(b)
-    ss = sensorGet(sensor, 'size');
     b = [round(-ss(1)/2) round(ss(1)/2) round(-ss(2)/2) round(ss(2)/2)];
+else
+    b = [b(1) + ss(1), b(2) - ss(1), b(3) + ss(2), b(4) - ss(2)];
 end
 
 %% Calculate the paths based on the input parameters
@@ -64,19 +73,34 @@ for ii = 1:numPaths
     pos = sensorGet(sensor, 'positions');
     
     % If there are large saccades, they will be used or implemented here.
-    if ~isempty(s) || ~isempty(sPath)
-        if isempty(sPath)
-            sPath = getSaccades(s.n, b, 'loc', loc);
+    if isempty(fullPath)
+        if ~isempty(s) || ~isempty(sPath)
+            if isempty(sPath)
+                sPath = getSaccades(s.n, b, 'loc', loc);
+            end
+            sExpand = zeros(pathSize);
+            expansionFactor = pathSize(1)/length(sPath);
+            for jj = 1:length(sPath)
+                sExpand((jj-1)*expansionFactor+1:expansionFactor*jj,:) = repmat(sPath(jj,:), expansionFactor, 1);
+            end
+            pos = pos + sExpand;
         end
-        sExpand = zeros(pathSize);
-        expansionFactor = pathSize(1)/length(sPath);
-        for jj = 1:length(sPath)
-            sExpand((jj-1)*expansionFactor+1:expansionFactor*jj,:) = repmat(sPath(jj,:), expansionFactor, 1);
-        end
-        pos = pos + sExpand;
+    else
+        pos = pos + fullPath;
     end
-    
     allPaths(:,:,ii) = pos;
     %     plot(allPaths(:,1,ii), allPaths(:,2,ii));
+end
+
+%% Adjust the final path
+% Since we do not check the path locations after adding the fixational eye
+% movements, it is possible that a few positions are actually out of the
+% bounding area.  We fix this by simply setting any positions outside the
+% bounding area equal to the extrema of the bounds. [minX maxX minY maxY]
+for ii = 1:numPaths
+    allPaths(allPaths(:,1,ii) > b(2),1,ii) = b(2);
+    allPaths(allPaths(:,1,ii) < b(1),1,ii) = b(1);
+    allPaths(allPaths(:,2,ii) > b(4),1,ii) = b(4);
+    allPaths(allPaths(:,2,ii) < b(3),1,ii) = b(3);
 end
 end

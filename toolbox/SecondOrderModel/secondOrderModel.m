@@ -158,16 +158,11 @@ for ii = 1:calcParams.targetImageSetSize
     standardPool{ii} = {sensorStandard; oi; -1; -1};
 end
 
-% % Compute the mean of the standardPool isomerizations.  This will serve as
-% % the standard deviation of an optional Gaussian noise factor Kg.
-% photonCellArray = cell(1, length(standardPool));
-% for ii = 1:length(photonCellArray)
-%     photonCellArray{ii} = sensorGet(standardPool{ii}, 'photons');
-% end
-% photonCellArray = cellfun(@(x)mean2(x),photonCellArray, 'UniformOutput', 0);
-% calcParams.meanStandard = mean(cat(1,photonCellArray{:}));
-%
-% CHANGE THIS TO THE MEAN OF THE LMS???? or perhaps mask at 0,0
+% Normally, the mean isomerizations in the stardard images are calculated
+% to in case some form of Gaussian noise is desired.  However, it is
+% unclear how this should be approached in the case where the data is a
+% time series. It is left at 0 for now, meaning this functionality does not
+% exist of the second order model.
 calcParams.meanStandard = 0;
 
 % If saccadic movement is desired, the boundary of possible movement
@@ -175,7 +170,8 @@ calcParams.meanStandard = 0;
 % saccadic movement over the whole image.
 if calcParams.numSaccades > 1
     s.n = calcParams.numSaccades;
-    ss = oiGet(standardPool{1}{2}, 'size')/ sensorGet(standardPool{1}{1}, 'fov');
+    resizedSensor = sensorSetSizeToFOV(standardPool{1}{1}, oiGet(standardPool{1}{2}, 'fov'), [], standardPool{1}{2});
+    ss = sensorGet(resizedSensor, 'size');
     bound = [-round(ss(1)/2) round(ss(1)/2) -round(ss(2)/2) round(ss(2)/2)];
 end
 
@@ -186,10 +182,13 @@ cols = [bound(2) bound(2)];
 LMSpath = [bound(2) bound(4); bound(1) bound(3)];
 for qq = 1:length(standardPool)
     sensorTemp = sensorSet(standardPool{qq}{1}, 'positions', LMSpath);
-    tic
     [standardPool{qq}{3}, standardPool{qq}{4}] = coneAbsorptionsLMS(sensorTemp, standardPool{qq}{2});
-    toc
 end
+
+% If there is existing eye movement data, we will preload it here. The data
+% should be in the format of a 3D matrix, with the third dimension
+% representing illumination level.
+EMdata = load(fullfile(analysisDir, 'EMData', calcParams.cacheFolderList{2}, [folderName 'EM.mat']));
 
 % Loop through the illumination number
 for ii = 1:maxImageIllumNumber
@@ -238,22 +237,24 @@ for ii = 1:maxImageIllumNumber
                 testChoice = randsample(calcParams.comparisonImageSetSize, 1);
                 
                 % Set the paths
+                
                 standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', thePaths(:,:,1));
                 standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', thePaths(:,:,2));
                 testComp = sensorSet(testPool{testChoice}{1}, 'positions', thePaths(:,:,3));
-                
+
+                try
                 % Get absorptions
                 standardRef = coneAbsorptionsApplyPath(standardRef, standardPool{standardChoice(1)}{3}, standardPool{standardChoice(1)}{4}, rows, cols);
                 standardComp = coneAbsorptionsApplyPath(standardComp, standardPool{standardChoice(2)}{3}, standardPool{standardChoice(2)}{4}, rows, cols);
                 testComp = coneAbsorptionsApplyPath(testComp, testPool{testChoice}{2}, testPool{testChoice}{3}, rows, cols);
-
-                % Get inital noisy ref image
+                catch 
+                    disp('Oh no!');
+                end
+                
+                % Get noisy photon images. We will apply the desired
+                % combination of Poisson and/or Gaussian noise.
                 photonsStandardRef = getNoisySensorImage(calcParams,standardRef,Kp,Kg);
-                
-                % Get noisy version of standard image
                 photonsStandardComp = getNoisySensorImage(calcParams,standardComp,Kp,Kg);
-                
-                % Get noisy version of test image
                 photonsTestComp = getNoisySensorImage(calcParams,testComp,Kp,Kg);
                 
                 % This is in case we want to use the OS code.  Variable
