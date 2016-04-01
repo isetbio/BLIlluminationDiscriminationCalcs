@@ -188,7 +188,7 @@ end
 % If there is existing eye movement data, we will preload it here. The data
 % should be in the format of a 3D matrix, with the third dimension
 % representing illumination level.
-EMdata = load(fullfile(analysisDir, 'EMData', calcParams.cacheFolderList{2}, [folderName 'EM.mat']));
+% EMdata = load(fullfile(analysisDir, 'EMData', calcParams.cacheFolderList{2}, [folderName 'EM.mat']));
 
 % Loop through the illumination number
 for ii = 1:maxImageIllumNumber

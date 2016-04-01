@@ -96,7 +96,7 @@ end
 % Since we do not check the path locations after adding the fixational eye
 % movements, it is possible that a few positions are actually out of the
 % bounding area.  We fix this by simply setting any positions outside the
-% bounding area equal to the extrema of the bounds. [minX maxX minY maxY]
+% bounding area equal to the extrema of the bounds. 
 for ii = 1:numPaths
     allPaths(allPaths(:,1,ii) > b(2),1,ii) = b(2);
     allPaths(allPaths(:,1,ii) < b(1),1,ii) = b(1);
