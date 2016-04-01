@@ -90,6 +90,8 @@ for ii = 1:numPaths
     end
     allPaths(:,:,ii) = pos;
     %     plot(allPaths(:,1,ii), allPaths(:,2,ii));
+    
+    sPath = []; % Reset this so that you actually get new paths
 end
 
 %% Adjust the final path
