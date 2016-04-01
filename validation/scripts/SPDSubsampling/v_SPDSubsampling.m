@@ -15,7 +15,7 @@ function ValidationFunction(runTimeParams)
 close all
 
 % Load the imageData and generate the calibrationData object
-calStructOBJ = loadCalibrationData('StereoLCDLeft');
+calStructOBJ = loadCalibrationData('StereoLCDBLIllumDiscrim');
 calStructOBJ.cal.describe;
 
 % Retrieve the display primaries SPD data from the calibration
