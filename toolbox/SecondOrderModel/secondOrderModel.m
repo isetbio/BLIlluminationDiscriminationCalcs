@@ -237,41 +237,37 @@ for ii = 1:maxImageIllumNumber
                 testChoice = randsample(calcParams.comparisonImageSetSize, 1);
                 
                 % Set the paths
-                
                 standardRef = sensorSet(standardPool{standardChoice(1)}{1}, 'positions', thePaths(:,:,1));
                 standardComp = sensorSet(standardPool{standardChoice(2)}{1}, 'positions', thePaths(:,:,2));
                 testComp = sensorSet(testPool{testChoice}{1}, 'positions', thePaths(:,:,3));
 
-                try
                 % Get absorptions
                 standardRef = coneAbsorptionsApplyPath(standardRef, standardPool{standardChoice(1)}{3}, standardPool{standardChoice(1)}{4}, rows, cols);
                 standardComp = coneAbsorptionsApplyPath(standardComp, standardPool{standardChoice(2)}{3}, standardPool{standardChoice(2)}{4}, rows, cols);
                 testComp = coneAbsorptionsApplyPath(testComp, testPool{testChoice}{2}, testPool{testChoice}{3}, rows, cols);
-                catch 
-                    disp('Oh no!');
-                end
                 
                 % Get noisy photon images. We will apply the desired
                 % combination of Poisson and/or Gaussian noise.
-                photonsStandardRef = getNoisySensorImage(calcParams,standardRef,Kp,Kg);
-                photonsStandardComp = getNoisySensorImage(calcParams,standardComp,Kp,Kg);
-                photonsTestComp = getNoisySensorImage(calcParams,testComp,Kp,Kg);
+                dataStandardRef = getNoisySensorImage(calcParams,standardRef,Kp,Kg);
+                dataStandardComp = getNoisySensorImage(calcParams,standardComp,Kp,Kg);
+                dataTestComp = getNoisySensorImage(calcParams,testComp,Kp,Kg);
                 
-                % This is in case we want to use the OS code.  Variable
-                % naming is extremely confusing and should be fixed at some
-                % point.  
+                % This is in case we want to use the OS code. The type of
+                % OS used is specified in the calcParams. The cone current
+                % response replaces the isomerization data.= for further
+                % calculations.
                 if calcParams.enableOS
-                    standardRef = sensorSet(standardRef, 'photons', photonsStandardRef);
-                    standardComp = sensorSet(standardComp, 'photons', photonsStandardComp);
-                    testComp = sensorSet(testComp, 'photons', photonsTestComp);
+                    standardRef = sensorSet(standardRef, 'photons', dataStandardRef);
+                    standardComp = sensorSet(standardComp, 'photons', dataStandardComp);
+                    testComp = sensorSet(testComp, 'photons', dataTestComp);
                     os = osCreate(calcParams.OSType);
                     os = osSet(os, 'noiseFlag', calcParams.enableOSNoise);
                     os1 = osCompute(os, standardRef);
-                    photonsStandardRef = os1.coneCurrentSignal;
+                    dataStandardRef = os1.coneCurrentSignal;
                     os2 = osCompute(os,standardComp);
-                    photonsStandardComp = os2.coneCurrentSignal;
+                    dataStandardComp = os2.coneCurrentSignal;
                     os3 = osCompute(os,testComp);
-                    photonsTestComp = os3.coneCurrentSignal;
+                    dataTestComp = os3.coneCurrentSignal;
                 end
                 
                 % We make sure that the summing interval divides evenly
@@ -283,17 +279,17 @@ for ii = 1:maxImageIllumNumber
                         if rem(100, 1)
                             error('sumEMInterval does not divide total integration time evenly')
                         end
-                        dS = size(photonsStandardComp);
-                        photonsStandardRef = sum(reshape(photonsStandardRef, dS(1), dS(2), samples, []), 4);
-                        photonsStandardComp = sum(reshape(photonsStandardComp, dS(1), dS(2), samples, []), 4);
-                        photonsTestComp = sum(reshape(photonsTestComp, dS(1), dS(2), samples, []), 4);
+                        dS = size(dataStandardComp);
+                        dataStandardRef = sum(reshape(dataStandardRef, dS(1), dS(2), samples, []), 4);
+                        dataStandardComp = sum(reshape(dataStandardComp, dS(1), dS(2), samples, []), 4);
+                        dataTestComp = sum(reshape(dataTestComp, dS(1), dS(2), samples, []), 4);
                     end
                 end
                 
                 % Calculate vector distance from the test image and
                 % standard image to the reference image
-                distToStandard = norm(photonsStandardRef(:)-photonsStandardComp(:));
-                distToTest = norm(photonsStandardRef(:)-photonsTestComp(:));
+                distToStandard = norm(dataStandardRef(:)-dataStandardComp(:));
+                distToTest = norm(dataStandardRef(:)-dataTestComp(:));
                 
                 % Decide if the model was correct on this trial
                 if (distToStandard < distToTest)
