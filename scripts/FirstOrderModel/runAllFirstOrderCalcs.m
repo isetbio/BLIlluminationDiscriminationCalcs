@@ -19,14 +19,6 @@ function runAllFirstOrderCalcs
 %% Clear and initialize
 close all; ieInit;
 
-%% Get our project toolbox on the path
-myDir = fileparts(fileparts(mfilename('fullpath')));
-pathDir = fullfile(myDir,'..','toolbox','');
-AddToMatlabPathDynamically(pathDir);
-
-% %% Make sure preferences are defined
-% setPrefsForBLIlluminationDiscriminationCalcs;
-
 %% Set identifiers to run
 calcIDStrs  = {'SOM_SNRMulti'};
     
@@ -49,7 +41,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.CACHE_OIS = false;
     calcParams.forceOICompute = false;    % Will overwrite any existing data.
     
-    calcParams.RUN_MODEL = false;
+    calcParams.RUN_MODEL = true;
     calcParams.MODEL_ORDER = 1; 
     calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
     calcParams.overWriteFlag = 1;        % Whether or not to overwrite existing data.
