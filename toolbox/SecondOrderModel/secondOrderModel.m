@@ -188,7 +188,12 @@ end
 % If there is existing eye movement data, we will preload it here. The data
 % should be in the format of a 3D matrix, with the third dimension
 % representing illumination level.
-% EMdata = load(fullfile(analysisDir, 'EMData', calcParams.cacheFolderList{2}, [folderName 'EM.mat']));
+if (~isempty(calcParams.pathFile))
+    EMdata = load(calcParams.pathFile);
+    EMdata = EMdata.EMdata;
+else
+    EMdata = [];
+end
 
 % Loop through the illumination number
 for ii = 1:maxImageIllumNumber
@@ -220,15 +225,31 @@ for ii = 1:maxImageIllumNumber
             % Simulate out over numTrials simulated trials
             tic
             for tt = 1:numTrials
-                if calcParams.useSameEMPath
-                    % If the same path is to be used for all three images,
-                    % we generate one path and duplicate it three times.
-                    thePaths = getEMPaths(sensor, 1, 'saccades', s, 'bound', bound);
-                    thePaths = repmat(thePaths, [1 1 3]);
+                % Load or generate eye movement path based on whether there
+                % is a path file loaded
+                if ~isempty(EMdata)
+                    sizeOfPaths = size(EMdata);
+                    if sizeOfPaths(2) == 2
+                        thePaths = getEMPaths(sensor, 1, 'fullPath', EMdata(:,:,ii));
+                        thePaths = repmat(thePaths, [1 1 3]);
+                    elseif sizeOfPaths(2) == 6
+                        thePaths(:,:,1) = getEMPaths(sensor, 1, 'fullPath', EMdata(:,1:2,ii));
+                        thePaths(:,:,2) = getEMPaths(sensor, 1, 'fullPath', EMdata(:,3:4,ii));
+                        thePaths(:,:,3) = getEMPaths(sensor, 1, 'fullPath', EMdata(:,5:6,ii));
+                    else
+                        error('Invalid sized path file given!');
+                    end
                 else
-                    thePaths = getEMPaths(sensor, 3, 'saccades', s, 'bound', bound);
+                    if calcParams.useSameEMPath
+                        % If the same path is to be used for all three images,
+                        % we generate one path and duplicate it three times.
+                        thePaths = getEMPaths(sensor, 1, 'saccades', s, 'bound', bound);
+                        thePaths = repmat(thePaths, [1 1 3]);
+                    else
+                        % Need to have the option to load 3 pre-generated paths
+                        thePaths = getEMPaths(sensor, 3, 'saccades', s, 'bound', bound);
+                    end
                 end
-                
                 % We choose 2 images without replacement from the standard image pool.
                 % This is in order to account for the pixel noise present from the renderer.
                 standardChoice = randsample(calcParams.targetImageSetSize, 2);

@@ -88,8 +88,6 @@ for k1 = 1:length(calcIDStrs)
     % Define some eye movement parameters related to large saccades
     calcParams.numSaccades = 3;             % Set this to 1 for only fixational eye movements
     calcParams.saccadeInterval = 0.150;
-%     calcParams.saccadeMu = 100;             % These are in units of cones
-%     calcParams.saccadeSigma = 50;
     
     % EMPositions represents the number of positions of eye movement to sample.  
     calcParams.numEMPositions = calcParams.numSaccades * calcParams.saccadeInterval / calcParams.coneIntegrationTime;
@@ -101,8 +99,12 @@ for k1 = 1:length(calcIDStrs)
     calcParams.enableDrift = true;
     calcParams.enableMSaccades = true;
     
-    % Whether or not to recreate a new eye movement path for the target and two comparisons
+    % Whether or not to recreate a new eye movement path for the target and
+    % two comparisons. We can also give the location to a matlab data file
+    % that contains pre-generated paths for the model to use. If no path
+    % file is desired, set the value to [];
     calcParams.useSameEMPath = true;
+    calcParams.pathFile = 'samplePathData.mat';
     
     % Use sum or individual data
     calcParams.sumEM = true;
