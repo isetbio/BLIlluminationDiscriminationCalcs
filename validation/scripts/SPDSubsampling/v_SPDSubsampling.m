@@ -223,8 +223,9 @@ end
 end
 
 function calStructOBJ = loadCalibrationData(calFile)
+dir = fileparts(mfilename('fullpath'));
 % Load the calibration data
-cal = LoadCalFile(calFile, [], []);
+cal = LoadCalFile(calFile, [], dir);
 % generate calStructOBJ to access the calibration data
 calStructOBJ = ObjectToHandleCalOrCalStruct(cal);
 clear 'cal'
