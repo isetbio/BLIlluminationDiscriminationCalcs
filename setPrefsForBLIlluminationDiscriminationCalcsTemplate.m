@@ -14,14 +14,20 @@ switch (sysInfo.localHostName)
     case 'eagleray'
         % DHB's desktop
         sharedRootDir = fullfile(filesep,'Volumes','Users1','Dropbox (Aguirre-Brainard Lab)');
-        
+        clonedWikiDir = '/Users/Shared/GitWebSites/BLIlluminationDiscriminationCalcs.wiki';
+        clonedGhPagesLocation = '/Users/Shared/GitWebSites/BLIlluminationDiscriminationCalcs';
+
     otherwise
         % Some unspecified machine, try user specific customization
         switch(sysInfo.userShortName)
             case 'xiaomaoding'
                 sharedRootDir = fullfile(filesep, 'Users', 'xiaomaoding', 'Dropbox (Aguirre-Brainard Lab)');
+                clonedWikiDir = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcsWiki/BLIlluminationDiscriminationCalcs.wiki';
+                clonedGhPagesLocation = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscrimCalcsGhPages/BLIlluminationDiscriminationCalcs';
             otherwise
                 sharedRootDir = fullfile(filesep, 'Users', sysInfo.userShortName, 'Dropbox (Aguirre-Brainard Lab)');
+                clonedWikiDir = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcsWiki/BLIlluminationDiscriminationCalcs.wiki';
+                clonedGhPagesLocation = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscrimCalcsGhPages/BLIlluminationDiscriminationCalcs';
         end
 end
 
@@ -31,8 +37,6 @@ dataBaseDir = fullfile(sharedRootDir, 'IBIO_data', 'BLIlluminationDiscrimination
 
 % UnitTestToolbox locations
 validationRootDir = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcs/validation';
-clonedWikiDir = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcsWiki/BLIlluminationDiscriminationCalcs.wiki';
-clonedGhPagesLocation = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscrimCalcsGhPages/BLIlluminationDiscriminationCalcs';
 alternateFullValidationDataDir = fullfile(dataBaseDir,'Validation','data','full');
 
 % If the preferences group already exists, remove it
