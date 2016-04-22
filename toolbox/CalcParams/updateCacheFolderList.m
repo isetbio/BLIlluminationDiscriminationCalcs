@@ -203,7 +203,8 @@ switch (calcParams.calcIDStr)
         calcParams.cacheFolderList = {'NM2', 'Neutral_NM2_S2_15'};
     case {'FullImageTest' 'FullImageTest2' 'FullImageTest3' 'FullImageTest4'...
             'FullImageTest5' 'OS3Step' 'OS3StepConeAbsorb' 'OSWithNoise'...
-            'SOM_linear' 'SOM_linear2' 'OS3StepConeAbsorb2'}
+            'SOM_linear' 'SOM_linear2' 'OS3StepConeAbsorb2' 'StaticFullImage'...
+            'StaticFullImageResizedOI' 'StaticFullImageResizedOI2'}
         calcParams.cacheFolderList = {'Neutral', 'Neutral_FullImage'};
     otherwise
         error('Unknown calcIDStr set');

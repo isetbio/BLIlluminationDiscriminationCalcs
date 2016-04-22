@@ -20,7 +20,7 @@ function runAllFirstOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs  = {'SOM_SNRMulti'};
+calcIDStrs  = {'StaticFullImageResizedOI2'};
     
 %% Parameters of the calculation
 %
@@ -64,11 +64,11 @@ for k1 = 1:length(calcIDStrs)
         
     % Parameters for creating the sensor
     calcParams.coneIntegrationTime = 0.050;
-    calcParams.sensorFOV = 0.83;             % Visual angle defining the size of the sensor
+    calcParams.sensorFOV = 0.4;             % Visual angle defining the size of the sensor
     
     % Specify the number of trials for each combination of Kp Kg as well as
     % the highest illumination step (max 50) to go up to.
-    calcParams.numTrials = 500;
+    calcParams.numTrials = 100;
     calcParams.maxIllumTarget = 50;
     
     % Kp represents the scale factor for the Poisson noise.  This is the
