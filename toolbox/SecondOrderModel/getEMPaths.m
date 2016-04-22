@@ -64,7 +64,7 @@ ss = sensorGet(sensor, 'size');
 if isempty(b)
     b = [round(-ss(1)/2) round(ss(1)/2) round(-ss(2)/2) round(ss(2)/2)];
 else
-    b = [b(1) + ss(1), b(2) - ss(1), b(3) + ss(2), b(4) - ss(2)];
+    b = [b(1) + 2*ss(1), b(2) - 2*ss(1), b(3) + 2*ss(2), b(4) - 2*ss(2)];
 end
 
 %% Calculate the paths based on the input parameters

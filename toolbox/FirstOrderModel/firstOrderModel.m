@@ -65,7 +65,7 @@ if calcParams.targetImageSetSize < 2
 end
 
 %% Check if destination folder exists and has files
-baseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+baseDir   = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
 targetPath = fullfile(baseDir, 'SimpleChooserData', calcParams.calcIDStr);
 
 % Make a new directory if target is non-existant.  If it does not exist,
@@ -162,7 +162,10 @@ standardPool = cell(1, calcParams.targetImageSetSize);
 for ii = 1:calcParams.targetImageSetSize
     opticalImageName = ['TestImage' int2str(ii - 1)];
     oi = loadOpticalImageData(standardPath, opticalImageName);
+    
     sensorStandard = sensorSet(sensor, 'noise flag', 0);
+    oi = resizeOI(oi, sensorGet(sensorStandard, 'fov'));
+%     sensorStandard = sensorSet(sensorStandard, 'nSamplesPerPixel', 5);
     sensorStandard = coneAbsorptions(sensorStandard, oi);
     standardPool{ii} = sensorStandard;
 end
@@ -191,6 +194,7 @@ for ii = 1:maxImageIllumNumber
         end
         oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' folderName], imageName);
         sensorTest = sensorSet(sensor, 'noise flag', 0);
+        oiTest = resizeOI(oiTest, sensorGet(sensorTest, 'fov'));
         sensorTest = coneAbsorptions(sensorTest, oiTest);
         testPool{oo} = sensorTest;
     end

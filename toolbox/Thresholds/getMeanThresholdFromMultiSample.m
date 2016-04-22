@@ -13,7 +13,7 @@ function [psycho, calcParams] = getMeanThresholdFromMultiSample(calcIDStrList)
 % 7/3/15  xd  wrote it
 
 %% Get directory path
-dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
 
 %% Load thresholds for each calcIDStr
 psychoData = cell(length(calcIDStrList),1);
