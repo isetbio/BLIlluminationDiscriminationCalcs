@@ -16,6 +16,7 @@ switch (sysInfo.localHostName)
         sharedRootDir = fullfile(filesep,'Volumes','Users1','Dropbox (Aguirre-Brainard Lab)');
         clonedWikiDir = '/Users/Shared/GitWebSites/BLIlluminationDiscriminationCalcs.wiki';
         clonedGhPagesLocation = '/Users/Shared/GitWebSites/BLIlluminationDiscriminationCalcs';
+        validationRootDir = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcs/validation';
 
     otherwise
         % Some unspecified machine, try user specific customization
@@ -24,10 +25,12 @@ switch (sysInfo.localHostName)
                 sharedRootDir = fullfile(filesep, 'Users', 'xiaomaoding', 'Dropbox (Aguirre-Brainard Lab)');
                 clonedWikiDir = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcsWiki/BLIlluminationDiscriminationCalcs.wiki';
                 clonedGhPagesLocation = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscrimCalcsGhPages/BLIlluminationDiscriminationCalcs';
+                validationRootDir = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcs/validation';
             otherwise
                 sharedRootDir = fullfile(filesep, 'Users', sysInfo.userShortName, 'Dropbox (Aguirre-Brainard Lab)');
                 clonedWikiDir = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcsWiki/BLIlluminationDiscriminationCalcs.wiki';
                 clonedGhPagesLocation = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscrimCalcsGhPages/BLIlluminationDiscriminationCalcs';
+                validationRootDir = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcs/validation';
         end
 end
 
@@ -36,7 +39,6 @@ analysisBaseDir = fullfile(sharedRootDir, 'IBIO_analysis', 'BLIlluminationDiscri
 dataBaseDir = fullfile(sharedRootDir, 'IBIO_data', 'BLIlluminationDiscrimination');
 
 % UnitTestToolbox locations
-validationRootDir = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcs/validation';
 alternateFullValidationDataDir = fullfile(dataBaseDir,'Validation','data','full');
 
 % If the preferences group already exists, remove it
