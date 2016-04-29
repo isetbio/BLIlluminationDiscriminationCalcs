@@ -60,6 +60,11 @@ switch p.Results.kType
         usable.green = find(psychoData.uGreenTotal <= KpIndex, 1);
         usable.yellow = find(psychoData.uYellowTotal <= KpIndex, 1);
         
+        usable.blue = psychoData.uBlueTotal{1};
+        usable.red = psychoData.uRedTotal{1};
+        usable.green = psychoData.uGreenTotal{1};
+        usable.yellow = psychoData.uYellowTotal{1};
+        
         % Pad threshold vectors with zeros based on uColorTotal
         psychoData.thresholdBlueTotal = cellfun(@(X,U) [zeros(U-1,1); X],psychoData.thresholdBlueTotal, num2cell(psychoData.uBlueTotal), 'Uniform', false);
         psychoData.thresholdRedTotal = cellfun(@(X,U) [zeros(U-1,1); X],psychoData.thresholdRedTotal, num2cell(psychoData.uRedTotal), 'Uniform', false);
@@ -90,7 +95,11 @@ switch p.Results.kType
         usable.red = psychoData.uRedTotal(KgIndex);
         usable.green = psychoData.uGreenTotal(KgIndex);
         usable.yellow = psychoData.uYellowTotal(KgIndex);
-        
+       
+        usable.blue = psychoData.uBlueTotal{1};
+        usable.red = psychoData.uRedTotal{1};
+        usable.green = psychoData.uGreenTotal{1};
+        usable.yellow = psychoData.uYellowTotal{1};        
         % Create the threshold vectors based on the newly calculated usable
         threshold.blue = psychoData.thresholdBlueTotal{KgIndex};
         threshold.red = psychoData.thresholdRedTotal{KgIndex};

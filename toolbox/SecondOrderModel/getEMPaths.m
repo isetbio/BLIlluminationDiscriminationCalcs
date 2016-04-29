@@ -73,20 +73,22 @@ for ii = 1:numPaths
     pos = sensorGet(sensor, 'positions');
     
     % If there are large saccades, they will be used or implemented here.
-    if isempty(fullPath)
-        if ~isempty(s) || ~isempty(sPath)
-            if isempty(sPath)
-                sPath = getSaccades(s.n, b, 'loc', loc);
+    if s.n > 1
+        if isempty(fullPath)
+            if ~isempty(s) || ~isempty(sPath)
+                if isempty(sPath)
+                    sPath = getSaccades(s.n, b, 'loc', loc);
+                end
+                sExpand = zeros(pathSize);
+                expansionFactor = pathSize(1)/length(sPath);
+                for jj = 1:size(sPath,1)
+                    sExpand((jj-1)*expansionFactor+1:expansionFactor*jj,:) = repmat(sPath(jj,:), expansionFactor, 1);
+                end
+                pos = pos + sExpand;
             end
-            sExpand = zeros(pathSize);
-            expansionFactor = pathSize(1)/length(sPath);
-            for jj = 1:length(sPath)
-                sExpand((jj-1)*expansionFactor+1:expansionFactor*jj,:) = repmat(sPath(jj,:), expansionFactor, 1);
-            end
-            pos = pos + sExpand;
+        else
+            pos = pos + fullPath;
         end
-    else
-        pos = pos + fullPath;
     end
     allPaths(:,:,ii) = pos;
     %     plot(allPaths(:,1,ii), allPaths(:,2,ii));
@@ -98,7 +100,7 @@ end
 % Since we do not check the path locations after adding the fixational eye
 % movements, it is possible that a few positions are actually out of the
 % bounding area.  We fix this by simply setting any positions outside the
-% bounding area equal to the extrema of the bounds. 
+% bounding area equal to the extrema of the bounds.
 for ii = 1:numPaths
     allPaths(allPaths(:,1,ii) > b(2),1,ii) = b(2);
     allPaths(allPaths(:,1,ii) < b(1),1,ii) = b(1);

@@ -28,10 +28,11 @@ p.addOptional('error', []);
 parse(p, varargin{:});
 
 %% Define x-axis value range
-numOfData = size(threshold);
-dataStart = min(kValsFine(:)) + (usableData - 1) * kInterval;
-dataEnd = dataStart + (numOfData(1) - 1) * kInterval;
-kVals = dataStart:kInterval:dataEnd;
+% numOfData = size(threshold);
+% dataStart = min(kValsFine(:)) + (usableData - 1) * kInterval;
+% dataEnd = dataStart + (numOfData(1) - 1) * kInterval;
+% kVals = dataStart:kInterval:dataEnd;
+kVals = usableData;
 
 %% Plot threshold points
 if isempty(p.Results.error)

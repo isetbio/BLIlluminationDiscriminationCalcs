@@ -69,17 +69,17 @@ pGreen = cell(calcParams.numKgSamples, 1);
 pRed = cell(calcParams.numKgSamples, 1);
 pYellow = cell(calcParams.numKgSamples, 1);
 
-uBlue = ones(calcParams.numKgSamples, 1);
-uGreen = ones(calcParams.numKgSamples, 1);
-uRed = ones(calcParams.numKgSamples, 1);
-uYellow = ones(calcParams.numKgSamples, 1);
+uBlue = cell(calcParams.numKgSamples, 1);
+uGreen = cell(calcParams.numKgSamples, 1);
+uRed = cell(calcParams.numKgSamples, 1);
+uYellow = cell(calcParams.numKgSamples, 1);
 
 % For each illumination color, we find a vector of thresholds at which the success rate is 0.709
 for ii = 1:calcParams.numKgSamples
-    [tBlue{ii}, pBlue{ii}, uBlue(ii)] = fitToData(calcParams, blueMatrix(:,:,ii), paramsValueEst, 'b', displayIndividualThreshold);
-    [tRed{ii}, pRed{ii}, uRed(ii)] = fitToData(calcParams, redMatrix(:,:,ii), paramsValueEst, 'r', displayIndividualThreshold);
-    [tGreen{ii}, pGreen{ii}, uGreen(ii)] = fitToData(calcParams, greenMatrix(:,:,ii), paramsValueEst, 'g', displayIndividualThreshold);
-    [tYellow{ii}, pYellow{ii}, uYellow(ii)] = fitToData(calcParams, yellowMatrix(:,:,ii), paramsValueEst, 'y', displayIndividualThreshold);
+    [tBlue{ii}, pBlue{ii}, uBlue{ii}] = fitToData(calcParams, blueMatrix(:,:,ii), paramsValueEst, 'b', displayIndividualThreshold);
+    [tRed{ii}, pRed{ii}, uRed{ii}] = fitToData(calcParams, redMatrix(:,:,ii), paramsValueEst, 'r', displayIndividualThreshold);
+    [tGreen{ii}, pGreen{ii}, uGreen{ii}] = fitToData(calcParams, greenMatrix(:,:,ii), paramsValueEst, 'g', displayIndividualThreshold);
+    [tYellow{ii}, pYellow{ii}, uYellow{ii}] = fitToData(calcParams, yellowMatrix(:,:,ii), paramsValueEst, 'y', displayIndividualThreshold);
 end
 
 psycho.thresholdBlueTotal = tBlue; psycho.bluePsychoFitParamsTotal = pBlue; psycho.uBlueTotal = uBlue;
@@ -139,8 +139,8 @@ sizeOfData = size(data);
 % and if it is less than 80, declare that column to be the first
 % possible start
 for ii = 1:sizeOfData(2)
-    sum = data(1,ii) + data(2,ii) + data(3,ii) + data(4,ii) + data(5,ii);
-    avg = sum / 5;
+    summ = data(1,ii) + data(2,ii) + data(3,ii) + data(4,ii) + data(5,ii);
+    avg = summ / 5;
     
     if (avg < 80)
         usableDataStart = ii;
@@ -160,14 +160,21 @@ end
 % non usable column of data
 usableDataEnd = sizeOfData(2) + 1;
 for ii = 1:sizeOfData(2)
-    sum = data(46,ii) + data(47,ii) + data(48,ii) + data(49,ii) + data(50,ii);
-    avg = sum / 5;
+    summ = data(46,ii) + data(47,ii) + data(48,ii) + data(49,ii) + data(50,ii);
+    avg = summ / 5;
     
     if (avg < 70)
         usableDataEnd = ii;
         break;
     end
 end
+
+avgStartData = sum(data(1:5,:)) / 5;
+avgEndData = sum(data(46:50,:)) / 5;
+
+usableDataPoints = (avgStartData < 80) & (avgEndData > 70);
+usableDataPoints = find(usableDataPoints);
+usableDataStart = usableDataPoints;
 
 %% Set common parameters
 numTrials = calcParams.numTrials;
@@ -176,6 +183,7 @@ criterion = .709;
 stimLevels = 1:1:sizeOfData(1);
 outOfNum   = repmat(numTrials, 1, sizeOfData(1));
 numKValue = usableDataEnd - usableDataStart;
+numKValue = length(usableDataPoints);
 
 %% Convert data from percentage to trial sample numbers
 data = data * numTrials / 100;
@@ -221,7 +229,8 @@ maxSubplot = 6;
 %% Calculate thresholds and fits
 for i = 1:numKValue
     % Load the current column of data, each column is a different k-value
-    NumPos = data(:, i + usableDataStart - 1)';
+%     NumPos = data(:, i + usableDataStart - 1)';
+    NumPos = data(:,usableDataPoints(i))';
     
     % Fit the data to a curve
     [paramsValues(i,:)] = PAL_PFML_Fit(stimLevels, NumPos, outOfNum, ...

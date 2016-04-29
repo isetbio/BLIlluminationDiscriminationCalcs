@@ -50,7 +50,7 @@ if calcParams.targetImageSetSize < 2
 end
 
 %% Check if destination folder exists and has files
-baseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+baseDir   = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
 targetPath = fullfile(baseDir, 'SimpleChooserData', calcParams.calcIDStr);
 
 % Make a new directory if target is non-existant.  If it does not exist,
@@ -155,6 +155,7 @@ for ii = 1:calcParams.targetImageSetSize
     opticalImageName = ['TestImage' int2str(ii - 1)];
     oi = loadOpticalImageData(standardPath, opticalImageName);
     sensorStandard = sensorSet(sensor, 'noise flag', 0);
+    oi = resizeOI(oi, sensorGet(sensorStandard, 'fov'));
     standardPool{ii} = {sensorStandard; oi; -1; -1};
 end
 
@@ -168,18 +169,22 @@ calcParams.meanStandard = 0;
 % If saccadic movement is desired, the boundary of possible movement
 % locations will be set to the size of the optical image, allowing for
 % saccadic movement over the whole image.
-if calcParams.numSaccades > 1
+% if calcParams.numSaccades > 1
     s.n = calcParams.numSaccades;
     resizedSensor = sensorSetSizeToFOV(standardPool{1}{1}, oiGet(standardPool{1}{2}, 'fov'), [], standardPool{1}{2});
     ss = sensorGet(resizedSensor, 'size');
-    bound = [-round(ss(1)/2) round(ss(1)/2) -round(ss(2)/2) round(ss(2)/2)];
-end
+    bound = [-floor(ss(1)/2) floor(ss(1)/2) -floor(ss(2)/2) floor(ss(2)/2)];
+% end
 
 % The LMS mask thus is the whole image.  Here we precompute it for the
 % standard image pool.
 rows = [bound(4) bound(4)];
 cols = [bound(2) bound(2)];
 LMSpath = [bound(2) bound(4); bound(1) bound(3)];
+if s.n == 1
+    bound = [];
+end
+
 for qq = 1:length(standardPool)
     sensorTemp = sensorSet(standardPool{qq}{1}, 'positions', LMSpath);
     [standardPool{qq}{3}, standardPool{qq}{4}] = coneAbsorptionsLMS(sensorTemp, standardPool{qq}{2});
@@ -209,6 +214,7 @@ for ii = 1:maxImageIllumNumber
         end
         oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' folderName], imageName);
         sensorTest = sensorSet(sensor, 'noise flag', 0);
+        oiTest = resizeOI(oiTest, sensorGet(sensorTest, 'fov'));
         sensorTest = sensorSet(sensorTest, 'positions', LMSpath);
         [LMS, msk] = coneAbsorptionsLMS(sensorTest, oiTest);
         testPool{oo} = {sensorTest; LMS; msk};
