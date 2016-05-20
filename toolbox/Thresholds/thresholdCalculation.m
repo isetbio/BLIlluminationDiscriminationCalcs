@@ -98,7 +98,9 @@ psycho.thresholdYellow = tYellow{1}; psycho.yellowPsychoFitParams = pYellow{1}; 
 % Plot each threshold vector against its representative k-value of
 % noise.  Also fit a line to it.  Only do this if Kp data is available
 
-if ~parser.Results.OnlyKg
+if calcParams.numKgSamples > 1
+    plotAllThresholds(calcParams, psycho, figParams, 'Kp', 1);
+elseif ~parser.Results.OnlyKg
     plotAllThresholds(calcParams, psycho, figParams);
 end
 

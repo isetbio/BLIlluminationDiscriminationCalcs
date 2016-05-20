@@ -29,7 +29,7 @@ function photons = getNoisySensorImage(calcParams, sensor, Kp, Kg)
 if nargin == 3
     Kg = 0;
 end
-if (nargin < 2)
+if (nargin < 3)
     Kp = 1;
     Kg = 0;
 end

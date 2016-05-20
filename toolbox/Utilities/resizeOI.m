@@ -1,7 +1,18 @@
 function newoi = resizeOI(oi, fov)
-%RESIZEOITOSENSOR Summary of this function goes here
-%   Detailed explanation goes here
+% newoi = resizeOI(oi, fov)
+% 
+% Script to resize an OI object to a new target fov size. This function
+% downsamples by averaging the signal within equally spaced blocks in the old
+% OI.
+%
+% Inputs:
+%   oi - original OI
+%   fov - target fov. This should be less than the original fov of the OI.
+%
+% xd  4/22/2016 wrote it
+% xd  5/19/2016 added comments and formatting
 
+% Get the old fov to calculate how many data points to average for the new oi
 oldfov = oiGet(oi,'fov');
 oldSize = size(oiGet(oi, 'photons'));
 
@@ -9,14 +20,16 @@ newSize(1:2) = floor(oldSize(1:2) * fov / oldfov);
 
 sizeStep = floor(oldSize(1:2) ./ newSize(1:2));
 
-newData = zeros([newSize-1, oldSize(3)]);
-newIllum = zeros(newSize-1);
+% Pre-allocate new data matrices
+newData = zeros([newSize, oldSize(3)]);
+newIllum = zeros(newSize);
 
 oldData = oiGet(oi, 'photons');
 oldIllum = oiGet(oi, 'illuminance');
 
-for ii = 1:newSize(1)-1
-    for jj = 1:newSize(2)-1
+% Average old data
+for ii = 1:newSize(1)
+    for jj = 1:newSize(2)
         for kk = 1:oldSize(3)
             newData(ii,jj,kk) = mean2(oldData(1 + sizeStep(1)*(ii-1):min(sizeStep(1)*(ii),oldSize(1)),...
                 1 + sizeStep(2)*(jj-1):min(sizeStep(2)*(jj),oldSize(2)),kk));
@@ -26,6 +39,7 @@ for ii = 1:newSize(1)-1
     end
 end
 
+% Set appropriate variables in new oi
 newoi = oiSet(oi, 'photons', newData);
 newoi = oiSet(newoi, 'illuminance', newIllum);
 newoi = oiSet(newoi, 'fov', fov);
