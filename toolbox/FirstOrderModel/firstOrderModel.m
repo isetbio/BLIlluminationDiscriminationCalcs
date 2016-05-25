@@ -157,15 +157,20 @@ accuracyMatrix = zeros(maxImageIllumNumber, KpSampleNum, KgSampleNum);
 %% Run calculations up to illumination number and k-value limits
 
 % Precompute all the sensor images from the standard pool to save
-% computational time later on.
-standardPool = cell(1, calcParams.targetImageSetSize);
-for ii = 1:calcParams.targetImageSetSize
-    opticalImageName = ['TestImage' int2str(ii - 1)];
+% computational time later on. Similar to the comparison optical images, we
+% will find all the file names first.
+folderPath = fullfile(analysisDir, 'OpticalImageData', standardPath);
+data = what(folderPath);
+standardOIList = data.mat;
+
+standardPool = cell(1, length(standardOIList));
+for ii = 1:length(standardOIList)
+    opticalImageName = standardOIList{ii};
+    opticalImageName = strrep(opticalImageName, 'OpticalImage.mat', '');
     oi = loadOpticalImageData(standardPath, opticalImageName);
     
     sensorStandard = sensorSet(sensor, 'noise flag', 0);
-    oi = resizeOI(oi, sensorGet(sensorStandard, 'fov'));
-%     sensorStandard = sensorSet(sensorStandard, 'nSamplesPerPixel', 5);
+    oi = resizeOI(oi, sensorGet(sensorStandard, 'fov')*1.1);
     sensorStandard = coneAbsorptions(sensorStandard, oi);
     standardPool{ii} = sensorStandard;
 end
@@ -194,7 +199,7 @@ for ii = 1:maxImageIllumNumber
         end
         oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' folderName], imageName);
         sensorTest = sensorSet(sensor, 'noise flag', 0);
-        oiTest = resizeOI(oiTest, sensorGet(sensorTest, 'fov'));
+        oiTest = resizeOI(oiTest, sensorGet(sensorTest, 'fov')*1.1);
         sensorTest = coneAbsorptions(sensorTest, oiTest);
         testPool{oo} = sensorTest;
     end
@@ -214,7 +219,7 @@ for ii = 1:maxImageIllumNumber
                 % We choose 2 images without replacement from the standard
                 % image pool. This is in order to account for the rendering
                 % noise.
-                standardChoice = randsample(calcParams.targetImageSetSize, 2);
+                standardChoice = randsample(length(standardOIList), 2);
                 
                 % Randomly choose one image from the test pool
                 testChoice = randsample(calcParams.comparisonImageSetSize, 1);

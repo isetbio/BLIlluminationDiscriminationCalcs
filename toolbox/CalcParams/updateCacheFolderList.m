@@ -207,6 +207,8 @@ switch (calcParams.calcIDStr)
             'StaticFullImageResizedOI' 'StaticFullImageResizedOI2' 'FullImageDownSampleFixational'...
             'FullImageDownSampleFixational2' 'StaticFullGaussian'}
         calcParams.cacheFolderList = {'Neutral', 'Neutral_FullImage'};
+    case {'ConstantFullImage'}
+        calcParams.cacheFolderList = {'Constant', 'Constant_FullImage'};
     otherwise
         error('Unknown calcIDStr set');
 end

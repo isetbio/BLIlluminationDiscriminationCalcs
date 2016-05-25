@@ -87,6 +87,8 @@ switch (calcParams.calcIDStr)
             'StaticFullImageResizedOI' 'StaticFullImageResizedOI2' 'FullImageDownSampleFixational'...
             'FullImageDownSampleFixational2' 'StaticFullGaussian'}
         calcParams.cropRect = [489 393 535 480];
+    case {'ConstantFullImage'}
+        calcParams.cropRect = [560 261 802 667];
     otherwise
         error('Unknown calcIDStr set');
 end

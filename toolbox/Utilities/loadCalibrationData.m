@@ -14,8 +14,7 @@ function calStructOBJ = loadCalibrationData(calFile)
     calDir   = fullfile(dataBaseDir, 'CalData', filesep);
 
     % Load the calibration data
-%     cal = LoadCalFile(calFile, [], calDir);
-    cal = LoadCalFile('StereoLCDLeft', [], calDir);
+    cal = LoadCalFile(calFile, [], calDir);
     
     % Generate calStructOBJ to access the calibration data
     calStructOBJ = ObjectToHandleCalOrCalStruct(cal);

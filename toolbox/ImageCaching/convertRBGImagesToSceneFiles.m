@@ -33,11 +33,11 @@ end
 %% Create isetbio display object from BL calibration file
 
 % Get calibration file
-calStructOBJ = loadCalibrationData('StereoLCDLeft');
+calStructOBJ = loadCalibrationData(calcParams.calibrationFile);
 
 % Create the display
 extraData = ptb.ExtraCalData;
-extraData.distance = 0.764;
+extraData.distance = calcParams.distance;
 extraData.subSamplingSvector = calcParams.S;
 
 % Generate an isetbio display object to model the display used to

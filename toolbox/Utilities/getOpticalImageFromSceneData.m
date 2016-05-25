@@ -24,8 +24,8 @@ opticalimage = oiCompute(oi,scene);
 fprintf('Optical image object generation took %2.1f seconds\n', toc);
 
 %% Save the optical image where we cache these things
-dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-oiFilePath = fullfile(dataBaseDir, 'OpticalImageData', calcParams.cacheFolderList{2}, folderName, strcat(imageName, 'OpticalImage.mat'));
+analysisDir = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
+oiFilePath = fullfile(analysisDir, 'OpticalImageData', calcParams.cacheFolderList{2}, folderName, strcat(imageName, 'OpticalImage.mat'));
 theDir = fileparts(oiFilePath);
 if (~exist(theDir,'dir'))
     mkdir(theDir);
