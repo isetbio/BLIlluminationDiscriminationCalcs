@@ -16,7 +16,7 @@ function newoi = resizeOI(oi, fov)
 oldfov = oiGet(oi,'fov');
 oldSize = size(oiGet(oi, 'photons'));
 
-newSize(1:2) = floor(oldSize(1:2) * fov / oldfov);
+newSize = repmat(floor(oldSize(2) * fov / oldfov),1,2);
 
 sizeStep = floor(oldSize(1:2) ./ newSize(1:2));
 
