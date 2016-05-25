@@ -10,6 +10,8 @@ calcParams.meanStandard = 0;
 
 basicSensor = getDefaultBLIllumDiscrSensor; 
 basicSensor = sensorSetSizeToFOV(basicSensor, 1, [], oiCreate('human'));
+coneDist = sensorGet(basicSensor, 'cfa');
+coneDist = coneDist.pattern;
 
 targetSensors = cell(7,1);
 for ii = 1:7
@@ -22,38 +24,50 @@ colors = {'Green' 'Red' 'Blue' 'Yellow'};
 testSensors = cell(4,1);
 
 for ii = 1:4
-    testOI = loadOpticalImageData(['Neutral_FullImage/' colors{ii} 'Illumination'], [lower(colors{ii}) '1L-RGB']);
+    testOI = loadOpticalImageData(['Neutral_FullImage/' colors{ii} 'Illumination'], [lower(colors{ii}) '10L-RGB']);
     testOI = resizeOI(testOI, 1);
     
     testSensors{ii} = coneAbsorptions(basicSensor, testOI);
 end
 
 %% Get some distributions
-distSize = 2500;
+distSize = 500;
 kp = 1;
 kg = 0;
+
+cones = {'L' 'M' 'S'};
+xlimits = [1010,1018;760,770;70,75];
 for ff = 1:4
-    
-    targetDist = zeros(distSize,1);
-    testDist = zeros(distSize,1);
-    
-    for ii = 1:distSize
-        s = randsample(7,1);
-        targetDist(ii) = mean2(getNoisySensorImage(calcParams, targetSensors{s},kp,kg));
-        testDist(ii) = mean2(getNoisySensorImage(calcParams, testSensors{ff},kp,kg));
-        if mod(ii, 100) == 0
-            disp([num2str(ii/distSize * 100) '% done']);
+        targetDist = zeros(distSize,3);
+        testDist = zeros(distSize,3);
+        
+        for ii = 1:distSize
+            s = randsample(7,1);
+            targetAbsorptions = getNoisySensorImage(calcParams, targetSensors{s},kp,kg);
+            testAbsorptions = getNoisySensorImage(calcParams, testSensors{ff},kp,kg);
+            
+            for jj = 1:3
+                targetDist(ii,jj) = mean2(targetAbsorptions(coneDist == (jj+1)));
+                testDist(ii,jj) = mean2(testAbsorptions(coneDist == (jj+1)));
+            end
+            if mod(ii, 100) == 0
+                disp([num2str(ii/distSize * 100) '% done']);
+            end
         end
-    end
-    
-    %% Plot
-    delete(subplot(2,2,ff));
-    subplot(2,2,ff);
-    hold on;
-    histogram(targetDist); histogram(testDist);
-    legend({'Target', 'Test'});
-    axis square
-    title([colors{ff} ' Illum']);
-    xlabel('Mean photons');
-    ylabel('Number of occurences');
+        
+        %% Plot
+        for cc = 1:3
+            plotLoc = 1 + (cc-1)*4 + (ff-1);
+            delete(subplot(3,4,plotLoc));
+            subplot(3,4,plotLoc);
+            hold on;
+            histogram(targetDist(:,cc)); histogram(testDist(:,cc));
+            legend({'Target', 'Test'});
+            axis square
+            title([colors{ff} ' Illum ' cones{cc} ' Cones']);
+            xlabel('Mean photons');
+            ylabel('Number of occurences');
+%             xlim(xlimits(cc,:));
+%             ylim([0 0.25*distSize]);
+        end
 end
