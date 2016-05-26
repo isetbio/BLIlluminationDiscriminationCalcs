@@ -209,6 +209,8 @@ switch (calcParams.calcIDStr)
         calcParams.cacheFolderList = {'Neutral', 'Neutral_FullImage'};
     case {'ConstantFullImage'}
         calcParams.cacheFolderList = {'Constant', 'Constant_FullImage'};
+    case {'ShuffledFullImage'}
+        calcParams.cacheFolderList = {'Shuffled', 'Shuffled_FullImage'};        
     otherwise
         error('Unknown calcIDStr set');
 end
