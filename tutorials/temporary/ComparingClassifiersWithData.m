@@ -27,7 +27,7 @@ usePoissonNoise = true;
 standardizeData = true;
 
 % Just some variables that tell the script which folders and data files to use
-colors = {'Blue' 'Yellow' 'Red' 'Green'};
+Colors = {'Blue' 'Yellow' 'Red' 'Green'};
 folders = {'Constant_FullImage'}; 
 fileName = {''};
 
@@ -62,9 +62,9 @@ NNpercentCorrect = zeros(50,10,4);
 SVMpercentCorrect = zeros(50,10,4);
 pcaData = cell(4,50,10);
 for ff = 1:length(folders)
-    for cc = 1:length(colors)
+    for cc = 1:length(Colors)
         for kk = 1:50
-            comparison = loadOpticalImageData([folders{ff} '/' colors{cc} 'Illumination'], ['C' lower(colors{cc}) num2str(kk) fileName{ff} '-RGB']);
+            comparison = loadOpticalImageData([folders{ff} '/' Colors{cc} 'Illumination'], ['C' lower(Colors{cc}) num2str(kk) fileName{ff} '-RGB']);
             sensorComparison = coneAbsorptions(sensor, resizeOI(comparison,sSize*1.1));
             
             tic
@@ -165,13 +165,13 @@ for ff = 1:length(folders)
                 NNpercentCorrect(kk, nn, cc) = correct / testingSetSize * 100;
                 
                 %% Perform pca analysis
-                [~,~,d.latent,~,d.explained] = pca([trainingData;testingData]);
+                [~,d.score,~,~,d.explained] = pca([trainingData;testingData]);
                 pcaData{cc,kk,nn} = d;
             end
-            fprintf('Calculation time for %s, dE %.2f = %2.1f\n', colors{cc} , kk, toc);
+            fprintf('Calculation time for %s, dE %.2f = %2.1f\n', Colors{cc} , kk, toc);
         end
     end
 end
 
 %% Save stuff
-save('ClassifierAnalysis', 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect', 'pcaData');
+save('ClassifierAnalysis', 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect', 'pcaData', 'Colors');
