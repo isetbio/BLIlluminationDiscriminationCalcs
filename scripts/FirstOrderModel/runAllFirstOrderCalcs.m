@@ -20,7 +20,7 @@ function runAllFirstOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs  = {'StaticFullImageResizedOI', 'StaticFullImageResizedOI2'};
+calcIDStrs  = {'ConstantFullImage'};
     
 %% Parameters of the calculation
 %
@@ -41,12 +41,12 @@ for k1 = 1:length(calcIDStrs)
     calcParams.CACHE_OIS = false;
     calcParams.forceOICompute = false;    % Will overwrite any existing data.
     
-    calcParams.RUN_MODEL = false;
+    calcParams.RUN_MODEL = true;
     calcParams.MODEL_ORDER = 1; 
     calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
     calcParams.overWriteFlag = 1;        % Whether or not to overwrite existing data.
     
-    calcParams.CALC_THRESH = true;
+    calcParams.CALC_THRESH = false;
     calcParams.displayIndividualThreshold = false;
     
     % Set the calcID
@@ -54,6 +54,9 @@ for k1 = 1:length(calcIDStrs)
     
     % Folder list to run over for conversions into isetbio format
     calcParams = updateCacheFolderList(calcParams);
+    
+    % Need to specify the calibration file to use
+    calcParams = assignCalibrationFile(calcParams);
     
     % Specify how to crop the image.  We don't want it all.
     % Code further on makes the most sense if the image is square (because we
@@ -91,7 +94,7 @@ for k1 = 1:length(calcIDStrs)
     % choose two images out of the target set and one image out of the
     % comparison set.  This is in order to reduce the effect of pixel noise
     % cause by the image renderer.
-    calcParams.targetImageSetSize = 7;
+%     calcParams.targetImageSetSize = 7;
     calcParams.comparisonImageSetSize = 1;
     
     %% Convert the images to cached scenes for more analysis
