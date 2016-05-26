@@ -20,7 +20,7 @@ function runAllFirstOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs  = {'ConstantFullImage'};
+calcIDStrs  = {'ShuffledFullImage'};
     
 %% Parameters of the calculation
 %
@@ -35,13 +35,13 @@ calcIDStrs  = {'ConstantFullImage'};
 for k1 = 1:length(calcIDStrs)
     
     % Define the steps of the calculation that should be carried out.
-    calcParams.CACHE_SCENES = false;
-    calcParams.forceSceneCompute = false; % Will overwrite any existing data.
+    calcParams.CACHE_SCENES = true;
+    calcParams.forceSceneCompute = true; % Will overwrite any existing data.
     
-    calcParams.CACHE_OIS = false;
-    calcParams.forceOICompute = false;    % Will overwrite any existing data.
+    calcParams.CACHE_OIS = true;
+    calcParams.forceOICompute = true;    % Will overwrite any existing data.
     
-    calcParams.RUN_MODEL = true;
+    calcParams.RUN_MODEL = false;
     calcParams.MODEL_ORDER = 1; 
     calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
     calcParams.overWriteFlag = 1;        % Whether or not to overwrite existing data.
@@ -62,7 +62,7 @@ for k1 = 1:length(calcIDStrs)
     % Code further on makes the most sense if the image is square (because we
     % define a square patch of cone mosaic when we build the sensor), so the
     % cropped region should always be square.
-    calcParams = updateCropRect(calcParams);              % [450 350 624 574] is the entire non-black region of our initial images
+    calcParams = updateCropRect(calcParams);              
     calcParams.S = [380 8 51];
         
     % Parameters for creating the sensor
