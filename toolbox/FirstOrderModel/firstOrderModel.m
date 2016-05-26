@@ -144,18 +144,13 @@ KgInterval = calcParams.KgInterval;
 % In this case # would start with 1. Code beyond this point will assume these conditions.
 analysisDir = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
 folderPath = fullfile(analysisDir, 'OpticalImageData', calcParams.cacheFolderList{2}, folderName);
-data = what(folderPath);
-fileList = data.mat;
-fileList = sort(fileList);
-[~,b] = sort(cellfun(@numel, fileList));
-fileList = fileList(b);
+fileList = getFilenamesInDirectory(folderPath);
 fileList = fileList((cellfun(@(x)any(isempty(regexp(x,'L[\d]','once'))),fileList) == 1)); % Removes any copies of test images
 
 %% Preallocate space for the accuracy matrix which will store the results of the calculations
 accuracyMatrix = zeros(maxImageIllumNumber, KpSampleNum, KgSampleNum);
 
 %% Run calculations up to illumination number and k-value limits
-
 % Precompute all the sensor images from the standard pool to save
 % computational time later on. Similar to the comparison optical images, we
 % will find all the file names first.
