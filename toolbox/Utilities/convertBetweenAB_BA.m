@@ -8,7 +8,7 @@ function BA_AB = convertBetweenAB_BA(AB_BA)
 
 
 lengthOfVector = length(AB_BA);
-BA_AB = [AB_BA(1:lengthOfVector/2) AB_BA(lengthOfVector/2+1:end)];
+BA_AB = [AB_BA(lengthOfVector/2+1:end) AB_BA(1:lengthOfVector/2)];
 
 end
 

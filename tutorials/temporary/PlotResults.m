@@ -1,9 +1,9 @@
 %% load
 clear;
+dataToLoad = 'ClassifierAnalysis_500_500_std.mat';
 dataPath = fullfile(getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir'), 'ClassifierComparisons');
-load(fullfile(dataPath,'ClassiferAnalysis_100_100_std.mat'));
+load(fullfile(dataPath,dataToLoad));
 allData = {NNpercentCorrect, DApercentCorrect, SVMpercentCorrect};
-PCADataSize = 200;
 
 %% Plot
 plotColors = {'b.-' 'g.-' 'y.-' 'r.-'};
@@ -39,17 +39,19 @@ for kk = 1:3
         
         plot(1:10, threshold, plotColors{ii}, 'markersize', 35);
     end
-    ylim([0 40]);
+    ylim([0 50]);
     xlabel('Noise Factor');
     ylabel('Threshold');
     axis square;
 end
+suptitle(strrep(dataToLoad,'_','\_'));
 
 %% Visualize the PCA's
 stimLevelToPlot = [1,10,25,50];
 noiseLevel = 1;
 PC1 = 1;
 PC2 = 2;
+PCADataSize = size(pcaData{1,1,1}.score,1);
 
 figure;
 for ii = 1:length(Colors)
@@ -60,10 +62,11 @@ for ii = 1:length(Colors)
         plot(dataToPlot.score([1:PCADataSize/4,PCADataSize/2+1:PCADataSize/4*3],PC1), dataToPlot.score([1:PCADataSize/4,PCADataSize/2+1:PCADataSize/4*3],PC2), 'go');
         plot(dataToPlot.score([PCADataSize/4+1:PCADataSize/2,PCADataSize/4*3+1:PCADataSize],PC1), dataToPlot.score([PCADataSize/4+1:PCADataSize/2,PCADataSize/4*3+1:PCADataSize],PC2), 'rx');
         title(Colors{ii});
-%         xlim([-100 100]);
-%         ylim([-20 20]);
+        xlim([-100 100]);
+        ylim([-20 20]);
         xlabel('Component 1');
         ylabel('Component 2');
         axis square
     end
 end
+suptitle(strrep(dataToLoad,'_','\_'));

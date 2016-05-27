@@ -82,43 +82,48 @@ for ff = 1:length(folders)
                 % testing vector data sets will contain equal numbers of AB
                 % and BA vectors. 
                 trainingData = zeros(trainingSetSize, 2 * responseSize);
+                trainingData = zeros(trainingSetSize,responseSize);
                 trainingClasses = ones(trainingSetSize, 1);
                 trainingClasses(1:trainingSetSize/2) = 0;
   
                 for jj = 1:trainingSetSize/2
-                    testSample = randsample(7, 2);
+                    testSample = randsample(length(standardOIList), 2);
                     
                     sensorStandard = standardSensorPool{testSample(1)};
                     photonsStandard = getNoisySensorImage(calcParams, sensorStandard, kp, kg);
                     photonsComparison = getNoisySensorImage(calcParams, sensorComparison, kp, kg);
                     
-                    trainingData(jj,:) = [photonsStandard(:); photonsComparison(:)]';
+%                     trainingData(jj,:) = [photonsStandard(:); photonsComparison(:)]';
+                    trainingData(jj,:) = photonsStandard(:)';
                     
                     sensorStandard = standardSensorPool{testSample(2)};
                     photonsStandard = getNoisySensorImage(calcParams, sensorStandard, kp, kg);
                     photonsComparison = getNoisySensorImage(calcParams, sensorComparison, kp, kg);
                     
-                    trainingData(jj + trainingSetSize/2,:) = [photonsComparison(:); photonsStandard(:)]';
+%                     trainingData(jj + trainingSetSize/2,:) = [photonsComparison(:); photonsStandard(:)]';
+                    trainingData(jj + trainingSetSize/2,:) = photonsComparison(:)';
                 end
 
                 testingData = zeros(testingSetSize, 2 * responseSize);
+                testingData = zeros(testingSetSize,responseSize);
                 testingClasses = ones(testingSetSize, 1);
                 testingClasses(1:testingSetSize/2) = 0;
                 
                 for jj = 1:testingSetSize/2
-                    testSample = randsample(7, 2);
+                    testSample = randsample(length(standardOIList), 2);
                     
                     sensorStandard = standardSensorPool{testSample(1)};
                     photonsStandard = getNoisySensorImage(calcParams, sensorStandard, kp, kg);
                     photonsComparison = getNoisySensorImage(calcParams, sensorComparison, kp, kg);
                     
-                    testingData(jj,:) = [photonsStandard(:); photonsComparison(:)]';
-                    
+%                     testingData(jj,:) = [photonsStandard(:); photonsComparison(:)]';
+                    testingData(jj,:) = photonsStandard(:)';
                     sensorStandard = standardSensorPool{testSample(2)};
                     photonsStandard = getNoisySensorImage(calcParams, sensorStandard, kp, kg);
                     photonsComparison = getNoisySensorImage(calcParams, sensorComparison, kp, kg);
                     
-                    testingData(jj + testingSetSize/2,:) = [photonsComparison(:); photonsStandard(:)]';
+%                     testingData(jj + testingSetSize/2,:) = [photonsComparison(:); photonsStandard(:)]';
+                    testingData(jj + testingSetSize/2,:) = photonsComparison(:)';
                 end
                 
                 % Standardize data if flag is set to true
@@ -143,13 +148,14 @@ for ff = 1:length(folders)
                 %% Distance based classification
                 correct = 0;
                 for tt = 1:testingSetSize
-                    standardChoice = randsample(7,1);
+                    standardChoice = randsample(length(standardOIList),1);
                     photonsS = getNoisySensorImage(calcParams, standardSensorPool{standardChoice}, kp, kg);
                     photonsC = getNoisySensorImage(calcParams, sensorComparison, kp, kg);
                     
-                    AB = [photonsS(:); photonsC(:)]';
-                    BA = [photonsC(:); photonsS(:)]';
-                    
+%                     AB = [photonsS(:); photonsC(:)]';
+%                     BA = [photonsC(:); photonsS(:)]';
+                    AB = photonsS(:)';
+                    BA = photonsC(:)';
                     if standardizeData
                         AB = (AB - m) ./ s;
                         BA = (BA - m) ./ s;
@@ -166,6 +172,7 @@ for ff = 1:length(folders)
                 
                 %% Perform pca analysis
                 [~,d.score,~,~,d.explained] = pca([trainingData;testingData]);
+                d.score = d.score(:,1:10);
                 pcaData{cc,kk,nn} = d;
             end
             fprintf('Calculation time for %s, dE %.2f = %2.1f\n', Colors{cc} , kk, toc);
