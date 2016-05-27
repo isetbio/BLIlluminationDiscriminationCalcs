@@ -12,7 +12,7 @@ switch (calcParams.calcIDStr)
     case {'ConstantFullImage' 'ShuffledFullImage'}
         calcParams.calibrationFile = 'EyeTrackerLCDNew';
         calcParams.distance = 0.683;
-    case {}
+    case {'StaticFullImageResizedOI2'}
         calcParams.calibrationFile = 'StereoLCDLeft';
         calcParams.distance = 0.764;
     otherwise

@@ -1,6 +1,6 @@
 function percentCorrect = cf1_NearestNeighbor(trainingData, testingData, trainingClasses, testingClasses)
 % percentCorrect = cf1_NearestNeighbor(trainingData, testingData)
-% 
+%
 %
 % xd  5/26/16  wrote it
 
@@ -20,11 +20,11 @@ for ii = 1:testingSize
     distToTraining = norm(currentTestSample - trainingSample);
     distToFlip = norm(currentTestSample - trainingSampleFlip);
     
-    if distToTraining < distToFlip == (testingClasses(ii) == trainingClasses(trainingSampleIdx))
+    if (distToTraining < distToFlip) == (testingClasses(ii) == trainingClasses(trainingSampleIdx))
         percentCorrect = percentCorrect + 1;
     end
 end
-percentCorrect = percentCorrect/testingSize;
+percentCorrect = percentCorrect/testingSize * 100;
 
 end
 
