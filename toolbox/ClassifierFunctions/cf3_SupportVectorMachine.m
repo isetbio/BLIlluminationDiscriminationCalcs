@@ -1,4 +1,4 @@
-function percentCorrect = cf3_SupportVectorMachine(trainingData, testingData, trainingClasses, testingClasses)
+function [percentCorrect,svm] = cf3_SupportVectorMachine(trainingData, testingData, trainingClasses, testingClasses)
 % percentCorrect = cf3_SupportVectorMachine(trainingData, testingData, trainingClasses, testingClasses)
 %
 %

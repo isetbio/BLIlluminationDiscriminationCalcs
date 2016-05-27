@@ -6,8 +6,8 @@
 % sets respectively. For the NN calculation, a new sample will be generated
 % for each testing set vector. The sample will use the same draw to form AB
 % and BA vectors to decide which is closer to the testing set entry.
-trainingSetSize = 100;
-testingSetSize = 100;
+trainingSetSize = 500;
+testingSetSize = 500;
 
 % This determines the size of the sensor in degrees. The optical image will
 % be scale to 1.1x this value to avoid having parts of the edge of the
@@ -28,7 +28,7 @@ standardizeData = true;
 
 % Just some variables that tell the script which folders and data files to use
 Colors = {'Blue' 'Yellow' 'Red' 'Green'};
-folders = {'Constant_FullImage'}; 
+folders = {'NM1_FullImage' 'NM2_FullImage'}; 
 fileName = {''};
 
 %% Create a sensor
@@ -57,14 +57,16 @@ for jj = 1:length(standardOIList)
 end
 
 %% Perform calculation
-DApercentCorrect = zeros(50,10,4);
-NNpercentCorrect = zeros(50,10,4);
-SVMpercentCorrect = zeros(50,10,4);
-pcaData = cell(4,50,10);
 for ff = 1:length(folders)
+    DApercentCorrect = zeros(50,10,4);
+    NNpercentCorrect = zeros(50,10,4);
+    SVMpercentCorrect = zeros(50,10,4);
+    pcaData = cell(4,50,10);
     for cc = 1:length(Colors)
+        comparisonOIPath = fullfile(analysisDir, 'OpticalImageData', folders{ff}, [Colors{cc} 'Illumination']);
+        OINames = getFilenamesInDirectory(comparisonOIPath);
         for kk = 1:50
-            comparison = loadOpticalImageData([folders{ff} '/' Colors{cc} 'Illumination'], ['C' lower(Colors{cc}) num2str(kk) fileName{ff} '-RGB']);
+            comparison = loadOpticalImageData([folders{ff} '/' Colors{cc} 'Illumination'], strrep(OINames{kk}, 'OpticalImage.mat', ''));
             sensorComparison = coneAbsorptions(sensor, resizeOI(comparison,sSize*1.1));
             
             tic
@@ -82,7 +84,7 @@ for ff = 1:length(folders)
                 % testing vector data sets will contain equal numbers of AB
                 % and BA vectors. 
                 trainingData = zeros(trainingSetSize, 2 * responseSize);
-                trainingData = zeros(trainingSetSize,responseSize);
+%                 trainingData = zeros(trainingSetSize,responseSize);
                 trainingClasses = ones(trainingSetSize, 1);
                 trainingClasses(1:trainingSetSize/2) = 0;
   
@@ -93,19 +95,19 @@ for ff = 1:length(folders)
                     photonsStandard = getNoisySensorImage(calcParams, sensorStandard, kp, kg);
                     photonsComparison = getNoisySensorImage(calcParams, sensorComparison, kp, kg);
                     
-%                     trainingData(jj,:) = [photonsStandard(:); photonsComparison(:)]';
-                    trainingData(jj,:) = photonsStandard(:)';
+                    trainingData(jj,:) = [photonsStandard(:); photonsComparison(:)]';
+%                     trainingData(jj,:) = photonsStandard(:)';
                     
                     sensorStandard = standardSensorPool{testSample(2)};
                     photonsStandard = getNoisySensorImage(calcParams, sensorStandard, kp, kg);
                     photonsComparison = getNoisySensorImage(calcParams, sensorComparison, kp, kg);
                     
-%                     trainingData(jj + trainingSetSize/2,:) = [photonsComparison(:); photonsStandard(:)]';
-                    trainingData(jj + trainingSetSize/2,:) = photonsComparison(:)';
+                    trainingData(jj + trainingSetSize/2,:) = [photonsComparison(:); photonsStandard(:)]';
+%                     trainingData(jj + trainingSetSize/2,:) = photonsComparison(:)';
                 end
 
                 testingData = zeros(testingSetSize, 2 * responseSize);
-                testingData = zeros(testingSetSize,responseSize);
+%                 testingData = zeros(testingSetSize,responseSize);
                 testingClasses = ones(testingSetSize, 1);
                 testingClasses(1:testingSetSize/2) = 0;
                 
@@ -116,14 +118,14 @@ for ff = 1:length(folders)
                     photonsStandard = getNoisySensorImage(calcParams, sensorStandard, kp, kg);
                     photonsComparison = getNoisySensorImage(calcParams, sensorComparison, kp, kg);
                     
-%                     testingData(jj,:) = [photonsStandard(:); photonsComparison(:)]';
-                    testingData(jj,:) = photonsStandard(:)';
+                    testingData(jj,:) = [photonsStandard(:); photonsComparison(:)]';
+%                     testingData(jj,:) = photonsStandard(:)';
                     sensorStandard = standardSensorPool{testSample(2)};
                     photonsStandard = getNoisySensorImage(calcParams, sensorStandard, kp, kg);
                     photonsComparison = getNoisySensorImage(calcParams, sensorComparison, kp, kg);
                     
-%                     testingData(jj + testingSetSize/2,:) = [photonsComparison(:); photonsStandard(:)]';
-                    testingData(jj + testingSetSize/2,:) = photonsComparison(:)';
+                    testingData(jj + testingSetSize/2,:) = [photonsComparison(:); photonsStandard(:)]';
+%                     testingData(jj + testingSetSize/2,:) = photonsComparison(:)';
                 end
                 
                 % Standardize data if flag is set to true
@@ -135,50 +137,22 @@ for ff = 1:length(folders)
                     testingData = (testingData - repmat(m, testingSetSize, 1)) ./ repmat(s, testingSetSize, 1);
                 end
                 
-                %% Train the linear classifiers
-                da = fitcdiscr(trainingData, trainingClasses, 'DiscrimType', 'pseudolinear');
-                svm = fitcsvm(trainingData, trainingClasses);
-
-                %% Test the linear classifiers
-                classifiedClasses = predict(da, testingData);
-                DApercentCorrect(kk, nn, cc) = sum(classifiedClasses == testingClasses) / testingSetSize * 100;
-                classifiedClasses = predict(svm, testingData);
-                SVMpercentCorrect(kk, nn, cc) = sum(classifiedClasses == testingClasses) / testingSetSize * 100;
-                
-                %% Distance based classification
-                correct = 0;
-                for tt = 1:testingSetSize
-                    standardChoice = randsample(length(standardOIList),1);
-                    photonsS = getNoisySensorImage(calcParams, standardSensorPool{standardChoice}, kp, kg);
-                    photonsC = getNoisySensorImage(calcParams, sensorComparison, kp, kg);
-                    
-%                     AB = [photonsS(:); photonsC(:)]';
-%                     BA = [photonsC(:); photonsS(:)]';
-                    AB = photonsS(:)';
-                    BA = photonsC(:)';
-                    if standardizeData
-                        AB = (AB - m) ./ s;
-                        BA = (BA - m) ./ s;
-                    end
-                    
-                    distToAB = norm(testingData(tt,:) - AB);
-                    distToBA = norm(testingData(tt,:) - BA);
-                    
-                    if (distToAB > distToBA) == logical(testingClasses(tt))
-                        correct = correct + 1;
-                    end
-                end
-                NNpercentCorrect(kk, nn, cc) = correct / testingSetSize * 100;
+                % Apply classifiers
+                [SVMpercentCorrect(kk, nn, cc),svm] = cf3_SupportVectorMachine(trainingData,testingData,trainingClasses,testingClasses);
+                DApercentCorrect(kk, nn, cc) = cf2_DiscriminantAnalysis(trainingData,testingData,trainingClasses,testingClasses);
+                NNpercentCorrect(kk, nn, cc) = cf1_NearestNeighbor(trainingData,testingData,trainingClasses,testingClasses);
                 
                 %% Perform pca analysis
                 [~,d.score,~,~,d.explained] = pca([trainingData;testingData]);
                 d.score = d.score(:,1:10);
+                d.svmBeta = svm.Beta;
                 pcaData{cc,kk,nn} = d;
             end
             fprintf('Calculation time for %s, dE %.2f = %2.1f\n', Colors{cc} , kk, toc);
         end
     end
+    %% Save stuff
+    nameOfFile = sprintf('ClassifierAnalysis_%d_%d_%d_%s',trainingSetSize,testingSetSize,standardizeData,folders{1});
+    save(nameOfFile, 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect', 'pcaData', 'Colors');
 end
 
-%% Save stuff
-save('ClassifierAnalysis', 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect', 'pcaData', 'Colors');

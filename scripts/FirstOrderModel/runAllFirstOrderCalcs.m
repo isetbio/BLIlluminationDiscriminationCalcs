@@ -20,7 +20,7 @@ function runAllFirstOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs  = {'ShuffledFullImage'};
+calcIDStrs  = {'NM1_FullImage' 'NM2_FullImage'};
     
 %% Parameters of the calculation
 %
@@ -71,7 +71,11 @@ for k1 = 1:length(calcIDStrs)
     
     % Specify the number of trials for each combination of Kp Kg as well as
     % the highest illumination step (max 50) to go up to.
-    calcParams.numTrials = 100;
+%     calcParams.numTrials = 100;
+    calcParams.trainingSetSize = 100;
+    calcParams.testingSetSize = 100;
+    calcParams.standardizeData = true;
+    calcParams.cFunction = 1;
     calcParams.maxIllumTarget = 50;
     
     % Kp represents the scale factor for the Poisson noise.  This is the
