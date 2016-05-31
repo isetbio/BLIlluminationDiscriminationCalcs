@@ -6,8 +6,8 @@
 % sets respectively. For the NN calculation, a new sample will be generated
 % for each testing set vector. The sample will use the same draw to form AB
 % and BA vectors to decide which is closer to the testing set entry.
-trainingSetSize = 500;
-testingSetSize = 500;
+trainingSetSize = 100;
+testingSetSize = 100;
 
 % This determines the size of the sensor in degrees. The optical image will
 % be scale to 1.1x this value to avoid having parts of the edge of the
@@ -28,7 +28,7 @@ standardizeData = true;
 
 % Just some variables that tell the script which folders and data files to use
 Colors = {'Blue' 'Yellow' 'Red' 'Green'};
-folders = {'NM1_FullImage' 'NM2_FullImage'}; 
+folders = {'NM1_FullImage'}; 
 fileName = {''};
 
 %% Create a sensor
@@ -42,22 +42,22 @@ sensorA = coneAbsorptions(sensor,oi);
 photons = sensorGet(sensorA, 'photons');
 responseSize = length(photons(:));
 
-%% Load all target scene sensors
-analysisDir = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
-folderPath = fullfile(analysisDir, 'OpticalImageData', folders{1}, 'Standard');
-data = what(folderPath);
-standardOIList = data.mat;
-
-standardSensorPool = cell(1, length(standardOIList));
-calcParams.meanStandard = 0;
-for jj = 1:length(standardOIList)
-    standard = loadOpticalImageData([folders{1} '/Standard'], strrep(standardOIList{jj}, 'OpticalImage.mat', ''));
-    standardSensorPool{jj} = coneAbsorptions(sensor, resizeOI(standard,sSize*1.1));
-    calcParams.meanStandard = calcParams.meanStandard + mean2(sensorGet(standardSensorPool{jj}, 'photons')) / length(standardOIList);
-end
-
 %% Perform calculation
 for ff = 1:length(folders)
+    %% Load all target scene sensors
+    analysisDir = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
+    folderPath = fullfile(analysisDir, 'OpticalImageData', folders{ff}, 'Standard');
+    data = what(folderPath);
+    standardOIList = data.mat;
+    
+    standardSensorPool = cell(1, length(standardOIList));
+    calcParams.meanStandard = 0;
+    for jj = 1:length(standardOIList)
+        standard = loadOpticalImageData([folders{ff} '/Standard'], strrep(standardOIList{jj}, 'OpticalImage.mat', ''));
+        standardSensorPool{jj} = coneAbsorptions(sensor, resizeOI(standard,sSize*1.1));
+        calcParams.meanStandard = calcParams.meanStandard + mean2(sensorGet(standardSensorPool{jj}, 'photons')) / length(standardOIList);
+    end
+    
     DApercentCorrect = zeros(50,10,4);
     NNpercentCorrect = zeros(50,10,4);
     SVMpercentCorrect = zeros(50,10,4);
@@ -143,16 +143,23 @@ for ff = 1:length(folders)
                 NNpercentCorrect(kk, nn, cc) = cf1_NearestNeighbor(trainingData,testingData,trainingClasses,testingClasses);
                 
                 %% Perform pca analysis
-                [~,d.score,~,~,d.explained] = pca([trainingData;testingData]);
+                [coeff,d.score,~,~,d.explained] = pca([trainingData;testingData]);
                 d.score = d.score(:,1:10);
-                d.svmBeta = svm.Beta;
+                
+                % We take the SVM discriminant function and project onto
+                % the first 2 principal components. Then, we find the
+                % vector orthogonal to the project image.  This should
+                % represent the decision boundary that the SVM uses to make
+                % a desision.
+                transformedBeta = coeff(:,1:2)'*svm.Beta;
+                d.decisionBoundary = null(transformedBeta');
                 pcaData{cc,kk,nn} = d;
             end
             fprintf('Calculation time for %s, dE %.2f = %2.1f\n', Colors{cc} , kk, toc);
         end
     end
     %% Save stuff
-    nameOfFile = sprintf('ClassifierAnalysis_%d_%d_%d_%s',trainingSetSize,testingSetSize,standardizeData,folders{1});
+    nameOfFile = sprintf('ClassifierAnalysis_%d_%d_%d_%s',trainingSetSize,testingSetSize,standardizeData,folders{ff});
     save(nameOfFile, 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect', 'pcaData', 'Colors');
 end
 

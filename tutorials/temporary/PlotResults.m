@@ -1,6 +1,6 @@
 %% load
 clear;
-dataToLoad = 'ClassifierAnalysis_500_500_std.mat';
+dataToLoad = 'ClassifierAnalysis_100_100_nostd_NM2.mat';
 dataPath = fullfile(getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir'), 'ClassifierComparisons');
 load(fullfile(dataPath,dataToLoad));
 allData = {NNpercentCorrect, DApercentCorrect, SVMpercentCorrect};
@@ -53,6 +53,16 @@ PC1 = 1;
 PC2 = 2;
 PCADataSize = size(pcaData{1,1,1}.score,1);
 
+% Find the min and max of the PCA projections so we can set the axis limits
+% programmatically.
+pcaMinPC1 = cell2mat(cellfun(@(X)min(X.score(:,PC1)),pcaData,'uniformOutput',false));
+pcaMaxPC1 = cell2mat(cellfun(@(X)max(X.score(:,PC1)),pcaData,'uniformOutput',false));
+pcaMinPC2 = cell2mat(cellfun(@(X)min(X.score(:,PC2)),pcaData,'uniformOutput',false));
+pcaMaxPC2 = cell2mat(cellfun(@(X)max(X.score(:,PC2)),pcaData,'uniformOutput',false));
+
+xlimits = max(abs([pcaMinPC1(:);pcaMaxPC1(:)]));
+ylimits = max(abs([pcaMinPC2(:);pcaMaxPC2(:)]));
+
 figure;
 for ii = 1:length(Colors)
     for jj = 1:length(stimLevelToPlot)
@@ -62,8 +72,12 @@ for ii = 1:length(Colors)
         plot(dataToPlot.score([1:PCADataSize/4,PCADataSize/2+1:PCADataSize/4*3],PC1), dataToPlot.score([1:PCADataSize/4,PCADataSize/2+1:PCADataSize/4*3],PC2), 'go');
         plot(dataToPlot.score([PCADataSize/4+1:PCADataSize/2,PCADataSize/4*3+1:PCADataSize],PC1), dataToPlot.score([PCADataSize/4+1:PCADataSize/2,PCADataSize/4*3+1:PCADataSize],PC2), 'rx');
         title(Colors{ii});
-        xlim([-100 100]);
-        ylim([-20 20]);
+%         xlim([-100 100]);
+%         ylim([-20 20]);
+
+        xlim(1.1*[-xlimits xlimits]);
+        ylim(1.1*[-ylimits ylimits]);
+        
         xlabel('Component 1');
         ylabel('Component 2');
         axis square
