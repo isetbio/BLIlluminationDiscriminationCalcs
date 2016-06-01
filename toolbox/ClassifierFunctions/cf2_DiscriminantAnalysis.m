@@ -1,6 +1,8 @@
 function percentCorrect = cf2_DiscriminantAnalysis(trainingData, testingData, trainingClasses, testingClasses)
 % percentCorrect = cf2_DiscriminantAnalysis(trainingData, testingData, trainingClasses, testingClasses)
 %
+% This function classifies the testingData using a pseudolinear
+% discriminant analysis. See fitcdiscr for more details.
 %
 % xd  5/26/16  wrote it
 

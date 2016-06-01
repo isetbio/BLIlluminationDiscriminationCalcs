@@ -1,35 +1,17 @@
 function percentCorrect = cf1_NearestNeighbor(trainingData, testingData, trainingClasses, testingClasses)
 % percentCorrect = cf1_NearestNeighbor(trainingData, testingData)
 %
+% This function determines the pairwise distance between the row vectors in
+% trainingData and testingData. For each vector in testingData, it finds
+% the closest vector in trainingData.  If both vectors have the same class,
+% then the choice is considered corret.
 %
 % xd  5/26/16  wrote it
-
-% %% Determine size of datasets
-% trainingSize = size(trainingData,1);
-% testingSize = size(testingData,1);
-% 
-% %% Calculate performance
-% percentCorrect = 0;
-% for ii = 1:testingSize
-%     currentTestSample = testingData(ii,:);
-%     
-%     trainingSampleIdx = randsample(trainingSize,1);
-%     trainingSample = trainingData(trainingSampleIdx,:);
-%     trainingSampleFlip = convertBetweenAB_BA(trainingSample);
-%     
-%     distToTraining = norm(currentTestSample - trainingSample);
-%     distToFlip = norm(currentTestSample - trainingSampleFlip);
-%     
-%     if (distToTraining < distToFlip) == (testingClasses(ii) == trainingClasses(trainingSampleIdx))
-%         percentCorrect = percentCorrect + 1;
-%     end
-% end
 
 distMatrix = pdist2(trainingData,testingData);
 [~,minIdx] = min(distMatrix);
 classifiedClasses = trainingClasses(minIdx);
 percentCorrect = sum(classifiedClasses == testingClasses) / size(testingData,1) * 100;
-% percentCorrect = percentCorrect/testingSize * 100;
 
 end
 
