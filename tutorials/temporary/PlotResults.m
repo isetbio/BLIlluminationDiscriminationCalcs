@@ -1,13 +1,14 @@
 %% load
 clear;
-dataToLoad = 'ClassifierAnalysis_100_100_nostd_NM2.mat';
+dataToLoad = 'ClassifierAnalysis_250_250_std.mat';
 dataPath = fullfile(getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir'), 'ClassifierComparisons');
 load(fullfile(dataPath,dataToLoad));
 allData = {NNpercentCorrect, DApercentCorrect, SVMpercentCorrect};
+thresholdToExtract = 5; saveThresholds = false;
 
 %% Plot
-plotColors = {'b.-' 'g.-' 'y.-' 'r.-'};
-Colors = {'blue' 'green' 'yellow' 'red'};
+ColorMapping = containers.Map({'Blue' 'Green' 'Yellow' 'Red'},{'b.-' 'g.-' 'y.-' 'r.-'});
+
 cl = {'NN' 'DA' 'SVM'};
 paramsFree = [1,1,0,0];
 criterion = 0.709;
@@ -21,7 +22,9 @@ options = optimset('fminsearch');
 options.TolFun = 1e-09;
 options.MaxFunEvals = 10000 * 100;
 options.MaxIter = 500*100;
-    
+
+extractedThresholds = zeros(4,1);
+
 figure;
 for kk = 1:3
     subplot(1,3,kk);
@@ -37,7 +40,13 @@ for kk = 1:3
             threshold(jj) = PF(paramsValues(jj,:), criterion, 'inverse');
         end
         
-        plot(1:10, threshold, plotColors{ii}, 'markersize', 35);
+        % Pick out the target of extraction
+        if kk == 1
+            extractedThresholds(ii) = threshold(thresholdToExtract);
+            if ii == 4, plot([thresholdToExtract thresholdToExtract], [0 50], 'k'); end
+        end
+        
+        plot(1:10, threshold, ColorMapping(Colors{ii}), 'markersize', 35);
     end
     ylim([0 50]);
     xlabel('Noise Factor');
@@ -45,6 +54,8 @@ for kk = 1:3
     axis square;
 end
 suptitle(strrep(dataToLoad,'_','\_'));
+
+if saveThresholds, save([dataToLoad(1:end-4) 'ExtThresh.mat'],'extractedThresholds','Colors'); end
 
 %% Visualize the PCA's
 stimLevelToPlot = [1,10,25,50];

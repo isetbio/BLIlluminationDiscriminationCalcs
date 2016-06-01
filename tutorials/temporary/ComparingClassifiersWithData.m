@@ -1,13 +1,13 @@
 %% TODO:
 % Comment this function
-
+clear;
 %% Set some parameters for the calculation
 % These two variables determine the size of the testing and training data
 % sets respectively. For the NN calculation, a new sample will be generated
 % for each testing set vector. The sample will use the same draw to form AB
 % and BA vectors to decide which is closer to the testing set entry.
-trainingSetSize = 100;
-testingSetSize = 100;
+trainingSetSize = 250;
+testingSetSize = 250;
 
 % This determines the size of the sensor in degrees. The optical image will
 % be scale to 1.1x this value to avoid having parts of the edge of the
@@ -28,8 +28,7 @@ standardizeData = true;
 
 % Just some variables that tell the script which folders and data files to use
 Colors = {'Blue' 'Yellow' 'Red' 'Green'};
-folders = {'NM1_FullImage'}; 
-fileName = {''};
+folders = {'Neutral_FullImage'}; 
 
 %% Create a sensor
 % Because we are formatting the data into AB/BA vectors, we need to know
