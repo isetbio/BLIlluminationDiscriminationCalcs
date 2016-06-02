@@ -1,13 +1,10 @@
 function  [dataset, classes] = df1_ABBA(calcParams,targetPool,comparisonPool,kp,kg,n)
 % [dataset, classes] = df1_ABBA(calcParams,targetPool,comparisonPool,kp,kg,n)
 % 
-%
-%
-% Data vectors will be in the formation of AB and BA, where
-% A represents a target illumination scene and B represents
-% a comparison illumination scene. Both training and
-% testing vector data sets will contain equal numbers of AB
-% and BA vectors.
+% This function will take the photon isomerizations in the targetPool
+% sensors and comparisonPool sensors and turn them into AB and BA vectors.
+% A is for the target and B is for the comparison. There will be equal
+% distributions of AB and BA vectors in the training and testing sets.
 %
 % xd  6/1/16  wrote it
 

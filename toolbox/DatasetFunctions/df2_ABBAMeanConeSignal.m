@@ -1,7 +1,10 @@
 function [dataset, classes] = df2_ABBAMeanConeSignal(calcParams,targetPool,comparisonPool,kp,kg,n)
 % [dataset, classes] = df2_ABBAMeanConeSignal(calcParams,targetPool,comparisonPool,kp,kg,n)
 %
-%
+% This function follows the same data organization as df1_ABBA, see that
+% function for more details. In addition, this function will change the
+% cone isomerizations in each cone to equal the mean isomerization of its
+% cone type (L,M,S).
 %
 % xd  6/1/16  wrote it
 

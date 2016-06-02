@@ -9,8 +9,8 @@ clear;
 % each entry in the testing set, we look at which vector it is closest to
 % in the training set. If the AB/BA format for both the test and training
 % vector is the same, we consider the classification as correct.
-trainingSetSize = 500;
-testingSetSize = 500;
+trainingSetSize = 100;
+testingSetSize = 100;
 
 % This determines the size of the sensor in degrees. The optical image will
 % be scaled to OIvSensorScale times this value to avoid having parts of the edge of the
@@ -22,7 +22,7 @@ OIvSensorScale = 1.1;
 % If set to true, variable Poisson noise will be used in the simulation. If
 % set to false variable Gaussian noise, with a variance equal to the mean
 % of all cone absorptions in the target scene will be used. However, 1x
-% Poisson noise will still be enable to simulate photon transport.
+% Poisson noise will still be enable to simulate photon noise.
 usePoissonNoise = true;
 
 % If set to true, the data will be standardized using the mean and standard
@@ -33,20 +33,22 @@ standardizeData = true;
 % Additional text to add to the end of the name of the saved data file.
 % This will help add specificity if the current naming scheme is not
 % enough. Needs one entry for each folder specified below.
-additionalNamingText = {'_Mean' '_Mean' '_Mean'};
+additionalNamingText = {'_Mean'};
 
 % Just some variables that tell the script which folders and data files to use
 Colors = {'Blue' 'Yellow' 'Red' 'Green'};
-folders = {'Neutral_FullImage' 'NM1_FullImage' 'NM2_FullImage'}; 
+folders = {'NM2_FullImage'}; 
 
-% Some numbers to play with.
+% These variables specify the number of illumination steps and the noise
+% multipliers to use. Generally keep the number of steps constant and vary
+% the noise as necessary.
 numIllumSteps = 50;
 NoiseSteps = 1:2:20;
 
 %% Create a sensor
-% Because we are formatting the data into AB/BA vectors, we need to know
-% the size of the cone responses so that we can allocate space for vectors
-% with 2x the number of entries as in a single sensor's cone response matrix.
+% Create a sensor here. This sensor will be used to calculate the
+% isomerizations for every optical image later in the calculation.  This
+% keeps parameters related to the sensor constant.
 sensor = getDefaultBLIllumDiscrSensor;
 sensor = sensorSetSizeToFOV(sensor, sSize, [], oiCreate('human'));
 
@@ -66,6 +68,9 @@ for ff = 1:length(folders)
         calcParams.meanStandard = calcParams.meanStandard + mean2(sensorGet(standardSensorPool{jj}, 'photons')) / length(standardOIList);
     end
     
+    %% Calculation body
+    
+    % Pre-allocate space for results
     DApercentCorrect = zeros(numIllumSteps,length(NoiseSteps),length(Colors));
     NNpercentCorrect = zeros(numIllumSteps,length(NoiseSteps),length(Colors));
     SVMpercentCorrect = zeros(numIllumSteps,length(NoiseSteps),length(Colors));
@@ -83,11 +88,11 @@ for ff = 1:length(folders)
             sensorComparison = coneAbsorptions(sensor, resizeOI(comparison,sSize*OIvSensorScale));
             
             tic
-            for nn = NoiseSteps
+            for nn = 1:length(NoiseSteps)
                 if usePoissonNoise
-                    kp = nn; kg = 0;
+                    kp = NoiseSteps(nn); kg = 0;
                 else
-                    kg = nn; kp = 1;
+                    kg = NoiseSteps(nn); kp = 1;
                 end
                 
                 %% Generate the data set
@@ -103,7 +108,7 @@ for ff = 1:length(folders)
                     testingData = (testingData - repmat(m, testingSetSize, 1)) ./ repmat(s, testingSetSize, 1);
                 end
                 
-                % Apply classifiers
+                %% Apply classifiers
                 [SVMpercentCorrect(kk, nn, cc),svm] = cf3_SupportVectorMachine(trainingData,testingData,trainingClasses,testingClasses);
                 DApercentCorrect(kk, nn, cc) = cf2_DiscriminantAnalysis(trainingData,testingData,trainingClasses,testingClasses);
                 NNpercentCorrect(kk, nn, cc) = cf1_NearestNeighbor(trainingData,testingData,trainingClasses,testingClasses);
@@ -117,8 +122,8 @@ for ff = 1:length(folders)
                 % vector orthogonal to the projected image.  This should
                 % represent the decision boundary that the SVM uses to make
                 % a decision.
-                transformedBeta = coeff(:,1:2)'*svm.Beta;
-                d.decisionBoundary = null(transformedBeta');
+                projectedBeta = coeff(:,1:2)'*svm.Beta;
+                d.decisionBoundary = null(projectedBeta');
                 pcaData{cc,kk,nn} = d;
             end
             fprintf('Calculation time for %s, dE %.2f = %2.1f\n', Colors{cc} , kk, toc);
