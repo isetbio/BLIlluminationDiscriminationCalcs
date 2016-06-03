@@ -8,7 +8,7 @@
 clear;
 close all;
 % dataToLoad specifies the file name(s) to load.
-dataToLoad = {'ClassifierAnalysis_500_500_std_Neutral_Mean' 'ClassifierAnalysis_500_500_std_NM1_Mean' 'ClassifierAnalysis_500_500_std_NM2_Mean'};
+dataToLoad = {'ClassifierAnalysis_500_500_std_Neutral_Mean'};
 
 % This variable determines the INDEX of the threshold to extract. That is,
 % if the noise levels are [1 3 5], then setting the value to 2 will extract
@@ -84,16 +84,24 @@ for nn = 1:length(dataToLoad)
     suplabel(strrep(dataToLoad{nn},'_','\_'), 't');
     
     if saveThresholds, save([dataToLoad(1:end-4) 'ExtThresh.mat'],'extractedThresholds','Colors'); end
-%     FigureSave(fullfile(getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir'), 'Plots',dataToLoad),gcf,'pdf');
+    FigureSave(fullfile(getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir'), 'Plots',dataToLoad{nn}),gcf,'pdf');
 end
 
 %% MAKE LOOP YAY PLEASE
 %% Visualize the PCA's 
+% Load and format the data appropriately
+dataPath = fullfile(getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir'), 'ClassifierComparisons');
+load(fullfile(dataPath,dataToLoad{1}));
+
+
 stimLevelToPlot = [1,10,25,50];
 noiseLevel = 1;
 PC1 = 1;
 PC2 = 2;
 PCADataSize = size(pcaData{1,1,1}.score,1);
+
+
+
 
 % Find the min and max of the PCA projections so we can set the axis limits
 % programmatically.
@@ -113,8 +121,9 @@ for ii = 1:length(Colors)
         dataToPlot = pcaData{ii,stimLevelToPlot(jj),noiseLevel};
         plot(dataToPlot.score([1:PCADataSize/4,PCADataSize/2+1:PCADataSize/4*3],PC1), dataToPlot.score([1:PCADataSize/4,PCADataSize/2+1:PCADataSize/4*3],PC2), 'go');
         plot(dataToPlot.score([PCADataSize/4+1:PCADataSize/2,PCADataSize/4*3+1:PCADataSize],PC1), dataToPlot.score([PCADataSize/4+1:PCADataSize/2,PCADataSize/4*3+1:PCADataSize],PC2), 'rx');
+        
         if isfield(dataToPlot, 'decisionBoundary')
-            plot([0 0; dataToPlot.decisionBoundary], 'k');
+            plot(1000*[0 dataToPlot.decisionBoundary(1)],1000*[0 dataToPlot.decisionBoundary(2)], 'k');
         end
         
         title(Colors{ii});
