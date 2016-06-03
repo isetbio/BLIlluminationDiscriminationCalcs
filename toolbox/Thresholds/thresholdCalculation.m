@@ -179,7 +179,7 @@ usableDataPoints = find(usableDataPoints);
 usableDataStart = usableDataPoints;
 
 %% Set common parameters
-numTrials = calcParams.numTrials;
+numTrials = 100;
 paramsFree  = [1, 1, 0, 0];
 criterion = .709;
 stimLevels = 1:1:sizeOfData(1);

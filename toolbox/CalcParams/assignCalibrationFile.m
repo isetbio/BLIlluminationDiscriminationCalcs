@@ -12,11 +12,15 @@ switch (calcParams.calcIDStr)
     case {'ConstantFullImage' 'ShuffledFullImage'}
         calcParams.calibrationFile = 'EyeTrackerLCDNew';
         calcParams.distance = 0.683;
-    case {'StaticFullImageResizedOI2' 'NM1_FullImage' 'NM2_FullImage'}
+    case {'StaticFullImageResizedOI2' 'NM1_FullImage' 'NM2_FullImage' ...
+            'StaticFullImageResizedOI3' 'StaticFullImageResizedOI4'...
+            'StaticFullImageResizedOI5'}
         calcParams.calibrationFile = 'StereoLCDLeft';
         calcParams.distance = 0.764;
     otherwise
-        error('Unknown calcIDStr set');
+%         error('Unknown calcIDStr set');
+        calcParams.calibrationFile = 'StereoLCDLeft';
+        calcParams.distance = 0.764;
 end
 updatedParams = calcParams;
 

@@ -181,7 +181,6 @@ photonCellArray = cell(1, length(standardPool));
 for ii = 1:length(photonCellArray)
     photonCellArray{ii} = sensorGet(standardPool{ii}, 'photons');
 end
-responseSize = numel(photonCellArray{1});
 photonCellArray = cellfun(@(x)mean2(x),photonCellArray, 'UniformOutput', 0);
 calcParams.meanStandard = mean(cat(1,photonCellArray{:}));
 
@@ -215,8 +214,8 @@ for ii = 1:maxImageIllumNumber
             % Run the desired number of trials
             tic
             %% OLD VERSION
-%                         correct = 0;
-%             for tt = 1:numTrials
+%             correct = 0;
+%             for tt = 1:testingSetSize
 %                 
 %                 % We choose 2 images without replacement from the standard
 %                 % image pool. This is in order to account for the rendering
@@ -245,53 +244,57 @@ for ii = 1:maxImageIllumNumber
 %                     correct  = correct + 1;
 %                 end
 %             end
-            
+%             accuracyMatrix(ii,jj,kk) = correct / testingSetSize * 100;
             %% NEW VERSION
 
-            % Randomly choose one image from the test pool
-            testChoice = randsample(calcParams.comparisonImageSetSize, 1);
-            sensorComparison = testPool{testChoice};
-            
-            % Generate training and testing datasets here
-            trainingData = zeros(trainingSetSize, 2 * responseSize);
-            trainingClasses = ones(trainingSetSize, 1);
-            trainingClasses(1:trainingSetSize/2) = 0;
-            
-            for tt = 1:trainingSetSize/2
-                testSample = randsample(length(standardOIList), 2);
-                
-                sensorStandard = standardPool{testSample(1)};
-                photonsStandard = getNoisySensorImage(calcParams, sensorStandard, Kp, Kg);
-                photonsComparison = getNoisySensorImage(calcParams, sensorComparison, Kp, Kg);
-                
-                trainingData(tt,:) = [photonsStandard(:); photonsComparison(:)]';
-                
-                sensorStandard = standardPool{testSample(2)};
-                photonsStandard = getNoisySensorImage(calcParams, sensorStandard, Kp, Kg);
-                photonsComparison = getNoisySensorImage(calcParams, sensorComparison, Kp, Kg);
-                
-                trainingData(tt + trainingSetSize/2,:) = [photonsComparison(:); photonsStandard(:)]';
-            end
-            
-            testingData = zeros(testingSetSize, 2 * responseSize);
-            testingClasses = ones(testingSetSize, 1);
-            testingClasses(1:testingSetSize/2) = 0;
-            
-            for tt = 1:testingSetSize/2
-                testSample = randsample(length(standardOIList), 2);
-                
-                sensorStandard = standardPool{testSample(1)};
-                photonsStandard = getNoisySensorImage(calcParams, sensorStandard, Kp, Kg);
-                photonsComparison = getNoisySensorImage(calcParams, sensorComparison, Kp, Kg);
-                
-                testingData(tt,:) = [photonsStandard(:); photonsComparison(:)]';
-                
-                sensorStandard = standardPool{testSample(2)};
-                photonsStandard = getNoisySensorImage(calcParams, sensorStandard, Kp, Kg);
-                photonsComparison = getNoisySensorImage(calcParams, sensorComparison, Kp, Kg);
-                
-                testingData(tt + testingSetSize/2,:) = [photonsComparison(:); photonsStandard(:)]';
-            end
+%             % Randomly choose one image from the test pool
+%             testChoice = randsample(calcParams.comparisonImageSetSize, 1);
+%             sensorComparison = testPool{testChoice};
+%             
+%             % Generate training and testing datasets here
+%             trainingData = zeros(trainingSetSize, 2 * responseSize);
+%             trainingClasses = ones(trainingSetSize, 1);
+%             trainingClasses(1:trainingSetSize/2) = 0;
+%             
+%             for tt = 1:trainingSetSize/2
+%                 testSample = randsample(length(standardOIList), 2);
+%                 
+%                 sensorStandard = standardPool{testSample(1)};
+%                 photonsStandard = getNoisySensorImage(calcParams, sensorStandard, Kp, Kg);
+%                 photonsComparison = getNoisySensorImage(calcParams, sensorComparison, Kp, Kg);
+%                 
+%                 trainingData(tt,:) = [photonsStandard(:); photonsComparison(:)]';
+%                 
+%                 sensorStandard = standardPool{testSample(2)};
+%                 photonsStandard = getNoisySensorImage(calcParams, sensorStandard, Kp, Kg);
+%                 photonsComparison = getNoisySensorImage(calcParams, sensorComparison, Kp, Kg);
+%                 
+%                 trainingData(tt + trainingSetSize/2,:) = [photonsComparison(:); photonsStandard(:)]';
+%             end
+%             
+%             testingData = zeros(testingSetSize, 2 * responseSize);
+%             testingClasses = ones(testingSetSize, 1);
+%             testingClasses(1:testingSetSize/2) = 0;
+%             
+%             for tt = 1:testingSetSize/2
+%                 testSample = randsample(length(standardOIList), 2);
+%                 
+%                 sensorStandard = standardPool{testSample(1)};
+%                 photonsStandard = getNoisySensorImage(calcParams, sensorStandard, Kp, Kg);
+%                 photonsComparison = getNoisySensorImage(calcParams, sensorComparison, Kp, Kg);
+%                 
+%                 testingData(tt,:) = [photonsStandard(:); photonsComparison(:)]';
+%                 
+%                 sensorStandard = standardPool{testSample(2)};
+%                 photonsStandard = getNoisySensorImage(calcParams, sensorStandard, Kp, Kg);
+%                 photonsComparison = getNoisySensorImage(calcParams, sensorComparison, Kp, Kg);
+%                 
+%                 testingData(tt + testingSetSize/2,:) = [photonsComparison(:); photonsStandard(:)]';
+%             end
+%      
+%% Super NEW
+            [trainingData, trainingClasses] = df3_noABBA(calcParams, standardPool, testPool,Kp,Kg,trainingSetSize);
+            [testingData, testingClasses] = df3_noABBA(calcParams, standardPool, testPool,Kp,Kg,testingSetSize);
             
             % Standardize data if flag is set to true
             if calcParams.standardizeData
