@@ -1,20 +1,20 @@
 % PlotResults
 % 
-% This function was written to be used in conjunction with
+% This function was written to  be used in conjunction with
 % ComparingClassifiersWithData. This is not guaranteed to work with data
-% generated through other means.
+% generated through other means (due for formatting).
 
 %% Load data
 clear;
-
+close all;
 % dataToLoad specifies the file name(s) to load.
-dataToLoad = {'ClassifierAnalysis_100_100_std_NM2_Mean.mat' 'ClassifierAnalysis_500_500_std_NM1_Mean.mat' ...
-    'ClassifierAnalysis_500_500_std_Neutral_Mean.mat'};
+dataToLoad = {'ClassifierAnalysis_500_500_std_Neutral_Mean' 'ClassifierAnalysis_500_500_std_NM1_Mean' 'ClassifierAnalysis_500_500_std_NM2_Mean'};
 
 % This variable determines the INDEX of the threshold to extract. That is,
 % if the noise levels are [1 3 5], then setting the value to 2 will extract
 % the thresholds for noise level 3.
-thresholdToExtract = [3 3 6]; saveThresholds = false;
+% thresholdToExtract = [2 2 3]; 
+saveThresholds = false;
 
 %% Plot
 
@@ -36,7 +36,7 @@ options = optimset('fminsearch');
 options.TolFun = 1e-09;
 options.MaxFunEvals = 10000 * 100;
 options.MaxIter = 500*100;
-
+tN = zeros(3,1);
 % Actual code to plot the data
 for nn = 1:length(dataToLoad)
     % Load and format the data appropriately
@@ -55,7 +55,7 @@ for nn = 1:length(dataToLoad)
         hold on;
         title(cl{kk});
         dataset = allData{kk};
-        tN = thresholdToExtract(kk);
+%         tN = thresholdToExtract(kk);
         for ii = 1:length(Colors)
             threshold = zeros(numKValue, 1);
             paramsValues = zeros(numKValue, 4);
@@ -65,9 +65,11 @@ for nn = 1:length(dataToLoad)
                 threshold(jj) = PF(paramsValues(jj,:), criterion, 'inverse');
             end
             
+            if nn == (ii == 1), [~,tN(kk)] = min(abs(threshold - 10)); end
+            
             % Pick out the target of extraction
-            extractedThresholds(ii,kk) = threshold(tN);
-            if ii == 4, plot([NoiseSteps(tN) NoiseSteps(tN)], [0 50], 'k'); end
+            extractedThresholds(ii,kk) = threshold(tN(kk));
+            if ii == 4, plot([NoiseSteps(tN(kk)) NoiseSteps(tN(kk))], [0 50], 'k'); end
             
             plotIdx = threshold > 0.001; % Float equality check
             plot(NoiseSteps(plotIdx), threshold(plotIdx), ColorMapping(Colors{ii}), 'markersize', 35);
@@ -82,8 +84,11 @@ for nn = 1:length(dataToLoad)
     suplabel(strrep(dataToLoad{nn},'_','\_'), 't');
     
     if saveThresholds, save([dataToLoad(1:end-4) 'ExtThresh.mat'],'extractedThresholds','Colors'); end
+%     FigureSave(fullfile(getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir'), 'Plots',dataToLoad),gcf,'pdf');
 end
-%% Visualize the PCA's
+
+%% MAKE LOOP YAY PLEASE
+%% Visualize the PCA's 
 stimLevelToPlot = [1,10,25,50];
 noiseLevel = 1;
 PC1 = 1;
@@ -108,9 +113,11 @@ for ii = 1:length(Colors)
         dataToPlot = pcaData{ii,stimLevelToPlot(jj),noiseLevel};
         plot(dataToPlot.score([1:PCADataSize/4,PCADataSize/2+1:PCADataSize/4*3],PC1), dataToPlot.score([1:PCADataSize/4,PCADataSize/2+1:PCADataSize/4*3],PC2), 'go');
         plot(dataToPlot.score([PCADataSize/4+1:PCADataSize/2,PCADataSize/4*3+1:PCADataSize],PC1), dataToPlot.score([PCADataSize/4+1:PCADataSize/2,PCADataSize/4*3+1:PCADataSize],PC2), 'rx');
+        if isfield(dataToPlot, 'decisionBoundary')
+            plot([0 0; dataToPlot.decisionBoundary], 'k');
+        end
+        
         title(Colors{ii});
-%         xlim([-100 100]);
-%         ylim([-20 20]);
 
         xlim(1.1*[-xlimits xlimits]);
         ylim(1.1*[-ylimits ylimits]);

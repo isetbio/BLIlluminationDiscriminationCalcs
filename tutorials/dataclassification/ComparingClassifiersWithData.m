@@ -28,16 +28,16 @@ usePoissonNoise = true;
 % If set to true, the data will be standardized using the mean and standard
 % deviation of the training set. This is generally used to help the
 % performance of linear classifiers by making the feature space spherical.
-standardizeData = true;
+standardizeData = false;
 
 % Additional text to add to the end of the name of the saved data file.
 % This will help add specificity if the current naming scheme is not
-% enough. Needs one entry for each folder specified below.
-additionalNamingText = {'_Mean'};
+% enough. 
+additionalNamingText = '';
 
 % Just some variables that tell the script which folders and data files to use
 Colors = {'Blue' 'Yellow' 'Red' 'Green'};
-folders = {'NM2_FullImage'}; 
+folders = {'Neutral_FullImage'}; % Rename to OIFolders?
 
 % These variables specify the number of illumination steps and the noise
 % multipliers to use. Generally keep the number of steps constant and vary
@@ -75,6 +75,9 @@ for ff = 1:length(folders)
     NNpercentCorrect = zeros(numIllumSteps,length(NoiseSteps),length(Colors));
     SVMpercentCorrect = zeros(numIllumSteps,length(NoiseSteps),length(Colors));
     pcaData = cell(length(Colors),numIllumSteps,length(NoiseSteps));
+    DApca = zeros(numIllumSteps,length(NoiseSteps),length(Colors));
+    NNpca = zeros(numIllumSteps,length(NoiseSteps),length(Colors));
+    SVMpca = zeros(numIllumSteps,length(NoiseSteps),length(Colors));
     for cc = 1:length(Colors)
         
         % Load all Optical image names in the target directory in
@@ -96,8 +99,8 @@ for ff = 1:length(folders)
                 end
                 
                 %% Generate the data set
-                [trainingData, trainingClasses] = df2_ABBAMeanConeSignal(calcParams,standardSensorPool,{sensorComparison},kp,kg,trainingSetSize);
-                [testingData, testingClasses] = df2_ABBAMeanConeSignal(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
+                [trainingData, trainingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,trainingSetSize);
+                [testingData, testingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
                 
                 % Standardize data if flag is set to true
                 if standardizeData
@@ -109,8 +112,8 @@ for ff = 1:length(folders)
                 end
                 
                 %% Apply classifiers
-                [SVMpercentCorrect(kk, nn, cc),svm] = cf3_SupportVectorMachine(trainingData,testingData,trainingClasses,testingClasses);
-                DApercentCorrect(kk, nn, cc) = cf2_DiscriminantAnalysis(trainingData,testingData,trainingClasses,testingClasses);
+%                 [SVMpercentCorrect(kk, nn, cc),svm] = cf3_SupportVectorMachine(trainingData,testingData,trainingClasses,testingClasses);
+%                 DApercentCorrect(kk, nn, cc) = cf2_DiscriminantAnalysis(trainingData,testingData,trainingClasses,testingClasses);
                 NNpercentCorrect(kk, nn, cc) = cf1_NearestNeighbor(trainingData,testingData,trainingClasses,testingClasses);
                 
                 %% Perform pca analysis
@@ -121,10 +124,24 @@ for ff = 1:length(folders)
                 % the first 2 principal components. Then, we find the
                 % vector orthogonal to the projected image.  This should
                 % represent the decision boundary that the SVM uses to make
-                % a decision.
-                projectedBeta = coeff(:,1:2)'*svm.Beta;
-                d.decisionBoundary = null(projectedBeta');
+                % a decision. It seems that the SVM sometimes has issues
+                % classifying the noAB vectors in high dimensional space,
+                % but is capable of doing the calculation using projections
+                % onto the PCA vectors.
+                svm.Beta = [];
+                if ~isempty(svm.Beta)
+                    projectedBeta = coeff(:,1:2)'*svm.Beta;
+                    d.decisionBoundary = null(projectedBeta');
+                else
+                    d.decisionBoundary = [0 0];
+                end
                 pcaData{cc,kk,nn} = d;
+                
+                % Run classification on the projections of data points on
+                % to the first two principal components.
+%                 SVMpca(kk, nn, cc) = cf3_SupportVectorMachine(d.score(1:trainingSetSize,1:2),d.score(trainingSetSize+1:end,1:2),trainingClasses,testingClasses);
+%                 DApca(kk, nn, cc) = cf2_DiscriminantAnalysis(d.score(1:trainingSetSize,1:2),d.score(trainingSetSize+1:end,1:2),trainingClasses,testingClasses);
+%                 NNpca(kk, nn, cc) = cf1_NearestNeighbor(d.score(1:trainingSetSize,1:2),d.score(trainingSetSize+1:end,1:2),trainingClasses,testingClasses);
             end
             fprintf('Calculation time for %s, dE %.2f = %2.1f\n', Colors{cc} , kk, toc);
         end
@@ -132,8 +149,12 @@ for ff = 1:length(folders)
     
     %% Save stuff
     stdText = {'nostd' 'std'};
-    nameOfFile = sprintf('ClassifierAnalysis_%d_%d_%s_%s%s',trainingSetSize,testingSetSize,stdText{standardizeData+1},strtok(folders{ff},'_'),additionalNamingText{ff});
+    nameOfFile = sprintf('ClassifierAnalysis_%d_%d_%s_%s%s',trainingSetSize,testingSetSize,stdText{standardizeData+1},strtok(folders{ff},'_'),additionalNamingText);
     fullSavePath = fullfile(analysisDir, 'ClassifierComparisons',nameOfFile);
-    save(fullSavePath, 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect', 'pcaData', 'Colors','NoiseSteps');
+%     save(fullSavePath, 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect',...
+%         'pcaData', 'Colors','NoiseSteps','SVMpca','NNpca','DApca');
+
+    save(fullSavePath, 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect',...
+        'pcaData', 'Colors','NoiseSteps');
 end
 
