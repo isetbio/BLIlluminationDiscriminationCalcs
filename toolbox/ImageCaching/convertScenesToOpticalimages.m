@@ -12,11 +12,11 @@ function convertScenesToOpticalimages(calcParams, forceCompute)
 % 3/13/2015   xd  wrote it
 
 %% Point at where input data live
-dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+AnalysisDir   = getpref('BLIlluminationDiscriminationCalcs', 'Analysis');
 
 %% List of where the images will be stored on ColorShare1
 targetFolderList = calcParams.cacheFolderList;
-sceneDir = fullfile(dataBaseDir, 'SceneData', targetFolderList{2});
+sceneDir = fullfile(AnalysisDir, 'SceneData', targetFolderList{2});
 contents = dir(sceneDir);
 folderList = cell(1,5);
 for ii = 1:length(contents)
@@ -35,9 +35,9 @@ oi = oiCreate('human');
 %% Compute the optical images
 
 % Check if target folder exists, if not, create folder and sub folders
-targetPath = fullfile(dataBaseDir, 'OpticalImageData', targetFolderList{2});
+targetPath = fullfile(AnalysisDir, 'OpticalImageData', targetFolderList{2});
 if ~exist(targetPath, 'dir')
-    parentPath = fullfile(dataBaseDir, 'OpticalImageData');
+    parentPath = fullfile(AnalysisDir, 'OpticalImageData');
     mkdir(parentPath, targetFolderList{2});
     for i = 1:length(folderList)
         if ~isempty(folderList{i})
@@ -60,7 +60,7 @@ for i = 1:length(folderList)
         
         % Create new Optical Image object if it does not already exist
         % or if forceCompute flag is set to true
-        oiCheckPath = fullfile(dataBaseDir, 'OpticalImageData', targetFolderList{2}, folderList{i}, strcat(imgName{1}, 'OpticalImage.mat'));
+        oiCheckPath = fullfile(AnalysisDir, 'OpticalImageData', targetFolderList{2}, folderList{i}, strcat(imgName{1}, 'OpticalImage.mat'));
         if (forceCompute || ~exist(oiCheckPath, 'file'))
             getOpticalImageFromSceneData(calcParams, oi, folderList{i}, imgName{1});
         end
