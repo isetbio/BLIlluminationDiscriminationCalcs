@@ -14,7 +14,8 @@ switch (calcParams.calcIDStr)
         calcParams.distance = 0.683;
     case {'StaticFullImageResizedOI2' 'NM1_FullImage' 'NM2_FullImage' ...
             'StaticFullImageResizedOI3' 'StaticFullImageResizedOI4'...
-            'StaticFullImageResizedOI5'}
+            'StaticFullImageResizedOI5' 'StaticFullImageResizedOI6'...
+            'StaticFullImageResizedOI7' 'StaticFullImageResizedOI8'}
         calcParams.calibrationFile = 'StereoLCDLeft';
         calcParams.distance = 0.764;
     otherwise

@@ -1,4 +1,4 @@
-function percentCorrect = cf4_EuclidianDist(trainingData, testingData, trainingClasses, testingClasses)
+function percentCorrect = cf4_oldEuclidianDist(trainingData, testingData, trainingClasses, testingClasses)
 % percentCorrect = cf1_NearestNeighbor(trainingData, testingData, trainingClasses, testingClasses)
 % 
 %
@@ -10,11 +10,11 @@ if sum(testingClasses == trainingClasses) ~= length(trainingClasses), error('cf4
 
 %% Calculate performance
 % We have half the trials as number of entries in the data.
-numTrials = length(testingClasses/2);
+numTrials = length(testingClasses)/2;
 percentCorrect = 0;
 for ii = 1:numTrials
-    distToSame = norm(trainingData(:,ii) - testingData(:,ii));
-    distToDiff = norm(trainingData(:,ii) - testingData(:,numTrials+ii));
+    distToSame = norm(trainingData(ii,:) - testingData(ii,:));
+    distToDiff = norm(trainingData(ii,:) - testingData(numTrials+ii,:));
     
     if distToSame < distToDiff
         percentCorrect = percentCorrect + 1;

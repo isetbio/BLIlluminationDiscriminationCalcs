@@ -174,9 +174,7 @@ end
 
 % Compute the mean of the standardPool isomerizations.  The square root of
 % this mean will serve as the standard deviation of an optional Gaussian
-% noise factor Kg. We will also record how many elements there are in a
-% cone response because we will need this number later for building the
-% training and testing data.
+% noise factor Kg. 
 photonCellArray = cell(1, length(standardPool));
 for ii = 1:length(photonCellArray)
     photonCellArray{ii} = sensorGet(standardPool{ii}, 'photons');
@@ -210,91 +208,14 @@ for ii = 1:maxImageIllumNumber
         for kk = 1:KgSampleNum
             Kg = calcParams.startKg + KgInterval * (kk - 1);
 
-            
-            % Run the desired number of trials
             tic
-            %% OLD VERSION
-%             correct = 0;
-%             for tt = 1:testingSetSize
-%                 
-%                 % We choose 2 images without replacement from the standard
-%                 % image pool. This is in order to account for the rendering
-%                 % noise.
-%                 standardChoice = randsample(length(standardOIList), 2);
-%                 
-%                 % Randomly choose one image from the test pool
-%                 testChoice = randsample(calcParams.comparisonImageSetSize, 1);
-%                 
-%                 % Get inital noisy ref image
-%                 photonsStandardRef = getNoisySensorImage(calcParams,standardPool{standardChoice(1)},Kp,Kg);
-%                 
-%                 % Get noisy version of standard image
-%                 photonsStandardComp = getNoisySensorImage(calcParams,standardPool{standardChoice(2)},Kp,Kg);
-%                 
-%                 % Get noisy version of test image
-%                 photonsTestComp = getNoisySensorImage(calcParams,testPool{testChoice},Kp,Kg);
-% 
-%                 % Calculate vector distance from the test image and
-%                 % standard image to the reference image
-%                 distToStandard = norm(photonsStandardRef(:)-photonsStandardComp(:));
-%                 distToTest = norm(photonsStandardRef(:)-photonsTestComp(:));
-%                 
-%                 % Decide if 'subject' was correct on this trial
-%                 if (distToStandard < distToTest)
-%                     correct  = correct + 1;
-%                 end
-%             end
-%             accuracyMatrix(ii,jj,kk) = correct / testingSetSize * 100;
-            %% NEW VERSION
-
-%             % Randomly choose one image from the test pool
-%             testChoice = randsample(calcParams.comparisonImageSetSize, 1);
-%             sensorComparison = testPool{testChoice};
-%             
-%             % Generate training and testing datasets here
-%             trainingData = zeros(trainingSetSize, 2 * responseSize);
-%             trainingClasses = ones(trainingSetSize, 1);
-%             trainingClasses(1:trainingSetSize/2) = 0;
-%             
-%             for tt = 1:trainingSetSize/2
-%                 testSample = randsample(length(standardOIList), 2);
-%                 
-%                 sensorStandard = standardPool{testSample(1)};
-%                 photonsStandard = getNoisySensorImage(calcParams, sensorStandard, Kp, Kg);
-%                 photonsComparison = getNoisySensorImage(calcParams, sensorComparison, Kp, Kg);
-%                 
-%                 trainingData(tt,:) = [photonsStandard(:); photonsComparison(:)]';
-%                 
-%                 sensorStandard = standardPool{testSample(2)};
-%                 photonsStandard = getNoisySensorImage(calcParams, sensorStandard, Kp, Kg);
-%                 photonsComparison = getNoisySensorImage(calcParams, sensorComparison, Kp, Kg);
-%                 
-%                 trainingData(tt + trainingSetSize/2,:) = [photonsComparison(:); photonsStandard(:)]';
-%             end
-%             
-%             testingData = zeros(testingSetSize, 2 * responseSize);
-%             testingClasses = ones(testingSetSize, 1);
-%             testingClasses(1:testingSetSize/2) = 0;
-%             
-%             for tt = 1:testingSetSize/2
-%                 testSample = randsample(length(standardOIList), 2);
-%                 
-%                 sensorStandard = standardPool{testSample(1)};
-%                 photonsStandard = getNoisySensorImage(calcParams, sensorStandard, Kp, Kg);
-%                 photonsComparison = getNoisySensorImage(calcParams, sensorComparison, Kp, Kg);
-%                 
-%                 testingData(tt,:) = [photonsStandard(:); photonsComparison(:)]';
-%                 
-%                 sensorStandard = standardPool{testSample(2)};
-%                 photonsStandard = getNoisySensorImage(calcParams, sensorStandard, Kp, Kg);
-%                 photonsComparison = getNoisySensorImage(calcParams, sensorComparison, Kp, Kg);
-%                 
-%                 testingData(tt + testingSetSize/2,:) = [photonsComparison(:); photonsStandard(:)]';
-%             end
-%      
-%% Super NEW
-            [trainingData, trainingClasses] = df3_noABBA(calcParams, standardPool, testPool,Kp,Kg,trainingSetSize);
-            [testingData, testingClasses] = df3_noABBA(calcParams, standardPool, testPool,Kp,Kg,testingSetSize);
+            % Choose the data generation function
+            toolboxPath = fileparts(fileparts(mfilename('fullpath')));
+            dfFolder = what(fullfile(toolboxPath,'DatasetFunctions'));
+            dfList = dfFolder.m;
+            datasetFunction = str2func(strrep(dfList{calcParams.dFunction},'.m',''));
+            [trainingData, trainingClasses] = datasetFunction(calcParams, standardPool, testPool,Kp,Kg,trainingSetSize);
+            [testingData, testingClasses] = datasetFunction(calcParams, standardPool, testPool,Kp,Kg,testingSetSize);
             
             % Standardize data if flag is set to true
             if calcParams.standardizeData
@@ -306,15 +227,13 @@ for ii = 1:maxImageIllumNumber
             end
             
             % Compute performance based on chose classifier method
-            toolboxPath = fileparts(fileparts(mfilename('fullpath')));
             cfFolder = what(fullfile(toolboxPath,'ClassifierFunctions'));
             cfList = cfFolder.m;
             classifierFunction = str2func(strrep(cfList{calcParams.cFunction},'.m',''));
             accuracyMatrix(ii,jj,kk) = classifierFunction(trainingData,testingData,trainingClasses,testingClasses);
             
             % Print the time the calculation took
-            fprintf('Calculation time for Kp %.2f, Kg %.2f = %2.1f\n', Kp, Kg, toc);
-            
+            fprintf('Calculation time for Kp %.2f, Kg %.2f = %2.1f\n', Kp, Kg, toc);            
         end
     end
 end

@@ -20,7 +20,7 @@ function runAllFirstOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs  = {'StaticFullImageResizedOI5'};
+calcIDStrs  = {'StaticFullImageResizedOI8' 'StaticFullImageResizedOI7' 'StaticFullImageResizedOI5'};
     
 %% Parameters of the calculation
 %
@@ -76,6 +76,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.testingSetSize = 200;
     calcParams.standardizeData = false;
     calcParams.cFunction = 4;
+    calcParams.dFunction = 3;
     calcParams.maxIllumTarget = 50;
     
     % Kp represents the scale factor for the Poisson noise.  This is the
