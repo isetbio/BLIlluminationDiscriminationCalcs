@@ -8,7 +8,9 @@
 clear;
 close all;
 % dataToLoad specifies the file name(s) to load.
-dataToLoad = {'ClassifierAnalysis_500_500_std_Neutral_Mean'};
+dataToLoad = {'ClassifierAnalysis_200_200_nostd_Neutral_oldNN_noABBA'...
+    'ClassifierAnalysis_200_200_nostd_NM1_oldNN_noABBA'...
+    'ClassifierAnalysis_200_200_nostd_NM2_oldNN_noABBA'};
 
 % This variable determines the INDEX of the threshold to extract. That is,
 % if the noise levels are [1 3 5], then setting the value to 2 will extract
@@ -72,6 +74,7 @@ for nn = 1:length(dataToLoad)
             if ii == 4, plot([NoiseSteps(tN(kk)) NoiseSteps(tN(kk))], [0 50], 'k'); end
             
             plotIdx = threshold > 0.001; % Float equality check
+            if sum(plotIdx) < length(plotIdx), plotIdx = 1:(find(~plotIdx,1) - 1); end
             plot(NoiseSteps(plotIdx), threshold(plotIdx), ColorMapping(Colors{ii}), 'markersize', 35);
         end
         plot([0 NoiseSteps(end) + 1], [10 10], 'k--');
