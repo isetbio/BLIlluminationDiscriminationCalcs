@@ -12,11 +12,11 @@ function convertScenesToOpticalimages(calcParams, forceCompute)
 % 3/13/2015   xd  wrote it
 
 %% Point at where input data live
-AnalysisDir   = getpref('BLIlluminationDiscriminationCalcs', 'Analysis');
+databaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
 
 %% List of where the images will be stored on ColorShare1
 targetFolderList = calcParams.cacheFolderList;
-sceneDir = fullfile(AnalysisDir, 'SceneData', targetFolderList{2});
+sceneDir = fullfile(databaseDir, 'SceneData', targetFolderList{2});
 contents = dir(sceneDir);
 folderList = cell(1,5);
 for ii = 1:length(contents)
@@ -35,6 +35,7 @@ oi = oiCreate('human');
 %% Compute the optical images
 
 % Check if target folder exists, if not, create folder and sub folders
+AnalysisDir = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
 targetPath = fullfile(AnalysisDir, 'OpticalImageData', targetFolderList{2});
 if ~exist(targetPath, 'dir')
     parentPath = fullfile(AnalysisDir, 'OpticalImageData');
