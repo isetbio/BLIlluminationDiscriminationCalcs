@@ -16,8 +16,8 @@ testingSetSize = 100;
 % be scaled to OIvSensorScale times this value to avoid having parts of the edge of the
 % sensor miss any stimulus. This should be OK since the optical image pads
 % the original stimulus with the average color at the edges.
-sSize = 0.4;
-OIvSensorScale = 1.1;
+sSize = 0.83;
+OIvSensorScale = 0;
 
 % If set to true, variable Poisson noise will be used in the simulation. If
 % set to false variable Gaussian noise, with a variance equal to the mean
@@ -28,16 +28,16 @@ usePoissonNoise = true;
 % If set to true, the data will be standardized using the mean and standard
 % deviation of the training set. This is generally used to help the
 % performance of linear classifiers by making the feature space spherical.
-standardizeData = false;
+standardizeData = true;
 
 % Additional text to add to the end of the name of the saved data file.
 % This will help add specificity if the current naming scheme is not
 % enough. 
-additionalNamingText = '';
+additionalNamingText = '_StaticPatch1';
 
 % Just some variables that tell the script which folders and data files to use
 Colors = {'Blue' 'Yellow' 'Red' 'Green'};
-folders = {'Neutral_FullImage'}; % Rename to OIFolders?
+folders = {'Neutral' 'NM1' 'NM2'}; % Rename to OIFolders?
 
 % These variables specify the number of illumination steps and the noise
 % multipliers to use. Generally keep the number of steps constant and vary
@@ -49,6 +49,7 @@ NoiseSteps = 1:2:20;
 % Create a sensor here. This sensor will be used to calculate the
 % isomerizations for every optical image later in the calculation.  This
 % keeps parameters related to the sensor constant.
+rng(1);
 sensor = getDefaultBLIllumDiscrSensor;
 sensor = sensorSetSizeToFOV(sensor, sSize, [], oiCreate('human'));
 
@@ -65,6 +66,7 @@ for ff = 1:length(folders)
     for jj = 1:length(standardOIList)
         standard = loadOpticalImageData([folders{ff} '/Standard'], strrep(standardOIList{jj}, 'OpticalImage.mat', ''));
         standardSensorPool{jj} = coneAbsorptions(sensor, resizeOI(standard,sSize*OIvSensorScale));
+%         standardSensorPool{jj} = coneAbsorptions(sensor, standard);
         calcParams.meanStandard = calcParams.meanStandard + mean2(sensorGet(standardSensorPool{jj}, 'photons')) / length(standardOIList);
     end
     
@@ -89,7 +91,7 @@ for ff = 1:length(folders)
             
             comparison = loadOpticalImageData([folders{ff} '/' Colors{cc} 'Illumination'], strrep(OINames{kk}, 'OpticalImage.mat', ''));
             sensorComparison = coneAbsorptions(sensor, resizeOI(comparison,sSize*OIvSensorScale));
-            
+%             sensorComparison = coneAbsorptions(sensor, comparison);
             tic
             for nn = 1:length(NoiseSteps)
                 if usePoissonNoise
@@ -112,14 +114,14 @@ for ff = 1:length(folders)
                 end
                 
                 %% Apply classifiers
-%                 [SVMpercentCorrect(kk, nn, cc),svm] = cf3_SupportVectorMachine(trainingData,testingData,trainingClasses,testingClasses);
-%                 DApercentCorrect(kk, nn, cc) = cf2_DiscriminantAnalysis(trainingData,testingData,trainingClasses,testingClasses);
+                [SVMpercentCorrect(kk, nn, cc),svm] = cf3_SupportVectorMachine(trainingData,testingData,trainingClasses,testingClasses);
+                DApercentCorrect(kk, nn, cc) = cf2_DiscriminantAnalysis(trainingData,testingData,trainingClasses,testingClasses);
                 NNpercentCorrect(kk, nn, cc) = cf1_NearestNeighbor(trainingData,testingData,trainingClasses,testingClasses);
                 
                 %% Perform pca analysis
                 [coeff,d.score,~,~,d.explained] = pca([trainingData;testingData]);
                 d.score = d.score(:,1:10);
-                
+                d.firstPC = coeff(:,1);
                 % We take the SVM discriminant function and project onto
                 % the first 2 principal components. Then, we find the
                 % vector orthogonal to the projected image.  This should
@@ -128,7 +130,8 @@ for ff = 1:length(folders)
                 % classifying the noAB vectors in high dimensional space,
                 % but is capable of doing the calculation using projections
                 % onto the PCA vectors.
-                svm.Beta = [];
+                
+%                 svm.Beta = [];
                 if ~isempty(svm.Beta)
                     projectedBeta = coeff(:,1:2)'*svm.Beta;
                     d.decisionBoundary = null(projectedBeta');
