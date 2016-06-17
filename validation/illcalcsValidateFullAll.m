@@ -36,9 +36,6 @@ function illcalcsValidateFullAll(varargin)
     % valid options are: 'none', min', 'low', 'med', 'high', 'max'
     UnitTest.setPref('verbosity', 'high');
 
-    %% Numeric tolerance for comparison to ground truth data
-    UnitTest.setPref('numericTolerance', 500*eps);
-
     %% Whether to plot data that do not agree with the ground truth
     UnitTest.setPref('graphMismatchedData', true);
 
