@@ -12,15 +12,7 @@ function runAllCalcFromQueue
 % 6/4/15  xd  wrote it
 
 %% Clear and initialize
-clear all; close all; ieInit;
-
-%% Get our project toolbox on the path
-myDir = fileparts(mfilename('fullpath'));
-pathDir = fullfile(myDir,'..','toolbox','');
-AddToMatlabPathDynamically(pathDir);
-
-%% Make sure preferences are defined
-setPrefsForBLIlluminationDiscriminationCalcs;
+ieInit;
 
 %% Get the queue directory
 BaseDir = getpref('BLIlluminationDiscriminationCalcs', 'QueueDir');
