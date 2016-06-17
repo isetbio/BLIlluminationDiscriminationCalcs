@@ -167,7 +167,7 @@ for ii = 1:length(standardOIList)
     oi = loadOpticalImageData(standardPath, opticalImageName);
     
     sensorStandard = sensorSet(sensor, 'noise flag', 0);
-    oi = resizeOI(oi, sensorGet(sensorStandard, 'fov')*1.1);
+    oi = resizeOI(oi, sensorGet(sensorStandard, 'fov')*calcParams.OIvSensorScale);
     sensorStandard = coneAbsorptions(sensorStandard, oi);
     standardPool{ii} = sensorStandard;
 end
@@ -196,7 +196,7 @@ for ii = 1:maxImageIllumNumber
         end
         oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' folderName], imageName);
         sensorTest = sensorSet(sensor, 'noise flag', 0);
-        oiTest = resizeOI(oiTest, sensorGet(sensorTest, 'fov')*1.1);
+        oiTest = resizeOI(oiTest, sensorGet(sensorTest, 'fov')*calcParams.OIvSensorScale);
         sensorTest = coneAbsorptions(sensorTest, oiTest);
         testPool{oo} = sensorTest;
     end
