@@ -20,7 +20,7 @@ function runAllFirstOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs  = {'StaticFullImageResizedOI8' 'StaticFullImageResizedOI7' 'StaticFullImageResizedOI5'};
+calcIDStrs  = {'NM1_FullImage' 'NM2_FullImage'};
     
 %% Parameters of the calculation
 %
@@ -35,18 +35,18 @@ calcIDStrs  = {'StaticFullImageResizedOI8' 'StaticFullImageResizedOI7' 'StaticFu
 for k1 = 1:length(calcIDStrs)
     
     % Define the steps of the calculation that should be carried out.
-    calcParams.CACHE_SCENES = false;
-    calcParams.forceSceneCompute = false; % Will overwrite any existing data.
+    calcParams.CACHE_SCENES = true;
+    calcParams.forceSceneCompute = true; % Will overwrite any existing data.
     
-    calcParams.CACHE_OIS = false;
-    calcParams.forceOICompute = false;    % Will overwrite any existing data.
+    calcParams.CACHE_OIS = true;
+    calcParams.forceOICompute = true;    % Will overwrite any existing data.
     
     calcParams.RUN_MODEL = false;
     calcParams.MODEL_ORDER = 1; 
     calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
     calcParams.overWriteFlag = 1;        % Whether or not to overwrite existing data.
     
-    calcParams.CALC_THRESH = true;
+    calcParams.CALC_THRESH = false;
     calcParams.displayIndividualThreshold = false;
     
     % Set the calcID
@@ -67,16 +67,17 @@ for k1 = 1:length(calcIDStrs)
         
     % Parameters for creating the sensor
     calcParams.coneIntegrationTime = 0.050;
-    calcParams.sensorFOV = 0.4;             % Visual angle defining the size of the sensor
+    calcParams.sensorFOV = 0.83;             % Visual angle defining the size of the sensor
+    calcParams.OIvSensorScale = 0;
     
     % Specify the number of trials for each combination of Kp Kg as well as
     % the highest illumination step (max 50) to go up to.
 %     calcParams.numTrials = 100;
-    calcParams.trainingSetSize = 200;
-    calcParams.testingSetSize = 200;
+    calcParams.trainingSetSize = 100;
+    calcParams.testingSetSize = 100;
     calcParams.standardizeData = false;
-    calcParams.cFunction = 4;
-    calcParams.dFunction = 3;
+    calcParams.cFunction = 1;
+    calcParams.dFunction = 1;
     calcParams.maxIllumTarget = 50;
     
     % Kp represents the scale factor for the Poisson noise.  This is the
