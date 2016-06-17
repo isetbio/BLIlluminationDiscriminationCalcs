@@ -9,13 +9,14 @@ function illcalcsSetUnitTestPreferences
             'projectName',                         'BLIlluminationDiscrimCalcsValidation', ... 	                         % The project name (also the preferences group name)
             'validationRootDir',                   '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcs/validation', ... % Directory location where the 'scripts' subdirectory resides.
             'alternateFastDataDir',                '',  ...  	                                                         % Alternate FAST (hash) data directory location. Specify '' to use the default location, i.e., $validationRootDir/data/fast
-            'alternateFullDataDir',                '/Volumes/ColorShare1/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcs/Validation/data/full',  ...  	 % Alternate FULL (hash) data directory location. Specify '' to use the default location, i.e., $validationRootDir/data/full
+            'alternateFullDataDir',                '/Volumes/Users1/Dropbox (Aguirre-Brainard Lab)/IBIO_data/BLIlluminationDiscrimination/Validation/data/full',  ...  	 % Alternate FULL (hash) data directory location. Specify '' to use the default location, i.e., $validationRootDir/data/full
             'useRemoteDataToolbox',  false, ...                                                                          % If true use Remote Data Toolbox to fetch validation data on demand.
             'remoteDataToolboxConfig', '', ...                                                                           % Struct, file path, or project name with Remote Data Toolbox configuration.
             'clonedWikiLocation',                  '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcsWiki/BLIlluminationDiscriminationCalcs.wiki', ... 	 % Local path to the directory where the wiki is cloned. Only relevant for publishing tutorials.
             'clonedGhPagesLocation',               '/Users/Shared/Matlab/Analysis/BLIlluminationDiscrimCalcsGhPages/BLIlluminationDiscriminationCalcs', ... 	 % Local path to the directory where the gh-pages repository is cloned. Only relevant for publishing tutorials.
             'githubRepoURL',                       'http://isetbio.github.io/BLIlluminationDiscriminationCalcs', ... 	 % Github URL for the project. This is only used for publishing tutorials.
             'generateGroundTruthDataIfNotFound',   true, ...  	                                                         % Flag indicating whether to generate ground truth if one is not found
+            'numericTolerance',                    1e-12, ...                                                          % Numeric tolerance for comparison to ground truth data.
             'listingScript',                       'illcalcsListAllValidationDirs' ...
       );
  
