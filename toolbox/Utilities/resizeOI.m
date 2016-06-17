@@ -12,8 +12,12 @@ function newoi = resizeOI(oi, fov)
 % xd  4/22/2016 wrote it
 % xd  5/19/2016 added comments and formatting
 
-%% Use 0 to leave oi unmodified
+%% Use 0 to leave OI unmodified
 if fov == 0, newoi = oi; return; end;
+
+%% Average the OI differently from resizing it
+
+
 
 %% Calculation if fov not 0
 % Get the old fov to calculate how many data points to average for the new oi
