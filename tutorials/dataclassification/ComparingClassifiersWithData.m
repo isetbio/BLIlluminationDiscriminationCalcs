@@ -16,8 +16,8 @@ testingSetSize = 100;
 % be scaled to OIvSensorScale times this value to avoid having parts of the edge of the
 % sensor miss any stimulus. This should be OK since the optical image pads
 % the original stimulus with the average color at the edges.
-sSize = 0.83;
-OIvSensorScale = 0;
+sSize = 0.07;
+OIvSensorScale = 1.3;
 
 % If set to true, variable Poisson noise will be used in the simulation. If
 % set to false variable Gaussian noise, with a variance equal to the mean
@@ -33,7 +33,7 @@ standardizeData = true;
 % Additional text to add to the end of the name of the saved data file.
 % This will help add specificity if the current naming scheme is not
 % enough. 
-additionalNamingText = '_StaticPatch1';
+additionalNamingText = '_NewOI';
 
 % Just some variables that tell the script which folders and data files to use
 Colors = {'Blue' 'Yellow' 'Red' 'Green'};
@@ -66,7 +66,6 @@ for ff = 1:length(folders)
     for jj = 1:length(standardOIList)
         standard = loadOpticalImageData([folders{ff} '/Standard'], strrep(standardOIList{jj}, 'OpticalImage.mat', ''));
         standardSensorPool{jj} = coneAbsorptions(sensor, resizeOI(standard,sSize*OIvSensorScale));
-%         standardSensorPool{jj} = coneAbsorptions(sensor, standard);
         calcParams.meanStandard = calcParams.meanStandard + mean2(sensorGet(standardSensorPool{jj}, 'photons')) / length(standardOIList);
     end
     
@@ -91,7 +90,7 @@ for ff = 1:length(folders)
             
             comparison = loadOpticalImageData([folders{ff} '/' Colors{cc} 'Illumination'], strrep(OINames{kk}, 'OpticalImage.mat', ''));
             sensorComparison = coneAbsorptions(sensor, resizeOI(comparison,sSize*OIvSensorScale));
-%             sensorComparison = coneAbsorptions(sensor, comparison);
+
             tic
             for nn = 1:length(NoiseSteps)
                 if usePoissonNoise
@@ -121,7 +120,7 @@ for ff = 1:length(folders)
                 %% Perform pca analysis
                 [coeff,d.score,~,~,d.explained] = pca([trainingData;testingData]);
                 d.score = d.score(:,1:10);
-                d.firstPC = coeff(:,1);
+%                 d.firstPC = coeff(:,1);
                 % We take the SVM discriminant function and project onto
                 % the first 2 principal components. Then, we find the
                 % vector orthogonal to the projected image.  This should
