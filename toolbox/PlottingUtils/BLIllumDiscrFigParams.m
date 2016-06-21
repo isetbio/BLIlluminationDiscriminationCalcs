@@ -32,6 +32,9 @@ switch (modifier)
         figParams.criterionLineWidth = 2;
         figParams.criterionLineStyle = '--';
         figParams.ylimit = [0 100];
+    case {'ThresholdvNoise'}
+        figParams.markerSize = 30;
+        figParams.colors = {[0.1 0.1 0.1] [0.3 0.3 0.3] [0.5 0.5 0.5] [0.7 0.7 0.7]};
         
 end
 

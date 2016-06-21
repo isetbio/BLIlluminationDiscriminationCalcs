@@ -30,13 +30,13 @@ outOfNum       = repmat(numTrials,1,length(data));
 PF             = @PAL_Weibull;
 
 %% Some optimization settings for the fit
-options = optimset('fminsearch');
-options.TolFun = 1e-09;
+options             = optimset('fminsearch');
+options.TolFun      = 1e-09;
 options.MaxFunEvals = 10000*100;
-options.MaxIter = 500*100;
+options.MaxIter     = 500*100;
 
 %% Fit the data to a curve
-paramsValues = PAL_PFML_Fit(stimLevels, data', outOfNum, ...
+paramsValues = PAL_PFML_Fit(stimLevels(:), data(:), outOfNum(:), ...
     paramsEstimate, paramsFree, PF, 'SearchOptions', options);
 
 threshold = PF(paramsValues, criterion, 'inverse');
