@@ -19,13 +19,13 @@ clear;
 % are doing this for an SVM, larger training set sizes (>1000) may be
 % painful to run.
 testingSetSize = 1000;
-trainingSetSizes = [10 50 100 500 1000 2500 5000];
+trainingSetSizes = 10*2.^(0:13);
 
 % Define the size of the sensor here. For a small patch in the rest of the
 % calculations, we are using a 0.83 degree sensor which we specify here.
 % The OIvSensorScale variable tells the script to not downsample the
 % optical image in any manner.
-sSize = 0.83;
+sSize = 0.83; % Maybe this should be 1 degree?
 OIvSensorScale = 0;
 
 % Some bookkeeping parameters. These should not be changed. NoiseStep is
@@ -54,7 +54,7 @@ dimensions.trainingSetSizes = trainingSetSizes;
 dimensions.numCrossVal = numCrossVal;
 
 %% Do calculations
-for ff = 1:length(folders)
+for ff = 2:length(folders)
     %% Load all target scene sensors
     analysisDir = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
     folderPath = fullfile(analysisDir, 'OpticalImageData', folders{ff}, 'Standard');

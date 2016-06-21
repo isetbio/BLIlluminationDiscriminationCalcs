@@ -12,10 +12,6 @@ clear; close all;
 %% Load the data
 load('SVMPerformance.mat');
 
-%% Process the data into points and error bars
-%% UPDATE THIS PART ONCE FULL DATA AVAILABLE
-SVMpercentCorrect = reshape(SVMpercentCorrect,3,1,7,25); % Temporary
-
 %% Plot
 % The first index of the data matrix will be image condition. The second
 % index is illumination color. We only ran blue, so it should be 1 in this
@@ -24,20 +20,27 @@ SVMpercentCorrect = reshape(SVMpercentCorrect,3,1,7,25); % Temporary
 
 figParams = BLIllumDiscrFigParams;
 figure('Position',figParams.sqPosition); hold on;
-set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
-set(gca,'XScale','log');
-set(gca,'OuterPosition',figParams.OuterPosition);
-
-xl = xlabel('Training Set Size','FontSize',figParams.labelFontSize);
-yl = ylabel('% Correct','FontSize',figParams.labelFontSize);
-yl.Position = [0.3 0.665];
 
 for ii = 1:1 % length(dimensions.folders)
-    % Process the data here
+    % Process the data by calculating the mean and std err for each cross validated point.
     CurrentData = SVMpercentCorrect(ii,:,:,:);
     DataToPlot = squeeze(mean(CurrentData,4));
-    StdErr = std(squeeze(CurrentData),[],2) / 25; % dimensions.numCrossVal ; % CHANGE TO THIS WHEN FULL DATA AVAILABLE
+    StdErr = std(squeeze(CurrentData),[],2) / dimensions.numCrossVal ; 
 
     % Actual plotting here
-    errorbar(dimensions.trainingSetSizes,DataToPlot,StdErr);
+    errorbar(dimensions.trainingSetSizes,DataToPlot*100,StdErr*100,'k','LineWidth',figParams.lineWidth);
 end
+
+legend(strtok(dimensions.folders{1},'_'),'Location','Northwest','FontSize',figParams.legendFontSize);
+set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
+set(gca,'XTick',logspace(0,5,6))
+set(gca,'XScale','log');
+axis square;
+grid on;
+
+t = title('SVM Performance','FontSize',figParams.titleFontSize);
+xl = xlabel('Training Set Size','FontSize',figParams.labelFontSize);
+yl = ylabel('% Correct','FontSize',figParams.labelFontSize);
+
+yl.Position = yl.Position + figParams.deltaYlabelPosition;
+xl.Position = xl.Position + figParams.deltaXlabelPosition;
