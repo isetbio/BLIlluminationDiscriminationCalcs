@@ -18,20 +18,20 @@ load('SVMPerformance.mat');
 % case. The third index represents the training set sizes which is stored
 % in the dimensions variable.
 
-figParams = BLIllumDiscrFigParams;
+figParams = BLIllumDiscrFigParams([],'Asymptote');
 figure('Position',figParams.sqPosition); hold on;
 
-for ii = 1:1 % length(dimensions.folders)
+for ii = 1:length(dimensions.folders)
     % Process the data by calculating the mean and std err for each cross validated point.
     CurrentData = SVMpercentCorrect(ii,:,:,:);
     DataToPlot = squeeze(mean(CurrentData,4));
     StdErr = std(squeeze(CurrentData),[],2) / dimensions.numCrossVal ; 
 
     % Actual plotting here
-    errorbar(dimensions.trainingSetSizes,DataToPlot*100,StdErr*100,'k','LineWidth',figParams.lineWidth);
+    errorbar(dimensions.trainingSetSizes,DataToPlot*100,StdErr*100,'Color',figParams.colors{ii},'LineWidth',figParams.lineWidth,'LineStyle',figParams.lineStyles{ii});
 end
 
-legend(strtok(dimensions.folders{1},'_'),'Location','Northwest','FontSize',figParams.legendFontSize);
+legend(cellfun(@(X)strtok(X,'_'),dimensions.folders,'UniformOutput',false),'Location','Northwest','FontSize',figParams.legendFontSize);
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
 set(gca,'XTick',logspace(0,5,6))
 set(gca,'XScale','log');
