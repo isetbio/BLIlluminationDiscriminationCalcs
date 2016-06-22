@@ -20,7 +20,7 @@ function runAllFirstOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs  = {'NM1_FullImage' 'NM2_FullImage'};
+calcIDStrs  = {'StaticPhoton'};
     
 %% Parameters of the calculation
 %
@@ -35,18 +35,18 @@ calcIDStrs  = {'NM1_FullImage' 'NM2_FullImage'};
 for k1 = 1:length(calcIDStrs)
     
     % Define the steps of the calculation that should be carried out.
-    calcParams.CACHE_SCENES = true;
-    calcParams.forceSceneCompute = true; % Will overwrite any existing data.
+    calcParams.CACHE_SCENES = false;
+    calcParams.forceSceneCompute = false; % Will overwrite any existing data.
     
-    calcParams.CACHE_OIS = true;
-    calcParams.forceOICompute = true;    % Will overwrite any existing data.
+    calcParams.CACHE_OIS = false;
+    calcParams.forceOICompute = false;    % Will overwrite any existing data.
     
     calcParams.RUN_MODEL = false;
     calcParams.MODEL_ORDER = 1; 
     calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
     calcParams.overWriteFlag = 1;        % Whether or not to overwrite existing data.
     
-    calcParams.CALC_THRESH = false;
+    calcParams.CALC_THRESH = true;
     calcParams.displayIndividualThreshold = false;
     
     % Set the calcID
@@ -120,7 +120,8 @@ for k1 = 1:length(calcIDStrs)
     
     %% Calculate threshholds using chooser model data
     if (calcParams.CALC_THRESH)
-        thresholdCalculation(calcParams.calcIDStr,calcParams.displayIndividualThreshold);
+%         thresholdCalculation(calcParams.calcIDStr,calcParams.displayIndividualThreshold);
+        plotAllThresholds(calcParams.calcIDStr,'NoiseIndex',[0 1]);
     end
 end
 
