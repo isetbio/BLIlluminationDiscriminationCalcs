@@ -19,7 +19,7 @@ figParams.legendFontSize = 18;
 figParams.titleFontSize = 26;
 figParams.figType = {'pdf'};
 
-figParams.deltaXlabelPosition = [0 -1.25 0];
+figParams.deltaXlabelPosition = [0 -0.25 0];
 figParams.deltaYlabelPosition = [-0.05 0 0];
 
 switch (modifier)
@@ -35,7 +35,11 @@ switch (modifier)
     case {'ThresholdvNoise'}
         figParams.markerSize = 30;
         figParams.colors = {[0.1 0.1 0.1] [0.3 0.3 0.3] [0.5 0.5 0.5] [0.7 0.7 0.7]};
-        
+        figParams.lineStyle = '--';
+        figParams.lineWidth = 2;
+    case {'Asymptote'}
+        figParams.lineStyles = {'-' '--' '-.'};
+        figParams.colors = {[0.2 0.2 0.4] [0.2 0.4 0.4] [0.4 0.4 0.4]};
 end
 
 end

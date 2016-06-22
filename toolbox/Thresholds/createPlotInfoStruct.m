@@ -8,6 +8,7 @@ function plotInfo = createPlotInfoStruct
 
 plotInfo.fitColor = [];
 plotInfo.stimLevels = [];
+plotInfo.colors = [];
 
 plotInfo.xlabel = 'Stimulus Levels';
 plotInfo.ylabel = 'Percent Correct';
