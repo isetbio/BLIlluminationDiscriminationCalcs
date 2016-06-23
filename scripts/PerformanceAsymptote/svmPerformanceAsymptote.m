@@ -1,10 +1,10 @@
 % performanceAsymptotes
 %
-% This script is meant to explore performance of the SVM as a function of 
+% This script is meant to explore performance of the SVM as a function of
 % training data set size. This will be done for a single small patch at the
 % center of the image. To avoid bias in the results due to selection of
 % training/testing vectors, we will cross-validate by generating 1
-% training and 10 testing sets of data at each training set size. This 
+% training and 10 testing sets of data at each training set size. This
 % results in 10x cross-validation for each SVM. The same testing sets will
 % be used for each classifier. The data will be saved into a 4-D matrix for plotting.
 %
@@ -18,8 +18,8 @@ clear;
 % addition, the size of the testing set will also be defined here. Since we
 % are doing this for an SVM, larger training set sizes (>1000) may be
 % painful to run.
-testingSetSize = 1000;
-trainingSetSizes = 10*2.^(0:12);
+testingSetSize = 5000;
+trainingSetSizes = 10*2.^(0:13);
 
 % Define the size of the sensor here. For a small patch in the rest of the
 % calculations, we are using a 0.83 degree sensor which we specify here.
@@ -82,18 +82,18 @@ for ff = 1:length(folders)
         kp = 1; kg = NoiseStep;
         
         %% Generate the data set
-        % We would like to generate 10 complete sets of testing data here. 
+        % We would like to generate 10 complete sets of testing data here.
         % One set of training data using the largest training set size will
-        % be created. This way, all the smaller training data sets will be 
-        % subsets of the larger training data sets.  This makes sense to do, 
-        % for consistency reasons. Since the classes will be identical for 
+        % be created. This way, all the smaller training data sets will be
+        % subsets of the larger training data sets.  This makes sense to do,
+        % for consistency reasons. Since the classes will be identical for
         % each data set, there is no reason to save 10 of them.
         tic
-        [trainingData, trainingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,max(trainingSetSizes));
-
-        testingData = cell(numCrossVal,1);
+        [testingData, testingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
+        
+        trainingData = cell(numCrossVal,1);
         for ii = 1:numCrossVal
-            [testingData{ii}, testingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
+            [trainingData{ii}, trainingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,max(trainingSetSizes));
         end
         fprintf('Yay! The Data has been created in %f seconds!\n',toc);
         
@@ -108,25 +108,23 @@ for ff = 1:length(folders)
             % Standardize data. We will use the mean and standard
             % deviation of the current training data set to standardize
             % both training and testing data.
-            currentTrainingData = trainingData(dataToUse,:);
-            currentTrainingClasses = trainingClasses(dataToUse);
-            
-            m = mean(currentTrainingData,1);
-            s = std(currentTrainingData,1);
-            
-            currentTrainingData = (currentTrainingData - repmat(m, numberOfVec, 1)) ./ repmat(s, numberOfVec, 1);
-            
-            tic
-            theSVM = fitcsvm(currentTrainingData,currentTrainingClasses);
-            fprintf('SVM trained in %f seconds for set size: %d!\n',toc, ii);
-            
-            % Classify each of the ten data sets using this SVM
             for kk = 1:numCrossVal
+                currentTrainingData = trainingData{kk}(dataToUse,:);
+                currentTrainingClasses = trainingClasses(dataToUse);
+                
+                m = mean(currentTrainingData,1);
+                s = std(currentTrainingData,1);
+                
+                currentTrainingData = (currentTrainingData - repmat(m, numberOfVec, 1)) ./ repmat(s, numberOfVec, 1);
+                
                 tic
-                currentTestingData = (testingData{kk} - repmat(m, testingSetSize, 1)) ./ repmat(s, testingSetSize, 1);
+                theSVM = fitcsvm(currentTrainingData,currentTrainingClasses,'KernelScale','auto'); %THIS SHOULD MAKE IT ACTUALLY TRAIN ON LARGE DATA SETS
+                fprintf('SVM trained in %f seconds for set size: %d! Run: %d\n',toc,kk,ii);
+                
+                % Classify each of the ten data sets using this SVM
+                currentTestingData = (testingData - repmat(m, testingSetSize, 1)) ./ repmat(s, testingSetSize, 1);
                 predictions = predict(theSVM, currentTestingData);
                 SVMpercentCorrect(ff,cc,ii,kk) = sum((predictions == testingClasses)) / length(testingClasses);
-                fprintf('Finished %d of %d training sets in %f seconds!\n',kk,numCrossVal,toc);
             end
         end
         

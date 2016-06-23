@@ -9,8 +9,13 @@
 % xd  6/20/16  wrote it
 
 clear; 
+
+%% Flag to save figure
+saveFig = false;
+
 %% Load the data
-load('SVMPerformance_0.1deg.mat');
+dataFile = 'SVMPerformance_0.4deg.mat';
+load(dataFile);
 
 %% Plot
 % The first index of the data matrix will be image condition. The second
@@ -19,13 +24,13 @@ load('SVMPerformance_0.1deg.mat');
 % in the dimensions variable.
 
 figParams = BLIllumDiscrFigParams([],'Asymptote');
-figure('Position',figParams.sqPosition); hold on;
+f = figure('Position',figParams.sqPosition); hold on;
 
 for ii = 1:length(dimensions.folders)
     % Process the data by calculating the mean and std err for each cross validated point.
     CurrentData = SVMpercentCorrect(ii,:,:,:);
     DataToPlot = squeeze(mean(CurrentData,4));
-    StdErr = std(squeeze(CurrentData),[],2) / dimensions.numCrossVal ; 
+    StdErr = std(squeeze(CurrentData),[],2) / sqrt(dimensions.numCrossVal); 
 
     % Actual plotting here
     errorbar(dimensions.trainingSetSizes,DataToPlot*100,StdErr*100,'Color',figParams.colors{ii},'LineWidth',figParams.lineWidth,'LineStyle',figParams.lineStyles{ii});
@@ -38,9 +43,11 @@ set(gca,'XScale','log');
 axis square;
 grid on;
 
-t = title('SVM Performance','FontSize',figParams.titleFontSize);
+t = title(strrep(dataFile(1:end-4),'_',' '),'FontSize',figParams.titleFontSize);
 xl = xlabel('Training Set Size','FontSize',figParams.labelFontSize);
 yl = ylabel('% Correct','FontSize',figParams.labelFontSize);
 
 yl.Position = yl.Position + figParams.deltaYlabelPosition;
 xl.Position = xl.Position + figParams.deltaXlabelPosition;
+
+if saveFig, FigureSave(strrep(dataFile(1:end-4),'_',' '), f, figParams.figType); end;
