@@ -19,13 +19,13 @@ clear;
 % are doing this for an SVM, larger training set sizes (>1000) may be
 % painful to run.
 testingSetSize = 1000;
-trainingSetSizes = 10*2.^(0:10);
+trainingSetSizes = 10*2.^(0:12);
 
 % Define the size of the sensor here. For a small patch in the rest of the
 % calculations, we are using a 0.83 degree sensor which we specify here.
 % The OIvSensorScale variable tells the script to not downsample the
 % optical image in any manner.
-sSize = 0.8; % Maybe this should be 1 degree?
+sSize = 0.1; % Maybe this should be 1 degree?
 OIvSensorScale = 0;
 
 % Some bookkeeping parameters. These should not be changed. NoiseStep is
@@ -133,7 +133,8 @@ for ff = 1:length(folders)
         %% Save the data
         % We save inside the loop so that if the program crashes, at least
         % we can get some data out of it.
-        save('SVMPerformance.mat','SVMpercentCorrect','dimensions');
+        fileName = sprintf('SVMPerformance_%03.1fdeg.mat',sSize);
+        save(fileName,'SVMpercentCorrect','dimensions');
     end
 end
 

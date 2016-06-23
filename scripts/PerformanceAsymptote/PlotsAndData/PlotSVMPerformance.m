@@ -8,9 +8,9 @@
 %
 % xd  6/20/16  wrote it
 
-clear; close all;
+clear; 
 %% Load the data
-load('SVMPerformance.mat');
+load('SVMPerformance_0.1deg.mat');
 
 %% Plot
 % The first index of the data matrix will be image condition. The second
