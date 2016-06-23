@@ -7,7 +7,7 @@ function [threshold, paramsValues] = singleThresholdExtraction(data, criterion)
 % performance and is ordered in increasing stimulus value (or however you'd
 % like the data to be fit). This function requires the data vector to have
 % at least 6 points. If the data cannot be fit, the threshold returned will
-% be -1 and the paramsValues will a zero row vector. It is also assumed
+% be NaN and the paramsValues will a zero row vector. It is also assumed
 % that the criterion is given as a percentage.
 %
 % xd  6/21/16 wrote it
@@ -18,7 +18,7 @@ function [threshold, paramsValues] = singleThresholdExtraction(data, criterion)
 % less than 70 and the last 5 are greater than 70, we proceed with the
 % fitting.  Otherwise, we return 0 for the threshold, which indicates that
 % the data cannot be fit.
-if mean(data(1:5)) > 70 || mean(data(end-4:end)) < 70, threshold = -1; paramsValues = zeros(1,4); return; end; 
+if mean(data(1:5)) > 70 || mean(data(end-4:end)) < 70, threshold = nan; paramsValues = zeros(1,4); return; end; 
 
 %% Set some parameters for the curve fitting
 criterion      = criterion/100;

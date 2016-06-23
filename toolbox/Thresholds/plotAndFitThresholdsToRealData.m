@@ -1,4 +1,4 @@
-function plotAndFitThresholdsToRealData(plotInfo,thresholds,data)
+function plotAndFitThresholdsToRealData(plotInfo,thresholds,data,varargin)
 % plotAndFitThresholdsToRealData(plotInfo,thresholds,data)
 %
 % This function takes in thresholds extracted from the model simulation and
@@ -8,6 +8,15 @@ function plotAndFitThresholdsToRealData(plotInfo,thresholds,data)
 % to the corresponding value in data.
 %
 % xd  6/22/16  wrote it
+
+%% Create input parser for possible error bar data
+parser = inputParser;
+parser.addParameter('ThresholdError',[],@isnumeric);
+parser.addParameter('DataError',zeros(size(data)),@isnumeric);
+parser.parse(varargin{:});
+
+thresholdError = parser.Results.ThresholdError;
+dataError = parser.Results.DataError;
 
 %% Check that thresholds and data have the same number of entries
 if size(thresholds,2) ~= length(data), error('thresholds and data size are not matching!'); end;
@@ -29,9 +38,13 @@ meanThresholdDistToData = mean(thresholdDistToData,2);
 % possible.
 pointToInterpolate = idx;
 fittedThresholds = thresholds(idx,:);
+fittedError = zeros(size(fittedThresholds));
 interpolatedPoint = idx;
 if sign(meanThresholdDistToData(idx)) ~= sign(meanThresholdDistToData(idx + 1)), pointToInterpolate = idx + 1;
 elseif sign(meanThresholdDistToData(idx)) ~= sign(meanThresholdDistToData(idx - 1)), pointToInterpolate = idx - 1; end;
+
+% Check against NaN
+if isnan(meanThresholdDistToData(pointToInterpolate)), pointToInterpolate = idx; end;
 
 % If the pointToInterpolate is not equal to the minimum magnitude, then we
 % interpolate. Otherwise, just continue using the thresholds at the minimum magnitude.
@@ -45,24 +58,35 @@ if pointToInterpolate ~= idx
     interpOffset = interpIdx/1000;
     interpolatedPoint = interpolatedPoint + sign(pointToInterpolate-idx) * interpOffset;
     fittedThresholds = interp1([idx pointToInterpolate],thresholds([idx,pointToInterpolate],:),interpolatedPoint);
+    if ~isempty(thresholdError)
+        fittedError = interp1([idx pointToInterpolate],thresholdError([idx,pointToInterpolate],:),interpolatedPoint);
+    end
 end
 
 %% Plot
 figParams = BLIllumDiscrFigParams([],'FitThresholdToData');
 if ~isempty(plotInfo.colors), figParams.colors = plotInfo.colors; end;
 plotInfo.title = sprintf('Data fitted at %.3f noise',interpolatedPoint);
+plotInfo.xlabel = 'Illumination Direction';
+plotInfo.ylabel = 'Stimulus Level (\DeltaE)';
 
 figure('Position',figParams.sqPosition); hold on;
 for ii = 1:length(data)
-    plot(ii,data(ii),figParams.markerType,'Color',figParams.colors{ii},'MarkerFaceColor',figParams.colors{ii},'MarkerSize',figParams.markerSize); % Check for colors
+    errorbar(ii,data(ii),dataError(ii),figParams.markerType,'Color',figParams.colors{ii},...
+        'MarkerFaceColor',figParams.colors{ii},'MarkerSize',figParams.markerSize,...
+        'LineWidth',figParams.lineWidth);
 end
-fittedThresholdHandle = plot(1:length(data),fittedThresholds,'k.','MarkerSize',figParams.markerSize);
+fittedThresholdHandle = errorbar(1:length(data),fittedThresholds,fittedError,...
+    figParams.modelMarkerType,'Color',figParams.modelMarkerColor,'MarkerSize',figParams.modelMarkerSize,...
+    'MarkerFaceColor',figParams.modelMarkerColor,'LineWidth',figParams.lineWidth);
 
 % Do some plot manipulations to make it look nice
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
+set(gca,'XTickLabel',figParams.XTickLabel);
+set(gca,'YGrid','on');
 axis square;
 ylim(figParams.ylimit);
-xlim([0 5]);
+xlim(figParams.xlimit);
 
 legend(fittedThresholdHandle,{'Model Data'},'FontSize',figParams.legendFontSize); 
 xl = xlabel(plotInfo.xlabel,'FontSize',figParams.labelFontSize);

@@ -41,10 +41,14 @@ switch (modifier)
         figParams.lineStyles = {'-' '--' '-.'};
         figParams.colors = {[0.2 0.2 0.4] [0.2 0.4 0.4] [0.4 0.4 0.4]};
     case {'FitThresholdToData'}
-        figParams.ylimit = [0 50];
-        figParams.markerSize = 40;
-        figParams.colors = {[0.1 0.1 0.1] [0.3 0.3 0.3] [0.5 0.5 0.5] [0.7 0.7 0.7]}; 
+        figParams.ylimit = [0 25];
+        figParams.xlimit = [0 5];
+        figParams.markerSize = 30;
+        figParams.modelMarkerType = 'o';
+        figParams.modelMarkerColor = 'k';
+        figParams.modelMarkerSize = 20;
+        figParams.colors = {[0 191 255]/255 [46 139 87]/255 [178,34,34]/255 [255 215 0]/255}; 
         figParams.markerType = 's';
+        figParams.XTickLabel = {'' 'Blue' 'Green' 'Red' 'Yellow' ''};
 
 end
-
