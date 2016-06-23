@@ -10,8 +10,6 @@ function plotThresholdsAgainstNoise(plotInfo,thresholds,noiseLevels)
 % also requires a stimLevels filed in plotInfo to be specified.
 %
 % xd  6/21/16  wrote it
-%% TODO: FILTER OUT -1 FROM THRESHOLDS
-
 
 %% Check that inputs are correct
 if size(noiseLevels,2) ~= 1 && size(noiseLevels,2) ~= size(thresholds,2),error('noiseLevels format incorrect!'); end;

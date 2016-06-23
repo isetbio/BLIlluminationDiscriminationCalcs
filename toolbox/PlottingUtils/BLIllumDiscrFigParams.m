@@ -40,7 +40,11 @@ switch (modifier)
     case {'Asymptote'}
         figParams.lineStyles = {'-' '--' '-.'};
         figParams.colors = {[0.2 0.2 0.4] [0.2 0.4 0.4] [0.4 0.4 0.4]};
-end
+    case {'FitThresholdToData'}
+        figParams.ylimit = [0 50];
+        figParams.markerSize = 40;
+        figParams.colors = {[0.1 0.1 0.1] [0.3 0.3 0.3] [0.5 0.5 0.5] [0.7 0.7 0.7]}; 
+        figParams.markerType = 's';
 
 end
 

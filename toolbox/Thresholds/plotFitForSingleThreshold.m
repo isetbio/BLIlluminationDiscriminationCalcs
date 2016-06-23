@@ -36,9 +36,9 @@ set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWid
 axis square;
 ylim(figParams.ylimit);
 
-xl = xlabel(plotInfo.xlabel);
-yl = ylabel(plotInfo.ylabel);
-t = title(plotInfo.title);
+xl = xlabel(plotInfo.xlabel,'FontSize',figParams.labelFontSize);
+yl = ylabel(plotInfo.ylabel,'FontSize',figParams.labelFontSize);
+t = title(plotInfo.title,'FontSize',figParams.titleFontSize);
 yl.Position = yl.Position + figParams.deltaYlabelPosition;
 xl.Position = xl.Position + figParams.deltaXlabelPosition;
 
