@@ -3,7 +3,9 @@ function results = RunModel(calcParams,overWrite,frozen)
 %
 % This function will run the computational observer model according to
 % specifications in the calcParams struct. Specifically, the sensor will be
-% created here in addition to deciding which order of the model to use.
+% created here in addition to deciding which order of the model to use. The
+% overWrite flag must be set to true if data should be overwritten.
+% Similarly, to generate reproducable results, set frozen to true.
 %
 % xd  6/23/16  extracted from old code
 

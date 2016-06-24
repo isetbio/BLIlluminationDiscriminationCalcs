@@ -43,7 +43,7 @@ for k1 = 1:length(calcIDStrs)
     
     calcParams.RUN_MODEL = true;
     calcParams.MODEL_ORDER = 1; 
-    calcParams.overWriteFlag = true;        % Whether or not to overwrite existing data.
+    calcParams.overWriteFlag = true;      % Whether or not to overwrite existing data.
     
     calcParams.CALC_THRESH = true;
     calcParams.displayIndividualThreshold = false;
@@ -110,7 +110,6 @@ for k1 = 1:length(calcIDStrs)
     
     %% Calculate threshholds using chooser model data
     if (calcParams.CALC_THRESH)
-%         thresholdCalculation(calcParams.calcIDStr,calcParams.displayIndividualThreshold);
         plotAllThresholds(calcParams.calcIDStr,'NoiseIndex',[0 1]);
     end
 end
