@@ -129,7 +129,7 @@ for ff = 1:length(folders)
                 currentTestingData = currentTestingData*coeff(:,1:2);
                 predictions = predict(theSVM, currentTestingData);
                 SVMpercentCorrect(ff,cc,ii,kk) = sum((predictions == testingClasses)) / length(testingClasses);
-                fprintf('SVM trained and tested in %f seconds for set size: %d! Run: %d\n',toc,kk,ii);
+                fprintf('SVM trained and tested in %f seconds for set size: %d! Run: %d\n',toc,ii,kk);
             end
         end
         

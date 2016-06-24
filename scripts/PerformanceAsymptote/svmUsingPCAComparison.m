@@ -90,10 +90,7 @@ for ii = 1:length(illumSteps)
         m = mean(trainingData,1);
         s = std(trainingData,1);
         trainingData = (trainingData - repmat(m, trainingSetSize, 1)) ./ repmat(s, trainingSetSize, 1);
-        
-        % Do PCA
-        [coeff,score] = pca(trainingData);
-        
+
         % Train SVM on raw data
         tic
         theSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto','CacheSize','maximal');
@@ -102,6 +99,7 @@ for ii = 1:length(illumSteps)
         
         % Train SVM on pca data
         tic
+        [coeff,score] = pca(trainingData);
         pcaSVM = fitcsvm(score(:,1:2),trainingClasses,'KernelScale','auto','CacheSize','maximal');
         SVMrunTime(2,ii,jj) = toc;
         fprintf('SVM trained in %f seconds!\n',SVMrunTime(2,ii,jj));
