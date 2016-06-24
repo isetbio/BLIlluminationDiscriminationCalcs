@@ -87,7 +87,7 @@ for ff = 1:length(folders)
         % be created. This way, all the smaller training data sets will be
         % subsets of the larger training data sets.  This makes sense to do,
         % for consistency reasons. Since the classes will be identical for
-        % each data set, there is no reason to save 10 of them.
+        % each data set, there is no reason to save 10 of them. 
         tic
         [testingData, testingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
         
@@ -109,29 +109,34 @@ for ff = 1:length(folders)
             % deviation of the current training data set to standardize
             % both training and testing data.
             for kk = 1:numCrossVal
+                tic
                 currentTrainingData = trainingData{kk}(dataToUse,:);
                 currentTrainingClasses = trainingClasses(dataToUse);
                 
                 m = mean(currentTrainingData,1);
                 s = std(currentTrainingData,1);
-                
                 currentTrainingData = (currentTrainingData - repmat(m, numberOfVec, 1)) ./ repmat(s, numberOfVec, 1);
                 
-                tic
+                % Since using the first 2 principal components seems to
+                % work fine, we will do the transformation here.
+                [coeff,score] = pca(currentTrainingData);
+                currentTrainingData = score(:,1:2);
+                
                 theSVM = fitcsvm(currentTrainingData,currentTrainingClasses,'KernelScale','auto'); %THIS SHOULD MAKE IT ACTUALLY TRAIN ON LARGE DATA SETS
-                fprintf('SVM trained in %f seconds for set size: %d! Run: %d\n',toc,kk,ii);
                 
                 % Classify each of the ten data sets using this SVM
                 currentTestingData = (testingData - repmat(m, testingSetSize, 1)) ./ repmat(s, testingSetSize, 1);
+                currentTestingData = currentTestingData*coeff(:,1:2);
                 predictions = predict(theSVM, currentTestingData);
                 SVMpercentCorrect(ff,cc,ii,kk) = sum((predictions == testingClasses)) / length(testingClasses);
+                fprintf('SVM trained and tested in %f seconds for set size: %d! Run: %d\n',toc,kk,ii);
             end
         end
         
         %% Save the data
         % We save inside the loop so that if the program crashes, at least
         % we can get some data out of it.
-        fileName = sprintf('SVMPerformance_%03.1fdeg.mat',sSize);
+        fileName = sprintf('SVMPerformance_%03.1fdeg_PCA.mat',sSize);
         save(fileName,'SVMpercentCorrect','dimensions');
     end
 end

@@ -49,7 +49,7 @@ sensor = sensorSetSizeToFOV(sensor, sSize, [], oiCreate('human'));
 % values.
 SVMpercentCorrect = zeros(2,length(illumSteps),numCrossVal);
 SVMrunTime = zeros(size(SVMpercentCorrect));
-dimensions.labels = {'Folders' 'Colors' 'TrainingSetSizes' 'TestingSet#'};
+dimensions.labels = {'Full/PCA' 'Illumination' 'TestingSet#'};
 dimensions.folder = folder;
 dimensions.color = color;
 dimensions.illumSteps = illumSteps;

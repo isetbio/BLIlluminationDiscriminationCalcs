@@ -50,5 +50,12 @@ switch (modifier)
         figParams.colors = {[0 191 255]/255 [46 139 87]/255 [178,34,34]/255 [255 215 0]/255}; 
         figParams.markerType = 's';
         figParams.XTickLabel = {'' 'Blue' 'Green' 'Red' 'Yellow' ''};
-
+    case {'SVMvPCA'}
+        figParams.xlimit = [0 11];
+        figParams.ylimit = [50 100];
+        figParams.insetPosition = [0.68 0.67 0.2 0.2];
+        figParams.colors = {[0 0.4470 0.7410] [0.8500 0.3250 0.0980]};
+        figParams.insetAxisLineWidth = 1;
+        figParams.insetAxisFontSize = 10;
+        figParams.insetTitleFontSize = 12;
 end

@@ -21,11 +21,12 @@ for ii = 1:4
     modelData(ii,:,:) = modelDataTemp{ii};
 end
 
-calcParams = load(fullfile(analysisDir,'SimpleChooserData',calcIDStr,['calcParams' calcIDStr '.mat']),'calcParams');
+calcParams = load(fullfile(analysisDir,'SimpleChooserData',calcIDStr,['calcParams' calcIDStr '.mat']));
+calcParams = calcParams.calcParams;
 calcParams.colors = colors;
 calcParams.stimLevels = 1:50;
 calcParams.plotColor = {'b' 'g' 'r' 'y'};
-calcParams.noiseLevels = (1:10)';
-
+calcParams.noiseLevels = (0:(calcParams.numKpSamples-1)) * calcParams.KpInterval + calcParams.startKp;
+calcParams.noiseLevels = calcParams.noiseLevels';
 end
 

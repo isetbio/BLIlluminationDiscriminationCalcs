@@ -41,7 +41,7 @@ end
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
 axis square; grid on;
 ylim([min(plotInfo.stimLevels) max(plotInfo.stimLevels)]);
-xlim([0 max(noiseLevels(:))]);
+xlim([0 max([noiseLevels(:); 10])]);
 
 xl = xlabel(plotInfo.xlabel);
 yl = ylabel(plotInfo.ylabel);
