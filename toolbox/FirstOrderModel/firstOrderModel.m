@@ -53,17 +53,6 @@ if (~frozen)
     rng('shuffle');
 end
 
-%% Check for faulty parameters, MOVE INTO NEXT FUNCTION BECAUSE THIS IS NO LONGER A VARIABLE
-%
-% A standard image pool of at least 2 is required.  This is because
-% rendering noise will introduce bias into the model.  Even two is rather
-% low because of possible bias introduced from the relationship between the
-% two renderings.  Currently, we are running the model with 7 copies of the
-% standard. 
-% if calcParams.targetImageSetSize < 2
-%     error('Must have a standard image pool size of at least 2');
-% end
-
 %% Check if destination folder exists and has files
 baseDir   = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
 targetPath = fullfile(baseDir, 'SimpleChooserData', calcParams.calcIDStr);
