@@ -20,7 +20,7 @@ if isfield(calcParams,'colors')
     modelData = theData.results;
     
     calcParams.stimLevels = calcParams.illumLevels;
-    calcParams.plotColor = cellfun(@(X) X(1),calcParams.colors);
+    calcParams.plotColor = cellfun(@(X) {X(1)},calcParams.colors);
     if length(calcParams.KgLevels)>length(calcParams.KgLevels), calcParams.noiseLevels = calcParams.KgLevels;
     else calcParams.noiseLevels = calcParams.KpLevels; end;
 else

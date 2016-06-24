@@ -20,7 +20,7 @@ classes(1:n/2) = 0;
 
 % The first half of the data will be AB format.  The second half will be BA
 % format. It is often the case that the comparison pool contains only one
-% sensor.  Having multiple entries just means that multiple versions of the
+% sensor. Having multiple entries just means that multiple versions of the
 % SAME stimuli were generated to account for pixel noise due to rendering.
 for jj = 1:n/2
     targetSample = randsample(length(targetPool), 2);

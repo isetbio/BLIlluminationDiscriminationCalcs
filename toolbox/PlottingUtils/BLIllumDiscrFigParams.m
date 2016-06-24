@@ -53,7 +53,7 @@ switch (modifier)
     case {'SVMvPCA'}
         figParams.xlimit = [0 11];
         figParams.ylimit = [50 100];
-        figParams.insetPosition = [0.68 0.67 0.2 0.2];
+        figParams.insetPosition = [0.74 0.15 0.15 0.15];
         figParams.colors = {[0 0.4470 0.7410] [0.8500 0.3250 0.0980]};
         figParams.insetAxisLineWidth = 1;
         figParams.insetAxisFontSize = 10;

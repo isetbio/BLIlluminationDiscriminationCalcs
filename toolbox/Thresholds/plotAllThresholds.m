@@ -40,7 +40,7 @@ plotInfo.stimLevels = calcParams.stimLevels;
 plotInfo.colors = calcParams.plotColor;
 plotInfo.xlabel = sprintf('%s Noise Levels',subsref({'Poisson' 'Gaussian'},struct('type','{}','subs',{{find(parser.Results.NoiseIndex==0,1)}})));
 plotInfo.ylabel = 'Stimulus Levels (\DeltaE)';
-plotInfo.title  = 'Thresholds v Noise';
+plotInfo.title  = ['Thresholds v Noise, ' calcParams.calcIDStr];
 
 % Once the data has been nicely formatted, we can extract the thresholds.
 thresholds = zeros(size(formattedData{1},2),length(calcParams.colors));
@@ -49,7 +49,7 @@ for ii = 1:size(thresholds,2)
 end
 
 % Do actual plotting in this function
-plotThresholdsAgainstNoise(plotInfo,thresholds,calcParams.noiseLevels);
+plotThresholdsAgainstNoise(plotInfo,thresholds,calcParams.noiseLevels(:));
 
 end
 

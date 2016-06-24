@@ -9,7 +9,6 @@ function results = RunModel(calcParams,overWrite,frozen)
 %
 % xd  6/23/16  extracted from old code
 
-
 %% Set defaults for inputs
 if notDefined('overWrite'), overWrite = false; end
 if notDefined('frozen'), frozen = false; end
