@@ -47,7 +47,7 @@ OINamesList = getFilenamesInDirectory(folderPath);
 
 %% Do the actual calculation here
 results = zeros(length(illumLevels),length(KpLevels),length(KgLevels));
-for ii = length(illumLevels);
+for ii = 1:length(illumLevels);
     fprintf('Running trials for %s illumination step %u\n',color,illumLevels(ii));
     
     % Precompute the test optical image to save computational time.
@@ -63,7 +63,7 @@ for ii = length(illumLevels);
         Kp = KpLevels(jj);
         
         for kk = 1:length(KgLevels);
-            Kg = KpLevels(kk);
+            Kg = KgLevels(kk);
 
             tic
             % Choose the data generation function
