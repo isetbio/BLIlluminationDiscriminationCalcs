@@ -4,9 +4,10 @@
 %
 % xd  6/24/16
 
-clear;
+clear; 
+saveFig = false;
 %% Load and pull out some data
-load('SVMvPCA.mat');
+load('SVMvPCA_2.mat');
 
 resultsWithFullData = squeeze(SVMpercentCorrect(1,:,:));
 resultsWithPCA = squeeze(SVMpercentCorrect(2,:,:));
@@ -14,10 +15,10 @@ runtimeWithFullData = squeeze(SVMrunTime(1,:,:));
 runtimeWithPCA = squeeze(SVMrunTime(2,:,:));
 
 %% Calculate the mean and std err for things we want to plot
-meanFullDataResults = mean(resultsWithFullData,1);
-stderrWithFullData = std(resultsWithFullData,[],1)/sqrt(dimensions.numCrossVal);
-meanPCAResults = mean(resultsWithPCA,1);
-stderrWithPCA = std(resultsWithPCA,[],1)/sqrt(dimensions.numCrossVal);
+meanFullDataResults = mean(resultsWithFullData,2);
+stderrWithFullData = std(resultsWithFullData,[],2)/sqrt(dimensions.numCrossVal);
+meanPCAResults = mean(resultsWithPCA,2);
+stderrWithPCA = std(resultsWithPCA,[],2)/sqrt(dimensions.numCrossVal);
 
 meanRuntimeWithFullData = mean(runtimeWithFullData(:));
 stderrRuntimeWithFullData = std(runtimeWithFullData(:))/sqrt(dimensions.numCrossVal*length(dimensions.illumSteps));
@@ -40,7 +41,7 @@ grid on;
 xlim(figParams.xlimit);
 ylim(figParams.ylimit);
 
-t = title('SVM Full Data v 2 PC','FontSize',figParams.titleFontSize);
+t = title('SVM Full Data v PCA','FontSize',figParams.titleFontSize);
 xl = xlabel('Stimulus Level (\DeltaE)','FontSize',figParams.labelFontSize);
 yl = ylabel('% Correct','FontSize',figParams.labelFontSize);
 
@@ -55,10 +56,10 @@ errorbar(1:2,[meanRuntimeWithFullData meanRuntimeWithPCA],[stderrRuntimeWithFull
     'LineWidth',figParams.lineWidth);
 xlim([0 3]);
 axis(inset,'square');
-set(inset,'YTick',[0 10 20]);
+oldYTicks = get(inset,'YTick');
+set(inset,'YTick',oldYTicks(1:2:length(oldYTicks)));
 set(inset,'XTick',[]);
 set(inset,'FontName',figParams.fontName,'FontSize',figParams.insetAxisFontSize,'LineWidth',figParams.insetAxisLineWidth);
-
 title('Runtime (s)','FontSize',figParams.insetTitleFontSize);
 
-FigureSave('SVMFullDataVPCA',f,figParams.figType);
+if saveFig, FigureSave('SVMFullDataVPCA',f,figParams.figType); end;

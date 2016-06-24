@@ -19,7 +19,7 @@ clear;
 % addition, the size of the testing set will also be defined here. Since we
 % are doing this for an SVM, larger training set sizes (>1000) may be
 % painful to run.
-testingSetSize = 5000;
+testingSetSize = 1000;
 trainingSetSize = 10*2^7;
 
 % Define the size of the sensor here. For a small patch in the rest of the
@@ -34,14 +34,14 @@ OIvSensorScale = 0;
 % render the result rather meaningless).
 folder = 'Neutral_FullImage';
 color = 'Blue';
-NoiseStep = 10;
+NoiseStep = 0;
 illumSteps = 1:10;
 numCrossVal = 10;
 
 %% Create our sensor
 rng(1); % Freeze noise
 sensor = getDefaultBLIllumDiscrSensor;
-sensor = sensorSetSizeToFOV(sensor, sSize, [], oiCreate('human'));
+sensor = sensorSetSizeToFOV(sensor,sSize,[],oiCreate('human'));
 
 %% Pre-allocate space for results
 % The dimensions struct will hold meta data about the parameters used for
@@ -57,24 +57,24 @@ dimensions.numCrossVal = numCrossVal;
 
 %% Calculations
 %% Load all target scene sensors
-analysisDir = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
-folderPath = fullfile(analysisDir, 'OpticalImageData', folder, 'Standard');
+analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
+folderPath = fullfile(analysisDir,'OpticalImageData',folder,'Standard');
 standardOIList = getFilenamesInDirectory(folderPath);
 
 standardSensorPool = cell(1, length(standardOIList));
 calcParams.meanStandard = 0;
 for jj = 1:length(standardOIList)
-    standard = loadOpticalImageData([folder '/Standard'], strrep(standardOIList{jj}, 'OpticalImage.mat', ''));
-    standardSensorPool{jj} = coneAbsorptions(sensor, resizeOI(standard,sSize*OIvSensorScale));
-    calcParams.meanStandard = calcParams.meanStandard + mean2(sensorGet(standardSensorPool{jj}, 'photons')) / length(standardOIList);
+    standard = loadOpticalImageData([folder '/Standard'],strrep(standardOIList{jj},'OpticalImage.mat',''));
+    standardSensorPool{jj} = coneAbsorptions(sensor,resizeOI(standard,sSize*OIvSensorScale));
+    calcParams.meanStandard = calcParams.meanStandard + mean2(sensorGet(standardSensorPool{jj},'photons')) / length(standardOIList);
 end
 
-comparisonOIPath = fullfile(analysisDir, 'OpticalImageData', folder, [color 'Illumination']);
+comparisonOIPath = fullfile(analysisDir,'OpticalImageData',folder,[color 'Illumination']);
 OINames = getFilenamesInDirectory(comparisonOIPath);
 
 for ii = 1:length(illumSteps)
-    comparison = loadOpticalImageData([folder '/' color 'Illumination'], strrep(OINames{illumSteps(ii)}, 'OpticalImage.mat', ''));
-    sensorComparison = coneAbsorptions(sensor, resizeOI(comparison,sSize*OIvSensorScale));
+    comparison = loadOpticalImageData([folder '/' color 'Illumination'],strrep(OINames{illumSteps(ii)},'OpticalImage.mat',''));
+    sensorComparison = coneAbsorptions(sensor,resizeOI(comparison,sSize*OIvSensorScale));
     
     % Set variables to pass into data generation functions.
     kp = 1; kg = NoiseStep;
@@ -89,8 +89,9 @@ for ii = 1:length(illumSteps)
         % Standardize our data
         m = mean(trainingData,1);
         s = std(trainingData,1);
-        trainingData = (trainingData - repmat(m, trainingSetSize, 1)) ./ repmat(s, trainingSetSize, 1);
-
+        trainingData = (trainingData - repmat(m,trainingSetSize,1)) ./ repmat(s,trainingSetSize,1);
+        testingData = (testingData - repmat(m,testingSetSize,1)) ./ repmat(s,testingSetSize,1);
+        
         % Train SVM on raw data
         tic
         theSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto','CacheSize','maximal');

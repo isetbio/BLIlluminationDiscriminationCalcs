@@ -25,7 +25,7 @@ trainingSetSizes = 10*2.^(0:13);
 % calculations, we are using a 0.83 degree sensor which we specify here.
 % The OIvSensorScale variable tells the script to not downsample the
 % optical image in any manner.
-sSize = 0.1; % Maybe this should be 1 degree?
+sSize = 0.83; % Maybe this should be 1 degree?
 OIvSensorScale = 0;
 
 % Some bookkeeping parameters. These should not be changed. NoiseStep is
@@ -36,6 +36,7 @@ Colors = {'Blue'};
 NoiseStep = 15;
 numIllumStep = 1;
 numCrossVal = 10;
+numPCA = 10;
 
 %% Create our sensor
 rng(1); % Freeze noise
@@ -81,55 +82,50 @@ for ff = 1:length(folders)
         % Set variables to pass into data generation functions.
         kp = 1; kg = NoiseStep;
         
-        %% Generate the data set
-        % We would like to generate 10 complete sets of testing data here.
-        % One set of training data using the largest training set size will
-        % be created. This way, all the smaller training data sets will be
-        % subsets of the larger training data sets.  This makes sense to do,
-        % for consistency reasons. Since the classes will be identical for
-        % each data set, there is no reason to save 10 of them. 
-        tic
-        [testingData, testingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
-        
-        trainingData = cell(numCrossVal,1);
-        for ii = 1:numCrossVal
-            [trainingData{ii}, trainingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,max(trainingSetSizes));
-        end
-        fprintf('Yay! The Data has been created in %f seconds!\n',toc);
-        
-        %% Train and apply classifiers
-        % For each training set size, we should first train the
-        % SVMs and then test each one of the testingData sets.
-        for ii = 1:length(trainingSetSizes);
+        for kk = 1:numCrossVal
+            %% Generate the data set
+            % We would like to generate 10 complete sets of testing data here.
+            % One set of training data using the largest training set size will
+            % be created. This way, all the smaller training data sets will be
+            % subsets of the larger training data sets.  This makes sense to do,
+            % for consistency reasons. Since the classes will be identical for
+            % each data set, there is no reason to save 10 of them.
+            tic
+            [trainingData, trainingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,max(trainingSetSizes));
+            [testingData, testingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
+            fprintf('Yay! The Data has been created in %f seconds!\n',toc);
             
-            numberOfVec = trainingSetSizes(ii);
-            dataToUse = [1:numberOfVec/2, max(trainingSetSizes)/2+1:max(trainingSetSizes)/2+numberOfVec/2];
-            
-            % Standardize data. We will use the mean and standard
-            % deviation of the current training data set to standardize
-            % both training and testing data.
-            for kk = 1:numCrossVal
+            %% Train and apply classifiers
+            % For each training set size, we should first train the
+            % SVMs and then test each one of the testingData sets.
+            for ii = 1:length(trainingSetSizes);
+                numberOfVec = trainingSetSizes(ii);
+                dataToUse = [1:numberOfVec/2, max(trainingSetSizes)/2+1:max(trainingSetSizes)/2+numberOfVec/2];
+                
                 tic
-                currentTrainingData = trainingData{kk}(dataToUse,:);
+                currentTrainingData = trainingData(dataToUse,:);
                 currentTrainingClasses = trainingClasses(dataToUse);
                 
+                % Standardize data. We will use the mean and standard
+                % deviation of the current training data set to standardize
+                % both training and testing data.
                 m = mean(currentTrainingData,1);
                 s = std(currentTrainingData,1);
                 currentTrainingData = (currentTrainingData - repmat(m, numberOfVec, 1)) ./ repmat(s, numberOfVec, 1);
                 
-                % Since using the first 2 principal components seems to
+                % Since using principal components seems to
                 % work fine, we will do the transformation here.
                 [coeff,score] = pca(currentTrainingData);
-                currentTrainingData = score(:,1:2);
+                currentTrainingData = score(:,1:numPCA);
                 
-                theSVM = fitcsvm(currentTrainingData,currentTrainingClasses,'KernelScale','auto'); %THIS SHOULD MAKE IT ACTUALLY TRAIN ON LARGE DATA SETS
+                theSVM = fitcsvm(currentTrainingData,currentTrainingClasses,'KernelScale','auto','CacheSize','maximal'); %THIS SHOULD MAKE IT ACTUALLY TRAIN ON LARGE DATA SETS
                 
                 % Classify each of the ten data sets using this SVM
                 currentTestingData = (testingData - repmat(m, testingSetSize, 1)) ./ repmat(s, testingSetSize, 1);
-                currentTestingData = currentTestingData*coeff(:,1:2);
+                currentTestingData = currentTestingData*coeff(:,1:numPCA);
                 predictions = predict(theSVM, currentTestingData);
                 SVMpercentCorrect(ff,cc,ii,kk) = sum((predictions == testingClasses)) / length(testingClasses);
-                fprintf('SVM trained and tested in %f seconds for set size: %d! Run: %d\n',toc,ii,kk);
+                fprintf('SVM trained and tested in %f seconds for set size: %d!\n',toc,ii);
             end
         end
         
