@@ -46,14 +46,8 @@ end
 
 %% Create data sets using the simple chooser model
 if (calcParams.RUN_MODEL)
-%     results = firstOrderModel(calcParams, calcParams.chooserColorChoice, calcParams.overWriteFlag,calcParams.frozen);
 	results = RunModel(calcParams,calcParams.overWriteFlag,calcParams.frozen);
 end
-
-%% Calculate threshholds using chooser model data
-% if (calcParams.CALC_THRESH)
-%     thresholdCalculation(calcParams.calcIDStr, calcParams.displayIndividualThreshold);
-% end
-    
+   
 UnitTest.validationData('FirstOrderModelResults', results);
 end
