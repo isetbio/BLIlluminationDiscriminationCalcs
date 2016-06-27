@@ -11,17 +11,6 @@
 %
 % 7/21/15  xd  wrote it
 
-%% Clear and close
-clear; close all;
-
-%% Get our project toolbox on the path
-myDir = fileparts(mfilename('fullpath'));
-pathDir = fullfile(myDir,'..','toolbox','');
-AddToMatlabPathDynamically(pathDir);
-
-%% Set preferences
-setPrefsForBLIlluminationDiscriminationCalcs;
-
 %% Get the queue directory
 BaseDir = getpref('BLIlluminationDiscriminationCalcs', 'QueueDir');
 
@@ -65,21 +54,19 @@ if (CREATE_StaticPhoton_Neutral)
         calcParams.S = [380 8 51];
         calcParams.coneIntegrationTime = 0.050;
         calcParams.sensorFOV = 0.83;
+        calcParams.OIvSensorScale = 0;
         
-        calcParams.numTrials = 500;
-        calcParams.maxIllumTarget = 50;
+        calcParams.trainingSetSize = 1000;
+        calcParams.testingSetSize = 1000;
+        calcParams.illumLevels = 1:50;
         
-        calcParams.numKpSamples = 10;
-        calcParams.KpInterval = 1;
-        calcParams.startKp = 1;
+        calcParams.standardizeData = false;
+        calcParams.cFunction = 4;
+        calcParams.dFunction = 3;
         
-        calcParams.numKgSamples = 1;
-        calcParams.startKg = 0;
-        calcParams.KgInterval = 1;
-        
-        calcParams.targetImageSetSize = 7;
-        calcParams.comparisonImageSetSize = 1;
-        
+        calcParams.KpLevels = 1:10;
+        calcParams.KgLevels = 1;
+    
         % Save the calcParam in the queue folder
         savePath = fullfile(BaseDir, ['calcParams' calcParams.calcIDStr]);
         save(savePath, 'calcParams');
@@ -117,20 +104,18 @@ if (CREATE_StaticPhoton_NM1)
         calcParams.S = [380 8 51];
         calcParams.coneIntegrationTime = 0.050;
         calcParams.sensorFOV = 0.83;
+        calcParams.OIvSensorScale = 0;
         
-        calcParams.numTrials = 500;
-        calcParams.maxIllumTarget = 50;
+        calcParams.trainingSetSize = 1000;
+        calcParams.testingSetSize = 1000;
+        calcParams.illumLevels = 1:50;
         
-        calcParams.numKpSamples = 10;
-        calcParams.KpInterval = 1;
-        calcParams.startKp = 1;
+        calcParams.standardizeData = false;
+        calcParams.cFunction = 4;
+        calcParams.dFunction = 3;
         
-        calcParams.numKgSamples = 1;
-        calcParams.startKg = 0;
-        calcParams.KgInterval = 1;
-        
-        calcParams.targetImageSetSize = 7;
-        calcParams.comparisonImageSetSize = 1;
+        calcParams.KpLevels = 1:10;
+        calcParams.KgLevels = 1;
         
         % Save the calcParam in the queue folder
         savePath = fullfile(BaseDir, ['calcParams' calcParams.calcIDStr]);
@@ -169,20 +154,18 @@ if (CREATE_StaticPhoton_NM2)
         calcParams.S = [380 8 51];
         calcParams.coneIntegrationTime = 0.050;
         calcParams.sensorFOV = 0.83;
+        calcParams.OIvSensorScale = 0;
         
-        calcParams.numTrials = 500;
-        calcParams.maxIllumTarget = 50;
+        calcParams.trainingSetSize = 1000;
+        calcParams.testingSetSize = 1000;
+        calcParams.illumLevels = 1:50;
         
-        calcParams.numKpSamples = 10;
-        calcParams.KpInterval = 1;
-        calcParams.startKp = 1;
+        calcParams.standardizeData = false;
+        calcParams.cFunction = 4;
+        calcParams.dFunction = 3;
         
-        calcParams.numKgSamples = 1;
-        calcParams.startKg = 0;
-        calcParams.KgInterval = 1;
-        
-        calcParams.targetImageSetSize = 7;
-        calcParams.comparisonImageSetSize = 1;
+        calcParams.KpLevels = 1:10;
+        calcParams.KgLevels = 1;
         
         % Save the calcParam in the queue folder
         savePath = fullfile(BaseDir, ['calcParams' calcParams.calcIDStr]);
@@ -222,20 +205,18 @@ if (CREATE_StaticPhoton_Neutral_S2)
         calcParams.S = [380 8 51];
         calcParams.coneIntegrationTime = 0.050;
         calcParams.sensorFOV = 0.83;
+        calcParams.OIvSensorScale = 0;
         
-        calcParams.numTrials = 500;
-        calcParams.maxIllumTarget = 50;
+        calcParams.trainingSetSize = 1000;
+        calcParams.testingSetSize = 1000;
+        calcParams.illumLevels = 1:50;
         
-        calcParams.numKpSamples = 10;
-        calcParams.KpInterval = 1;
-        calcParams.startKp = 1;
+        calcParams.standardizeData = false;
+        calcParams.cFunction = 4;
+        calcParams.dFunction = 3;
         
-        calcParams.numKgSamples = 1;
-        calcParams.startKg = 0;
-        calcParams.KgInterval = 1;
-        
-        calcParams.targetImageSetSize = 7;
-        calcParams.comparisonImageSetSize = 1;
+        calcParams.KpLevels = 1:10;
+        calcParams.KgLevels = 1;
         
         % Save the calcParam in the queue folder
         savePath = fullfile(BaseDir, ['calcParams' calcParams.calcIDStr]);
@@ -275,20 +256,18 @@ if (CREATE_StaticPhoton_NM1_S2)
         calcParams.S = [380 8 51];
         calcParams.coneIntegrationTime = 0.050;
         calcParams.sensorFOV = 0.83;
+        calcParams.OIvSensorScale = 0;
         
-        calcParams.numTrials = 200;
-        calcParams.maxIllumTarget = 50;
+        calcParams.trainingSetSize = 1000;
+        calcParams.testingSetSize = 1000;
+        calcParams.illumLevels = 1:50;
         
-        calcParams.numKpSamples = 10;
-        calcParams.KpInterval = 1;
-        calcParams.startKp = 1;
+        calcParams.standardizeData = false;
+        calcParams.cFunction = 4;
+        calcParams.dFunction = 3;
         
-        calcParams.numKgSamples = 1;
-        calcParams.startKg = 0;
-        calcParams.KgInterval = 1;
-        
-        calcParams.targetImageSetSize = 7;
-        calcParams.comparisonImageSetSize = 1;
+        calcParams.KpLevels = 1:10;
+        calcParams.KgLevels = 1;
         
         % Save the calcParam in the queue folder
         savePath = fullfile(BaseDir, ['calcParams' calcParams.calcIDStr]);
@@ -328,20 +307,18 @@ if (CREATE_StaticPhoton_NM2_S2)
         calcParams.S = [380 8 51];
         calcParams.coneIntegrationTime = 0.050;
         calcParams.sensorFOV = 0.83;
+        calcParams.OIvSensorScale = 0;
         
-        calcParams.numTrials = 500;
-        calcParams.maxIllumTarget = 50;
+        calcParams.trainingSetSize = 1000;
+        calcParams.testingSetSize = 1000;
+        calcParams.illumLevels = 1:50;
         
-        calcParams.numKpSamples = 10;
-        calcParams.KpInterval = 1;
-        calcParams.startKp = 1;
+        calcParams.standardizeData = false;
+        calcParams.cFunction = 4;
+        calcParams.dFunction = 3;
         
-        calcParams.numKgSamples = 1;
-        calcParams.startKg = 0;
-        calcParams.KgInterval = 1;
-        
-        calcParams.targetImageSetSize = 7;
-        calcParams.comparisonImageSetSize = 1;
+        calcParams.KpLevels = 1:10;
+        calcParams.KgLevels = 1;
         
         % Save the calcParam in the queue folder
         savePath = fullfile(BaseDir, ['calcParams' calcParams.calcIDStr]);

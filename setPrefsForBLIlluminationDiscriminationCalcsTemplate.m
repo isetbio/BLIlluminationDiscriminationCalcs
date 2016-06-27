@@ -37,6 +37,7 @@ end
 % Use this for DropBox data path, might need to change based on local settings
 analysisBaseDir = fullfile(sharedRootDir, 'IBIO_analysis', 'BLIlluminationDiscrimination');
 dataBaseDir = fullfile(sharedRootDir, 'IBIO_data', 'BLIlluminationDiscrimination');
+queueDir = fullfile(analysisBaseDir, 'CalcParamQueue');
 
 % UnitTestToolbox locations
 alternateFullValidationDataDir = fullfile(dataBaseDir,'Validation','data','full');
@@ -50,6 +51,7 @@ end
 setpref('BLIlluminationDiscriminationCalcs', 'SharedRootDir', sharedRootDir);
 setpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir', analysisBaseDir);
 setpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir', dataBaseDir);
+setpref('BLIlluminationDiscriminationCalcs', 'QueueDir', queueDir);
 
 % Unit test toolbox preferences
 p = struct(...

@@ -17,12 +17,6 @@ ieInit;
 %% Get the queue directory
 BaseDir = getpref('BLIlluminationDiscriminationCalcs', 'QueueDir');
 
-%% Define the model functions
-FirstOrder = @(cp, cc, fl) firstOrderModel(cp, cc, fl);
-SecondOrder = @(cp, cc, fl) secondOrderModel(cp, cc, fl);
-
-Models = {FirstOrder, SecondOrder};
-
 %% Create a cell array to hold calcParams that have been run
 % This is in case a deletion/permission error occurs on ColorShare.
 % Currently code associated with these variables are not being used.
@@ -77,7 +71,7 @@ while ~KEY_IS_PRESSED
                     
                     %% Create data sets using the appropriate model
                     if (calcParams.RUN_MODEL)
-                        Models{calcParams.MODEL_ORDER}(calcParams,calcParams.chooserColorChoice,calcParams.overWriteFlag);
+                        RunModel(calcParams,calcParams.overWriteFlag);
                     end
                     
                     %                 fprintf('This is working fine: %s\n', calcParams.calcIDStr);
