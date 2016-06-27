@@ -157,7 +157,7 @@ for ii = 1:length(standardOIList)
     opticalImageName = strrep(opticalImageName,'OpticalImage.mat','');
     oi = loadOpticalImageData(standardPath,opticalImageName);
     oi = resizeOI(oi,calcParams.sensorFOV*calcParams.OIvSensorScale);
-    sensorStandard = coneAbsorptions(sensorStandard,oi);
+    sensorStandard = coneAbsorptions(sensor,oi);
     standardPool{ii} = sensorStandard;
 end
 
