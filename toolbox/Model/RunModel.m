@@ -18,7 +18,9 @@ if notDefined('frozen'), frozen = false; end
 % allows us to generate reproducable data. Otherwise we'll use random noise
 % so that the model does not do the same thing everytime.  Since we run
 % many trials, this should not induce significant variability.
-if frozen, rng(1); else rng('shuffle'); end;
+if (~frozen)
+    rng('shuffle');
+end
 
 % We'll check if the target directory for our data exists. If it does not,
 % we'll make it here. Also check if we want to overwrite existing data.
@@ -48,7 +50,8 @@ oi = oiCreate('human');
 sensor = sensorSetSizeToFOV(sensor,calcParams.sensorFOV,[],oi);
 
 % Set wavelength sampling
-sensor = sensorSet(sensor, 'wavelength', SToWls(calcParams.S));
+sensor = sensorSet(sensor,'wavelength',SToWls(calcParams.S));
+sensor = sensorSet(sensor,'noise flag',0);
 
 %% Run the desired model
 calcParams.colors = {'blue' 'green' 'red' 'yellow'};
@@ -65,11 +68,11 @@ for ii = 1:length(calcParams.colors)
 end
 
 % Save the results
-analysisDir = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
-TargetPath = fullfile(analysisDir, 'SimpleChooserData', calcParams.calcIDStr);
-calcParamFileName = fullfile(TargetPath, ['calcParams' calcParams.calcIDStr]);
-dataFileName = fullfile(TargetPath, ['ModelData' calcParams.calcIDStr]);
-save(calcParamFileName, 'calcParams');
+analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
+TargetPath = fullfile(analysisDir,'SimpleChooserData',calcParams.calcIDStr);
+calcParamFileName = fullfile(TargetPath,['calcParams' calcParams.calcIDStr]);
+dataFileName = fullfile(TargetPath,['ModelData' calcParams.calcIDStr]);
+save(calcParamFileName,'calcParams');
 save(dataFileName,'results');
 
 end

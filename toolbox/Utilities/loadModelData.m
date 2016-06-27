@@ -21,26 +21,29 @@ if isfield(calcParams,'colors')
     
     calcParams.stimLevels = calcParams.illumLevels;
     calcParams.plotColor = cellfun(@(X) {X(1)},calcParams.colors);
-    if length(calcParams.KgLevels)>length(calcParams.KgLevels), calcParams.noiseLevels = calcParams.KgLevels;
+    if length(calcParams.KgLevels)>length(calcParams.KpLevels), calcParams.noiseLevels = calcParams.KgLevels;
     else calcParams.noiseLevels = calcParams.KpLevels; end;
-else
-    modelDataTemp = cell(4,1);
-    colors = {'blue' 'green' 'red' 'yellow'};
-    for ii = 1:4
-        theData = load(fullfile(analysisDir,'SimpleChooserData',calcIDStr,[colors{ii} 'IllumComparison' calcIDStr '.mat']));
-        modelDataTemp{ii} = theData.matrix;
-    end
-    s = size(modelDataTemp{1});
-    modelData = zeros([4,s]);
-    for ii = 1:4
-        modelData(ii,:,:) = modelDataTemp{ii};
-    end
-    
-    calcParams.colors = colors;
-    calcParams.stimLevels = 1:50;
-    calcParams.plotColor = {'b' 'g' 'r' 'y'};
-    calcParams.noiseLevels = (0:(calcParams.numKpSamples-1)) * calcParams.KpInterval + calcParams.startKp;
-    calcParams.noiseLevels = calcParams.noiseLevels';
+    return;
 end
+
+%% OLD Data
+modelDataTemp = cell(4,1);
+colors = {'blue' 'green' 'red' 'yellow'};
+for ii = 1:4
+    theData = load(fullfile(analysisDir,'SimpleChooserData',calcIDStr,[colors{ii} 'IllumComparison' calcIDStr '.mat']));
+    modelDataTemp{ii} = theData.matrix;
+end
+s = size(modelDataTemp{1});
+modelData = zeros([4,s]);
+for ii = 1:4
+    modelData(ii,:,:) = modelDataTemp{ii};
+end
+
+calcParams.colors = colors;
+calcParams.stimLevels = 1:50;
+calcParams.plotColor = {'b' 'g' 'r' 'y'};
+calcParams.noiseLevels = (0:(calcParams.numKpSamples-1)) * calcParams.KpInterval + calcParams.startKp;
+calcParams.noiseLevels = calcParams.noiseLevels';
+
 end
 

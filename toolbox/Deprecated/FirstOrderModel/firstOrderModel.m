@@ -88,6 +88,7 @@ sensor = sensorSetSizeToFOV(sensor,calcParams.sensorFOV,[],oi);
 
 % Set wavelength sampling
 sensor = sensorSet(sensor, 'wavelength', SToWls(S));
+sensor = sensorSet(sensor,'noise flag',0);
 
 %% Compute according to the input color choice
 results = computeByColor(calcParams, sensor, colorChoice);
@@ -116,7 +117,6 @@ function results = singleColorKValueComparison(calcParams, sensor, standardPath,
 %             made by the model
 
 %% Get relevant parameters from calcParams
-% numTrials = calcParams.numTrials;
 maxImageIllumNumber = calcParams.maxIllumTarget;
 KpSampleNum = calcParams.numKpSamples;
 KpInterval = calcParams.KpInterval;
@@ -124,6 +124,8 @@ KgSampleNum = calcParams.numKgSamples;
 KgInterval = calcParams.KgInterval;
 trainingSetSize = calcParams.trainingSetSize;
 testingSetSize = calcParams.testingSetSize;
+
+illumLevels = calcParams.illumLevels;
 
 %% Get a list of images
 
@@ -145,40 +147,38 @@ accuracyMatrix = zeros(maxImageIllumNumber, KpSampleNum, KgSampleNum);
 % Precompute all the sensor images from the standard pool to save
 % computational time later on. Similar to the comparison optical images, we
 % will find all the file names first.
-folderPath = fullfile(analysisDir, 'OpticalImageData', standardPath);
+folderPath = fullfile(analysisDir,'OpticalImageData',standardPath);
 data = what(folderPath);
 standardOIList = data.mat;
 
 standardPool = cell(1, length(standardOIList));
 for ii = 1:length(standardOIList)
     opticalImageName = standardOIList{ii};
-    opticalImageName = strrep(opticalImageName, 'OpticalImage.mat', '');
-    oi = loadOpticalImageData(standardPath, opticalImageName);
-    
-    sensorStandard = sensorSet(sensor, 'noise flag', 0);
-    oi = resizeOI(oi, sensorGet(sensorStandard, 'fov')*calcParams.OIvSensorScale);
-    sensorStandard = coneAbsorptions(sensorStandard, oi);
+    opticalImageName = strrep(opticalImageName,'OpticalImage.mat','');
+    oi = loadOpticalImageData(standardPath,opticalImageName);
+    oi = resizeOI(oi,calcParams.sensorFOV*calcParams.OIvSensorScale);
+    sensorStandard = coneAbsorptions(sensorStandard,oi);
     standardPool{ii} = sensorStandard;
 end
 
 % Compute the mean of the standardPool isomerizations.  The square root of
 % this mean will serve as the standard deviation of an optional Gaussian
 % noise factor Kg. 
-photonCellArray = cell(1, length(standardPool));
+photonCellArray = cell(1,length(standardPool));
 for ii = 1:length(photonCellArray)
-    photonCellArray{ii} = sensorGet(standardPool{ii}, 'photons');
+    photonCellArray{ii} = sensorGet(standardPool{ii},'photons');
 end
-photonCellArray = cellfun(@(x)mean2(x),photonCellArray, 'UniformOutput', 0);
+photonCellArray = cellfun(@(x)mean2(x),photonCellArray,'UniformOutput',0);
 calcParams.meanStandard = mean(cat(1,photonCellArray{:}));
 
 % Loop through the illumination number
-for ii = 1:maxImageIllumNumber
-    fprintf('Running trials for %s illumination step %u\n', prefix, ii);
+for ii = 1:length(illumLevels)
+    fprintf('Running trials for %s illumination step %u\n',prefix,illumLevels(ii));
     
     % Precompute the test image pool to save computational time.
-    imageName = fileList{ii};
-    imageName = strrep(imageName, 'OpticalImage.mat', '');
-    testPool = cell(1, calcParams.comparisonImageSetSize);
+    imageName = fileList{illumLevels(ii)};
+    imageName = strrep(imageName,'OpticalImage.mat','');
+    testPool = cell(1,calcParams.comparisonImageSetSize);
     for oo = 1:calcParams.comparisonImageSetSize
         if oo > 1
             imageName = strrep(imageName, 'L-', ['L' int2str(oo - 1) '-']);
@@ -199,10 +199,7 @@ for ii = 1:maxImageIllumNumber
 
             tic
             % Choose the data generation function
-            toolboxPath = fileparts(fileparts(mfilename('fullpath')));
-            dfFolder = what(fullfile(toolboxPath,'DatasetFunctions'));
-            dfList = dfFolder.m;
-            datasetFunction = str2func(strrep(dfList{calcParams.dFunction},'.m',''));
+            datasetFunction = masterDataFunction(calcParams.dFunction);
             [trainingData, trainingClasses] = datasetFunction(calcParams, standardPool, testPool,Kp,Kg,trainingSetSize);
             [testingData, testingClasses] = datasetFunction(calcParams, standardPool, testPool,Kp,Kg,testingSetSize);
             
@@ -216,9 +213,7 @@ for ii = 1:maxImageIllumNumber
             end
             
             % Compute performance based on chose classifier method
-            cfFolder = what(fullfile(toolboxPath,'ClassifierFunctions'));
-            cfList = cfFolder.m;
-            classifierFunction = str2func(strrep(cfList{calcParams.cFunction},'.m',''));
+            classifierFunction = masterClassifierFunction(calcParams.cFunction);
             accuracyMatrix(ii,jj,kk) = classifierFunction(trainingData,testingData,trainingClasses,testingClasses);
             
             % Print the time the calculation took

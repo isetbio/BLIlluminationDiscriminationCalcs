@@ -1,6 +1,6 @@
-function  [dataset, classes] = df1_ABBA(calcParams,targetPool,comparisonPool,kp,kg,n)
+function  [dataset, classes] = df1_ABBA(calcParams,targetPool,comparisonPool,kp,kg,n,os)
 % [dataset, classes] = df1_ABBA(calcParams,targetPool,comparisonPool,kp,kg,n)
-% 
+%
 % This function will take the photon isomerizations in the targetPool
 % sensors and comparisonPool sensors and turn them into AB and BA vectors.
 % A is for the target and B is for the comparison. There will be equal
@@ -8,11 +8,14 @@ function  [dataset, classes] = df1_ABBA(calcParams,targetPool,comparisonPool,kp,
 %
 % xd  6/1/16  wrote it
 
+%% Set appropriate function handle depending on if os is defined
+if notDefined('os'), calcFunction = @(s) sensorGet(s,'photons');
+else calcFunction = @(s) osCompute(os,s); end;
+
 %% Get size of photon data
 numberOfCones = numel(sensorGet(targetPool{1}, 'photons'));
 
 %% Generate the data set
-
 % Pre-allocate space for the dataset.
 dataset = zeros(n, 2 * numberOfCones);
 classes = ones(n, 1);
@@ -30,15 +33,20 @@ for jj = 1:n/2
     photonsStandard = getNoisySensorImage(calcParams, sensorStandard, kp, kg);
     photonsComparison = getNoisySensorImage(calcParams, comparisonPool{comparisonSample}, kp, kg);
     
+    photonsStandard = calcFunction(sensorSet(sensorStandard,'photons',photonsStandard));
+    photonsComparison = calcFunction(sensorSet(comparisonPool{comparisonSample},'photons',photonsComparison));
+    
     dataset(jj,:) = [photonsStandard(:); photonsComparison(:)]';
     
     sensorStandard = targetPool{targetSample(2)};
     photonsStandard = getNoisySensorImage(calcParams, sensorStandard, kp, kg);
     photonsComparison = getNoisySensorImage(calcParams, comparisonPool{comparisonSample}, kp, kg);
     
+    photonsStandard = calcFunction(sensorSet(sensorStandard,'photons',photonsStandard));
+    photonsComparison = calcFunction(sensorSet(comparisonPool{comparisonSample},'photons',photonsComparison));
+    
     dataset(jj + n/2,:) = [photonsComparison(:); photonsStandard(:)]';
 end
-
 
 end
 
