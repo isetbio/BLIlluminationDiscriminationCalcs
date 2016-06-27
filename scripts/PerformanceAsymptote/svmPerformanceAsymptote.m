@@ -19,13 +19,13 @@ clear;
 % are doing this for an SVM, larger training set sizes (>1000) may be
 % painful to run.
 testingSetSize = 5000;
-trainingSetSizes = 10*2.^(0:13);
+trainingSetSizes = 10*2.^(1:12);
 
 % Define the size of the sensor here. For a small patch in the rest of the
 % calculations, we are using a 0.83 degree sensor which we specify here.
 % The OIvSensorScale variable tells the script to not downsample the
 % optical image in any manner.
-sSize = 0.83; % Maybe this should be 1 degree?
+sSize = 0.3; % Maybe this should be 1 degree?
 OIvSensorScale = 0;
 
 % Some bookkeeping parameters. These should not be changed. NoiseStep is
@@ -99,10 +99,10 @@ for ff = 1:length(folders)
             % For each training set size, we should first train the
             % SVMs and then test each one of the testingData sets.
             for ii = 1:length(trainingSetSizes);
+                tic
                 numberOfVec = trainingSetSizes(ii);
                 dataToUse = [1:numberOfVec/2, max(trainingSetSizes)/2+1:max(trainingSetSizes)/2+numberOfVec/2];
-                
-                tic
+
                 currentTrainingData = trainingData(dataToUse,:);
                 currentTrainingClasses = trainingClasses(dataToUse);
                 

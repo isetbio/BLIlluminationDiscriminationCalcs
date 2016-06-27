@@ -14,7 +14,7 @@ clear;
 saveFig = true;
 
 %% Load the data
-dataFile = 'SVMPerformance_0.4deg.mat';
+dataFile = 'SVMPerformance_0.3deg.mat';
 load(dataFile);
 
 %% Plot
@@ -43,7 +43,7 @@ set(gca,'XScale','log');
 axis square;
 grid on;
 
-t = title(strrep(dataFile(1:end-4),'_',' '),'FontSize',figParams.titleFontSize);
+t = title(dataFile(1:end-4),'FontSize',figParams.titleFontSize,'Interpreter','none');
 xl = xlabel('Training Set Size','FontSize',figParams.labelFontSize);
 yl = ylabel('% Correct','FontSize',figParams.labelFontSize);
 

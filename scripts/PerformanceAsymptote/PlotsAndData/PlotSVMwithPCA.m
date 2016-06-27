@@ -7,7 +7,7 @@
 clear; 
 saveFig = false;
 %% Load and pull out some data
-load('SVMvPCA_2.mat');
+load('SVMvPCA_0.3deg.mat');
 
 resultsWithFullData = squeeze(SVMpercentCorrect(1,:,:));
 resultsWithPCA = squeeze(SVMpercentCorrect(2,:,:));

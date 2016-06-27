@@ -34,7 +34,7 @@ OIvSensorScale = 0;
 % render the result rather meaningless).
 folder = 'Neutral_FullImage';
 color = 'Blue';
-NoiseStep = 0;
+NoiseStep = 15;
 illumSteps = 1:10;
 numCrossVal = 10;
 
