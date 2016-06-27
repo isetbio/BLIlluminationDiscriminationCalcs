@@ -41,12 +41,11 @@ for k1 = 1:length(calcIDStrs)
     calcParams.CACHE_OIS = false;
     calcParams.forceOICompute = false;    % Will overwrite any existing data.
     
-    calcParams.RUN_MODEL = true;
+    calcParams.RUN_MODEL = false;
     calcParams.MODEL_ORDER = 1; 
     calcParams.overWriteFlag = true;      % Whether or not to overwrite existing data.
     
     calcParams.CALC_THRESH = true;
-    calcParams.displayIndividualThreshold = false;
     
     % Set the calcID
     calcParams.calcIDStr = calcIDStrs{k1};
@@ -68,7 +67,7 @@ for k1 = 1:length(calcIDStrs)
     % that, if set to a value > 0, will subsample the optical image to the
     % size sensorFOV*OIvSensorScale.
     calcParams.coneIntegrationTime = 0.050;
-    calcParams.sensorFOV = 0.83;             
+    calcParams.sensorFOV = 0.83;
     calcParams.OIvSensorScale = 0;
     
     % Specify the number of trials for each combination of Kp Kg as well as
@@ -77,8 +76,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.testingSetSize = 200;
     calcParams.illumLevels = 1:50;
     
-    % Here we specify which data function and classification function to
-    % use. 
+    % Here we specify which data function and classification function to use. 
     calcParams.standardizeData = false;
     calcParams.cFunction = 4;
     calcParams.dFunction = 3;
@@ -86,12 +84,12 @@ for k1 = 1:length(calcIDStrs)
     % Kp represents the scale factor for the Poisson noise.  This is the
     % realistic noise representation of the photons arriving at the retina.
     % Therefore, there should always be at least 1x Kp.
-    calcParams.KpLevels = 1:10;
+    calcParams.KpLevels = 1;
     
     % Kg is the scale factor for Gaussian noise.  The standard deviation of 
     % the Gaussian noise is equal to the square root of the mean 
     % photoisomerizations across the available target image samples.
-    calcParams.KgLevels = 1;
+    calcParams.KgLevels = 1:10;
     
     %% Convert the images to cached scenes for more analysis
     if (calcParams.CACHE_SCENES)
