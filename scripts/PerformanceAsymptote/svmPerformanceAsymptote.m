@@ -19,13 +19,13 @@ clear;
 % are doing this for an SVM, larger training set sizes (>1000) may be
 % painful to run.
 testingSetSize = 5000;
-trainingSetSizes = 10*2.^(1:12);
+trainingSetSizes = 10*2.^(4:14);
 
 % Define the size of the sensor here. For a small patch in the rest of the
 % calculations, we are using a 0.83 degree sensor which we specify here.
 % The OIvSensorScale variable tells the script to not downsample the
 % optical image in any manner.
-sSize = 0.3; % Maybe this should be 1 degree?
+sSize = 0.3; %Maybe this should be 1 degree?
 OIvSensorScale = 0;
 
 % Some bookkeeping parameters. These should not be changed. NoiseStep is
@@ -36,7 +36,7 @@ Colors = {'Blue'};
 NoiseStep = 15;
 numIllumStep = 1;
 numCrossVal = 10;
-numPCA = 10;
+numPCA = 100;
 
 %% Create our sensor
 rng(1); % Freeze noise
@@ -83,56 +83,53 @@ for ff = 1:length(folders)
         kp = 1; kg = NoiseStep;
         
         for kk = 1:numCrossVal
-            %% Generate the data set
-            % We would like to generate 10 complete sets of testing data here.
-            % One set of training data using the largest training set size will
-            % be created. This way, all the smaller training data sets will be
-            % subsets of the larger training data sets.  This makes sense to do,
-            % for consistency reasons. Since the classes will be identical for
-            % each data set, there is no reason to save 10 of them.
-            tic
-            [trainingData, trainingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,max(trainingSetSizes));
-            [testingData, testingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
-            fprintf('Yay! The Data has been created in %f seconds!\n',toc);
             
             %% Train and apply classifiers
             % For each training set size, we should first train the
             % SVMs and then test each one of the testingData sets.
             for ii = 1:length(trainingSetSizes);
+                %% Generate the data set
+                % We would like to generate 10 complete sets of testing data here.
+                % One set of training data using the largest training set size will
+                % be created. This way, all the smaller training data sets will be
+                % subsets of the larger training data sets.  This makes sense to do,
+                % for consistency reasons. Since the classes will be identical for
+                % each data set, there is no reason to save 10 of them.
                 tic
-                numberOfVec = trainingSetSizes(ii);
-                dataToUse = [1:numberOfVec/2, max(trainingSetSizes)/2+1:max(trainingSetSizes)/2+numberOfVec/2];
-
-                currentTrainingData = trainingData(dataToUse,:);
-                currentTrainingClasses = trainingClasses(dataToUse);
+                [trainingData, trainingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,trainingSetSizes(ii));
+                [testingData, testingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
+                fprintf('Yay! The Data for folder %d run %d has been created in %6.5f seconds!\n',ff,kk,toc);
                 
                 % Standardize data. We will use the mean and standard
                 % deviation of the current training data set to standardize
                 % both training and testing data.
-                m = mean(currentTrainingData,1);
-                s = std(currentTrainingData,1);
-                currentTrainingData = (currentTrainingData - repmat(m, numberOfVec, 1)) ./ repmat(s, numberOfVec, 1);
-                
+                m = mean(trainingData,1);
+                s = std(trainingData,1);
+                trainingData = (trainingData - repmat(m,trainingSetSizes(ii),1)) ./ repmat(s,trainingSetSizes(ii),1);
+                testingData = (testingData - repmat(m,testingSetSize,1)) ./ repmat(s,testingSetSize,1);
+
                 % Since using principal components seems to
                 % work fine, we will do the transformation here.
-                [coeff,score] = pca(currentTrainingData);
-                currentTrainingData = score(:,1:numPCA);
+                coeff = pca(trainingData,'NumComponents',numPCA,'Algorithm','eig');
+                trainingData = trainingData*coeff;
+                testingData = testingData*coeff;
+                clearvars coeff
                 
-                theSVM = fitcsvm(currentTrainingData,currentTrainingClasses,'KernelScale','auto','CacheSize','maximal'); %THIS SHOULD MAKE IT ACTUALLY TRAIN ON LARGE DATA SETS
+                theSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto',...
+                    'CacheSize',10*1024); %THIS SHOULD MAKE IT ACTUALLY TRAIN ON LARGE DATA SETS
                 
                 % Classify each of the ten data sets using this SVM
-                currentTestingData = (testingData - repmat(m, testingSetSize, 1)) ./ repmat(s, testingSetSize, 1);
-                currentTestingData = currentTestingData*coeff(:,1:numPCA);
-                predictions = predict(theSVM, currentTestingData);
+                predictions = predict(theSVM,testingData);
                 SVMpercentCorrect(ff,cc,ii,kk) = sum((predictions == testingClasses)) / length(testingClasses);
                 fprintf('SVM trained and tested in %f seconds for set size: %d!\n',toc,ii);
+                clearvars theSVM
             end
         end
         
         %% Save the data
         % We save inside the loop so that if the program crashes, at least
         % we can get some data out of it.
-        fileName = sprintf('SVMPerformance_%03.1fdeg_PCA.mat',sSize);
+        fileName = sprintf('SVMPerformance_%03.1fdeg_%dPCA.mat',sSize,numPCA);
         save(fileName,'SVMpercentCorrect','dimensions');
     end
 end
