@@ -16,7 +16,7 @@ imageName = 'TestImage0';
 scene = loadSceneData('Neutral_FullImage/Standard', imageName);
 oi = loadOpticalImageData('Neutral_FullImage/Standard', imageName);
 
-sampleTime = 0.00001;
+sampleTime = 0.001;
 
 % Create a sensor of the size used in the 2nd order model
 sensor = getDefaultBLIllumDiscrSensor;
@@ -44,20 +44,20 @@ sensor = sensorSet(sensor, 'positions', thePath);
 sensor = coneAbsorptions(sensor, oi);
 
 %% Calculate OS signals and visualize
-osB = osBioPhys();
-osB = osSet(osB, 'noiseFlag', 1);
-osB = osCompute(osB, sensor);
+% osB = osBioPhys();
+% osB = osSet(osB, 'noiseFlag', 1);
+% osB = osCompute(osB, sensor);
+% 
+% osBwindow = osWindow(1, 'biophys-based outer segment', 'horizontalLayout', osB, sensor, oi, scene);
+% 
+% osL = osLinear();
+% osL = osSet(osL, 'noiseFlag', 1);
+% osL = osCompute(osL, sensor);
+% 
+% osLwindow = osWindow(2, 'linear outer segment', 'horizontalLayout', osL, sensor, oi, scene);
 
-osBwindow = osWindow(1, 'biophys-based outer segment', 'horizontalLayout', osB, sensor, oi, scene);
+osI = osIdentity();
+osI = osSet(osI,'noiseFlag',1);
+osI = osCompute(osI,sensor);
 
-osL = osLinear();
-osL = osSet(osL, 'noiseFlag', 1);
-osL = osCompute(osL, sensor);
-
-osLwindow = osWindow(2, 'linear outer segment', 'horizontalLayout', osL, sensor, oi, scene);
-
-% osI = osIdentity1();
-% osI = osSet(osI, 'noiseFlag', 1);
-% osI = osCompute(osI, sensor);
-
-osIwindow = osWindow(3, 'identity outer segment', 'horizontalLayout', osI, sensor, oi, scene);
+osIwindow = osWindow(3,'identity outer segment','horizontalLayout',osI,sensor,oi,scene);
