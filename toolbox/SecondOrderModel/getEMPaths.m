@@ -40,11 +40,11 @@ function allPaths = getEMPaths(sensor, numPaths, varargin)
 
 %% Set up the input parser
 p = inputParser;
-p.addParameter('bound', []);
-p.addParameter('saccades', []);
-p.addParameter('sPath', []);
-p.addParameter('loc', []);
-p.addParameter('fullPath', []);
+p.addParameter('bound',[]);
+p.addParameter('saccades',[]);
+p.addParameter('sPath',[]);
+p.addParameter('loc',[]);
+p.addParameter('fullPath',[]);
 
 p.parse(varargin{:});
 
@@ -55,34 +55,32 @@ loc = p.Results.loc;
 fullPath = p.Results.fullPath;
 
 %% Get path size and allocate room for the desired number of paths
-pathSize = size(sensorGet(sensor, 'positions'));
+pathSize = size(sensorGet(sensor,'positions'));
 allPaths = zeros([pathSize numPaths]);
 
-% if b is not specified as a parameter, use the size of the sensor as the
-% boundary
+% if b is not specified as a parameter, use the size of the sensor as the boundary
 ss = sensorGet(sensor, 'size');
 if isempty(b)
-    b = [round(-ss(1)/2) round(ss(1)/2) round(-ss(2)/2) round(ss(2)/2)];
-else
-    b = [b(1) + 2*ss(1), b(2) - 2*ss(1), b(3) + 2*ss(2), b(4) - 2*ss(2)];
+    b = [floor(-ss(1)/2) ceil(ss(1)/2) floor(-ss(2)/2) ceil(ss(2)/2)];
 end
 
 %% Calculate the paths based on the input parameters
 for ii = 1:numPaths
+    % This piece of code will give us fixational eye movements generated using ISETBIO code.
     sensor = emGenSequence(sensor);
-    pos = sensorGet(sensor, 'positions');
+    pos = sensorGet(sensor,'positions');
     
     % If there are large saccades, they will be used or implemented here.
     if s.n > 1
         if isempty(fullPath)
             if ~isempty(s) || ~isempty(sPath)
                 if isempty(sPath)
-                    sPath = getSaccades(s.n, b, 'loc', loc);
+                    sPath = getSaccades(s.n,b,'loc',loc);
                 end
                 sExpand = zeros(pathSize);
                 expansionFactor = pathSize(1)/length(sPath);
-                for jj = 1:size(sPath,1)
-                    sExpand((jj-1)*expansionFactor+1:expansionFactor*jj,:) = repmat(sPath(jj,:), expansionFactor, 1);
+                for jj = 1:s.n
+                    sExpand((jj-1)*expansionFactor+1:expansionFactor*jj,:) = repmat(sPath(jj,:),expansionFactor,1);
                 end
                 pos = pos + sExpand;
             end
@@ -104,7 +102,7 @@ end
 for ii = 1:numPaths
     allPaths(allPaths(:,1,ii) > b(2),1,ii) = b(2);
     allPaths(allPaths(:,1,ii) < b(1),1,ii) = b(1);
-    allPaths(allPaths(:,2,ii) > b(4),1,ii) = b(4);
-    allPaths(allPaths(:,2,ii) < b(3),1,ii) = b(3);
+    allPaths(allPaths(:,2,ii) > b(4),2,ii) = b(4);
+    allPaths(allPaths(:,2,ii) < b(3),2,ii) = b(3);
 end
 end

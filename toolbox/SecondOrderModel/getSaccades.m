@@ -26,9 +26,7 @@ function path = getSaccades(n, b, varargin)
 %% InputParser for optional set of predefined locations
 p = inputParser;
 p.addParameter('loc', []);
-
 p.parse(varargin{:});
-
 loc = p.Results.loc;
 
 %% Initialize path to zeros
@@ -43,30 +41,21 @@ end
 %% Use set locations if present
 if ~isempty(loc)
     % Check that all preset locations are in bound
-    for ii = 1:length(loc)
-        pos = loc(ii,:);
-        if (pos(1) < b(1) || pos(1) > b(2) || pos(2) < b(3) || pos(2) > b(4))
-            error('Given set of locations contains an entry out of bounds.');
-        end
+    minLoc = min(loc);
+    maxLoc = max(loc);
+    if (minLoc(1) < b(1) || maxLoc(1) > b(2) || minLoc(2) < b(3) || maxLoc(2) > b(4))
+        error('Given set of locations contains an entry out of bounds.');
     end
-    
-    for ii = 1:n
-        % Randomly sample a location from the preset list
-        idx = randsample(length(loc), 1);
-        path(ii,:) = loc(idx,:);
-    end
+
+    path = datasample(loc,n);
     return
 end
 
 %% Generate random locations
-% If a boundary is defined, pick n random positions from inside the
-% boundary
-for ii = 1:n
-    % Get x and y positions [minX maxX minY maxY]
-    xrand = (b(2) - b(1)) * rand(1,1) + b(1);
-    yrand = (b(4) - b(3)) * rand(1,1) + b(3);
-    
-    path(ii,:) = [xrand yrand];
-end
+% If a boundary is defined, pick n random positions from inside the boundary
+% Get x and y positions [minX maxX minY maxY]
+xrand = (b(2) - b(1)) * rand(n,1) + b(1);
+yrand = (b(4) - b(3)) * rand(n,1) + b(3);
+path = [xrand yrand];
 
 end

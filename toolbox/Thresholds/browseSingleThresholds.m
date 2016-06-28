@@ -38,7 +38,7 @@ end
 global THE_ONE_KEY;
 THE_ONE_KEY = 'Hello'; TheOldKey = 'Hello';
 
-inaction = true;
+inaction = true; closeFig = true;
 colorIdx = 1;
 noiseIdx = 1;
 
@@ -58,7 +58,7 @@ while ~strcmp(THE_ONE_KEY,'escape')
     
     if ~strcmp(THE_ONE_KEY,TheOldKey)
         inaction = true;
-        close;
+        
         switch(THE_ONE_KEY)
             case 'uparrow'
                 colorIdx = mod(colorIdx,4) + 1;
@@ -70,16 +70,19 @@ while ~strcmp(THE_ONE_KEY,'escape')
                 if noiseIdx == 0, noiseIdx = 10; end
             case 'rightarrow'
                 noiseIdx = mod(noiseIdx,10) + 1;
+            case 's'
+                closeFig = false;
         end
+        if closeFig, close; else closeFig = true; end;
     end
     pause(0.001);
 end
 close;
-
+clearvars -GLOBAL THE_ONE_KEY;
 end
 
 function myKeyPress(hObject,event)
-    global THE_ONE_KEY;
-    THE_ONE_KEY = event.Key;
+global THE_ONE_KEY;
+THE_ONE_KEY = event.Key;
 end
 
