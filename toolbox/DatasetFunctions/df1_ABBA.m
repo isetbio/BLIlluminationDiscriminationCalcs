@@ -9,8 +9,9 @@ function  [dataset, classes] = df1_ABBA(calcParams,targetPool,comparisonPool,kp,
 % xd  6/1/16  wrote it
 
 %% Set appropriate function handle depending on if os is defined
-if notDefined('os'), calcFunction = @(s) sensorGet(s,'photons');
-else calcFunction = @(s) osCompute(os,s); end;
+if notDefined('os'), os = []; end
+if isempty(os), calcFunction = @(s) sensorGet(s,'photons');
+else calcFunction = @(s) osCompute(os,s); end
 
 %% Get size of photon data
 numberOfCones = numel(sensorGet(targetPool{1}, 'photons'));

@@ -53,6 +53,16 @@ sensor = sensorSetSizeToFOV(sensor,calcParams.sensorFOV,[],oi);
 sensor = sensorSet(sensor,'wavelength',SToWls(calcParams.S));
 sensor = sensorSet(sensor,'noise flag',0);
 
+if calcParams.MODEL_ORDER == 2
+    % Adjust eye movements
+    em = emCreate;
+    em = emSet(em, 'emFlag', [calcParams.enableTremor calcParams.enableDrift calcParams.enableMSaccades]);
+    em = emSet(em, 'sample time', calcParams.coneIntegrationTime);
+    
+    sensor = sensorSet(sensor, 'eye move', em);
+    sensor = sensorSet(sensor, 'positions', calcParams.EMPositions);
+end
+
 %% Run the desired model
 calcParams.colors = {'blue' 'green' 'red' 'yellow'};
 results = zeros(length(calcParams.colors),length(calcParams.illumLevels),length(calcParams.KpLevels),length(calcParams.KgLevels));
