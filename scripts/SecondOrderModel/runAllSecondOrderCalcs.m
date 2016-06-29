@@ -60,8 +60,6 @@ for k1 = 1:length(calcIDStrs)
     
     % Specify the number of trials for each combination of Kp Kg as well as
     % the highest illumination step (max 50) to go up to.
-    calcParams.numTrials = 100;
-    calcParams.maxIllumTarget = 50;
     calcParams.trainingSetSize = 200;
     calcParams.testingSetSize = 200;
     calcParams.illumLevels = 1:50;
@@ -69,31 +67,18 @@ for k1 = 1:length(calcIDStrs)
     calcParams.standardizeData = false;
     calcParams.cFunction = 4;
     calcParams.dFunction = 3;
+    
     % Kp represents the scale factor for the Poisson noise.  This is the
     % realistic noise representation of the photons arriving at the retina.
     % Therefore, startKp should always be kept at 1.
-    calcParams.numKpSamples = 10;
-    calcParams.KpInterval = 1;
-    calcParams.startKp = 1;
     calcParams.KpLevels = 1;
     
     % Kg is the scale factor for an optional Gaussian noise.  The standard
     % deviation of the Gaussian distribution is equal to the square root of
     % the mean photoisomerizations across the available target image
     % samples.
-    calcParams.numKgSamples = 1;
-    calcParams.startKg = 0;
-    calcParams.KgInterval = 1;
     calcParams.KgLevels = 1:10;
     
-%     % Specify the number of standard image samples available as well as the
-%     % number of test image samples available.  The chooser will randomly
-%     % choose two images out of the target set and one image out of the
-%     % comparison set.  This is in order to reduce the effect of pixel noise
-%     % cause by the image renderer.
-%     calcParams.targetImageSetSize = 7;
-%     calcParams.comparisonImageSetSize = 1;
-
     % Define some eye movement parameters related to large saccades
     calcParams.numSaccades = 3;             % Set this to 1 for only fixational eye movements
     calcParams.saccadeInterval = 0.150;
@@ -116,16 +101,14 @@ for k1 = 1:length(calcIDStrs)
     % provided list.  If this is left empty, the saccades will be randomly
     % chosen from across the entire optical image.
     calcParams.useSameEMPath = true;
-    calcParams.pathFile = [];
     calcParams.EMLoc = [];
     
     % Use sum or individual data
     calcParams.sumEM = false;
-    calcParams.sumEMInterval = calcParams.totalTime;
     
     % Whether to use OS code
     calcParams.enableOS = true;
-    calcParams.OSType = 'linear'; % alternative option is 'linear' or 'identity'
+    calcParams.OSType = 'linear'; % Types of OS, options are 'linear' 'biophys' 'identity'
     calcParams.enableOSNoise = false;
     
     %% Convert the images to cached scenes for more analysis
@@ -140,7 +123,6 @@ for k1 = 1:length(calcIDStrs)
     
     %% Create data sets using the simple chooser model
     if (calcParams.RUN_MODEL)
-%         secondOrderModel(calcParams,calcParams.chooserColorChoice,calcParams.overWriteFlag);
         RunModel(calcParams,calcParams.overWriteFlag);
     end
     
