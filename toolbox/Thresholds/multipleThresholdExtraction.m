@@ -12,15 +12,12 @@ function [thresholds, paramsValues] = multipleThresholdExtraction(data, criterio
 
 %% Preallocate space for the data
 thresholds = zeros(size(data,2),1);
-paramsValues = cell(size(data,2),1);
+paramsValues = zeros(size(data,2),4);
 
 %% Get thresholds
 for ii = 1:size(data,2)
-    [thresholds(ii), paramsValues{ii}] = singleThresholdExtraction(data(:,ii), criterion);
+    [thresholds(ii), paramsValues(ii,:)] = singleThresholdExtraction(data(:,ii), criterion);
 end
-
-% Convert the paramsValues cell to a matrix
-paramsValues = cell2mat(paramsValues);
 
 end
 

@@ -18,7 +18,7 @@ function [threshold, paramsValues] = singleThresholdExtraction(data, criterion)
 % less than 70 and the last 5 are greater than 70, we proceed with the
 % fitting.  Otherwise, we return 0 for the threshold, which indicates that
 % the data cannot be fit.
-if mean(data(1:5)) > 70 || mean(data(end-4:end)) < 70, threshold = nan; paramsValues = zeros(1,4); return; end; 
+if mean(data(1:5)) > 80 || mean(data(end-4:end)) < 70, threshold = nan; paramsValues = zeros(1,4); return; end; 
 
 %% Set some parameters for the curve fitting
 criterion      = criterion/100;

@@ -4,7 +4,8 @@ function [meanThreshold, stdErr] = meanThresholdOverSamples(calcIDList,criterion
 % Given a cell array of calcID strings, this function will calculate and
 % return the mean thresholds and errors in the data. This function
 % presumes that the selected calcID's were run across identical
-% noise/stimulus level conditions.
+% noise/stimulus level conditions. We only take the average over data
+% points in which NaN does not appear at any entry.
 %
 % xd  6/23/16  wrote it
 
@@ -25,11 +26,15 @@ end
 
 % Count how many NaN there are in the matrix
 validThresholds = meanThreshold > 0;
-stdErr = squeeze(nanstd(meanThreshold,[],1)./sqrt(sum(validThresholds,1)));
+[~,c] = find(validThresholds == 0);
+validThresholds(:,c) = false;
+meanThreshold = meanThreshold .* double(int32(validThresholds));
+stdErr = squeeze(nanstd(meanThreshold,[],1)/sqrt(length(calcIDList)));
 
 % Set the NaN to 0 to calulcate mean
 meanThreshold(~validThresholds) = 0;
-meanThreshold = squeeze(sum(meanThreshold,1)./sum(validThresholds,1));
+meanThreshold = squeeze(mean(meanThreshold,1));
+meanThreshold(meanThreshold == 0) = NaN;
 
 end
 
