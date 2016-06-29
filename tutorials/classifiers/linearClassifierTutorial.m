@@ -306,8 +306,8 @@ for ii = 1:length(dimensionalities)
         theTitle = ['Noise factor: ' int2str(noiseFactorKs(jj)) ', dimensionality: ' int2str(theDimensionality)];
         [~, h] = suplabel(theTitle, 't');
         set(h, 'FontSize', 20);
-        savefig(fullfile(directoryName, 'HyperplaneFigs', theTitle));
-        FigureSave(fullfile(directoryName, 'HyperplaneFigs', theTitle), boundaryFigure, 'pdf');
+%         savefig(fullfile(directoryName, 'HyperplaneFigs', theTitle));
+%         FigureSave(fullfile(directoryName, 'HyperplaneFigs', theTitle), boundaryFigure, 'pdf');
         close;
     end
     
@@ -315,21 +315,21 @@ for ii = 1:length(dimensionalities)
         for jj = 1:length(noiseFactorKs)
             for ff = 1:length(noiseFuncList)
                 % This is a struct in case other information needs to be saved
-                data.NumSupportVectors = sum(trainedSVMList{jj,ff}.IsSupportVector);
-                someSVMData{ii,jj,ff} = data;
+                NumSupportVectors = sum(trainedSVMList{jj,ff}.IsSupportVector);
+                someSVMData{ii,jj,ff} = NumSupportVectors;
             end
         end
     else
         for ff = 1:length(noiseFuncList)
             % This is a struct in case other information needs to be saved
-            data.NumSupportVectors = sum(trainedSVMList{ff}.IsSupportVector);
-            someSVMData{ii,1,ff} = data;
+            NumSupportVectors = sum(trainedSVMList{ff}.IsSupportVector);
+            someSVMData{ii,1,ff} = NumSupportVectors;
         end
     end
 end
 
 %% Clear out large data
-clear trainedSVMList data class testData testClasses  transformedTestData ...
+clearvars trainedSVMList data class testData testClasses  transformedTestData ...
     theSVM classifiedData hyperplane beta comparisonPoissonNoise ...
     class0Mean class1Mean testPoissonNoise comparisonVectorMean testVectorMean ...
     testVectorPerturbation;
@@ -388,8 +388,8 @@ for ii = 1:length(dimensionalities)
 end
 [~, h] = suplabel(['Mean percent correct for SVM ' testDirectionName{testVectorDirection}], 't');
 set(h, 'FontSize', figParams.titleFontSize);
-savefig(fullfile(directoryName, 'PercentCorrect'));
-FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'pdf');
+% savefig(fullfile(directoryName, 'PercentCorrect'));
+% FigureSave(fullfile(directoryName, 'PercentCorrect'), gcf, 'pdf');
 
 figure;
 set(gcf, 'position', [0 0 1500 1500]);
@@ -412,7 +412,7 @@ for ii = 1:length(dimensionalities)
 end
 [~, h] = suplabel(['p values for SVM ', testDirectionName{testVectorDirection}], 't');
 set(h, 'FontSize', figParams.titleFontSize);
-savefig(fullfile(directoryName, 'pvalues'));
-FigureSave(fullfile(directoryName, 'pvalues'), gcf, 'pdf');
+% savefig(fullfile(directoryName, 'pvalues'));
+% FigureSave(fullfile(directoryName, 'pvalues'), gcf, 'pdf');
 
-save(fullfile(directoryName, 'data'));
+% save(fullfile(directoryName, 'data'));
