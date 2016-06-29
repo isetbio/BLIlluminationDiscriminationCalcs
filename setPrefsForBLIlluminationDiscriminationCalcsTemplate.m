@@ -9,6 +9,29 @@ function setPrefsForBLIlluminationDiscriminationCalcsTemplate
 % 6/4/15        xd      Added the queue directory
 % 3/1/16        xd      Modified to use DropBox path
 
+%% Figure out what computer we are running on
+%
+% Check if we have the IsCluster function.  If not, we are not on a
+% cluster.
+if (exist('IsCluster'))
+    [isCluster,whichCluster] = IsCluster;
+else
+    isCluster = false;
+end
+
+%% Computer specific configuration
+%
+% Cluster.  Assume GPC since that is currently the only one we know about.
+if (isCluster) 
+     sharedRootDir = fullfile(filesep,'home/dhb/dropbox');
+     clonedWikiDir = '';
+     clonedGhPagesLocation = '';
+     validationRootDir = '/home/dhb/analysis/BLIlluminationDiscriminationCalcs/validation';
+
+    
+% Brainard Lab Mac
+else
+
 sysInfo = GetComputerInfo();
 switch (sysInfo.localHostName)
     case 'eagleray'
@@ -34,6 +57,11 @@ switch (sysInfo.localHostName)
         end
 end
 
+
+
+end
+
+%% This section might work on any computer
 % Use this for DropBox data path, might need to change based on local settings
 analysisBaseDir = fullfile(sharedRootDir, 'IBIO_analysis', 'BLIlluminationDiscrimination');
 dataBaseDir = fullfile(sharedRootDir, 'IBIO_data', 'BLIlluminationDiscrimination');
