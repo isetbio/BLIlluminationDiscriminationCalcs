@@ -1,4 +1,4 @@
-function [dataset, classes] = df2_ABBAMeanConeSignal(calcParams,targetPool,comparisonPool,kp,kg,n)
+function [dataset, classes] = df2_ABBAMeanConeSignal(calcParams,targetPool,comparisonPool,kp,kg,n,os)
 % [dataset, classes] = df2_ABBAMeanConeSignal(calcParams,targetPool,comparisonPool,kp,kg,n)
 %
 % This function follows the same data organization as df1_ABBA, see that
@@ -7,6 +7,10 @@ function [dataset, classes] = df2_ABBAMeanConeSignal(calcParams,targetPool,compa
 % cone type (L,M,S).
 %
 % xd  6/1/16  wrote it
+%% Set appropriate function handle depending on if os is defined
+if notDefined('os'), os = []; end
+if isempty(os), calcFunction = @(s) sensorGet(s,'photons');
+else calcFunction = @(s) osCompute(os,s); end
 
 %% Get size of photon data and cone types
 numberOfCones = numel(sensorGet(targetPool{1}, 'photons'));
@@ -51,11 +55,17 @@ for jj = 1:n/2
     photonsStandard = getNoisySensorImage(calcParams, sensorStandard, kp, kg);
     photonsComparison = getNoisySensorImage(calcParams, comparisonPool{comparisonSample}, kp, kg);
     
+    photonsStandard = calcFunction(sensorSet(sensorStandard,'photons',photonsStandard));
+    photonsComparison = calcFunction(sensorSet(comparisonPool{comparisonSample},'photons',photonsComparison));
+    
     dataset(jj,:) = [photonsStandard(:); photonsComparison(:)]';
     
     sensorStandard = targetPool{targetSample(2)};
     photonsStandard = getNoisySensorImage(calcParams, sensorStandard, kp, kg);
     photonsComparison = getNoisySensorImage(calcParams, comparisonPool{comparisonSample}, kp, kg);
+    
+    photonsStandard = calcFunction(sensorSet(sensorStandard,'photons',photonsStandard));
+    photonsComparison = calcFunction(sensorSet(comparisonPool{comparisonSample},'photons',photonsComparison));    
     
     dataset(jj + n/2,:) = [photonsComparison(:); photonsStandard(:)]';
 end
