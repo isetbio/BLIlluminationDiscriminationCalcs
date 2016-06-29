@@ -20,7 +20,7 @@ function runAllFirstOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs  = {'StaticPhoton'};
+calcIDStrs  = {'StaticPhoton_repeat'};
     
 %% Parameters of the calculation
 %
@@ -41,11 +41,11 @@ for k1 = 1:length(calcIDStrs)
     calcParams.CACHE_OIS = false;
     calcParams.forceOICompute = false;    % Will overwrite any existing data.
     
-    calcParams.RUN_MODEL = false;
+    calcParams.RUN_MODEL = true;
     calcParams.MODEL_ORDER = 1; 
     calcParams.overWriteFlag = true;      % Whether or not to overwrite existing data.
     
-    calcParams.CALC_THRESH = true;
+    calcParams.CALC_THRESH = false;
     
     % Set the calcID
     calcParams.calcIDStr = calcIDStrs{k1};
@@ -77,9 +77,11 @@ for k1 = 1:length(calcIDStrs)
     calcParams.illumLevels = 1:50;
     
     % Here we specify which data function and classification function to use. 
-    calcParams.standardizeData = false;
-    calcParams.cFunction = 4;
-    calcParams.dFunction = 3;
+    calcParams.standardizeData = true;
+    calcParams.cFunction = 3;
+    calcParams.dFunction = 1;
+    calcParams.usePCA = true;
+    calcParams.numPCA = 10;
     
     % Kp represents the scale factor for the Poisson noise.  This is the
     % realistic noise representation of the photons arriving at the retina.
