@@ -116,7 +116,7 @@ for ff = 1:length(folders)
                 
                 % Since using principal components seems to
                 % work fine, we will do the transformation here.
-                coeff = pca(trainingData,'NumComponents',numPCA,'Algorithm','eig');
+                coeff = pca(currentTrainingData,'NumComponents',numPCA,'Algorithm','svd');
                 currentTrainingData = currentTrainingData*coeff;
                 currentTestingData = currentTestingData*coeff;
                 clearvars coeff

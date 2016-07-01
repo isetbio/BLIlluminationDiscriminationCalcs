@@ -14,7 +14,7 @@ clear;
 saveFig = false;
 
 %% Load the data
-dataFile = 'SVMPerformance_0.3deg_100PCA.mat';
+dataFile = 'SVMPerformance_0.3deg_100PCA_parfor.mat';
 load(dataFile);
 
 %% Plot
@@ -35,7 +35,7 @@ for ii = 1:length(dimensions.folders)
     errorbar(dimensions.trainingSetSizes,DataToPlot*100,StdErr*100,'Color',figParams.colors{ii},'LineWidth',figParams.lineWidth,'LineStyle',figParams.lineStyles{ii});
 end
 ylim([45 100]);
-xlim([1 10^6]);
+xlim([10^1 10^6]);
 
 legend(cellfun(@(X)strtok(X,'_'),dimensions.folders,'UniformOutput',false),'Location','Northwest','FontSize',figParams.legendFontSize);
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
@@ -51,4 +51,4 @@ yl = ylabel('% Correct','FontSize',figParams.labelFontSize);
 yl.Position = yl.Position + figParams.deltaYlabelPosition;
 xl.Position = xl.Position + figParams.deltaXlabelPosition;
 
-if saveFig, FigureSave(strrep(dataFile(1:end-4),'_',' '), f, figParams.figType); end;
+if saveFig, FigureSave(strrep(dataFile(1:end-4),'_',' '),f,figParams.figType); end;
