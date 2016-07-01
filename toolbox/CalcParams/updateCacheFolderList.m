@@ -143,65 +143,65 @@ switch (calcParams.calcIDStr)
     case {'StaticPhoton_S2_15'}
         calcParams.cacheFolderList = {'Neutral', 'Neutral_S2_15'};
     case {'StaticPhoton_NM1_S2_1'}
-        calcParams.cacheFolderList = {'NM1', 'Neutral_NM1_S2_1'};
+        calcParams.cacheFolderList = {'NM1', 'NM1_S2_1'};
     case {'StaticPhoton_NM1_S2_2'}
-        calcParams.cacheFolderList = {'NM1', 'Neutral_NM1_S2_2'};
+        calcParams.cacheFolderList = {'NM1', 'NM1_S2_2'};
     case {'StaticPhoton_NM1_S2_3'}
-        calcParams.cacheFolderList = {'NM1', 'Neutral_NM1_S2_3'};
+        calcParams.cacheFolderList = {'NM1', 'NM1_S2_3'};
     case {'StaticPhoton_NM1_S2_4'}
-        calcParams.cacheFolderList = {'NM1', 'Neutral_NM1_S2_4'};
+        calcParams.cacheFolderList = {'NM1', 'NM1_S2_4'};
     case {'StaticPhoton_NM1_S2_5'}
-        calcParams.cacheFolderList = {'NM1', 'Neutral_NM1_S2_5'};
+        calcParams.cacheFolderList = {'NM1', 'NM1_S2_5'};
     case {'StaticPhoton_NM1_S2_6'}
-        calcParams.cacheFolderList = {'NM1', 'Neutral_NM1_S2_6'};
+        calcParams.cacheFolderList = {'NM1', 'NM1_S2_6'};
     case {'StaticPhoton_NM1_S2_7'}
-        calcParams.cacheFolderList = {'NM1', 'Neutral_NM1_S2_7'};
+        calcParams.cacheFolderList = {'NM1', 'NM1_S2_7'};
     case {'StaticPhoton_NM1_S2_8'}
-        calcParams.cacheFolderList = {'NM1', 'Neutral_NM1_S2_8'};
+        calcParams.cacheFolderList = {'NM1', 'NM1_S2_8'};
     case {'StaticPhoton_NM1_S2_9'}
-        calcParams.cacheFolderList = {'NM1', 'Neutral_NM1_S2_9'};
+        calcParams.cacheFolderList = {'NM1', 'NM1_S2_9'};
     case {'StaticPhoton_NM1_S2_10'}
-        calcParams.cacheFolderList = {'NM1', 'Neutral_NM1_S2_10'};
+        calcParams.cacheFolderList = {'NM1', 'NM1_S2_10'};
     case {'StaticPhoton_NM1_S2_11'}
-        calcParams.cacheFolderList = {'NM1', 'Neutral_NM1_S2_11'};
+        calcParams.cacheFolderList = {'NM1', 'NM1_S2_11'};
     case {'StaticPhoton_NM1_S2_12'}
-        calcParams.cacheFolderList = {'NM1', 'Neutral_NM1_S2_12'};
+        calcParams.cacheFolderList = {'NM1', 'NM1_S2_12'};
     case {'StaticPhoton_NM1_S2_13'}
-        calcParams.cacheFolderList = {'NM1', 'Neutral_NM1_S2_13'};
+        calcParams.cacheFolderList = {'NM1', 'NM1_S2_13'};
     case {'StaticPhoton_NM1_S2_14'}
-        calcParams.cacheFolderList = {'NM1', 'Neutral_NM1_S2_14'};
+        calcParams.cacheFolderList = {'NM1', 'NM1_S2_14'};
     case {'StaticPhoton_NM1_S2_15'}
-        calcParams.cacheFolderList = {'NM1', 'Neutral_NM1_S2_15'};
+        calcParams.cacheFolderList = {'NM1', 'NM1_S2_15'};
     case {'StaticPhoton_NM2_S2_1'}
-        calcParams.cacheFolderList = {'NM2', 'Neutral_NM2_S2_1'};
+        calcParams.cacheFolderList = {'NM2', 'NM2_S2_1'};
     case {'StaticPhoton_NM2_S2_2'}
-        calcParams.cacheFolderList = {'NM2', 'Neutral_NM2_S2_2'};
+        calcParams.cacheFolderList = {'NM2', 'NM2_S2_2'};
     case {'StaticPhoton_NM2_S2_3'}
-        calcParams.cacheFolderList = {'NM2', 'Neutral_NM2_S2_3'};
+        calcParams.cacheFolderList = {'NM2', 'NM2_S2_3'};
     case {'StaticPhoton_NM2_S2_4'}
-        calcParams.cacheFolderList = {'NM2', 'Neutral_NM2_S2_4'};
+        calcParams.cacheFolderList = {'NM2', 'NM2_S2_4'};
     case {'StaticPhoton_NM2_S2_5'}
-        calcParams.cacheFolderList = {'NM2', 'Neutral_NM2_S2_5'};
+        calcParams.cacheFolderList = {'NM2', 'NM2_S2_5'};
     case {'StaticPhoton_NM2_S2_6'}
-        calcParams.cacheFolderList = {'NM2', 'Neutral_NM2_S2_6'};
+        calcParams.cacheFolderList = {'NM2', 'NM2_S2_6'};
     case {'StaticPhoton_NM2_S2_7'}
-        calcParams.cacheFolderList = {'NM2', 'Neutral_NM2_S2_7'};
+        calcParams.cacheFolderList = {'NM2', 'NM2_S2_7'};
     case {'StaticPhoton_NM2_S2_8'}
-        calcParams.cacheFolderList = {'NM2', 'Neutral_NM2_S2_8'};
+        calcParams.cacheFolderList = {'NM2', 'NM2_S2_8'};
     case {'StaticPhoton_NM2_S2_9'}
-        calcParams.cacheFolderList = {'NM2', 'Neutral_NM2_S2_9'};
+        calcParams.cacheFolderList = {'NM2', 'NM2_S2_9'};
     case {'StaticPhoton_NM2_S2_10'}
-        calcParams.cacheFolderList = {'NM2', 'Neutral_NM2_S2_10'};
+        calcParams.cacheFolderList = {'NM2', 'NM2_S2_10'};
     case {'StaticPhoton_NM2_S2_11'}
-        calcParams.cacheFolderList = {'NM2', 'Neutral_NM2_S2_11'};
+        calcParams.cacheFolderList = {'NM2', 'NM2_S2_11'};
     case {'StaticPhoton_NM2_S2_12'}
-        calcParams.cacheFolderList = {'NM2', 'Neutral_NM2_S2_12'};
+        calcParams.cacheFolderList = {'NM2', 'NM2_S2_12'};
     case {'StaticPhoton_NM2_S2_13'}
-        calcParams.cacheFolderList = {'NM2', 'Neutral_NM2_S2_13'};
+        calcParams.cacheFolderList = {'NM2', 'NM2_S2_13'};
     case {'StaticPhoton_NM2_S2_14'}
-        calcParams.cacheFolderList = {'NM2', 'Neutral_NM2_S2_14'};
+        calcParams.cacheFolderList = {'NM2', 'NM2_S2_14'};
     case {'StaticPhoton_NM2_S2_15'}
-        calcParams.cacheFolderList = {'NM2', 'Neutral_NM2_S2_15'};
+        calcParams.cacheFolderList = {'NM2', 'NM2_S2_15'};
     case {'FullImageTest' 'FullImageTest2' 'FullImageTest3' 'FullImageTest4'...
             'FullImageTest5' 'OS3Step' 'OS3StepConeAbsorb' 'OSWithNoise'...
             'SOM_linear' 'SOM_linear2' 'OS3StepConeAbsorb2' 'StaticFullImage'...

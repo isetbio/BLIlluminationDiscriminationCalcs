@@ -92,6 +92,8 @@ switch (calcParams.calcIDStr)
         calcParams.cropRect = [489 393 535 480];
     case {'ConstantFullImage' 'ShuffledFullImage'}
         calcParams.cropRect = [560 261 802 667];
+    case {'Parallel'}
+        calcParams.cropRect = [];
     otherwise
         error('Unknown calcIDStr set');
 end
