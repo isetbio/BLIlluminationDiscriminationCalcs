@@ -13,6 +13,7 @@ function plotAndFitThresholdsToRealData(plotInfo,thresholds,data,varargin)
 parser = inputParser;
 parser.addParameter('ThresholdError',[],@isnumeric);
 parser.addParameter('DataError',zeros(size(data)),@isnumeric);
+parser.addParameter('NoiseLevel',-1,@isnumeric);
 parser.parse(varargin{:});
 
 thresholdError = parser.Results.ThresholdError;
@@ -57,6 +58,16 @@ if pointToInterpolate ~= idx
     [~,interpIdx] = min(abs(interpolatedThresholds));
     interpOffset = interpIdx/1000;
     interpolatedPoint = interpolatedPoint + sign(pointToInterpolate-idx) * interpOffset;
+    
+    % If the NoiseLevel field is greater than 0, than the user specified an
+    % input noise level. We will interpolate to that value instead of what
+    % we just calculated.
+    if parser.Results.NoiseLevel > 0, 
+        interpolatedPoint = parser.Results.NoiseLevel;
+    end
+    
+    % Use the interpolated point calculate the thresholds (and errors) that
+    % we will plot.
     fittedThresholds = interp1([idx pointToInterpolate],thresholds([idx,pointToInterpolate],:),interpolatedPoint);
     if ~isempty(thresholdError)
         fittedError = interp1([idx pointToInterpolate],thresholdError([idx,pointToInterpolate],:),interpolatedPoint);
