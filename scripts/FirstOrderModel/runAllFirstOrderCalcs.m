@@ -20,7 +20,7 @@ function runAllFirstOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs  = {'StaticPhoton'};
+calcIDStrs  = {'StaticPhoton' 'StaticPhoton_2'};
     
 %% Parameters of the calculation
 %
@@ -32,7 +32,7 @@ calcIDStrs  = {'StaticPhoton'};
 % the current parameters being used.
 
 % This part loops through the calculations for all caldIDStrs specified
-for k1 = 1:length(calcIDStrs)
+parfor k1 = 1:length(calcIDStrs)
     
     % Define the steps of the calculation that should be carried out.
     calcParams.CACHE_SCENES = false;
@@ -41,11 +41,11 @@ for k1 = 1:length(calcIDStrs)
     calcParams.CACHE_OIS = false;
     calcParams.forceOICompute = false;    % Will overwrite any existing data.
     
-    calcParams.RUN_MODEL = false;
+    calcParams.RUN_MODEL = true;
     calcParams.MODEL_ORDER = 1; 
     calcParams.overWriteFlag = true;      % Whether or not to overwrite existing data.
     
-    calcParams.CALC_THRESH = true;
+    calcParams.CALC_THRESH = false;
     
     % Set the calcID
     calcParams.calcIDStr = calcIDStrs{k1};

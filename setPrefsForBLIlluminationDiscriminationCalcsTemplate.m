@@ -23,10 +23,10 @@ end
 %
 % Cluster.  Assume GPC since that is currently the only one we know about.
 if (isCluster) 
-     sharedRootDir = fullfile(filesep,'home/dhb/dropbox');
+     sharedRootDir = fullfile(filesep,'/data/shared/brainardlab/dropbox');
      clonedWikiDir = '';
      clonedGhPagesLocation = '';
-     validationRootDir = '/home/dhb/analysis/BLIlluminationDiscriminationCalcs/validation';
+     validationRootDir = '/data/shared/brainardlab/analysis/BLIlluminationDiscriminationCalcs/validation';
 
     
 % Brainard Lab Mac

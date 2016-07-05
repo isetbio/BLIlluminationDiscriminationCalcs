@@ -64,7 +64,7 @@ if calcParams.MODEL_ORDER == 2
 end
 
 %% Run the desired model
-calcParams.colors = {'blue' 'green' 'red' 'yellow'};
+calcParams.colors = {'Blue' 'Green' 'Red' 'Yellow'};
 results = zeros(length(calcParams.colors),length(calcParams.illumLevels),length(calcParams.KpLevels),length(calcParams.KgLevels));
 
 % Choose the appropriate model function which should be specified in calcParams.
@@ -76,6 +76,7 @@ modelFunction = str2func(strrep(modelList{calcParams.MODEL_ORDER},'.m',''));
 for ii = 1:length(calcParams.colors)
     results(ii,:,:,:) = modelFunction(calcParams,sensor,calcParams.colors{ii});
 end
+calcParams.colors = lower(calcParams.colors);
 
 % Save the results
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
