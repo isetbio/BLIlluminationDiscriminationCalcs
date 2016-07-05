@@ -6,8 +6,8 @@ function [percentCorrect,svm] = cf3_SupportVectorMachine(trainingData, testingDa
 %
 % xd  5/26/16  wrote it
 
-svm = fitcsvm(trainingData, trainingClasses);
-classifiedClasses = predict(svm, testingData);
+svm = fitcsvm(trainingData,trainingClasses);
+classifiedClasses = predict(svm,testingData,'KernelScale','auto');
 percentCorrect = sum(classifiedClasses == testingClasses) / size(testingData,1) * 100;
 
 end
