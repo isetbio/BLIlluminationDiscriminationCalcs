@@ -34,7 +34,7 @@ switch (modifier)
         figParams.ylimit = [0 100];
     case {'ThresholdvNoise'}
         figParams.markerSize = 30;
-        figParams.colors = {[0.1 0.1 0.1] [0.3 0.3 0.3] [0.5 0.5 0.5] [0.7 0.7 0.7]};
+        figParams.colors = {[0 191 255]/255 [46 139 87]/255 [178,34,34]/255 [255 215 0]/255}; 
         figParams.lineStyle = '--';
         figParams.lineWidth = 2;
     case {'Asymptote'}

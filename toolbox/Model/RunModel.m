@@ -14,12 +14,14 @@ if notDefined('overWrite'), overWrite = false; end
 if notDefined('frozen'), frozen = false; end
 
 %% Take care of some housekeeping
-% Here we set a constant seed in case we want to freeze the noise.  This
+% Here we set a constant seed in case we want to freeze the noise. This
 % allows us to generate reproducable data. Otherwise we'll use random noise
-% so that the model does not do the same thing everytime.  Since we run
+% so that the model does not do the same thing everytime. Since we run
 % many trials, this should not induce significant variability.
 if (~frozen)
     rng('shuffle');
+else
+    rng(1);
 end
 
 % We'll check if the target directory for our data exists. If it does not,

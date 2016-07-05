@@ -79,6 +79,12 @@ for ii = 1:length(illumLevels);
                 testingData = (testingData - repmat(m,testingSetSize,1)) ./ repmat(s,testingSetSize,1);
             end
             
+            if calcParams.usePCA
+                coeff = pca(trainingData,'NumComponents',calcParams.numPCA);
+                trainingData = trainingData*coeff;
+                testingData = testingData*coeff;
+            end
+            
             % Compute performance based on chosen classifier method
             classifierFunction = masterClassifierFunction(calcParams.cFunction);
             results(ii,jj,kk) = classifierFunction(trainingData,testingData,trainingClasses,testingClasses);

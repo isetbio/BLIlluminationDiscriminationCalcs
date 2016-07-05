@@ -20,7 +20,10 @@ function runAllFirstOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs  = {'StaticPhoton' 'StaticPhoton_2'};
+calcIDStrs  = {'StaticPhoton_NM2_S2_2' 'StaticPhoton_NM2_S2_3' 'StaticPhoton_NM2_S2_4' 'StaticPhoton_NM2_S2_5'...
+    'StaticPhoton_NM2_S2_6' 'StaticPhoton_NM2_S2_7' 'StaticPhoton_NM2_S2_8' 'StaticPhoton_NM2_S2_9' 'StaticPhoton_NM2_S2_10'...
+    'StaticPhoton_NM2_S2_11' 'StaticPhoton_NM2_S2_12' 'StaticPhoton_NM2_S2_13' 'StaticPhoton_NM2_S2_14'...
+    'StaticPhoton_NM2_S2_15' 'StaticPhoton_NM2_S2_1'};
     
 %% Parameters of the calculation
 %
@@ -35,11 +38,11 @@ calcIDStrs  = {'StaticPhoton' 'StaticPhoton_2'};
 parfor k1 = 1:length(calcIDStrs)
     
     % Define the steps of the calculation that should be carried out.
-    calcParams.CACHE_SCENES = false;
-    calcParams.forceSceneCompute = false; % Will overwrite any existing data.
+    calcParams.CACHE_SCENES = true;
+    calcParams.forceSceneCompute = true; % Will overwrite any existing data.
     
-    calcParams.CACHE_OIS = false;
-    calcParams.forceOICompute = false;    % Will overwrite any existing data.
+    calcParams.CACHE_OIS = true;
+    calcParams.forceOICompute = true;    % Will overwrite any existing data.
     
     calcParams.RUN_MODEL = true;
     calcParams.MODEL_ORDER = 1; 
@@ -77,9 +80,11 @@ parfor k1 = 1:length(calcIDStrs)
     calcParams.illumLevels = 1:50;
     
     % Here we specify which data function and classification function to use. 
-    calcParams.standardizeData = false;
-    calcParams.cFunction = 4;
-    calcParams.dFunction = 3;
+    calcParams.standardizeData = true;
+    calcParams.cFunction = 3;
+    calcParams.dFunction = 1;
+    calcParams.usePCA = true;
+    calcParams.numPCA = 10;
     
     % Kp represents the scale factor for the Poisson noise.  This is the
     % realistic noise representation of the photons arriving at the retina.

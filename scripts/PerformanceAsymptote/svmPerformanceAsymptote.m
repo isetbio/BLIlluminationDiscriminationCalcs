@@ -19,13 +19,13 @@ clear;
 % are doing this for an SVM, larger training set sizes (>1000) may be
 % painful to run.
 testingSetSize = 5000;
-trainingSetSizes = 10*2.^(4:14);
+trainingSetSizes = 10*2.^(8);
 
 % Define the size of the sensor here. For a small patch in the rest of the
 % calculations, we are using a 0.83 degree sensor which we specify here.
 % The OIvSensorScale variable tells the script to not downsample the
 % optical image in any manner.
-sSize = 0.3; %Maybe this should be 1 degree?
+sSizes = 1; %Maybe this should be 1 degree?
 OIvSensorScale = 0;
 
 % Some bookkeeping parameters. These should not be changed. NoiseStep is
@@ -34,105 +34,118 @@ OIvSensorScale = 0;
 folders = {'Neutral_FullImage' 'NM1_FullImage' 'NM2_FullImage'};
 Colors = {'Blue'};
 NoiseStep = 15;
-numIllumStep = 1;
+numIllumSteps = 1;
 numCrossVal = 10;
 numPCA = 100;
-
-%% Create our sensor
-rng(1); % Freeze noise
-sensor = getDefaultBLIllumDiscrSensor;
-sensor = sensorSetSizeToFOV(sensor, sSize, [], oiCreate('human'));
 
 %% Pre-allocate space for results
 % The dimensions struct will hold meta data about the parameters used for
 % the calculation. SVMpercentCorrent contains the actual performance
 % values.
-SVMpercentCorrect = zeros(length(folders),length(Colors),length(trainingSetSizes),numCrossVal);
-dimensions.labels = {'Folders' 'Colors' 'TrainingSetSizes' 'TestingSet#'};
-dimensions.folders = folders;
-dimensions.colors = Colors;
-dimensions.trainingSetSizes = trainingSetSizes;
-dimensions.numCrossVal = numCrossVal;
-
-%% Do calculations
-for ff = 1:length(folders)
-    %% Load all target scene sensors
-    analysisDir = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
-    folderPath = fullfile(analysisDir, 'OpticalImageData', folders{ff}, 'Standard');
-    standardOIList = getFilenamesInDirectory(folderPath);
+for yy = 1:length(sSizes)
+    sSize = sSizes(yy);
+    %% Create our sensor
+    rng(1); % Freeze noise
+    sensor = getDefaultBLIllumDiscrSensor;
+    sensor = sensorSetSizeToFOV(sensor, sSize, [], oiCreate('human'));
     
-    standardSensorPool = cell(1, length(standardOIList));
-    calcParams.meanStandard = 0;
-    for jj = 1:length(standardOIList)
-        standard = loadOpticalImageData([folders{ff} '/Standard'], strrep(standardOIList{jj}, 'OpticalImage.mat', ''));
-        standardSensorPool{jj} = coneAbsorptions(sensor, resizeOI(standard,sSize*OIvSensorScale));
-        calcParams.meanStandard = calcParams.meanStandard + mean2(sensorGet(standardSensorPool{jj}, 'photons')) / length(standardOIList);
-    end
-    
-    %% Calculation body
-    for cc = 1:length(Colors)
+    for zz = 1:length(numIllumSteps)
+        numIllumStep = numIllumSteps(zz);
         
-        % Load all Optical image names in the target directory in
-        % alphanumerical order. This corresponds to increasing illumination steps.
-        comparisonOIPath = fullfile(analysisDir, 'OpticalImageData', folders{ff}, [Colors{cc} 'Illumination']);
-        OINames = getFilenamesInDirectory(comparisonOIPath);
-        comparison = loadOpticalImageData([folders{ff} '/' Colors{cc} 'Illumination'], strrep(OINames{numIllumStep}, 'OpticalImage.mat', ''));
-        sensorComparison = coneAbsorptions(sensor, resizeOI(comparison,sSize*OIvSensorScale));
-        
-        % Set variables to pass into data generation functions.
-        kp = 1; kg = NoiseStep;
-        
-        for kk = 1:numCrossVal
+        SVMpercentCorrect = zeros(length(folders),length(Colors),length(trainingSetSizes),numCrossVal);
+        dimensions.labels = {'Folders' 'Colors' 'TrainingSetSizes' 'TestingSet#'};
+        dimensions.folders = folders;
+        dimensions.colors = Colors;
+        dimensions.trainingSetSizes = trainingSetSizes;
+        dimensions.numCrossVal = numCrossVal;
+        dimensions.sSize = sSize;
+        dimensions.numIllumStep = numIllumStep;
+        %% Do calculations
+        for ff = 1:length(folders)
+            %% Load all target scene sensors
+            analysisDir = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
+            folderPath = fullfile(analysisDir, 'OpticalImageData', folders{ff}, 'Standard');
+            standardOIList = getFilenamesInDirectory(folderPath);
             
-            %% Train and apply classifiers
-            % For each training set size, we should first train the
-            % SVMs and then test each one of the testingData sets.
-            for ii = 1:length(trainingSetSizes);
-                %% Generate the data set
-                % We would like to generate 10 complete sets of testing data here.
-                % One set of training data using the largest training set size will
-                % be created. This way, all the smaller training data sets will be
-                % subsets of the larger training data sets.  This makes sense to do,
-                % for consistency reasons. Since the classes will be identical for
-                % each data set, there is no reason to save 10 of them.
-                tic
-                [trainingData, trainingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,trainingSetSizes(ii));
-                [testingData, testingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
-                fprintf('Yay! The Data for folder %d run %d has been created in %6.5f seconds!\n',ff,kk,toc);
+            standardSensorPool = cell(1, length(standardOIList));
+            calcParams.meanStandard = 0;
+            for jj = 1:length(standardOIList)
+                standard = loadOpticalImageData([folders{ff} '/Standard'], strrep(standardOIList{jj}, 'OpticalImage.mat', ''));
+                standardSensorPool{jj} = coneAbsorptions(sensor, resizeOI(standard,sSize*OIvSensorScale));
+                calcParams.meanStandard = calcParams.meanStandard + mean2(sensorGet(standardSensorPool{jj}, 'photons')) / length(standardOIList);
+            end
+            
+            %% Calculation body
+            for cc = 1:length(Colors)
                 
-                % Standardize data. We will use the mean and standard
-                % deviation of the current training data set to standardize
-                % both training and testing data.
-                m = mean(trainingData,1);
-                s = std(trainingData,1);
-                trainingData = (trainingData - repmat(m,trainingSetSizes(ii),1)) ./ repmat(s,trainingSetSizes(ii),1);
-                testingData = (testingData - repmat(m,testingSetSize,1)) ./ repmat(s,testingSetSize,1);
-
-                % Since using principal components seems to
-                % work fine, we will do the transformation here.
-                coeff = pca(trainingData,'NumComponents',numPCA,'Algorithm','eig');
-                trainingData = trainingData*coeff;
-                testingData = testingData*coeff;
-                clearvars coeff
+                % Load all Optical image names in the target directory in
+                % alphanumerical order. This corresponds to increasing illumination steps.
+                comparisonOIPath = fullfile(analysisDir, 'OpticalImageData', folders{ff}, [Colors{cc} 'Illumination']);
+                OINames = getFilenamesInDirectory(comparisonOIPath);
+                comparison = loadOpticalImageData([folders{ff} '/' Colors{cc} 'Illumination'], strrep(OINames{numIllumStep}, 'OpticalImage.mat', ''));
+                sensorComparison = coneAbsorptions(sensor, resizeOI(comparison,sSize*OIvSensorScale));
                 
-                theSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto',...
-                    'CacheSize',10*1024); %THIS SHOULD MAKE IT ACTUALLY TRAIN ON LARGE DATA SETS
+                % Set variables to pass into data generation functions.
+                kp = 1; kg = NoiseStep;
                 
-                % Classify each of the ten data sets using this SVM
-                predictions = predict(theSVM,testingData);
-                SVMpercentCorrect(ff,cc,ii,kk) = sum((predictions == testingClasses)) / length(testingClasses);
-                fprintf('SVM trained and tested in %f seconds for set size: %d!\n',toc,ii);
-                clearvars theSVM
+                for kk = 1:numCrossVal
+                    %% Generate the data set
+                    % We would like to generate 10 complete sets of testing data here.
+                    % One set of training data using the largest training set size will
+                    % be created. This way, all the smaller training data sets will be
+                    % subsets of the larger training data sets.  This makes sense to do,
+                    % for consistency reasons. Since the classes will be identical for
+                    % each data set, there is no reason to save 10 of them.
+                    tic
+                    [trainingData, trainingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,max(trainingSetSizes));
+                    [testingData, testingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
+                    trainingData = single(trainingData);
+                    testingData  = single(testingData);
+                    fprintf('Yay! The Data for folder %d run %d has been created in %6.5f seconds!\n',ff,kk,toc);
+                    
+                    %% Train and apply classifiers
+                    % For each training set size, we should first train the
+                    % SVMs and then test each one of the testingData sets.
+                    for ii = 1:length(trainingSetSizes);
+                        tic
+                        numberOfVec = trainingSetSizes(ii);
+                        dataToUse = [1:numberOfVec/2, max(trainingSetSizes)/2+1:max(trainingSetSizes)/2+numberOfVec/2];
+                        
+                        currentTrainingData = trainingData(dataToUse,:);
+                        currentTrainingClasses = trainingClasses(dataToUse);
+                        
+                        % Standardize data. We will use the mean and standard
+                        % deviation of the current training data set to standardize
+                        % both training and testing data.
+                        m = mean(currentTrainingData,1);
+                        s = std(currentTrainingData,1);
+                        currentTrainingData = (currentTrainingData - repmat(m,trainingSetSizes(ii),1)) ./ repmat(s,trainingSetSizes(ii),1);
+                        currentTestingData = (testingData - repmat(m,testingSetSize,1)) ./ repmat(s,testingSetSize,1);
+                        
+                        % Since using principal components seems to
+                        % work fine, we will do the transformation here.
+                        coeff = pca(currentTrainingData,'NumComponents',numPCA,'Algorithm','svd');
+                        currentTrainingData = currentTrainingData*coeff;
+                        currentTestingData = currentTestingData*coeff;
+                        clearvars coeff
+                        
+                        theSVM = fitcsvm(currentTrainingData,currentTrainingClasses,'KernelScale','auto',...
+                            'CacheSize',10*1024); %THIS SHOULD MAKE IT ACTUALLY TRAIN ON LARGE DATA SETS
+                        
+                        % Classify each of the ten data sets using this SVM
+                        predictions = predict(theSVM,currentTestingData);
+                        SVMpercentCorrect(ff,cc,ii,kk) = sum((predictions == testingClasses)) / length(testingClasses);
+                        fprintf('SVM trained and tested in %f seconds for set size: %d!\n',toc,ii);
+                        clearvars theSVM
+                    end
+                end
+                
+                %% Save the data
+                % We save inside the loop so that if the program crashes, at least
+                % we can get some data out of it.
+                fileName = sprintf('SVMPerformance_%03.1fdeg_%dPCA.mat',sSize,numPCA);
+                save(fileName,'SVMpercentCorrect','dimensions');
             end
         end
-        
-        %% Save the data
-        % We save inside the loop so that if the program crashes, at least
-        % we can get some data out of it.
-        fileName = sprintf('SVMPerformance_%03.1fdeg_%dPCA.mat',sSize,numPCA);
-        save(fileName,'SVMpercentCorrect','dimensions');
     end
 end
-
-
-
