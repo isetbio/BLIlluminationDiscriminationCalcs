@@ -11,10 +11,10 @@
 clear;
 
 %% Flag to save figure
-saveFig = true;
+saveFig = false;
 
 %% Plot choice
-sensorSize = 0.1;
+sensorSize = 0.8;
 illumLevels = [1 5 10 15];
 
 %% Plot
