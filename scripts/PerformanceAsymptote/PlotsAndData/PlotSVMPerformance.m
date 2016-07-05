@@ -14,7 +14,7 @@ clear;
 saveFig = false;
 
 %% Load the data
-dataFile = 'SVMPerformance_0.3deg_100PCA_parfor.mat';
+dataFile = 'SVMPerformance_Illum1_0.1deg_100PCA_parfor.mat';
 load(dataFile);
 
 %% Plot
