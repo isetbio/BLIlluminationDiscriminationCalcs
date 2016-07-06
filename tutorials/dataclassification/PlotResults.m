@@ -37,7 +37,7 @@ PF = @PAL_Weibull;
 
 options = optimset('fminsearch');
 options.TolFun = 1e-09;
-options.MaxFunEvals = 10000 * 100;
+options.MaxFunEvals = 10000*100;
 options.MaxIter = 500*100;
 tN = zeros(3,1);
 % Actual code to plot the data
