@@ -35,7 +35,7 @@ calcIDStrs  = {'StaticPhoton_NM2_S2_2' 'StaticPhoton_NM2_S2_3' 'StaticPhoton_NM2
 % the current parameters being used.
 
 % This part loops through the calculations for all caldIDStrs specified
-parfor k1 = 1:length(calcIDStrs)
+for k1 = 1:length(calcIDStrs)
     
     % Define the steps of the calculation that should be carried out.
     calcParams.CACHE_SCENES = true;
