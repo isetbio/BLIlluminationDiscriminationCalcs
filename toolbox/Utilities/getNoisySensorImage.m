@@ -36,10 +36,10 @@ end
 
 %% Calculate noisy sample
 
-noiseFree = sensorGet(sensor, 'photons');
+noiseFree = sensor;
 
 % Get poisson noise, this is in photons
-[~, nP] = noiseShot(sensor);
+[~, nP] = coneMosaic.photonNoise(sensor);
 
 % Get the Gaussian noise
 nG = sqrt(calcParams.meanStandard) * randn(size(noiseFree));

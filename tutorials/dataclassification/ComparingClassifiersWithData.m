@@ -50,8 +50,12 @@ NoiseSteps = 1:2:20;
 % isomerizations for every optical image later in the calculation.  This
 % keeps parameters related to the sensor constant.
 rng(1);
-sensor = getDefaultBLIllumDiscrSensor;
-sensor = sensorSetSizeToFOV(sensor, sSize, [], oiCreate('human'));
+%% Using the coneMosaic object here
+sensor = coneMosaic;
+sensor.setSizeToFOV(sSize);
+sensor.integrationTime = 0.050;
+sensor.wave = SToWls([380 8 51]);
+sensor.noiseFlag = 0;
 
 %% Perform calculation
 for ff = 1:length(folders)
@@ -65,8 +69,8 @@ for ff = 1:length(folders)
     calcParams.meanStandard = 0;
     for jj = 1:length(standardOIList)
         standard = loadOpticalImageData([folders{ff} '/Standard'], strrep(standardOIList{jj}, 'OpticalImage.mat', ''));
-        standardSensorPool{jj} = coneAbsorptions(sensor, resizeOI(standard,sSize*OIvSensorScale));
-        calcParams.meanStandard = calcParams.meanStandard + mean2(sensorGet(standardSensorPool{jj}, 'photons')) / length(standardOIList);
+        standardSensorPool{jj} = sensor.compute(standard,'currentFlag',false);
+        calcParams.meanStandard = calcParams.meanStandard + mean2(standardSensorPool{jj}) / length(standardOIList);
     end
     
     %% Calculation body
@@ -89,7 +93,7 @@ for ff = 1:length(folders)
         for kk = 1:numIllumSteps
             
             comparison = loadOpticalImageData([folders{ff} '/' Colors{cc} 'Illumination'], strrep(OINames{kk}, 'OpticalImage.mat', ''));
-            sensorComparison = coneAbsorptions(sensor, resizeOI(comparison,sSize*OIvSensorScale));
+            sensorComparison = sensor.compute(comparison,'currentFlag',false);
 
             tic
             for nn = 1:length(NoiseSteps)
@@ -100,16 +104,16 @@ for ff = 1:length(folders)
                 end
                 
                 %% Generate the data set
-                [trainingData, trainingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,trainingSetSize);
-                [testingData, testingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
+                [trainingData,trainingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,trainingSetSize);
+                [testingData,testingClasses]   = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
                 
                 % Standardize data if flag is set to true
                 if standardizeData
                     m = mean(trainingData,1);
                     s = std(trainingData,1);
                     
-                    trainingData = (trainingData - repmat(m, trainingSetSize, 1)) ./ repmat(s, trainingSetSize, 1);
-                    testingData = (testingData - repmat(m, testingSetSize, 1)) ./ repmat(s, testingSetSize, 1);
+                    trainingData = (trainingData - repmat(m,trainingSetSize,1)) ./ repmat(s,trainingSetSize,1);
+                    testingData  = (testingData  - repmat(m,testingSetSize,1))  ./ repmat(s,testingSetSize,1);
                 end
                 
                 %% Apply classifiers
@@ -156,7 +160,7 @@ for ff = 1:length(folders)
 %     save(fullSavePath, 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect',...
 %         'pcaData', 'Colors','NoiseSteps','SVMpca','NNpca','DApca');
 
-    save(fullSavePath, 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect',...
+    save(nameOfFile, 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect',...
         'pcaData', 'Colors','NoiseSteps');
 end
 

@@ -44,7 +44,8 @@ tN = zeros(3,1);
 for nn = 1:length(dataToLoad)
     % Load and format the data appropriately
     dataPath = fullfile(getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir'), 'ClassifierComparisons');
-    load(fullfile(dataPath,dataToLoad{nn}));
+%     load(fullfile(dataPath,dataToLoad{nn}));
+    load(dataToLoad{nn});
     allData = {NNpercentCorrect, DApercentCorrect, SVMpercentCorrect};
    
     % Check for meta-data related to the calculation
