@@ -97,10 +97,10 @@ for ii = 1:length(illumSteps)
         testingData  = (testingData - repmat(m,testingSetSize,1)) ./ repmat(s,testingSetSize,1);
         
         % Train SVM on raw data
-        %         tic
-        %         theSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto','CacheSize','maximal');
-        %         SVMrunTime(1,ii,jj) = toc;
-        %         fprintf('SVM trained in %f seconds!\n',SVMrunTime(1,ii,jj));
+        tic
+        theSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto','CacheSize','maximal');
+        SVMrunTime(1,ii,jj) = toc;
+        fprintf('SVM trained in %f seconds!\n',SVMrunTime(1,ii,jj));
         
         % Train SVM on pca data
         tic
@@ -109,13 +109,14 @@ for ii = 1:length(illumSteps)
         fprintf('PCA calculated in in %f seconds!\n',pcaTime);
         trainingData = score(:,1:numPCA); clear score;
         coeff = coeff(:,1:numPCA);
-        pcaSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto','CacheSize','maximal');
+        pcaSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto');
         SVMrunTime(2,ii,jj) = toc;
         fprintf('SVM trained in %f seconds!\n',SVMrunTime(2,ii,jj)-pcaTime);
         
         % Do classification
-        %         predictedClasses = predict(theSVM,testingData);
-        %         SVMpercentCorrect(1,ii,jj) = sum(predictedClasses == testingClasses)/testingSetSize;
+        predictedClasses = predict(theSVM,testingData);
+        SVMpercentCorrect(1,ii,jj) = sum(predictedClasses == testingClasses)/testingSetSize;
+
         testingData = testingData*coeff;
         predictedClasses = predict(pcaSVM,testingData);
         SVMpercentCorrect(2,ii,jj) = sum(predictedClasses == testingClasses)/testingSetSize;
