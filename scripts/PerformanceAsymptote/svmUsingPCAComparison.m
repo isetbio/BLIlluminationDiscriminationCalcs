@@ -234,3 +234,4 @@ end
 %% Save the data
 fileName = 'SVM_FullvPCA.mat';
 save(fileName,'SVMpercentCorrect','SVMrunTime','MetaData');
+
