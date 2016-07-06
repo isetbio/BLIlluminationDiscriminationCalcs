@@ -199,7 +199,7 @@ for colorIdx = 1:length(colors)
         predictedClasses = predict(theSVM,testingData);
         SVMpercentCorrect(colorIdx,1,illumStepIdx,3) = sum(predictedClasses == testingClasses)/testingSetSize;
         SVMrunTime(colorIdx,1,illumStepIdx,2) = toc;
-        
+
         tic
         CVSVM = crossval(theSVM,'KFold',numCrossVal);
         percentCorrect = 1 - kfoldLoss(CVSVM,'lossfun','classiferror','mode','individual');
