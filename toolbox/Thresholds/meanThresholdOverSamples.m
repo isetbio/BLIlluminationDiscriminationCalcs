@@ -13,7 +13,7 @@ function [meanThreshold, stdErr] = meanThresholdOverSamples(calcIDList,criterion
 % We'll load the first calcID to get how large our mean threshold variable
 % needs to be.
 dummyData =loadModelData(calcIDList{1});
-meanThreshold = zeros(length(calcIDList),size(dummyData,3),size(dummyData,1));
+meanThreshold = zeros(length(calcIDList),max(size(dummyData,3),size(dummyData,4)),size(dummyData,1));
 
 %% Loop over calcIDList and do calculations
 for ii = 1:length(calcIDList)
