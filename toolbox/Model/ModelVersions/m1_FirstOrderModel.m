@@ -96,7 +96,11 @@ for ii = 1:length(illumLevels);
             results(ii,jj,kk) = classifierFunction(trainingData,testingData,trainingClasses,testingClasses);
         end
     end
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> Trying to keep this up to date before branching
     % Update the last 5 correct and check if startKg needs to be shifted.
     % If the average of the last 5 is greater than 99.5%, we set the
     % remaining values for each illumination level for the startKg noise
