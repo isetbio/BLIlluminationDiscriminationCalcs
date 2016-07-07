@@ -37,7 +37,7 @@ color = 'Blue';
 NoiseStep = 15;
 illumSteps = 1:10;
 numCrossVal = 10;
-numPCA = 100;
+numPCA = 2;
 
 %% Create our sensor
 rng(1); % Freeze noise
@@ -131,3 +131,4 @@ end
 %% Save the data
 fileName = sprintf('SVMv%dPCAv250SVD.mat',numPCA);
 save(fileName,'SVMpercentCorrect','SVMrunTime','dimensions');
+
