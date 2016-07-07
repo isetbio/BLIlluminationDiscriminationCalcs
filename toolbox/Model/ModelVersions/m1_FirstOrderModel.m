@@ -53,7 +53,7 @@ startKg = 1;
 %% Do the actual calculation here
 results = zeros(length(illumLevels),length(KpLevels),length(KgLevels));
 for ii = 1:length(illumLevels);
-    
+
     % Precompute the test optical image to save computational time.
     imageName = OINamesList{illumLevels(ii)};
     imageName = strrep(imageName,'OpticalImage.mat','');
@@ -69,7 +69,7 @@ for ii = 1:length(illumLevels);
         
         for kk = startKg:length(KgLevels);
             Kg = KgLevels(kk);
-            
+
             % Choose the data generation function
             datasetFunction = masterDataFunction(calcParams.dFunction);
             [trainingData, trainingClasses] = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,trainingSetSize);
@@ -119,6 +119,8 @@ for ii = 1:length(illumLevels);
             break
         end
     end
+    % Print the time the calculation took
+    fprintf('Calculation time for %s illumination step %u\n',color,illumLevels(ii));
 end
 end
 

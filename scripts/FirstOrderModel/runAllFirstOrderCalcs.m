@@ -1,4 +1,4 @@
-function runAllFirstOrderCalcs
+% function runAllFirstOrderCalcs
 % runAllFirstOrderCalcs
 %
 % Run the full set of calculations for the first order model in the
@@ -17,7 +17,7 @@ function runAllFirstOrderCalcs
 % 7/29/15  xd                Renamed.
 
 %% Clear and initialize
-close all; ieInit;
+close all; ieInit; parpool(40);
 
 %% Set identifiers to run
 calcIDStrs = {'Constant_Plot'};
@@ -31,12 +31,19 @@ calcIDStrs = {'Constant_Plot'};
 % on the structure at runtime to make sure our caches are consistent with
 % the current parameters being used.
 
+c.calcIDStr = 'SVM_Static_Isomerizations';
+c.cacheFolderList = {'Neutral', 'Neutral_FullImage'};
+c.sensorFOV = 0.83;
+tempScene = loadSceneData([c.cacheFolderList{2} '/Standard'],'TestImage0');
+numberofOI = numel(splitSceneIntoMultipleSmallerScenes(tempScene,c.sensorFOV));
+% numberofOI = generateOIForParallelComputing(c);
+
 % This part loops through the calculations for all caldIDStrs specified
-for k1 = 1:length(calcIDStrs)
+parfor k1 = 1:numberofOI
     
     % Define the steps of the calculation that should be carried out.
     calcParams.CACHE_SCENES = false;
-    calcParams.forceSceneCompute = false;  % Will overwrite any existing data.
+    calcParams.forceSceneCompute = false; % Will overwrite any existing data.
     
     calcParams.CACHE_OIS = false;
     calcParams.forceOICompute = false;    % Will overwrite any existing data.
@@ -48,11 +55,11 @@ for k1 = 1:length(calcIDStrs)
     calcParams.CALC_THRESH = false;
     
     % Set the calcID
-    calcParams.calcIDStr = calcIDStrs{k1};
+    calcParams.calcIDStr = [c.calcIDStr '_' num2str(k1)];
     
     % Folder list to run over for conversions into isetbio format
-%     calcParams = updateCacheFolderList(calcParams);
-    calcParams.cacheFolderList = {'Constant' 'Constant_PlottingOnly'};
+    calcParams.cacheFolderList = {c.cacheFolderList{1} calcParams.calcIDStr};
+    
     % Need to specify the calibration file to use
     calcParams = assignCalibrationFile(calcParams);
     
@@ -60,14 +67,14 @@ for k1 = 1:length(calcIDStrs)
     % Code further on makes the most sense if the image is square (because we
     % define a square patch of cone mosaic when we build the sensor), so the
     % cropped region should always be square.
-    calcParams = updateCropRect(calcParams);  
+    calcParams.cropRect = [];              
     calcParams.S = [380 8 51];
         
     % Parameters for creating the sensor. OIvSensorScale is a parameter
     % that, if set to a value > 0, will subsample the optical image to the
     % size sensorFOV*OIvSensorScale.
     calcParams.coneIntegrationTime = 0.050;
-    calcParams.sensorFOV = 0.83;
+    calcParams.sensorFOV = c.sensorFOV;
     calcParams.OIvSensorScale = 0;
     
     % Specify the number of trials for each combination of Kp Kg as well as
@@ -90,8 +97,8 @@ for k1 = 1:length(calcIDStrs)
     
     % Kg is the scale factor for Gaussian noise.  The standard deviation of 
     % the Gaussian noise is equal to the square root of the mean 
-    % photoisomerizations across the available target image samples. 
-    calcParams.KgLevels = 30;
+    % photoisomerizations across the available target image samples.
+    calcParams.KgLevels = 0:3:30;
     
     %% Convert the images to cached scenes for more analysis
     if (calcParams.CACHE_SCENES)
@@ -114,4 +121,7 @@ for k1 = 1:length(calcIDStrs)
     end
 end
 
-end
+deleteOIForParallelComputing(c);
+exit;
+
+% end
