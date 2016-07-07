@@ -20,7 +20,7 @@ clear;
 % are doing this for an SVM, larger training set sizes (>1000) may be
 % painful to run.
 testingSetSize = 1000;
-trainingSetSize = 10*2^10;
+trainingSetSize = 1000;
 
 % Define the size of the sensor here. For a small patch in the rest of the
 % calculations, we are using a 0.83 degree sensor which we specify here.
@@ -35,9 +35,9 @@ OIvSensorScale = 0;
 folder = 'Neutral_FullImage';
 color = 'Blue';
 NoiseStep = 15;
-illumSteps = 5:10;
+illumSteps = 1:10;
 numCrossVal = 10;
-numPCA = 100;
+numPCA = 2;
 
 %% Create our sensor
 rng(1); % Freeze noise
@@ -94,24 +94,25 @@ for ii = 1:length(illumSteps)
         testingData = (testingData - repmat(m,testingSetSize,1)) ./ repmat(s,testingSetSize,1);
         
         % Train SVM on raw data
-%         tic
-%         theSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto','CacheSize','maximal');
-%         SVMrunTime(1,ii,jj) = toc;
-%         fprintf('SVM trained in %f seconds!\n',SVMrunTime(1,ii,jj));
+        tic
+        theSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto','CacheSize','maximal');
+        SVMrunTime(1,ii,jj) = toc;
+        fprintf('SVM trained in %f seconds!\n',SVMrunTime(1,ii,jj));
         
         % Train SVM on pca data
         tic
         [coeff,score] = pca(trainingData);
-        fprintf('PCA calculated in in %f seconds!\n',toc);
+        pcaTime = toc;
+        fprintf('PCA calculated in in %f seconds!\n',pcaTime);
         trainingData = score(:,1:numPCA); clear score;
         coeff = coeff(:,1:numPCA);
-        pcaSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto','CacheSize','maximal');
+        pcaSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto');
         SVMrunTime(2,ii,jj) = toc;
-        fprintf('SVM trained in %f seconds!\n',SVMrunTime(2,ii,jj));
+        fprintf('SVM trained in %f seconds!\n',SVMrunTime(2,ii,jj)-pcaTime);
         
         % Do classification
-%         predictedClasses = predict(theSVM,testingData);
-%         SVMpercentCorrect(1,ii,jj) = sum(predictedClasses == testingClasses)/testingSetSize;
+        predictedClasses = predict(theSVM,testingData);
+        SVMpercentCorrect(1,ii,jj) = sum(predictedClasses == testingClasses)/testingSetSize;
         testingData = testingData*coeff;
         predictedClasses = predict(pcaSVM,testingData);
         SVMpercentCorrect(2,ii,jj) = sum(predictedClasses == testingClasses)/testingSetSize;
@@ -119,4 +120,5 @@ for ii = 1:length(illumSteps)
 end
 
 %% Save the data
-save('SVMvPCA.mat','SVMpercentCorrect','SVMrunTime','dimensions');
+fileName = sprintf('SVMv%dPCA.mat',num2str(numPCA));
+save(fileName,'SVMpercentCorrect','SVMrunTime','dimensions');

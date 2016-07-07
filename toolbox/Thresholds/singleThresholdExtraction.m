@@ -15,16 +15,16 @@ function [threshold, paramsValues] = singleThresholdExtraction(data, criterion)
 %% Check to make sure data is fittable
 % We check the average value of the first 5 and last 5 numbers to get an
 % idea of if the data is fittable to a curve. If the first 5 values are
-% less than 70 and the last 5 are greater than 70, we proceed with the
+% less than criterion and the last 5 are greater than criterion+10, we proceed with the
 % fitting.  Otherwise, we return 0 for the threshold, which indicates that
 % the data cannot be fit.
-if mean(data(1:5)) > 80 || mean(data(end-4:end)) < 70, threshold = nan; paramsValues = zeros(1,4); return; end; 
+if mean(data(1:5)) > criterion+10 || mean(data(end-4:end)) < criterion, threshold = nan; paramsValues = zeros(1,4); return; end; 
 
 %% Set some parameters for the curve fitting
 criterion      = criterion/100;
 paramsEstimate = [10 1 0.5 0];
 numTrials      = 100;
-paramsFree     = [1, 1, 0, 0];
+paramsFree     = [1 1 0 0];
 stimLevels     = 1:length(data);
 outOfNum       = repmat(numTrials,1,length(data));
 PF             = @PAL_Weibull;
