@@ -33,7 +33,7 @@ errorbar(dimensions.illumSteps,meanFullDataResults*100,stderrWithFullData*100,'L
 errorbar(dimensions.illumSteps,meanPCAResults*100,stderrWithPCA*100,'LineWidth',figParams.lineWidth,...
     'Color',figParams.colors{2});
 
-legend({'Full Data','2 PCA Components'},'Location','Northwest','FontSize',figParams.legendFontSize);
+legend({'Full Data','100 PCA Components'},'Location','Northwest','FontSize',figParams.legendFontSize);
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
 axis square;
 grid on;
