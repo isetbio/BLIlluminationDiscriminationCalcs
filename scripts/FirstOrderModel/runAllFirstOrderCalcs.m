@@ -132,6 +132,4 @@ parfor k1 = 1:length(theIndex)
 end
 
 % deleteOIForParallelComputing(c);
-exit;
-
 % end
