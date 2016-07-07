@@ -53,7 +53,7 @@ startKg = 1;
 %% Do the actual calculation here
 results = zeros(length(illumLevels),length(KpLevels),length(KgLevels));
 for ii = 1:length(illumLevels);
-
+    
     % Precompute the test optical image to save computational time.
     imageName = OINamesList{illumLevels(ii)};
     imageName = strrep(imageName,'OpticalImage.mat','');
