@@ -31,23 +31,25 @@ for jj = 1:n/2
     comparisonSample = randsample(length(comparisonPool), 1);
     
     sensorStandard = targetPool{targetSample(1)};
-    photonsStandard = getNoisySensorImage(calcParams,sensorStandard,kp,kg);
-    photonsComparison = getNoisySensorImage(calcParams,comparisonPool{comparisonSample},kp,kg);
+%     photonsStandard = getNoisySensorImage(calcParams,sensorStandard,kp,kg);
+%     photonsComparison = getNoisySensorImage(calcParams,comparisonPool{comparisonSample},kp,kg);
+%     
+%     photonsStandard = calcFunction(photonsStandard);
+%     photonsComparison = calcFunction(photonsComparison);
     
-    photonsStandard = calcFunction(photonsStandard);
-    photonsComparison = calcFunction(photonsComparison);
-    
-    dataset(jj,:) = [photonsStandard(:); photonsComparison(:)]';
+    dataset(jj,:) = [sensorStandard(:); comparisonPool{comparisonSample}(:)]';
     
     sensorStandard = targetPool{targetSample(2)};
-    photonsStandard = getNoisySensorImage(calcParams,sensorStandard,kp,kg);
-    photonsComparison = getNoisySensorImage(calcParams,comparisonPool{comparisonSample},kp,kg);
+%     photonsStandard = getNoisySensorImage(calcParams,sensorStandard,kp,kg);
+%     photonsComparison = getNoisySensorImage(calcParams,comparisonPool{comparisonSample},kp,kg);
+%     
+%     photonsStandard = calcFunction(photonsStandard);
+%     photonsComparison = calcFunction(photonsComparison);
     
-    photonsStandard = calcFunction(photonsStandard);
-    photonsComparison = calcFunction(photonsComparison);
-    
-    dataset(jj + n/2,:) = [photonsComparison(:); photonsStandard(:)]';
+    dataset(jj + n/2,:) = [comparisonPool{comparisonSample}(:); sensorStandard(:)]';
 end
+
+dataset = coneMosaic.photonNoise(dataset);
 
 end
 
