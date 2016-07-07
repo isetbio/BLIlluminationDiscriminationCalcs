@@ -53,7 +53,6 @@ startKg = 1;
 %% Do the actual calculation here
 results = zeros(length(illumLevels),length(KpLevels),length(KgLevels));
 for ii = 1:length(illumLevels);
-
     % Precompute the test optical image to save computational time.
     imageName = OINamesList{illumLevels(ii)};
     imageName = strrep(imageName,'OpticalImage.mat','');
@@ -95,8 +94,6 @@ for ii = 1:length(illumLevels);
             results(ii,jj,kk) = classifierFunction(trainingData,testingData,trainingClasses,testingClasses);
         end
     end
-    % Print the time the calculation took
-    fprintf('Calculation time for %s illumination step %u: %04.3f s\n',color,illumLevels(ii),toc);
     
     % Update the last 5 correct and check if startKg needs to be shifted.
     % If the average of the last 5 is greater than 99.5%, we set the

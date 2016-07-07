@@ -20,7 +20,7 @@
 close all; ieInit; parpool(40);
 
 %% Set identifiers to run
-calcIDStrs = {'Constant_Plot'};
+% calcIDStrs = {'Constant_Plot'};
 
 %% Parameters of the calculation
 %
@@ -114,7 +114,7 @@ parfor k1 = 1:numberofOI
     if (calcParams.RUN_MODEL)
         RunModel(calcParams,calcParams.overWriteFlag);
     end
-    
+    git 
     %% Calculate threshholds using chooser model data
     if (calcParams.CALC_THRESH)
         plotAllThresholds(calcParams.calcIDStr,'NoiseIndex',[0 1]);
