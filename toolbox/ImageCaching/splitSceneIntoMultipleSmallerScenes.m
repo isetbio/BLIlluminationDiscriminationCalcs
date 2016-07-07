@@ -1,4 +1,4 @@
-function smallScenes = splitSceneIntoMultipleSmallerScenes(largeScene,newFOV)
+function [smallScenes,plotInfo] = splitSceneIntoMultipleSmallerScenes(largeScene,newFOV)
 % smallScenes = splitSceneIntoMultipleSmallerScenes(largeScene,newFOV)
 %
 % The purpose of this function is to divide a large scene into many smaller
@@ -26,6 +26,10 @@ sizeOfSquare = floor(scaleRatio*sizeOfLargeScene(2));
 
 hNum = floor(sizeOfLargeScene(2)/sizeOfSquare);
 vNum = floor(sizeOfLargeScene(1)/sizeOfSquare);
+
+plotInfo.sizeOfSquare = sizeOfSquare;
+plotInfo.hNum = hNum;
+plotInfo.vNum = vNum;
 
 smallScenes = cell(vNum,hNum);
 startY = 0;
