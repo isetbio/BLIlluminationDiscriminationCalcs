@@ -19,13 +19,13 @@ if newFOV > sceneGet(largeScene,'fov'), error('FOV too large!'); end;
 % must do so ourselves by setting the cropped scenes' FOV to newFOV.
 % Additionally, we calculate the desired rectangle by scaling the full size
 % by the ratio of the FOV.
-sizeOfLargeSensor = sceneGet(largeScene,'size');
+sizeOfLargeScene = sceneGet(largeScene,'size');
 largeFOV = sceneGet(largeScene,'fov');
 scaleRatio = newFOV / largeFOV;
-sizeOfSquare = floor(scaleRatio*sizeOfLargeSensor(2));
+sizeOfSquare = floor(scaleRatio*sizeOfLargeScene(2));
 
-hNum = floor(sizeOfLargeSensor(2)/sizeOfSquare);
-vNum = floor(sizeOfLargeSensor(1)/sizeOfSquare);
+hNum = floor(sizeOfLargeScene(2)/sizeOfSquare);
+vNum = floor(sizeOfLargeScene(1)/sizeOfSquare);
 
 smallScenes = cell(vNum,hNum);
 startY = 0;
