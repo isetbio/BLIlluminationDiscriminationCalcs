@@ -1,4 +1,4 @@
-function [percentCorrect,svm] = cf3_SupportVectorMachine(trainingData, testingData, trainingClasses, testingClasses)
+function [percentCorrect,svm] = cf3_SupportVectorMachine(trainingData,testingData,trainingClasses,testingClasses)
 % percentCorrect = cf3_SupportVectorMachine(trainingData, testingData, trainingClasses, testingClasses)
 %
 % This function classifies testingData using a SVM with no optimization of 
