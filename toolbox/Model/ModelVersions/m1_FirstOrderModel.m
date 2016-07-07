@@ -1,6 +1,6 @@
 function results = m1_FirstOrderModel(calcParams,sensor,color)
 % results = m1_FirstOrderModel(calcParams,sensor,color)
-% 
+%
 % This function performs the computational observer calculation on a 'First
 % Order' level. By this, we mean that a static cone mosaic (without eye
 % movement) is used to calculate the number of isomerizations given a
@@ -48,7 +48,7 @@ OINamesList = getFilenamesInDirectory(folderPath);
 %% Do the actual calculation here
 results = zeros(length(illumLevels),length(KpLevels),length(KgLevels));
 for ii = 1:length(illumLevels);
-    fprintf('Running trials for %s illumination step %u\n',color,illumLevels(ii));
+%     fprintf('Running trials for %s illumination step %u\n',color,illumLevels(ii));
     
     % Precompute the test optical image to save computational time.
     imageName = OINamesList{illumLevels(ii)};
@@ -56,16 +56,17 @@ for ii = 1:length(illumLevels);
     oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' [color 'Illumination']],imageName);
     oiTest = resizeOI(oiTest,calcParams.sensorFOV*calcParams.OIvSensorScale);
     sensorTest = coneAbsorptions(sensor,oiTest);
-
+    
     % Loop through the two different noise levels and perform the
     % calculation at each combination.
+    tic
     for jj = 1:length(KpLevels)
         Kp = KpLevels(jj);
         
         for kk = 1:length(KgLevels);
             Kg = KgLevels(kk);
-
-            tic
+            
+            
             % Choose the data generation function
             datasetFunction = masterDataFunction(calcParams.dFunction);
             [trainingData, trainingClasses] = datasetFunction(calcParams,standardPool,{sensorTest},Kp,Kg,trainingSetSize);
@@ -89,10 +90,11 @@ for ii = 1:length(illumLevels);
             classifierFunction = masterClassifierFunction(calcParams.cFunction);
             results(ii,jj,kk) = classifierFunction(trainingData,testingData,trainingClasses,testingClasses);
             
-            % Print the time the calculation took
-            fprintf('Calculation time for Kp %.2f, Kg %.2f = %2.1f\n',Kp,Kg,toc);            
+            
         end
     end
+    % Print the time the calculation took
+    fprintf('Calculation time for %s illumination step %u\n',color,illumLevels(ii));
 end
 end
 

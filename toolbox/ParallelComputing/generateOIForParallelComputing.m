@@ -1,4 +1,4 @@
-function generateOIForParallelComputing(calcParams)
+function numberOfOI = generateOIForParallelComputing(calcParams)
 % generateOIForParallelComputing(calcParams)
 % 
 % In order to maximize the use of a computing cluster, we may be
@@ -51,10 +51,11 @@ for ii = 1:length(sceneFolder)
         theCurrentScene = loadSceneData([sceneCacheFolder '/' currentSceneSubDir],theCurrentFilename(1:end-9));
         splicedScenes = splitSceneIntoMultipleSmallerScenes(theCurrentScene,theFOV);
         theOIs = sceneArrayToOIArray(oiCreate('human'),splicedScenes);
+        theOIs = theOIs(:);
         for ss = 1:numberOfOI
-            dirName = [theCalcIDStr '_' num2str(ff)];
+            dirName = [theCalcIDStr '_' num2str(ss)];
             savePath = fullfile(analysisDir,'OpticalImageData',dirName,currentSceneSubDir,strrep(theCurrentFilename,'Scene','OpticalImage'));
-            parforSave(savePath,theOIs{ii});
+            parforSave(savePath,theOIs{ss});
         end
     end
 end
