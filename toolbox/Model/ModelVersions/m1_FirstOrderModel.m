@@ -68,7 +68,7 @@ for ii = 1:length(illumLevels);
         
         for kk = startKg:length(KgLevels);
             Kg = KgLevels(kk);
-            
+
             % Choose the data generation function
             datasetFunction = masterDataFunction(calcParams.dFunction);
             [trainingData, trainingClasses] = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,trainingSetSize,mosaic);
