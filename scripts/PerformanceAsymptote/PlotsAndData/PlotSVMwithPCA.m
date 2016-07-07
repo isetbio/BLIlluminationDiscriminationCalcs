@@ -41,7 +41,7 @@ errorbar(dimensions.illumSteps,meanPCAResults*100,stderrWithPCA*100,'LineWidth',
 errorbar(dimensions.illumSteps,meanSVDResults*100,stderrWithSVD*100,'LineWidth',figParams.lineWidth,...
     'Color',figParams.colors{3});
 
-legend({'Full Data','PCA Components','Fast SVD'},'Location','Northwest','FontSize',figParams.legendFontSize);
+legend({'Full Data','100 PCA Components'},'Location','Northwest','FontSize',figParams.legendFontSize);
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
 axis square;
 grid on;
