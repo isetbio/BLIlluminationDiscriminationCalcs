@@ -48,13 +48,21 @@ OINamesList = getFilenamesInDirectory(folderPath);
 %% Do the actual calculation here
 results = zeros(length(illumLevels),length(KpLevels),length(KgLevels));
 for ii = 1:length(illumLevels);
+<<<<<<< HEAD
+=======
+%     fprintf('Running trials for %s illumination step %u\n',color,illumLevels(ii));
+>>>>>>> Trying to keep this up to date before branching
     
     % Precompute the test optical image to save computational time.
     imageName = OINamesList{illumLevels(ii)};
     imageName = strrep(imageName,'OpticalImage.mat','');
     oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' [color 'Illumination']],imageName);
     oiTest = resizeOI(oiTest,calcParams.sensorFOV*calcParams.OIvSensorScale);
+<<<<<<< HEAD
     absorptionsTest = mosaic.compute(oiTest,'currentFlag',false);
+=======
+    sensorTest = coneAbsorptions(sensor,oiTest);
+>>>>>>> Trying to keep this up to date before branching
     
     % Loop through the two different noise levels and perform the
     % calculation at each combination.
@@ -65,6 +73,10 @@ for ii = 1:length(illumLevels);
         for kk = 1:length(KgLevels);
             Kg = KgLevels(kk);
             
+<<<<<<< HEAD
+=======
+            
+>>>>>>> Trying to keep this up to date before branching
             % Choose the data generation function
             datasetFunction = masterDataFunction(calcParams.dFunction);
             [trainingData, trainingClasses] = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,trainingSetSize);
@@ -87,10 +99,19 @@ for ii = 1:length(illumLevels);
             % Compute performance based on chosen classifier method
             classifierFunction = masterClassifierFunction(calcParams.cFunction);
             results(ii,jj,kk) = classifierFunction(trainingData,testingData,trainingClasses,testingClasses);
+<<<<<<< HEAD
         end
     end
     % Print the time the calculation took
     fprintf('Calculation time for %s illumination step %u: %04.3f s\n',color,illumLevels(ii),toc);
+=======
+            
+            
+        end
+    end
+    % Print the time the calculation took
+    fprintf('Calculation time for %s illumination step %u\n',color,illumLevels(ii));
+>>>>>>> Trying to keep this up to date before branching
 end
 end
 
