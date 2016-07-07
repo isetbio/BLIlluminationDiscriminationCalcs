@@ -35,9 +35,9 @@ OIvSensorScale = 0;
 folder = 'Neutral_FullImage';
 color = 'Blue';
 NoiseStep = 15;
-illumSteps = 5:10;
+illumSteps = 1:10;
 numCrossVal = 10;
-numPCA = 100;
+numPCA = 2;
 
 %% Create our sensor
 rng(1); % Freeze noise
@@ -124,4 +124,5 @@ for ii = 1:length(illumSteps)
 end
 
 %% Save the data
-save('SVMvPCA.mat','SVMpercentCorrect','SVMrunTime','dimensions');
+fileName = sprintf('SVMv%dPCA.mat',num2str(numPCA));
+save(fileName,'SVMpercentCorrect','SVMrunTime','dimensions');
