@@ -127,8 +127,6 @@ for ii = 1:length(illumLevels);
             end
         end
     end
-    % Print the time the calculation took
-    fprintf('Calculation time for %s illumination step %u: %04.3f s\n',color,illumLevels(ii),toc);
     
 end
 end
