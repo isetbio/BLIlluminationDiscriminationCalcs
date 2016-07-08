@@ -120,5 +120,5 @@ for ii = 1:length(illumSteps)
 end
 
 %% Save the data
-fileName = sprintf('SVMv%dPCA.mat',num2str(numPCA));
+fileName = sprintf('SVMv%dPCA.mat',numPCA);
 save(fileName,'SVMpercentCorrect','SVMrunTime','dimensions');

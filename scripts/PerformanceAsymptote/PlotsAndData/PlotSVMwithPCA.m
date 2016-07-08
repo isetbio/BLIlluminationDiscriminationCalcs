@@ -5,9 +5,10 @@
 % xd  6/24/16
 
 clear; 
-saveFig = false;
+saveFig = true;
 %% Load and pull out some data
-load('SVMv100PCA.mat');
+fileName = 'SVMv100PCA.mat';
+load(fileName);
 
 resultsWithFullData = squeeze(SVMpercentCorrect(1,:,:));
 resultsWithPCA = squeeze(SVMpercentCorrect(2,:,:));
@@ -33,7 +34,7 @@ errorbar(dimensions.illumSteps,meanFullDataResults*100,stderrWithFullData*100,'L
 errorbar(dimensions.illumSteps,meanPCAResults*100,stderrWithPCA*100,'LineWidth',figParams.lineWidth,...
     'Color',figParams.colors{2});
 
-legend({'Full Data','100 PCA Components'},'Location','Northwest','FontSize',figParams.legendFontSize);
+legend({'Full Data','PCA Components'},'Location','Northwest','FontSize',figParams.legendFontSize);
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
 axis square;
 grid on;
@@ -62,4 +63,4 @@ set(inset,'XTick',[]);
 set(inset,'FontName',figParams.fontName,'FontSize',figParams.insetAxisFontSize,'LineWidth',figParams.insetAxisLineWidth);
 title('Runtime (s)','FontSize',figParams.insetTitleFontSize);
 
-if saveFig, FigureSave('SVMFullDataVPCA',f,figParams.figType); end;
+if saveFig, FigureSave(fileName,f,figParams.figType); end;
