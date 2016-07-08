@@ -138,12 +138,6 @@ for ff = 1:length(folders)
                     d.decisionBoundary = [0 0];
                 end
                 pcaData{cc,kk,nn} = d;
-                
-                % Run classification on the projections of data points on
-                % to the first two principal components.
-%                 SVMpca(kk, nn, cc) = cf3_SupportVectorMachine(d.score(1:trainingSetSize,1:2),d.score(trainingSetSize+1:end,1:2),trainingClasses,testingClasses);
-%                 DApca(kk, nn, cc) = cf2_DiscriminantAnalysis(d.score(1:trainingSetSize,1:2),d.score(trainingSetSize+1:end,1:2),trainingClasses,testingClasses);
-%                 NNpca(kk, nn, cc) = cf1_NearestNeighbor(d.score(1:trainingSetSize,1:2),d.score(trainingSetSize+1:end,1:2),trainingClasses,testingClasses);
             end
             fprintf('Calculation time for %s, dE %.2f = %2.1f\n', Colors{cc} , kk, toc);
         end
@@ -153,9 +147,6 @@ for ff = 1:length(folders)
     stdText = {'nostd' 'std'};
     nameOfFile = sprintf('ClassifierAnalysis_%d_%d_%s_%s%s',trainingSetSize,testingSetSize,stdText{standardizeData+1},strtok(folders{ff},'_'),additionalNamingText);
     fullSavePath = fullfile(analysisDir, 'ClassifierComparisons',nameOfFile);
-%     save(fullSavePath, 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect',...
-%         'pcaData', 'Colors','NoiseSteps','SVMpca','NNpca','DApca');
-
     save(fullSavePath, 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect',...
         'pcaData', 'Colors','NoiseSteps');
 end
