@@ -40,7 +40,7 @@ end
 [~,nP] = coneMosaic.photonNoise(isomerizations);
 
 % Get the Gaussian noise
-nG = sqrt(calcParams.meanStandard) * randn(size(noiseFree));
+nG = sqrt(calcParams.meanStandard) * randn(size(isomerizations));
 
 % Add noise back with multipliers
 isomerizations = isomerizations + Kp * nP + Kg * nG;
