@@ -48,6 +48,7 @@ OINamesList = getFilenamesInDirectory(folderPath);
 %% Do the actual calculation here
 results = zeros(length(illumLevels),length(KpLevels),length(KgLevels));
 for ii = 1:length(illumLevels);
+
     
     % Precompute the test optical image to save computational time.
     imageName = OINamesList{illumLevels(ii)};
@@ -55,6 +56,7 @@ for ii = 1:length(illumLevels);
     oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' [color 'Illumination']],imageName);
     oiTest = resizeOI(oiTest,calcParams.sensorFOV*calcParams.OIvSensorScale);
     absorptionsTest = mosaic.compute(oiTest,'currentFlag',false);
+
     
     % Loop through the two different noise levels and perform the
     % calculation at each combination.
@@ -91,6 +93,7 @@ for ii = 1:length(illumLevels);
     end
     % Print the time the calculation took
     fprintf('Calculation time for %s illumination step %u: %04.3f s\n',color,illumLevels(ii),toc);
+
 end
 end
 
