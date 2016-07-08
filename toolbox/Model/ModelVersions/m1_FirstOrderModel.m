@@ -53,6 +53,7 @@ startKg = 1;
 %% Do the actual calculation here
 results = zeros(length(illumLevels),length(KpLevels),length(KgLevels));
 for ii = 1:length(illumLevels);
+
     % Precompute the test optical image to save computational time.
     imageName = OINamesList{illumLevels(ii)};
     imageName = strrep(imageName,'OpticalImage.mat','');
@@ -121,7 +122,7 @@ for ii = 1:length(illumLevels);
         end
     end
     % Print the time the calculation took
-    fprintf('Calculation time for %s illumination step %u\n',color,illumLevels(ii));
+    fprintf('Calculation time for %s illumination step %u: %04.3f s\n',color,illumLevels(ii),toc);
 end
 end
 
