@@ -9,7 +9,7 @@ function showJoinedSmallScenes(largeScene,plotInfo)
 % xd  7/7/16  wrote it
 
 %% Use the large image and the plot info obj
-vcNewGraphWin;
+% vcNewGraphWin;
 
 % Pre allocate a larger image that is the size of the original+space for black bars.
 sizeOfOriginal = sceneGet(largeScene,'size');
@@ -33,6 +33,27 @@ targetImageT(targetIdxV,:,:) = targetImage(1:sizeOfOriginal(1),:,:);
 targetImage = targetImageT; clearvars targetImageT;
 
 % Plot the thing.
+figure;
 image(targetImage);
+set(gcf,'Position',[133 849 size(targetImage,2)*2 size(targetImage,1)*2]);
+set(gca,'TickLength',[0 0]);
+set(gca,'XTick',[],'YTick',[]);
+hold on;
+
+%% Plot lines over the image
+vLines = (1:plotInfo.sizeOfSquare:size(targetImage,1));
+vLines = vLines(1:plotInfo.vNum+1) + (1:plotInfo.vNum+1) - 1;
+hLines = (1:plotInfo.sizeOfSquare:size(targetImage,2));
+hLines = hLines(1:plotInfo.hNum+1) + (1:plotInfo.hNum+1) - 1;
+
+for ii = 1:length(vLines)
+    line([0 size(targetImage,2)],[vLines(ii) vLines(ii)],'linewidth',2,'Color','k');
+end
+
+for ii = 1:length(hLines)
+    line([hLines(ii) hLines(ii)],[0 size(targetImage,1)],'linewidth',2,'Color','k');
+end
+
+pause(1);
 end
 
