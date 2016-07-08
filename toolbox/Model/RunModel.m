@@ -38,31 +38,19 @@ else
 end
 
 %% Create sensor
-sensor = sensorCreate('human');
-
-% Set the sensor dimensions to a square
-sensorRows = sensorGet(sensor,'rows');
-sensor = sensorSet(sensor,'cols',sensorRows);
-
-% Set integration time
-sensor = sensorSet(sensor,'exp time',calcParams.coneIntegrationTime);
-
-% Set FOV
-oi = oiCreate('human');
-sensor = sensorSetSizeToFOV(sensor,calcParams.sensorFOV,[],oi);
-
-% Set wavelength sampling
-sensor = sensorSet(sensor,'wavelength',SToWls(calcParams.S));
-sensor = sensorSet(sensor,'noise flag',0);
+mosaic = coneMosaic;
+mosaic.fov = calcParams.sensorFOV;
+mosaic.wave = SToWls(calcParams.S);
+mosaic.noiseFlag = false;
+mosaic.integrationTime = calcParams.coneIntegrationTime;
 
 if calcParams.MODEL_ORDER == 2
     % Adjust eye movements
-    em = emCreate;
-    em = emSet(em, 'emFlag', [calcParams.enableTremor calcParams.enableDrift calcParams.enableMSaccades]);
-    em = emSet(em, 'sample time', calcParams.coneIntegrationTime);
+    calcParams.em = emCreate;
+    calcParams.em = emSet(calcParams.em, 'emFlag', [calcParams.enableTremor calcParams.enableDrift calcParams.enableMSaccades]);
+    calcParams.em = emSet(calcParams.em, 'sample time', calcParams.coneIntegrationTime);
     
-    sensor = sensorSet(sensor, 'eye move', em);
-    sensor = sensorSet(sensor, 'positions', calcParams.EMPositions);
+    mosaic.emPositions = calcParams.EMPositions;
 end
 
 %% Run the desired model
@@ -76,7 +64,7 @@ modelList = modelFolder.m;
 modelFunction = str2func(strrep(modelList{calcParams.MODEL_ORDER},'.m',''));
 
 for ii = 1:length(calcParams.colors)
-    results(ii,:,:,:) = modelFunction(calcParams,sensor,calcParams.colors{ii});
+    results(ii,:,:,:) = modelFunction(calcParams,mosaic,calcParams.colors{ii});
 end
 calcParams.colors = lower(calcParams.colors);
 

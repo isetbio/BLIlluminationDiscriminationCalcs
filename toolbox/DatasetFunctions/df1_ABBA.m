@@ -11,7 +11,8 @@ function  [dataset, classes] = df1_ABBA(calcParams,targetPool,comparisonPool,kp,
 %% Set appropriate function handle depending on if os is defined
 if notDefined('os'), os = []; end
 if isempty(os), calcFunction = @(s) s;
-else calcFunction = @(s) osCompute(os,s); end
+else calcFunction = @(s) osCompute(os,s); 
+end
 
 %% Get size of photon data
 numberOfCones = numel(targetPool{1});
@@ -31,25 +32,13 @@ for jj = 1:n/2
     comparisonSample = randsample(length(comparisonPool), 1);
     
     sensorStandard = targetPool{targetSample(1)};
-%     photonsStandard = getNoisySensorImage(calcParams,sensorStandard,kp,kg);
-%     photonsComparison = getNoisySensorImage(calcParams,comparisonPool{comparisonSample},kp,kg);
-%     
-%     photonsStandard = calcFunction(photonsStandard);
-%     photonsComparison = calcFunction(photonsComparison);
-    
     dataset(jj,:) = [sensorStandard(:); comparisonPool{comparisonSample}(:)]';
     
     sensorStandard = targetPool{targetSample(2)};
-%     photonsStandard = getNoisySensorImage(calcParams,sensorStandard,kp,kg);
-%     photonsComparison = getNoisySensorImage(calcParams,comparisonPool{comparisonSample},kp,kg);
-%     
-%     photonsStandard = calcFunction(photonsStandard);
-%     photonsComparison = calcFunction(photonsComparison);
-    
     dataset(jj + n/2,:) = [comparisonPool{comparisonSample}(:); sensorStandard(:)]';
 end
 
-dataset = coneMosaic.photonNoise(dataset);
+dataset = getNoisySensorImage(calcParams,dataset,kp,kg);
 
 end
 
