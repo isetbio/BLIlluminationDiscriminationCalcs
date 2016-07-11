@@ -16,17 +16,17 @@ classes(1:n/2) = 0;
 % generated for each training instance.
 for ii = 1:n/2
 
-    mosaic.emGenSequence(calcParams.numEMPositions);
+    mosaic.emGenSequence(calcParams.numEMPositions,'em',calcParams.em);
     isomerizations = mosaic.applyEMPath(targetPool{randsample(numel(targetPool),1)},...
         'padRows',calcParams.rowPadding,'padCols',calcParams.colPadding);
     if calcParams.enableOS
         isomerizations = mosaic.os.compute(isomerizations,mosaic.pattern);
     end
-    dataset{ii} = isomerizations(:);
+    dataset{ii} = isomerizations(:)';
     
     % Generate a new eyemovement path if we are to use different paths
     if ~calcParams.useSameEMPath
-        mosaic.emGenSequence(calcParams.numEMPositions);
+        mosaic.emGenSequence(calcParams.numEMPositions,'em',calcParams.em);
     end
     
     
@@ -34,7 +34,7 @@ for ii = 1:n/2
     if calcParams.enableOS
         isomerizations = mosaic.os.compute(isomerizations,mosaic.pattern);
     end
-    dataset{ii+n/2} = isomerizations(:);
+    dataset{ii+n/2} = isomerizations(:)';
 end
 
 dataset = cell2mat(dataset);

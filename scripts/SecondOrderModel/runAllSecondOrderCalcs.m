@@ -34,11 +34,9 @@ for k1 = 1:length(calcIDStrs)
     
     calcParams.RUN_MODEL = true;
     calcParams.MODEL_ORDER = 2;          % Which model to run
-    calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
     calcParams.overWriteFlag = true;    % Whether or not to overwrite existing data. An overwrite is required to run the same calculation name again.
     
     calcParams.CALC_THRESH = false;
-    calcParams.displayIndividualThreshold = false;
     
     % Set the name of this calculation set
     calcParams.calcIDStr = calcIDStrs{k1};
@@ -54,17 +52,19 @@ for k1 = 1:length(calcIDStrs)
     calcParams.S = [380 8 51];                            % [489 393 535 480] will get image without any black border
     
     % Parameters for creating the sensor
-    calcParams.coneIntegrationTime = 0.001;
-    calcParams.sensorFOV = 0.07;             % Visual angle defining the size of the sensor
+    calcParams.coneIntegrationTime = 0.050;
+    calcParams.sensorFOV = 0.83;             % Visual angle defining the size of the sensor
     calcParams.OIvSensorScale = 0;
     
     % Specify the number of trials for each combination of Kp Kg as well as
     % the highest illumination step (max 50) to go up to.
-    calcParams.trainingSetSize = 200;
-    calcParams.testingSetSize = 200;
+    calcParams.trainingSetSize = 1000;
+    calcParams.testingSetSize = 1000;
     calcParams.illumLevels = 1:50;
 
-    calcParams.standardizeData = false;
+    calcParams.standardizeData = true;
+    calcParams.usePCA = true;
+    calcParams.numPCA = 100;
     calcParams.cFunction = 4;
     
     % Keep this as 4 since that is the only function that supports eye
@@ -80,14 +80,10 @@ for k1 = 1:length(calcIDStrs)
     % deviation of the Gaussian distribution is equal to the square root of
     % the mean photoisomerizations across the available target image
     % samples.
-    calcParams.KgLevels = 1:10;
-    
-    % Define some eye movement parameters related to large saccades
-    calcParams.numSaccades = 3;             % Set this to 1 for only fixational eye movements
-    calcParams.saccadeInterval = 0.150;
+    calcParams.KgLevels = 0:3:30;
     
     % EMPositions represents the number of positions of eye movement to sample.  
-    calcParams.numEMPositions = 20;
+    calcParams.numEMPositions = 10;
     
     % Enable or disable certain aspects of fixational eye movement
     calcParams.enableTremor = true;
@@ -102,10 +98,9 @@ for k1 = 1:length(calcIDStrs)
     % provided list.  If this is left empty, the saccades will be randomly
     % chosen from across the entire optical image.
     calcParams.useSameEMPath = true;
-    calcParams.EMLoc = [];
     
     % Whether to use OS code
-    calcParams.enableOS = true;
+    calcParams.enableOS = false;
     calcParams.OSType = 'linear'; % Types of OS, options are 'linear' 'biophys' 'identity'
     calcParams.noiseFlag = false;
     

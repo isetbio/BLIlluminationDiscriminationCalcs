@@ -26,7 +26,7 @@ for ii = 1:length(standardOIList)
     opticalImageName = strrep(opticalImageName,'OpticalImage.mat','');
     oi = loadOpticalImageData(fullfile(calcParams.cacheFolderList{2},'Standard'),opticalImageName);
     oi = resizeOI(oi,calcParams.sensorFOV*calcParams.OIvSensorScale);
-    standardPool{ii} = {oi};
+    standardPool{ii} = oi;
 end
 
 % Normally, the mean isomerizations in the stardard images are calculated
@@ -40,9 +40,8 @@ calcParams.meanStandard = 0;
 % If saccadic movement is desired, the boundary of possible movement
 % locations will be set to the size of the optical image, allowing for
 % saccadic movement over the whole image.
-s.n = calcParams.numSaccades;
 tempMosaic = mosaic.copy;
-tempMosaic.fov = oiGet(standardPool{1}{1},'fov');
+tempMosaic.fov = oiGet(standardPool{1},'fov');
 
 colPadding = (tempMosaic.cols-mosaic.cols)/2;
 rowPadding = (tempMosaic.rows-mosaic.rows)/2;
@@ -54,7 +53,8 @@ calcParams.rowPadding = (tempMosaic.rows-mosaic.rows)/2;
 % The LMS mask thus is the whole image. Here we precompute it for the
 % standard image pool.
 for qq = 1:length(standardPool)
-    standardPool{qq}{1} = largeMosaic.computeSingleFrame(standardPool{qq}{1},'FullLMS',true);
+    standardPool{qq} = tempMosaic.computeSingleFrame(standardPool{qq},'FullLMS',true);
+    calcParams.meanStandard = calcParams.meanStandard + mean2(standardPool{qq})/length(standardPool);
 end
 
 %% Calculation Body
@@ -70,21 +70,21 @@ for ii = 1:length(illumLevels)
     imageName = strrep(imageName,'OpticalImage.mat','');
     oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' [color 'Illumination']],imageName);
     oiTest = resizeOI(oiTest,calcParams.sensorFOV*calcParams.OIvSensorScale);
-    LMS = largeMosaic.computeSingleFrame(oiTest,'FullLMS',true);
+    LMS = tempMosaic.computeSingleFrame(oiTest,'FullLMS',true);
     testPool = {LMS};
     
     % Loop through the k values
+    tic
     for jj = 1:length(KpLevels)
         Kp = KpLevels(jj);
         
         for kk = 1:length(KgLevels)
             Kg = KgLevels(kk);
-            tic
             
             %% Replace below with new code
             datasetFunction = masterDataFunction(calcParams.dFunction);
-            [trainingData,trainingClasses] = datasetFunction(calcParams,{standardRef;standardComp},testPool,Kp,Kg,trainingSetSize,mosaic);
-            [testingData,testingClasses]   = datasetFunction(calcParams,{standardRef;standardComp},testPool,Kp,Kg,testingSetSize,mosaic);
+            [trainingData,trainingClasses] = datasetFunction(calcParams,standardPool,testPool,Kp,Kg,trainingSetSize,mosaic);
+            [testingData,testingClasses]   = datasetFunction(calcParams,standardPool,testPool,Kp,Kg,testingSetSize,mosaic);
             
             % Standardize data if flag is set to true
             if calcParams.standardizeData

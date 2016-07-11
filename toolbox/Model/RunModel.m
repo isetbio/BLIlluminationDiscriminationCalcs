@@ -50,7 +50,6 @@ if calcParams.MODEL_ORDER == 2
     calcParams.em = emSet(calcParams.em, 'emFlag', [calcParams.enableTremor calcParams.enableDrift calcParams.enableMSaccades]);
     calcParams.em = emSet(calcParams.em, 'sample time', calcParams.coneIntegrationTime);
     
-    mosaic.emPositions = calcParams.EMPositions;
     mosaic.os = osCreate(calcParams.OSType);
     mosaic.os.noiseFlag = calcParams.noiseFlag;
 end
