@@ -66,7 +66,10 @@ for k1 = 1:length(calcIDStrs)
 
     calcParams.standardizeData = false;
     calcParams.cFunction = 4;
-    calcParams.dFunction = 3;
+    
+    % Keep this as 4 since that is the only function that supports eye
+    % movements and the outer segment.
+    calcParams.dFunction = 4;
     
     % Kp represents the scale factor for the Poisson noise.  This is the
     % realistic noise representation of the photons arriving at the retina.
@@ -84,9 +87,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.saccadeInterval = 0.150;
     
     % EMPositions represents the number of positions of eye movement to sample.  
-    calcParams.numEMPositions = calcParams.numSaccades * calcParams.saccadeInterval / calcParams.coneIntegrationTime;
-    calcParams.EMPositions = zeros(int32(calcParams.numEMPositions), 2);
-    calcParams.totalTime = calcParams.numEMPositions * calcParams.coneIntegrationTime;
+    calcParams.numEMPositions = 20;
     
     % Enable or disable certain aspects of fixational eye movement
     calcParams.enableTremor = true;
@@ -103,13 +104,10 @@ for k1 = 1:length(calcIDStrs)
     calcParams.useSameEMPath = true;
     calcParams.EMLoc = [];
     
-    % Use sum or individual data
-    calcParams.sumEM = false;
-    
     % Whether to use OS code
     calcParams.enableOS = true;
     calcParams.OSType = 'linear'; % Types of OS, options are 'linear' 'biophys' 'identity'
-    calcParams.enableOSNoise = false;
+    calcParams.noiseFlag = false;
     
     %% Convert the images to cached scenes for more analysis
     if (calcParams.CACHE_SCENES)

@@ -1,4 +1,4 @@
-function  [dataset, classes] = df1_ABBA(calcParams,targetPool,comparisonPool,kp,kg,n,os)
+function  [dataset,classes] = df1_ABBA(calcParams,targetPool,comparisonPool,kp,kg,n,~)
 % [dataset, classes] = df1_ABBA(calcParams,targetPool,comparisonPool,kp,kg,n)
 %
 % This function will take the photon isomerizations in the targetPool
@@ -7,12 +7,6 @@ function  [dataset, classes] = df1_ABBA(calcParams,targetPool,comparisonPool,kp,
 % distributions of AB and BA vectors in the training and testing sets.
 %
 % xd  6/1/16  wrote it
-
-%% Set appropriate function handle depending on if os is defined
-if notDefined('os'), os = []; end
-if isempty(os), calcFunction = @(s) s;
-else calcFunction = @(s) osCompute(os,s); 
-end
 
 %% Get size of photon data
 numberOfCones = numel(targetPool{1});
@@ -31,11 +25,8 @@ for jj = 1:n/2
     targetSample = randsample(length(targetPool), 2);
     comparisonSample = randsample(length(comparisonPool), 1);
     
-    sensorStandard = targetPool{targetSample(1)};
-    dataset(jj,:) = [sensorStandard(:); comparisonPool{comparisonSample}(:)]';
-    
-    sensorStandard = targetPool{targetSample(2)};
-    dataset(jj + n/2,:) = [comparisonPool{comparisonSample}(:); sensorStandard(:)]';
+    dataset(jj,:) = [targetPool{targetSample(1)}(:); comparisonPool{comparisonSample}(:)]';
+    dataset(jj + n/2,:) = [comparisonPool{comparisonSample}(:); targetPool{targetSample(2)}(:)]';
 end
 
 dataset = getNoisySensorImage(calcParams,dataset,kp,kg);

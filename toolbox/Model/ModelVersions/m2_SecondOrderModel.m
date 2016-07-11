@@ -1,4 +1,4 @@
-function results = m2_SecondOrderModel(calcParams,sensor,color)
+function results = m2_SecondOrderModel(calcParams,mosaic,color)
 % results = m2_SecondOrderModel(calcParams,sensor,color)
 %
 %
@@ -26,11 +26,11 @@ for ii = 1:length(standardOIList)
     opticalImageName = strrep(opticalImageName,'OpticalImage.mat','');
     oi = loadOpticalImageData(fullfile(calcParams.cacheFolderList{2},'Standard'),opticalImageName);
     oi = resizeOI(oi,calcParams.sensorFOV*calcParams.OIvSensorScale);
-    standardPool{ii} = {oi;-1;-1};
+    standardPool{ii} = {oi};
 end
 
 % Normally, the mean isomerizations in the stardard images are calculated
-% to in case some form of Gaussian noise is desired.  However, it is
+% too in case some form of Gaussian noise is desired.  However, it is
 % unclear how this should be approached in the case where the data is a
 % time series. It is left at 0 for now, meaning this functionality does not
 % exist in the second order model.
@@ -41,18 +41,20 @@ calcParams.meanStandard = 0;
 % locations will be set to the size of the optical image, allowing for
 % saccadic movement over the whole image.
 s.n = calcParams.numSaccades;
-resizedSensor = sensorSetSizeToFOV(sensor,oiGet(standardPool{1}{1},'fov'),[],standardPool{1}{1});
-ss = sensorGet(resizedSensor,'size');
-bound = [floor(-ss(1)/2) ceil(ss(1)/2) floor(-ss(2)/2) ceil(ss(2)/2)];
+tempMosaic = mosaic.copy;
+tempMosaic.fov = oiGet(standardPool{1}{1},'fov');
+
+colPadding = (tempMosaic.cols-mosaic.cols)/2;
+rowPadding = (tempMosaic.rows-mosaic.rows)/2;
+if ~isinteger(colPadding), tempMosaic.cols = tempMosaic.cols - 1; end
+if ~isinteger(rowPadding), tempMosaic.rows = tempMosaic.rows - 1; end
+calcParams.colPadding = (tempMosaic.cols-mosaic.cols)/2;
+calcParams.rowPadding = (tempMosaic.rows-mosaic.rows)/2;
 
 % The LMS mask thus is the whole image. Here we precompute it for the
 % standard image pool.
-rows = [bound(4) bound(4)];
-cols = [bound(2) bound(2)];
-LMSpath = [bound(2) bound(4); bound(1) bound(3)];
 for qq = 1:length(standardPool)
-    sensorTemp = sensorSet(sensor,'positions',LMSpath);
-    [standardPool{qq}{2},standardPool{qq}{3}] = coneAbsorptionsLMS(sensorTemp,standardPool{qq}{1});
+    standardPool{qq}{1} = largeMosaic.computeSingleFrame(standardPool{qq}{1},'FullLMS',true);
 end
 
 %% Calculation Body
@@ -63,16 +65,13 @@ OINamesList = getFilenamesInDirectory(folderPath);
 % Preallocate space for the results of the calculations
 results = zeros(length(illumLevels),length(KpLevels),length(KgLevels));
 for ii = 1:length(illumLevels)
-    fprintf('Running trials for %s illumination step %u\n',color,illumLevels(ii));
-    
     % Precompute the LMS for the test pool as well.
     imageName = OINamesList{illumLevels(ii)};
     imageName = strrep(imageName,'OpticalImage.mat','');
     oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' [color 'Illumination']],imageName);
     oiTest = resizeOI(oiTest,calcParams.sensorFOV*calcParams.OIvSensorScale);
-    sensorTest = sensorSet(sensor,'positions',LMSpath);
-    [LMS, msk] = coneAbsorptionsLMS(sensorTest,oiTest);
-    testPool = {sensorTest;LMS;msk};
+    LMS = largeMosaic.computeSingleFrame(oiTest,'FullLMS',true);
+    testPool = {LMS};
     
     % Loop through the k values
     for jj = 1:length(KpLevels)
@@ -81,62 +80,11 @@ for ii = 1:length(illumLevels)
         for kk = 1:length(KgLevels)
             Kg = KgLevels(kk);
             tic
-            if calcParams.useSameEMPath
-                % If the same path is to be used for all three images,
-                % we generate one path and duplicate it three times.
-                thePaths = getEMPaths(sensor,1,'saccades',s,'bound',bound,'loc',calcParams.EMLoc);
-                thePaths = repmat(thePaths, [1 1 3]);
-            else
-                % Need to have the option to load 3 pre-generated paths
-                thePaths = getEMPaths(sensor,3,'saccades',s,'bound',bound,'loc',calcParams.EMLoc);
-            end
-            
-            % We choose 2 images without replacement from the standard image pool.
-            % This is in order to account for the pixel noise present from the renderer.
-            standardChoice = randsample(length(standardOIList),2);
-            
-            % Set the paths
-            standardRef  = sensorSet(sensor,'positions',thePaths(:,:,1));
-            standardComp = sensorSet(sensor,'positions',thePaths(:,:,2));
-            testComp     = sensorSet(sensor,'positions',thePaths(:,:,3));
-            
-            % Get absorptions
-            standardRef  = coneAbsorptionsApplyPath(standardRef,standardPool{standardChoice(1)}{2},standardPool{standardChoice(1)}{3},rows,cols);
-            standardComp = coneAbsorptionsApplyPath(standardComp,standardPool{standardChoice(2)}{2},standardPool{standardChoice(2)}{3},rows,cols);
-            testComp     = coneAbsorptionsApplyPath(testComp,testPool{2},testPool{3},rows,cols);
             
             %% Replace below with new code
-            % Create an appropriate os
-            os = [];
-            if calcParams.enableOS
-                os = osCreate(calcParams.OSType); 
-                os = osSet(os,'noise flag',calcParams.enableOSNoise);
-            end
             datasetFunction = masterDataFunction(calcParams.dFunction);
-            [trainingData,trainingClasses] = datasetFunction(calcParams,{standardRef;standardComp},{testComp},Kp,Kg,trainingSetSize,os);
-            [testingData,testingClasses] = datasetFunction(calcParams,{standardRef;standardComp},{testComp},Kp,Kg,testingSetSize,os);
-            
-            % Reshape the data into its original temporal 3D matrix form.
-            % This will allow us to sum the data over time if desired.
-            % After summing, we take care to put it back into its matrix
-            % format.
-            if calcParams.sumEM
-                DataSize = size(sensorGet(standardRef,'photons'));
-                tempDataMatrix = zeros(trainingSetSize,DataSize(1)*DataSize(2));
-                for rr = 1:trainingSetSize
-                    summedA = sum(reshape(trainingData(1:end/2,:),DataSize),3);
-                    summedB = sum(reshape(trainingData(end/2+1:end,:),DataSize),3);
-                    tempDataMatrix(rr,:) = [summedA summedB];
-                end
-                trainingData = tempDataMatrix;
-                tempDataMatrix = zeros(testingSetSize,DataSize(1)*DataSize(2));
-                for rr = 1:testingSetSize
-                    summedA = sum(reshape(testingData(1:end/2,:),DataSize),3);
-                    summedB = sum(reshape(testingData(end/2+1:end,:),DataSize),3);
-                    tempDataMatrix(rr,:) = [summedA summedB];
-                end
-                testingData = tempDataMatrix;
-            end
+            [trainingData,trainingClasses] = datasetFunction(calcParams,{standardRef;standardComp},testPool,Kp,Kg,trainingSetSize,mosaic);
+            [testingData,testingClasses]   = datasetFunction(calcParams,{standardRef;standardComp},testPool,Kp,Kg,testingSetSize,mosaic);
             
             % Standardize data if flag is set to true
             if calcParams.standardizeData
@@ -146,13 +94,20 @@ for ii = 1:length(illumLevels)
                 testingData = (testingData - repmat(m,testingSetSize,1)) ./ repmat(s,testingSetSize,1);
             end
             
+            if calcParams.usePCA
+                coeff = pca(trainingData,'NumComponents',calcParams.numPCA);
+                trainingData = trainingData*coeff;
+                testingData = testingData*coeff;
+            end
+            
+            % Perform classification
             classifierFunction = masterClassifierFunction(calcParams.cFunction);
             results(ii,jj,kk) = classifierFunction(trainingData,testingData,trainingClasses,testingClasses);
-            
-            % Print the time the calculation took
-            fprintf('Calculation time for Kp %.2f, Kg %.2f = %2.1f\n', Kp, Kg, toc);
         end
     end
+    
+    % Print the time the calculation took
+    fprintf('Calculation time for %s illumination step %u: %04.3f s\n',color,illumLevels(ii),toc);
 end
 
 end
