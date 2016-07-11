@@ -22,6 +22,14 @@ for ii = 1:length(calcIDList)
         currentThresholds = multipleThresholdExtraction(squeeze(currentData(jj,:,:)),criterion);
         meanThreshold(ii,:,jj) = currentThresholds; 
     end
+    
+    % Save the thresholds in the same folder
+    analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
+    saveFile = fullfile(analysisDir,'SimpleChooserData',calcIDList{ii},['Thresholds' calcIDList{ii} '.mat']);
+    if ~exist(saveFile,'file')
+        thresholds = squeeze(meanThreshold(ii,:,:)); %#ok<NASGU>
+        save(saveFile,'thresholds');
+    end
 end
 
 % Count how many NaN there are in the matrix

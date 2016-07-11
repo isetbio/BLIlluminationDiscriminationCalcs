@@ -7,7 +7,7 @@ function plotInfo = createPlotInfoStruct
 % xd  6/21/16  wrote it
 
 plotInfo.fitColor = [];
-plotInfo.stimLevels = [];
+plotInfo.stimLevels = 1:50;
 plotInfo.colors = [];
 
 plotInfo.xlabel = 'Stimulus Levels';

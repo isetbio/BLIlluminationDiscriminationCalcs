@@ -1,4 +1,4 @@
-function ChooserData = loadChooserData(folderName, fileName)
+function ChooserData = loadChooserData(folderName,fileName)
 % loadChooserData(fileName)
 %
 % This function loads the data acquired from the simple chooser model.
@@ -14,8 +14,16 @@ function ChooserData = loadChooserData(folderName, fileName)
 analysisDir   = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
 analysisPath = fullfile(analysisDir, 'SimpleChooserData', folderName, fileName);
 
-% Load the image
+if ~exist(analysisPath,'file')
+    ChooserData = []; return;
+end
+
+% Load the data
 data = load(analysisPath);
+if isfield(data,'thresholds')
+    ChooserData = data.thresholds;
+    return
+end
 ChooserData = data.matrix;
 
 end

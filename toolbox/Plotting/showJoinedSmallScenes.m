@@ -41,6 +41,10 @@ set(gca,'XTick',[],'YTick',[]);
 hold on;
 
 %% Plot lines over the image
+%
+% The single pixel width blanks in the enlarged image vary with the size of
+% the figure apparently. We'll circumvent this issue by drawing some lines
+% over them.
 vLines = (1:plotInfo.sizeOfSquare:size(targetImage,1));
 vLines = vLines(1:plotInfo.vNum+1) + (1:plotInfo.vNum+1) - 1;
 hLines = (1:plotInfo.sizeOfSquare:size(targetImage,2));
@@ -53,6 +57,8 @@ end
 for ii = 1:length(hLines)
     line([hLines(ii) hLines(ii)],[0 size(targetImage,1)],'linewidth',2,'Color','k');
 end
+
+%% Graph thresholds in some manner
 
 pause(1);
 end
