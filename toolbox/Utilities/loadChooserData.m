@@ -12,7 +12,7 @@ function ChooserData = loadChooserData(folderName,fileName)
 
 % Get the directory find the image
 analysisDir   = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
-analysisPath = fullfile(analysisDir, 'SimpleChooserData', folderName, fileName);
+analysisPath  = fullfile(analysisDir, 'SimpleChooserData', folderName, fileName);
 
 if ~exist(analysisPath,'file')
     ChooserData = []; return;
