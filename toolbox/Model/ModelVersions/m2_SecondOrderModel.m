@@ -1,17 +1,18 @@
 function results = m2_SecondOrderModel(calcParams,mosaic,color)
 % results = m2_SecondOrderModel(calcParams,sensor,color)
 %
-%
+% The revamped code for the second order model. Computes and performs
+% classification on data with eye movements and/or cone currents. 
 %
 % xd  6/24/16  wrote it
 
 %% Set values for variables that will be used through the function
-illumLevels = calcParams.illumLevels;
-KpLevels = calcParams.KpLevels;
-KgLevels = calcParams.KgLevels;
+illumLevels     = calcParams.illumLevels;
+KpLevels        = calcParams.KpLevels;
+KgLevels        = calcParams.KgLevels;
 trainingSetSize = calcParams.trainingSetSize;
-testingSetSize = calcParams.testingSetSize;
-analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
+testingSetSize  = calcParams.testingSetSize;
+analysisDir     = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 
 %% Load standard stuff
 % The way we store these data is that we keep the full sized OI as well as
@@ -29,11 +30,7 @@ for ii = 1:length(standardOIList)
     standardPool{ii} = oi;
 end
 
-% Normally, the mean isomerizations in the stardard images are calculated
-% too in case some form of Gaussian noise is desired. Because we can't
-% really predict what the eye movements will be (and thus what paths will be
-% sampled) ahead of time, we will just the mean of the entire LMS mask.
-calcParams.meanStandard = 0;
+
 
 %% Set up eye movement things
 % If saccadic movement is desired, the boundary of possible movement
@@ -42,19 +39,35 @@ calcParams.meanStandard = 0;
 tempMosaic = mosaic.copy;
 tempMosaic.fov = oiGet(standardPool{1},'fov');
 
+% Our lives will be easier if the difference in mosaic sizes is even. The
+% values are used for some indexing scheme in the compute functions. There
+% may be some way to fix it but I have no interest in giving myself a
+% headache.
 colPadding = (tempMosaic.cols-mosaic.cols)/2;
 rowPadding = (tempMosaic.rows-mosaic.rows)/2;
-if ~isinteger(colPadding), tempMosaic.cols = tempMosaic.cols - 1; end
-if ~isinteger(rowPadding), tempMosaic.rows = tempMosaic.rows - 1; end
+if ~isinteger(colPadding), tempMosaic.cols = tempMosaic.cols + 1; end
+if ~isinteger(rowPadding), tempMosaic.rows = tempMosaic.rows + 1; end
 calcParams.colPadding = (tempMosaic.cols-mosaic.cols)/2;
 calcParams.rowPadding = (tempMosaic.rows-mosaic.rows)/2;
 
 % The LMS mask thus is the whole image. Here we precompute it for the
-% standard image pool.
+% standard image pool. Normally, the mean isomerizations in the stardard
+% images are calculated too in case some form of Gaussian noise is desired.
+% Because we can't really predict what the eye movements will be (and thus
+% what paths will be sampled) ahead of time, we will just the mean of the
+% entire LMS mask.
+calcParams.meanStandard = 0;
 for qq = 1:length(standardPool)
     standardPool{qq} = tempMosaic.computeSingleFrame(standardPool{qq},'FullLMS',true);
-    calcParams.meanStandard = calcParams.meanStandard + mean2(standardPool{qq})/length(standardPool);
+    
+    % Need to multiply mask with actual mosaic
+    tempMask = zeros([size(tempMosaic.pattern) 3]);
+    for ii = 2:4
+        tempMask(:,:,ii-1) = single(tempMosaic.pattern==ii);
+    end
+    calcParams.meanStandard = calcParams.meanStandard + mean2(sum(standardPool{qq}.*tempMask,3))/length(standardPool);
 end
+clearvars tempMask
 
 %% Calculation Body
 % Get a list of images
@@ -90,7 +103,7 @@ for ii = 1:length(illumLevels)
                 m = mean(trainingData,1);
                 s = std(trainingData,1);
                 trainingData = (trainingData - repmat(m,trainingSetSize,1)) ./ repmat(s,trainingSetSize,1);
-                testingData = (testingData - repmat(m,testingSetSize,1)) ./ repmat(s,testingSetSize,1);
+                testingData  = (testingData - repmat(m,testingSetSize,1)) ./ repmat(s,testingSetSize,1);
             end
             
             if calcParams.usePCA

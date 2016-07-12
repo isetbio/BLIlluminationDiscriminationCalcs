@@ -34,7 +34,7 @@ for k1 = 1:length(calcIDStrs)
     
     calcParams.RUN_MODEL = true;
     calcParams.MODEL_ORDER = 2;          % Which model to run
-    calcParams.overWriteFlag = true;    % Whether or not to overwrite existing data. An overwrite is required to run the same calculation name again.
+    calcParams.overWriteFlag = true;     % Whether or not to overwrite existing data. An overwrite is required to run the same calculation name again.
     
     calcParams.CALC_THRESH = false;
     
@@ -52,12 +52,12 @@ for k1 = 1:length(calcIDStrs)
     calcParams.S = [380 8 51];                            % [489 393 535 480] will get image without any black border
     
     % Parameters for creating the sensor
-    calcParams.coneIntegrationTime = 0.010;
+    calcParams.coneIntegrationTime = 0.010;  % Integration time in ms. Also determines eye movement and os sampling interval
     calcParams.sensorFOV = 0.83;             % Visual angle defining the size of the sensor
     calcParams.OIvSensorScale = 0;
     
     % Specify the number of trials for each combination of Kp Kg as well as
-    % the highest illumination step (max 50) to go up to.
+    % the highest illumination step (max 50) to go up to. 
     calcParams.trainingSetSize = 1000;
     calcParams.testingSetSize = 1000;
     calcParams.illumLevels = 1:50;

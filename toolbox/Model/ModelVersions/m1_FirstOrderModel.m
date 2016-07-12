@@ -10,12 +10,12 @@ function results = m1_FirstOrderModel(calcParams,mosaic,color)
 % xd  6/23/16  moved out of old code
 
 %% Set values for variables that will be used through the function
-illumLevels = calcParams.illumLevels;
-KpLevels = calcParams.KpLevels;
-KgLevels = calcParams.KgLevels;
+illumLevels     = calcParams.illumLevels;
+KpLevels        = calcParams.KpLevels;
+KgLevels        = calcParams.KgLevels;
 trainingSetSize = calcParams.trainingSetSize;
-testingSetSize = calcParams.testingSetSize;
-analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
+testingSetSize  = calcParams.testingSetSize;
+analysisDir     = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 
 %% Load standard optical images
 % We will load the pool of standard OI's here. The reason we have multiple
