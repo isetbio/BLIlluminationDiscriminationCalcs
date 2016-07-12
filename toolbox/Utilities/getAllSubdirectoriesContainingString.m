@@ -8,7 +8,7 @@ function subdir = getAllSubdirectoriesContainingString(path,string)
 
 allsubDir = dir(path);
 allsubDir = {allsubDir(:).name};
-targetIdx = cell2mat(cellfun(@(X)~isempty(strfind(X,string)),allsubDir,'UniformOutput',false));
+targetIdx = cell2mat(cellfun(@(X)~isempty(regexp(X,[string '_*\d+'],'once')),allsubDir,'UniformOutput',false));
 
 subdir = allsubDir(targetIdx);
 
