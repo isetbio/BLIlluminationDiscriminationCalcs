@@ -1,4 +1,4 @@
-function [dataset,classes] = df4_EMData(calcParams,targetPool,comparisonPool,kp,kg,n,mosaic)
+function [dataset,classes] = df4_EyeMoveData(calcParams,targetPool,comparisonPool,kp,kg,n,mosaic)
 % [dataset,classes] = df4_EMData(calcParams,targetPool,comparisonPool,kp,kg,n,mosaic)
 % 
 %
@@ -21,6 +21,7 @@ for ii = 1:n/2
         'padRows',calcParams.rowPadding,'padCols',calcParams.colPadding);
     if calcParams.enableOS
         isomerizations = mosaic.os.compute(isomerizations,mosaic.pattern);
+        calcParams.coneCurrentSize = size(isomerizations);
     end
     dataset{ii} = isomerizations(:)';
     
@@ -38,7 +39,9 @@ for ii = 1:n/2
 end
 
 dataset = cell2mat(dataset);
-if ~calcParams.enableOS
+if calcParams.enableOS
+    dataset = getNoisyConeCurrents(calcParams,dataset,kp,kg);
+else
     dataset = getNoisySensorImage(calcParams,dataset,kp,kg);
 end
 

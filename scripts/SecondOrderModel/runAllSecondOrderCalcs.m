@@ -52,7 +52,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.S = [380 8 51];                            % [489 393 535 480] will get image without any black border
     
     % Parameters for creating the sensor
-    calcParams.coneIntegrationTime = 0.050;
+    calcParams.coneIntegrationTime = 0.010;
     calcParams.sensorFOV = 0.83;             % Visual angle defining the size of the sensor
     calcParams.OIvSensorScale = 0;
     
@@ -65,7 +65,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.standardizeData = true;
     calcParams.usePCA = true;
     calcParams.numPCA = 100;
-    calcParams.cFunction = 4;
+    calcParams.cFunction = 3;
     
     % Keep this as 4 since that is the only function that supports eye
     % movements and the outer segment.
@@ -73,13 +73,15 @@ for k1 = 1:length(calcIDStrs)
     
     % Kp represents the scale factor for the Poisson noise.  This is the
     % realistic noise representation of the photons arriving at the retina.
-    % Therefore, startKp should always be kept at 1.
+    % Therefore, startKp should always be kept at 1. If os is enabled this
+    % does nothing (but keep it a scalar).
     calcParams.KpLevels = 1;
     
     % Kg is the scale factor for an optional Gaussian noise.  The standard
     % deviation of the Gaussian distribution is equal to the square root of
     % the mean photoisomerizations across the available target image
-    % samples.
+    % samples. If os is enabled, this multiplies the outer segment noise
+    % instead.
     calcParams.KgLevels = 0:3:30;
     
     % EMPositions represents the number of positions of eye movement to sample.  
@@ -100,9 +102,8 @@ for k1 = 1:length(calcIDStrs)
     calcParams.useSameEMPath = true;
     
     % Whether to use OS code
-    calcParams.enableOS = false;
+    calcParams.enableOS = true;
     calcParams.OSType = 'linear'; % Types of OS, options are 'linear' 'biophys' 'identity'
-    calcParams.noiseFlag = false;
     
     %% Convert the images to cached scenes for more analysis
     if (calcParams.CACHE_SCENES)

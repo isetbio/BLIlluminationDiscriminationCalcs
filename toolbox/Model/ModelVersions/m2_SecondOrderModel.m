@@ -30,10 +30,9 @@ for ii = 1:length(standardOIList)
 end
 
 % Normally, the mean isomerizations in the stardard images are calculated
-% too in case some form of Gaussian noise is desired.  However, it is
-% unclear how this should be approached in the case where the data is a
-% time series. It is left at 0 for now, meaning this functionality does not
-% exist in the second order model.
+% too in case some form of Gaussian noise is desired. Because we can't
+% really predict what the eye movements will be (and thus what paths will be
+% sampled) ahead of time, we will just the mean of the entire LMS mask.
 calcParams.meanStandard = 0;
 
 %% Set up eye movement things

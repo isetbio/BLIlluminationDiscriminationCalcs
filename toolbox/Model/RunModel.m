@@ -47,11 +47,13 @@ mosaic.integrationTime = calcParams.coneIntegrationTime;
 if calcParams.MODEL_ORDER == 2
     % Adjust eye movements
     calcParams.em = emCreate;
-    calcParams.em = emSet(calcParams.em, 'emFlag', [calcParams.enableTremor calcParams.enableDrift calcParams.enableMSaccades]);
-    calcParams.em = emSet(calcParams.em, 'sample time', calcParams.coneIntegrationTime);
+    calcParams.em = emSet(calcParams.em,'emFlag',[calcParams.enableTremor calcParams.enableDrift calcParams.enableMSaccades]);
     
     mosaic.os = osCreate(calcParams.OSType);
-    mosaic.os.noiseFlag = calcParams.noiseFlag;
+    mosaic.os.noiseFlag = false;
+    warning('off','all');
+    mosaic.sampleTime = calcParams.coneIntegrationTime;
+    warning('on','all');
 end
 
 %% Run the desired model

@@ -93,7 +93,7 @@ for k1 = 1:length(calcIDStrs)
     
     % Kg is the scale factor for Gaussian noise.  The standard deviation of 
     % the Gaussian noise is equal to the square root of the mean 
-    % photoisomerizations across the available target image samples.
+    % photoisomerizations across the available target image samples. 
     calcParams.KgLevels = 1:10;
     
     %% Convert the images to cached scenes for more analysis
