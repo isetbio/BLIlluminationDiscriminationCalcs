@@ -34,11 +34,9 @@ for k1 = 1:length(calcIDStrs)
     
     calcParams.RUN_MODEL = true;
     calcParams.MODEL_ORDER = 2;          % Which model to run
-    calcParams.chooserColorChoice = 0;   % Which color direction to use (0 means all)
-    calcParams.overWriteFlag = true;    % Whether or not to overwrite existing data. An overwrite is required to run the same calculation name again.
+    calcParams.overWriteFlag = true;     % Whether or not to overwrite existing data. An overwrite is required to run the same calculation name again.
     
     calcParams.CALC_THRESH = false;
-    calcParams.displayIndividualThreshold = false;
     
     % Set the name of this calculation set
     calcParams.calcIDStr = calcIDStrs{k1};
@@ -54,39 +52,40 @@ for k1 = 1:length(calcIDStrs)
     calcParams.S = [380 8 51];                            % [489 393 535 480] will get image without any black border
     
     % Parameters for creating the sensor
-    calcParams.coneIntegrationTime = 0.001;
-    calcParams.sensorFOV = 0.07;             % Visual angle defining the size of the sensor
+    calcParams.coneIntegrationTime = 0.010;  % Integration time in ms. Also determines eye movement and os sampling interval
+    calcParams.sensorFOV = 0.83;             % Visual angle defining the size of the sensor
     calcParams.OIvSensorScale = 0;
     
     % Specify the number of trials for each combination of Kp Kg as well as
-    % the highest illumination step (max 50) to go up to.
-    calcParams.trainingSetSize = 200;
-    calcParams.testingSetSize = 200;
+    % the highest illumination step (max 50) to go up to. 
+    calcParams.trainingSetSize = 1000;
+    calcParams.testingSetSize = 1000;
     calcParams.illumLevels = 1:50;
 
-    calcParams.standardizeData = false;
-    calcParams.cFunction = 4;
-    calcParams.dFunction = 3;
+    calcParams.standardizeData = true;
+    calcParams.usePCA = true;
+    calcParams.numPCA = 100;
+    calcParams.cFunction = 3;
+    
+    % Keep this as 4 since that is the only function that supports eye
+    % movements and the outer segment.
+    calcParams.dFunction = 4;
     
     % Kp represents the scale factor for the Poisson noise.  This is the
     % realistic noise representation of the photons arriving at the retina.
-    % Therefore, startKp should always be kept at 1.
+    % Therefore, startKp should always be kept at 1. If os is enabled this
+    % does nothing (but keep it a scalar).
     calcParams.KpLevels = 1;
     
     % Kg is the scale factor for an optional Gaussian noise.  The standard
     % deviation of the Gaussian distribution is equal to the square root of
     % the mean photoisomerizations across the available target image
-    % samples.
-    calcParams.KgLevels = 1:10;
-    
-    % Define some eye movement parameters related to large saccades
-    calcParams.numSaccades = 3;             % Set this to 1 for only fixational eye movements
-    calcParams.saccadeInterval = 0.150;
+    % samples. If os is enabled, this multiplies the outer segment noise
+    % instead.
+    calcParams.KgLevels = 0:3:30;
     
     % EMPositions represents the number of positions of eye movement to sample.  
-    calcParams.numEMPositions = calcParams.numSaccades * calcParams.saccadeInterval / calcParams.coneIntegrationTime;
-    calcParams.EMPositions = zeros(int32(calcParams.numEMPositions), 2);
-    calcParams.totalTime = calcParams.numEMPositions * calcParams.coneIntegrationTime;
+    calcParams.numEMPositions = 10;
     
     % Enable or disable certain aspects of fixational eye movement
     calcParams.enableTremor = true;
@@ -101,15 +100,10 @@ for k1 = 1:length(calcIDStrs)
     % provided list.  If this is left empty, the saccades will be randomly
     % chosen from across the entire optical image.
     calcParams.useSameEMPath = true;
-    calcParams.EMLoc = [];
-    
-    % Use sum or individual data
-    calcParams.sumEM = false;
     
     % Whether to use OS code
     calcParams.enableOS = true;
     calcParams.OSType = 'linear'; % Types of OS, options are 'linear' 'biophys' 'identity'
-    calcParams.enableOSNoise = false;
     
     %% Convert the images to cached scenes for more analysis
     if (calcParams.CACHE_SCENES)

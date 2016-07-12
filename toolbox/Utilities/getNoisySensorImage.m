@@ -1,4 +1,4 @@
-function photons = getNoisySensorImage(calcParams, sensor, Kp, Kg)
+function isomerizations = getNoisySensorImage(calcParams,isomerizations,Kp,Kg)
 % getNoisySensorImage(calcParams, folderName, imageName, sensor, k)
 %
 % Generate a single noisy sensor image of the input optical image location
@@ -36,19 +36,17 @@ end
 
 %% Calculate noisy sample
 
-noiseFree = sensorGet(sensor, 'photons');
-
 % Get poisson noise, this is in photons
-[~, nP] = noiseShot(sensor);
+[~,nP] = coneMosaic.photonNoise(isomerizations);
 
 % Get the Gaussian noise
-nG = sqrt(calcParams.meanStandard) * randn(size(noiseFree));
+nG = sqrt(calcParams.meanStandard) * randn(size(isomerizations));
 
-% Add noise back with k multipliers
-photons = noiseFree + Kp * nP + Kg * nG;
+% Add noise back with multipliers
+isomerizations = isomerizations + Kp * nP + Kg * nG;
 
 % Photons are whole numbers
-photons = round(photons);     % Disable rounding for bug testing
+isomerizations = round(isomerizations);     % Disable rounding for bug testing
 
 end
 

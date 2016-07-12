@@ -38,11 +38,11 @@ calcIDStrs  = {'StaticPhoton_NM2_S2_2' 'StaticPhoton_NM2_S2_3' 'StaticPhoton_NM2
 for k1 = 1:length(calcIDStrs)
     
     % Define the steps of the calculation that should be carried out.
-    calcParams.CACHE_SCENES = true;
-    calcParams.forceSceneCompute = true; % Will overwrite any existing data.
+    calcParams.CACHE_SCENES = false;
+    calcParams.forceSceneCompute = false; % Will overwrite any existing data.
     
-    calcParams.CACHE_OIS = true;
-    calcParams.forceOICompute = true;    % Will overwrite any existing data.
+    calcParams.CACHE_OIS = false;
+    calcParams.forceOICompute = false;    % Will overwrite any existing data.
     
     calcParams.RUN_MODEL = true;
     calcParams.MODEL_ORDER = 1; 
@@ -75,8 +75,8 @@ for k1 = 1:length(calcIDStrs)
     
     % Specify the number of trials for each combination of Kp Kg as well as
     % the range of illuminants to use (max 50).
-    calcParams.trainingSetSize = 200;
-    calcParams.testingSetSize = 200;
+    calcParams.trainingSetSize = 1000;
+    calcParams.testingSetSize = 1000;
     calcParams.illumLevels = 1:50;
     
     % Here we specify which data function and classification function to use. 
@@ -93,7 +93,7 @@ for k1 = 1:length(calcIDStrs)
     
     % Kg is the scale factor for Gaussian noise.  The standard deviation of 
     % the Gaussian noise is equal to the square root of the mean 
-    % photoisomerizations across the available target image samples.
+    % photoisomerizations across the available target image samples. 
     calcParams.KgLevels = 1:10;
     
     %% Convert the images to cached scenes for more analysis

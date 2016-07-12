@@ -1,6 +1,6 @@
-function results = m1_FirstOrderModel(calcParams,sensor,color)
+function results = m1_FirstOrderModel(calcParams,mosaic,color)
 % results = m1_FirstOrderModel(calcParams,sensor,color)
-% 
+%
 % This function performs the computational observer calculation on a 'First
 % Order' level. By this, we mean that a static cone mosaic (without eye
 % movement) is used to calculate the number of isomerizations given a
@@ -10,12 +10,12 @@ function results = m1_FirstOrderModel(calcParams,sensor,color)
 % xd  6/23/16  moved out of old code
 
 %% Set values for variables that will be used through the function
-illumLevels = calcParams.illumLevels;
-KpLevels = calcParams.KpLevels;
-KgLevels = calcParams.KgLevels;
+illumLevels     = calcParams.illumLevels;
+KpLevels        = calcParams.KpLevels;
+KgLevels        = calcParams.KgLevels;
 trainingSetSize = calcParams.trainingSetSize;
-testingSetSize = calcParams.testingSetSize;
-analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
+testingSetSize  = calcParams.testingSetSize;
+analysisDir     = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 
 %% Load standard optical images
 % We will load the pool of standard OI's here. The reason we have multiple
@@ -32,9 +32,9 @@ for ii = 1:length(standardOIList)
     oi = loadOpticalImageData(fullfile(calcParams.cacheFolderList{2},'Standard'),opticalImageName);
     oi = resizeOI(oi,calcParams.sensorFOV*calcParams.OIvSensorScale);
     
-    sensorStandard = coneAbsorptions(sensor,oi);
-    calcParams.meanStandard = calcParams.meanStandard + mean2(sensorGet(sensorStandard,'photons'))/length(standardOIList);
-    standardPool{ii} = sensorStandard;
+    absorptionsStandard = mosaic.compute(oi,'currentFlag',false);
+    calcParams.meanStandard = calcParams.meanStandard + mean2(absorptionsStandard)/length(standardOIList);
+    standardPool{ii} = absorptionsStandard;
 end
 
 %% Get a list of images
@@ -48,35 +48,34 @@ OINamesList = getFilenamesInDirectory(folderPath);
 %% Do the actual calculation here
 results = zeros(length(illumLevels),length(KpLevels),length(KgLevels));
 for ii = 1:length(illumLevels);
-    fprintf('Running trials for %s illumination step %u\n',color,illumLevels(ii));
     
     % Precompute the test optical image to save computational time.
     imageName = OINamesList{illumLevels(ii)};
     imageName = strrep(imageName,'OpticalImage.mat','');
     oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' [color 'Illumination']],imageName);
     oiTest = resizeOI(oiTest,calcParams.sensorFOV*calcParams.OIvSensorScale);
-    sensorTest = coneAbsorptions(sensor,oiTest);
-
+    absorptionsTest = mosaic.compute(oiTest,'currentFlag',false);
+    
     % Loop through the two different noise levels and perform the
     % calculation at each combination.
+    tic
     for jj = 1:length(KpLevels)
         Kp = KpLevels(jj);
         
         for kk = 1:length(KgLevels);
             Kg = KgLevels(kk);
-
-            tic
+            
             % Choose the data generation function
             datasetFunction = masterDataFunction(calcParams.dFunction);
-            [trainingData, trainingClasses] = datasetFunction(calcParams,standardPool,{sensorTest},Kp,Kg,trainingSetSize);
-            [testingData, testingClasses] = datasetFunction(calcParams,standardPool,{sensorTest},Kp,Kg,testingSetSize);
+            [trainingData, trainingClasses] = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,trainingSetSize);
+            [testingData, testingClasses]   = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,testingSetSize);
             
             % Standardize data if flag is set to true
             if calcParams.standardizeData
                 m = mean(trainingData,1);
                 s = std(trainingData,1);
                 trainingData = (trainingData - repmat(m,trainingSetSize,1)) ./ repmat(s,trainingSetSize,1);
-                testingData = (testingData - repmat(m,testingSetSize,1)) ./ repmat(s,testingSetSize,1);
+                testingData  = (testingData - repmat(m,testingSetSize,1))   ./ repmat(s,testingSetSize,1);
             end
             
             if calcParams.usePCA
@@ -88,11 +87,10 @@ for ii = 1:length(illumLevels);
             % Compute performance based on chosen classifier method
             classifierFunction = masterClassifierFunction(calcParams.cFunction);
             results(ii,jj,kk) = classifierFunction(trainingData,testingData,trainingClasses,testingClasses);
-            
-            % Print the time the calculation took
-            fprintf('Calculation time for Kp %.2f, Kg %.2f = %2.1f\n',Kp,Kg,toc);            
         end
     end
+    % Print the time the calculation took
+    fprintf('Calculation time for %s illumination step %u: %04.3f s\n',color,illumLevels(ii),toc);
 end
 end
 

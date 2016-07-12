@@ -37,14 +37,15 @@ PF = @PAL_Weibull;
 
 options = optimset('fminsearch');
 options.TolFun = 1e-09;
-options.MaxFunEvals = 10000 * 100;
+options.MaxFunEvals = 10000*100;
 options.MaxIter = 500*100;
 tN = zeros(3,1);
 % Actual code to plot the data
 for nn = 1:length(dataToLoad)
     % Load and format the data appropriately
     dataPath = fullfile(getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir'), 'ClassifierComparisons');
-    load(fullfile(dataPath,dataToLoad{nn}));
+%     load(fullfile(dataPath,dataToLoad{nn}));
+    load(dataToLoad{nn});
     allData = {NNpercentCorrect, DApercentCorrect, SVMpercentCorrect};
    
     % Check for meta-data related to the calculation

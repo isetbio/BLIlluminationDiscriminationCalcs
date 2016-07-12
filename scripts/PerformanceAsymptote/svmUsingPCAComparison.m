@@ -41,8 +41,11 @@ numPCA = 2;
 
 %% Create our sensor
 rng(1); % Freeze noise
-sensor = getDefaultBLIllumDiscrSensor;
-sensor = sensorSetSizeToFOV(sensor,sSize,[],oiCreate('human'));
+sensor = coneMosaic;
+sensor.setSizeToFOV(sSize);
+sensor.integrationTime = 0.050;
+sensor.wave = SToWls([380 8 51]);
+sensor.noiseFlag = 0;
 
 %% Pre-allocate space for results
 % The dimensions struct will hold meta data about the parameters used for
@@ -66,8 +69,8 @@ standardSensorPool = cell(1, length(standardOIList));
 calcParams.meanStandard = 0;
 for jj = 1:length(standardOIList)
     standard = loadOpticalImageData([folder '/Standard'],strrep(standardOIList{jj},'OpticalImage.mat',''));
-    standardSensorPool{jj} = coneAbsorptions(sensor,resizeOI(standard,sSize*OIvSensorScale));
-    calcParams.meanStandard = calcParams.meanStandard + mean2(sensorGet(standardSensorPool{jj},'photons')) / length(standardOIList);
+    standardSensorPool{jj} = sensor.compute(standard,'currentFlag',false);
+    calcParams.meanStandard = calcParams.meanStandard + mean2(standardSensorPool{jj}) / length(standardOIList);
 end
 
 comparisonOIPath = fullfile(analysisDir,'OpticalImageData',folder,[color 'Illumination']);
@@ -75,7 +78,7 @@ OINames = getFilenamesInDirectory(comparisonOIPath);
 
 for ii = 1:length(illumSteps)
     comparison = loadOpticalImageData([folder '/' color 'Illumination'],strrep(OINames{illumSteps(ii)},'OpticalImage.mat',''));
-    sensorComparison = coneAbsorptions(sensor,resizeOI(comparison,sSize*OIvSensorScale));
+    sensorComparison = sensor.compute(comparison,'currentFlag',false);
     
     % Set variables to pass into data generation functions.
     kp = 1; kg = NoiseStep;
@@ -83,15 +86,15 @@ for ii = 1:length(illumSteps)
     for jj = 1:numCrossVal
         %% Generate Data
         tic
-        [testingData, testingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
-        [trainingData, trainingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,trainingSetSize);
+        [trainingData,trainingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,trainingSetSize);
+        [testingData,testingClasses]   = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
         fprintf('Yay! The Data has been created in %f seconds!\n',toc);
         
         % Standardize our data
         m = mean(trainingData,1);
         s = std(trainingData,1);
         trainingData = (trainingData - repmat(m,trainingSetSize,1)) ./ repmat(s,trainingSetSize,1);
-        testingData = (testingData - repmat(m,testingSetSize,1)) ./ repmat(s,testingSetSize,1);
+        testingData  = (testingData - repmat(m,testingSetSize,1)) ./ repmat(s,testingSetSize,1);
         
         % Train SVM on raw data
         tic
@@ -113,6 +116,7 @@ for ii = 1:length(illumSteps)
         % Do classification
         predictedClasses = predict(theSVM,testingData);
         SVMpercentCorrect(1,ii,jj) = sum(predictedClasses == testingClasses)/testingSetSize;
+
         testingData = testingData*coeff;
         predictedClasses = predict(pcaSVM,testingData);
         SVMpercentCorrect(2,ii,jj) = sum(predictedClasses == testingClasses)/testingSetSize;
