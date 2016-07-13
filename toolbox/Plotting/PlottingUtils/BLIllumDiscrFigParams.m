@@ -54,7 +54,7 @@ switch (modifier)
         figParams.xlimit = [0 11];
         figParams.ylimit = [50 100];
         figParams.insetPosition = [0.74 0.15 0.15 0.15];
-        figParams.colors = {[0 0.4470 0.7410] [0.8500 0.3250 0.0980]};
+        figParams.colors = {[0 0.4470 0.7410] [0.8500 0.3250 0.0980] [0.9290 0.6940 0.1250]};
         figParams.insetAxisLineWidth = 1;
         figParams.insetAxisFontSize = 10;
         figParams.insetTitleFontSize = 12;

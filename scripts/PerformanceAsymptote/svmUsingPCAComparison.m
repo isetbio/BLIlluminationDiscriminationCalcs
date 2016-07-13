@@ -37,7 +37,7 @@ color = 'Blue';
 NoiseStep = 15;
 illumSteps = 1:10;
 numCrossVal = 10;
-numPCA = 2;
+numPCA = 100;
 
 %% Create our sensor
 rng(1); % Freeze noise
@@ -51,7 +51,7 @@ sensor.noiseFlag = 0;
 % The dimensions struct will hold meta data about the parameters used for
 % the calculation. SVMpercentCorrent contains the actual performance
 % values.
-SVMpercentCorrect = zeros(2,length(illumSteps),numCrossVal);
+SVMpercentCorrect = zeros(3,length(illumSteps),numCrossVal);
 SVMrunTime = zeros(size(SVMpercentCorrect));
 dimensions.labels = {'Full/PCA' 'Illumination' 'TestingSet#'};
 dimensions.folder = folder;
@@ -97,32 +97,37 @@ for ii = 1:length(illumSteps)
         testingData  = (testingData - repmat(m,testingSetSize,1)) ./ repmat(s,testingSetSize,1);
         
         % Train SVM on raw data
-        tic
-        theSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto','CacheSize','maximal');
-        SVMrunTime(1,ii,jj) = toc;
-        fprintf('SVM trained in %f seconds!\n',SVMrunTime(1,ii,jj));
+%         tic
+%         theSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto','CacheSize','maximal');
+%         SVMrunTime(1,ii,jj) = toc;
+%         fprintf('SVM trained in %f seconds!\n',SVMrunTime(1,ii,jj));
         
         % Train SVM on pca data
         tic
-        [coeff,score] = pca(trainingData);
-        pcaTime = toc;
-        fprintf('PCA calculated in in %f seconds!\n',pcaTime);
-        trainingData = score(:,1:numPCA); clear score;
-        coeff = coeff(:,1:numPCA);
-        pcaSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto');
+        coeff = pca(trainingData,'NumComponents',numPCA);
+        pcaSVM = fitcsvm(trainingData*coeff,trainingClasses,'KernelScale','auto');
         SVMrunTime(2,ii,jj) = toc;
-        fprintf('SVM trained in %f seconds!\n',SVMrunTime(2,ii,jj)-pcaTime);
+        fprintf('PCA in %f seconds!\n',SVMrunTime(2,ii,jj));
+        
+        % Training using fast svd
+        tic
+        [~,~,V] = fsvd(trainingData,numPCA*2);
+        svdSVM = fitcsvm(trainingData*V,trainingClasses,'KernelScale','auto');
+        SVMrunTime(3,ii,jj) = toc;
+        fprintf('SVD in %f seconds!\n',toc);
         
         % Do classification
-        predictedClasses = predict(theSVM,testingData);
-        SVMpercentCorrect(1,ii,jj) = sum(predictedClasses == testingClasses)/testingSetSize;
+%         predictedClasses = predict(theSVM,testingData);
+%         SVMpercentCorrect(1,ii,jj) = sum(predictedClasses == testingClasses)/testingSetSize;
 
-        testingData = testingData*coeff;
-        predictedClasses = predict(pcaSVM,testingData);
+        predictedClasses = predict(pcaSVM,testingData*coeff);
         SVMpercentCorrect(2,ii,jj) = sum(predictedClasses == testingClasses)/testingSetSize;
+        
+        predictedClasses = predict(svdSVM,testingData*V);
+        SVMpercentCorrect(3,ii,jj) = sum(predictedClasses == testingClasses)/testingSetSize;
     end
 end
 
 %% Save the data
-fileName = sprintf('SVMv%dPCA.mat',numPCA);
+fileName = sprintf('SVMv%dPCAvSVD.mat',numPCA);
 save(fileName,'SVMpercentCorrect','SVMrunTime','dimensions');
