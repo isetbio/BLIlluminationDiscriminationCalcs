@@ -111,7 +111,7 @@ for ii = 1:length(illumSteps)
         
         % Training using fast svd
         tic
-        [~,~,V] = fsvd(trainingData,numPCA*2);
+        [~,~,V] = fsvd(trainingData,numPCA*2.5);
         svdSVM = fitcsvm(trainingData*V,trainingClasses,'KernelScale','auto');
         SVMrunTime(3,ii,jj) = toc;
         fprintf('SVD in %f seconds!\n',toc);
@@ -129,5 +129,5 @@ for ii = 1:length(illumSteps)
 end
 
 %% Save the data
-fileName = sprintf('SVMv%dPCAvSVD.mat',numPCA);
+fileName = sprintf('SVMv%dPCAv250SVD.mat',numPCA);
 save(fileName,'SVMpercentCorrect','SVMrunTime','dimensions');

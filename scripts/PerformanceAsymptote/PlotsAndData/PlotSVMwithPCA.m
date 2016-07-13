@@ -5,9 +5,9 @@
 % xd  6/24/16
 
 clear; 
-saveFig = true;
+saveFig = false;
 %% Load and pull out some data
-fileName = 'SVMv100PCAvSVD.mat';
+fileName = 'SVMv100PCAv250SVD.mat';
 load(fileName);
 
 resultsWithFullData = squeeze(SVMpercentCorrect(1,:,:));
