@@ -1,9 +1,11 @@
 function generateLinearInterpolatedOI(calcParams,patchInfo,hIdx,vIdx)
 % generateInterpolatedOI(calcParams,patchInfo,hIdx,vIdx)
 % 
+% Interpolates spatial positions between two adjacent patches from the
+% split. New patches are generated from the interpolated positions. The OI
+% are then calculated and then saved.
 %
-%
-%
+% 7/12/16  xd  wrote it
 
 %% Check that h and v are valid
 %
