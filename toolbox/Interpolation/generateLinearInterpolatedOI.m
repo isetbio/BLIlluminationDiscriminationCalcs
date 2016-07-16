@@ -79,7 +79,7 @@ end
 
 end
 
-function parforSave(fileName,opticalimage)
+function parforSave(fileName,opticalimage) %#ok<INUSD>
     save(fileName,'opticalimage');
 end
 

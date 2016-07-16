@@ -15,7 +15,7 @@ maxYValue = 0;
 
 figure('Position',[133 849 patchInfo.hNum*100 patchInfo.vNum*100]);
 for jj = 1:length(calcIDStrList)
-    patchNumber = str2double(calcIDStrList{jj}(regexp(calcIDStrList{jj},'[\d]')));
+    patchNumber = str2double(regexp(calcIDStrList{jj},'[\d]+$','match'));
     
     % Get thresholds
     thresholds = loadChooserData(calcIDStrList{jj},['Thresholds' calcIDStrList{jj} '.mat']);
@@ -25,7 +25,7 @@ for jj = 1:length(calcIDStrList)
     rankings = zeros(size(thresholds));
     for ii = 1:size(thresholds,1)
         tempThresholds = thresholds(ii,:);
-        rankings(ii,:) = tempThresholds - min(tempThresholds)+1;
+        rankings(ii,:) = tempThresholds;% - min(tempThresholds)+1;
     end
     rankings = mean(rankings,1);
     
@@ -43,10 +43,6 @@ end
 set(axisHandles,'YLim',[0 maxYValue+1],'XTick',[]);
 [~,superTitle] = suplabel('Difference in thresholds averaged over noise','t');
 set(superTitle,'FontSize',32);
-% set(superTitle,'Position',[0.0902    0.0500    0.8548    0.8950])
-% xlabel = num2str(1:patchInfo.hNum);
-% xlabel = strrep(xlabel,' ','   ');
-% [~,superXLabel] = suplabel(xlabel,'x');
-% set(superXLabel,'FontSize',26.5);
+
 end
 
