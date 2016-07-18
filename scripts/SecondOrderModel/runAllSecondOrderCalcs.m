@@ -11,7 +11,7 @@ function runAllSecondOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs = {'OS3StepConeAbsorb'};
+calcIDStrs = {'SVM_EM_Isomerizations_60_Test'};
 
 %% Parameters of the calculation
 %
@@ -42,14 +42,16 @@ for k1 = 1:length(calcIDStrs)
     calcParams.calcIDStr = calcIDStrs{k1};
     
     % Folder list to run over for conversions into isetbio format
-    calcParams = updateCacheFolderList(calcParams);
+%     calcParams = updateCacheFolderList(calcParams);
+    calcParams.cacheFolderList = {'Neutral' 'SVM_Static_Interp_End_60'};
     
     % Specify how to crop the image.  We don't want it all.
     % Code further on makes the most sense if the image is square (because we
     % define a square patch of cone mosaic when we build the sensor), so the
     % cropped region should always be square.
-    calcParams = updateCropRect(calcParams);              % [450 350 624 574] is the entire non-black region of our initial images with small border
-    calcParams.S = [380 8 51];                            % [489 393 535 480] will get image without any black border
+%     calcParams = updateCropRect(calcParams);   
+    calcParams.cropRect = [];
+    calcParams.S = [380 8 51];                            
     
     % Parameters for creating the sensor
     calcParams.coneIntegrationTime = 0.010;  % Integration time in ms. Also determines eye movement and os sampling interval
@@ -60,7 +62,7 @@ for k1 = 1:length(calcIDStrs)
     % the highest illumination step (max 50) to go up to. 
     calcParams.trainingSetSize = 1000;
     calcParams.testingSetSize = 1000;
-    calcParams.illumLevels = 1:50;
+    calcParams.illumLevels = 1:2:50;
 
     calcParams.standardizeData = true;
     calcParams.usePCA = true;
@@ -82,7 +84,7 @@ for k1 = 1:length(calcIDStrs)
     % the mean photoisomerizations across the available target image
     % samples. If os is enabled, this multiplies the outer segment noise
     % instead.
-    calcParams.KgLevels = 0:3:30;
+    calcParams.KgLevels = [1 3];
     
     % EMPositions represents the number of positions of eye movement to sample.  
     calcParams.numEMPositions = 10;
@@ -102,7 +104,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.useSameEMPath = true;
     
     % Whether to use OS code
-    calcParams.enableOS = true;
+    calcParams.enableOS = false;
     calcParams.OSType = 'linear'; % Types of OS, options are 'linear' 'biophys' 'identity'
     
     %% Convert the images to cached scenes for more analysis
