@@ -3,7 +3,8 @@ function generateLinearInterpolatedOI(calcParams,patchInfo,hIdx,vIdx)
 % 
 % Interpolates spatial positions between two adjacent patches from the
 % split. New patches are generated from the interpolated positions. The OI
-% are then calculated and then saved.
+% are then calculated and then saved. The function is set to interpolate 3
+% positions between the given patches.
 %
 % 7/12/16  xd  wrote it
 
