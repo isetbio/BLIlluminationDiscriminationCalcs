@@ -46,8 +46,8 @@ for yy = 1:length(sSizes)
     sSize = sSizes(yy);
     %% Create our sensor
     rng(1); % Freeze noise
-    sensor = getDefaultBLIllumDiscrSensor;
-    sensor = sensorSetSizeToFOV(sensor, sSize, [], oiCreate('human'));
+    mosaic = getDefaultBLIllumDiscrSensor;
+    mosaic.fov = sSize;
     
     for zz = 1:length(numIllumSteps)
         numIllumStep = numIllumSteps(zz);
@@ -71,8 +71,8 @@ for yy = 1:length(sSizes)
             calcParams.meanStandard = 0;
             for jj = 1:length(standardOIList)
                 standard = loadOpticalImageData([folders{ff} '/Standard'], strrep(standardOIList{jj}, 'OpticalImage.mat', ''));
-                standardSensorPool{jj} = coneAbsorptions(sensor, resizeOI(standard,sSize*OIvSensorScale));
-                calcParams.meanStandard = calcParams.meanStandard + mean2(sensorGet(standardSensorPool{jj}, 'photons')) / length(standardOIList);
+                standardSensorPool{jj} = mosaic.compute(resizeOI(standard,sSize*OIvSensorScale),'currentFlag',false);
+                calcParams.meanStandard = calcParams.meanStandard + mean2(standardSensorPool{jj}) / length(standardOIList);
             end
             
             %% Calculation body
@@ -80,10 +80,10 @@ for yy = 1:length(sSizes)
                 
                 % Load all Optical image names in the target directory in
                 % alphanumerical order. This corresponds to increasing illumination steps.
-                comparisonOIPath = fullfile(analysisDir, 'OpticalImageData', folders{ff}, [Colors{cc} 'Illumination']);
+                comparisonOIPath = fullfile(analysisDir,'OpticalImageData',folders{ff},[Colors{cc} 'Illumination']);
                 OINames = getFilenamesInDirectory(comparisonOIPath);
-                comparison = loadOpticalImageData([folders{ff} '/' Colors{cc} 'Illumination'], strrep(OINames{numIllumStep}, 'OpticalImage.mat', ''));
-                sensorComparison = coneAbsorptions(sensor, resizeOI(comparison,sSize*OIvSensorScale));
+                comparison = loadOpticalImageData([folders{ff} '/' Colors{cc} 'Illumination'],strrep(OINames{numIllumStep},'OpticalImage.mat', ''));
+                sensorComparison = mosaic.compute(resizeOI(comparison,sSize*OIvSensorScale));
                 
                 % Set variables to pass into data generation functions.
                 kp = 1; kg = NoiseStep;
@@ -98,7 +98,7 @@ for yy = 1:length(sSizes)
                     % each data set, there is no reason to save 10 of them.
                     tic
                     [trainingData, trainingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,max(trainingSetSizes));
-                    [testingData, testingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
+                    [testingData, testingClasses]   = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
                     trainingData = single(trainingData);
                     testingData  = single(testingData);
                     fprintf('Yay! The Data for folder %d run %d has been created in %6.5f seconds!\n',ff,kk,toc);
