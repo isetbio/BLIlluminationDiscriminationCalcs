@@ -45,8 +45,8 @@ tempMosaic.fov = oiGet(standardPool{1},'fov');
 % headache.
 colPadding = (tempMosaic.cols-mosaic.cols)/2;
 rowPadding = (tempMosaic.rows-mosaic.rows)/2;
-if ~isinteger(colPadding), tempMosaic.cols = tempMosaic.cols + 1; end
-if ~isinteger(rowPadding), tempMosaic.rows = tempMosaic.rows + 1; end
+if mod(colPadding,1), tempMosaic.cols = tempMosaic.cols + 1; end
+if mod(rowPadding,1), tempMosaic.rows = tempMosaic.rows + 1; end
 calcParams.colPadding = (tempMosaic.cols-mosaic.cols)/2;
 calcParams.rowPadding = (tempMosaic.rows-mosaic.rows)/2;
 
@@ -112,8 +112,8 @@ for ii = 1:length(illumLevels)
             end
             
             if calcParams.usePCA
-                coeff = pca(trainingData,'NumComponents',calcParams.numPCA);
-%                 [~,~,coeff] = fsvd(trainingData,calcParams.numPCA);
+%                 coeff = pca(trainingData,'NumComponents',calcParams.numPCA);
+                [~,~,coeff] = fsvd(trainingData,2.5*calcParams.numPCA);
                 trainingData = trainingData*coeff;
                 testingData = testingData*coeff;
             end
@@ -137,7 +137,7 @@ for ii = 1:length(illumLevels)
         lastFiveCorrect = squeeze(results(ii-4:ii,1,startKg));
 %         fprintf(num2str(lastFiveCorrect'));
 %         fprintf([' StartKg: ' num2str(startKg) '\n']);
-        if mean(lastFiveCorrect) > 99.5 
+        if mean(lastFiveCorrect) > 99.6 
             results(ii+1:end,1,startKg) = 100;
             startKg = startKg + 1;
         end

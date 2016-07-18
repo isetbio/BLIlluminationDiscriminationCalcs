@@ -108,7 +108,7 @@ for ii = 1:length(illumLevels);
         lastFiveCorrect = squeeze(results(ii-4:ii,1,startKg));
 %         fprintf(num2str(lastFiveCorrect'));
 %         fprintf([' StartKg: ' num2str(startKg) '\n']);
-        if mean(lastFiveCorrect) > 99.5 
+        if mean(lastFiveCorrect) > 99.6 
             results(ii+1:end,1,startKg) = 100;
             startKg = startKg + 1;
         end

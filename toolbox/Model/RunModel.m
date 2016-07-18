@@ -51,9 +51,7 @@ if calcParams.MODEL_ORDER == 2
     
     mosaic.os = osCreate(calcParams.OSType);
     mosaic.os.noiseFlag = false;
-    warning('off','all');
     mosaic.sampleTime = calcParams.coneIntegrationTime;
-    warning('on','all');
 end
 
 %% Run the desired model
