@@ -11,7 +11,7 @@ function runAllSecondOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs = {'SVM_EM_Isomerizations_60_Test'};
+calcIDStrs = {'SVM_EM_OSLinear_60_Test'};
 
 %% Parameters of the calculation
 %
@@ -84,7 +84,7 @@ for k1 = 1:length(calcIDStrs)
     % the mean photoisomerizations across the available target image
     % samples. If os is enabled, this multiplies the outer segment noise
     % instead.
-    calcParams.KgLevels = [1 3];
+    calcParams.KgLevels = 1;
     
     % EMPositions represents the number of positions of eye movement to sample.  
     calcParams.numEMPositions = 10;
@@ -104,7 +104,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.useSameEMPath = true;
     
     % Whether to use OS code
-    calcParams.enableOS = false;
+    calcParams.enableOS = true;
     calcParams.OSType = 'linear'; % Types of OS, options are 'linear' 'biophys' 'identity'
     
     %% Convert the images to cached scenes for more analysis
