@@ -52,9 +52,9 @@ for ii = 1:length(sceneFolder)
         splicedScenes = splitSceneIntoMultipleSmallerScenes(theCurrentScene,theFOV);
         theOIs = sceneArrayToOIArray(oiCreate('human'),splicedScenes);
         for ss = 1:numberOfOI
-            dirName = [theCalcIDStr '_' num2str(ff)];
+            dirName = [theCalcIDStr '_' num2str(ss)];
             savePath = fullfile(analysisDir,'OpticalImageData',dirName,currentSceneSubDir,strrep(theCurrentFilename,'Scene','OpticalImage'));
-            parforSave(savePath,theOIs{ii});
+            parforSave(savePath,theOIs{ss});
         end
     end
 end
