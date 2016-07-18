@@ -42,7 +42,5 @@ t = title(plotInfo.title,'FontSize',figParams.titleFontSize);
 yl.Position = yl.Position + figParams.deltaYlabelPosition;
 xl.Position = xl.Position + figParams.deltaXlabelPosition;
 
-
-
 end
 

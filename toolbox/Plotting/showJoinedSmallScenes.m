@@ -1,4 +1,4 @@
-function showJoinedSmallScenes(largeScene,plotInfo)
+function showJoinedSmallScenes(largeScene,fov)
 % showJoinedSmallScenes(largeScene,plotInfo)
 % 
 % Displays how the splitting function cuts up a large scene. This function
@@ -9,7 +9,8 @@ function showJoinedSmallScenes(largeScene,plotInfo)
 % xd  7/7/16  wrote it
 
 %% Use the large image and the plot info obj
-% vcNewGraphWin;
+
+[~,plotInfo] = splitSceneIntoMultipleSmallerScenes(largeScene,fov);
 
 % Pre allocate a larger image that is the size of the original+space for black bars.
 sizeOfOriginal = sceneGet(largeScene,'size');
