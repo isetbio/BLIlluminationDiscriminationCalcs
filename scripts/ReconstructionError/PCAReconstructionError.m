@@ -44,4 +44,37 @@ emMosaic = masterMosaic.copy;
 emMosaic.integrationTime = emMosaicParams.integrationTimeInMS;
 emMosaic.os = osCreate(emMosaicParams.osType);
 
-%% Calculation
+%% Load optical image data.
+%
+% Load optical images here since we will do the calculations with a variety
+% of sensors and conditions to test reconstruction error.
+
+% Load all target scene sensors
+analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
+folderPath = fullfile(analysisDir,'OpticalImageData','Neutral_FullImage','Standard');
+standardOIList = getFilenamesInDirectory(folderPath);
+
+standardOIPool = cell(1, length(standardOIList));
+calcParams.meanStandard = 0;
+for jj = 1:length(standardOIList)
+    standardOIPool{jj} = loadOpticalImageData('Neutral_FullImage/Standard',strrep(standardOIList{jj},'OpticalImage.mat',''));
+end
+
+comparisonOI = loadOpticalImageData('Neutral_FullImage/BlueIllumination','blue1L-RGB');
+
+%% Calculations
+%
+% Generate data sets for Static Isomerizations, EM Isomerizations, and EM
+% OSlinear and check if the error in reconstruction using the PCA
+% components varies greatly amongst the three cases.
+
+% Static Isomerizations case
+staticStandardIsomerizations = cellfun(@(X)staticMosaic.compute(X,'currentFlag',false),standardOIPool,'UniformOutput',false);
+staticComparisonIsomerizations = staticMosaic.compute(comparisonOI,'currentFlag',false);
+
+calcParams.meanStandard = mean(cellfun(@(X)mean2(X),staticStandardIsomerizations));
+
+staticDataset = df1_ABBA(calcParams,staticStandardIsomerizations,{staticComparisonIsomerizations},1,0,dataSetSize);
+[staticCoeff,score] = pca(staticDataset,'NumComponents',numPCA);
+projectedDataset = staticDataset*staticCoeff;
+
