@@ -21,7 +21,7 @@ for ii = 1:length(calcIDList)
     analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
     saveFile = fullfile(analysisDir,'SimpleChooserData',calcIDList{ii},['Thresholds' calcIDList{ii} '.mat']);
     if exist(saveFile,'file')
-        thresholds = loadChooserData(calcIDList{ii},['Thresholds' calcIDList{ii} '.mat']);
+        thresholds = loadThresholdData(calcIDList{ii},['Thresholds' calcIDList{ii} '.mat']);
         meanThreshold(ii,:,:) = thresholds;
     else
         currentData = loadModelData(calcIDList{ii});

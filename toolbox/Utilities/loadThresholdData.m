@@ -1,4 +1,4 @@
-function ChooserData = loadChooserData(folderName,fileName)
+function ChooserData = loadThresholdData(folderName,fileName)
 % loadChooserData(fileName)
 %
 % This function loads the data acquired from the simple chooser model.

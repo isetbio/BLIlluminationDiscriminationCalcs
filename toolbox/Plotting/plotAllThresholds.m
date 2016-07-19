@@ -27,7 +27,7 @@ plotInfo.colors = calcParams.plotColor;
 plotInfo.xlabel = sprintf('%s Noise Levels',subsref({'Poisson' 'Gaussian'},struct('type','{}','subs',{{find(parser.Results.NoiseIndex==0,1)}})));
 plotInfo.ylabel = 'Stimulus Levels (\DeltaE)';
 plotInfo.title  = ['Thresholds v Noise, ' calcParams.calcIDStr];
-thresholds = loadChooserData(calcIDStr,['Thresholds' calcIDStr '.mat']);
+thresholds = loadThresholdData(calcIDStr,['Thresholds' calcIDStr '.mat']);
 
 if isempty(thresholds)
     %% Format data
