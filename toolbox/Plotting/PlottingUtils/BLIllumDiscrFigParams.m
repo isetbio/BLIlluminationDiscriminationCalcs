@@ -58,4 +58,10 @@ switch (modifier)
         figParams.insetAxisLineWidth = 1;
         figParams.insetAxisFontSize = 10;
         figParams.insetTitleFontSize = 12;
+    case {'ThresholdHistogram'}
+        figParams.binNum = 20;
+        figParams.faceColors = {[0 191 255]/255 [46 139 87]/255 [178,34,34]/255 [255 215 0]/255}; 
+        figParams.subplotsize = 600;
+        figParams.xlim = [0 50];
+        
 end
