@@ -5,6 +5,7 @@ function figParams = BLIllumDiscrFigParams(figParams, modifier)
 % by David Brainard.
 %
 % xd  6/20/16  wrote it
+if notDefined('modifier'), modifier = ''; end;
 
 figParams.basicSize = 700;
 figParams.position = [100 100 figParams.basicSize round(420/560*figParams.basicSize)];

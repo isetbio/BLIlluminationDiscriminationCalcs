@@ -43,12 +43,17 @@ for ii = 1:numSubplots
     subplot(2,ceil(numSubplots/2),ii); hold on;
     numOfSamplesForLegend = zeros(4,1);
     for jj = 1:4
+        % Get data to plot and remove NaN's
         thisData = aggregateData(jj,ii+startOffSet,:);
         thisData = thisData(~isnan(thisData));
+        
+        % Plot data and track down how many samples there were
         histogram(thisData,figParams.binNum,'FaceColor',figParams.faceColors{jj});
         numOfSamplesForLegend(jj) = length(thisData);
     end
     legend(strcat('N= ',num2str(numOfSamplesForLegend)));
+    
+    % Formatting stuff
     set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
     axis square; grid on;
     
@@ -56,9 +61,11 @@ for ii = 1:numSubplots
     ylabel('Num of Occurrences','FontSize',figParams.labelFontSize);
     title(['Noise Level: ' num2str(calcParams.KgLevels(ii+startOffSet))],'FontSize',figParams.titleFontSize);
 end
+
 h = findobj(gcf,'type','axes');
 set(h,'XLim',figParams.xlim);
 maxY = max(reshape(cell2mat(get(h,'YLim')),[],1));
 set(h,'YLim',[0 maxY+2]);
+
 end
 
