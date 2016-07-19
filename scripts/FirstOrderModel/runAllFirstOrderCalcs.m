@@ -20,11 +20,11 @@ function runAllFirstOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs  = {'StaticPhoton_NM2_S2_2' 'StaticPhoton_NM2_S2_3' 'StaticPhoton_NM2_S2_4' 'StaticPhoton_NM2_S2_5'...
-    'StaticPhoton_NM2_S2_6' 'StaticPhoton_NM2_S2_7' 'StaticPhoton_NM2_S2_8' 'StaticPhoton_NM2_S2_9' 'StaticPhoton_NM2_S2_10'...
-    'StaticPhoton_NM2_S2_11' 'StaticPhoton_NM2_S2_12' 'StaticPhoton_NM2_S2_13' 'StaticPhoton_NM2_S2_14'...
-    'StaticPhoton_NM2_S2_15' 'StaticPhoton_NM2_S2_1'};
-    
+% calcIDStrs  = {'StaticPhoton_NM2_S2_2' 'StaticPhoton_NM2_S2_3' 'StaticPhoton_NM2_S2_4' 'StaticPhoton_NM2_S2_5'...
+%     'StaticPhoton_NM2_S2_6' 'StaticPhoton_NM2_S2_7' 'StaticPhoton_NM2_S2_8' 'StaticPhoton_NM2_S2_9' 'StaticPhoton_NM2_S2_10'...
+%     'StaticPhoton_NM2_S2_11' 'StaticPhoton_NM2_S2_12' 'StaticPhoton_NM2_S2_13' 'StaticPhoton_NM2_S2_14'...
+%     'StaticPhoton_NM2_S2_15' 'StaticPhoton_NM2_S2_1'};
+  calcIDStrs = {'SVM_Static_Isom_CompareToEM_100ms'};
 %% Parameters of the calculation
 %
 % We'll define this as a structure, with the fields providing the name of
@@ -54,8 +54,8 @@ for k1 = 1:length(calcIDStrs)
     calcParams.calcIDStr = calcIDStrs{k1};
     
     % Folder list to run over for conversions into isetbio format
-    calcParams = updateCacheFolderList(calcParams);
-    
+%     calcParams = updateCacheFolderList(calcParams);
+    calcParams.cacheFolderList = {'Neutral' 'SVM_Static_Interp_End_60'};
     % Need to specify the calibration file to use
     calcParams = assignCalibrationFile(calcParams);
     
@@ -63,13 +63,14 @@ for k1 = 1:length(calcIDStrs)
     % Code further on makes the most sense if the image is square (because we
     % define a square patch of cone mosaic when we build the sensor), so the
     % cropped region should always be square.
-    calcParams = updateCropRect(calcParams);              
+%     calcParams = updateCropRect(calcParams);  
+    calcParams.cropRect = [];
     calcParams.S = [380 8 51];
         
     % Parameters for creating the sensor. OIvSensorScale is a parameter
     % that, if set to a value > 0, will subsample the optical image to the
     % size sensorFOV*OIvSensorScale.
-    calcParams.coneIntegrationTime = 0.050;
+    calcParams.coneIntegrationTime = 0.100;
     calcParams.sensorFOV = 0.83;
     calcParams.OIvSensorScale = 0;
     
@@ -84,7 +85,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.cFunction = 3;
     calcParams.dFunction = 1;
     calcParams.usePCA = true;
-    calcParams.numPCA = 10;
+    calcParams.numPCA = 100;
     
     % Kp represents the scale factor for the Poisson noise.  This is the
     % realistic noise representation of the photons arriving at the retina.
@@ -94,7 +95,7 @@ for k1 = 1:length(calcIDStrs)
     % Kg is the scale factor for Gaussian noise.  The standard deviation of 
     % the Gaussian noise is equal to the square root of the mean 
     % photoisomerizations across the available target image samples. 
-    calcParams.KgLevels = 1:10;
+    calcParams.KgLevels = 0:4:40;
     
     %% Convert the images to cached scenes for more analysis
     if (calcParams.CACHE_SCENES)

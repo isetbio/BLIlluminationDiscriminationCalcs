@@ -11,7 +11,7 @@ function runAllSecondOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs = {'SVM_EM_OSLinear_60_Test'};
+calcIDStrs = {'SVM_NoEM_Isom_CompareToEM_100ms'};
 
 %% Parameters of the calculation
 %
@@ -33,8 +33,8 @@ for k1 = 1:length(calcIDStrs)
     calcParams.forceOICompute = false;    % Will overwrite any existing data.
     
     calcParams.RUN_MODEL = true;
-    calcParams.MODEL_ORDER = 2;          % Which model to run
-    calcParams.overWriteFlag = true;     % Whether or not to overwrite existing data. An overwrite is required to run the same calculation name again.
+    calcParams.MODEL_ORDER = 2;           % Which model to run
+    calcParams.overWriteFlag = true;      % Whether or not to overwrite existing data. An overwrite is required to run the same calculation name again.
     
     calcParams.CALC_THRESH = false;
     
@@ -84,15 +84,15 @@ for k1 = 1:length(calcIDStrs)
     % the mean photoisomerizations across the available target image
     % samples. If os is enabled, this multiplies the outer segment noise
     % instead.
-    calcParams.KgLevels = 1;
+    calcParams.KgLevels = 0:4:40;
     
     % EMPositions represents the number of positions of eye movement to sample.  
     calcParams.numEMPositions = 10;
     
     % Enable or disable certain aspects of fixational eye movement
-    calcParams.enableTremor = true;
-    calcParams.enableDrift = true;
-    calcParams.enableMSaccades = true;
+    calcParams.enableTremor = false;
+    calcParams.enableDrift = false;
+    calcParams.enableMSaccades = false;
     
     % Whether or not to recreate a new eye movement path for the target and
     % two comparisons. We can also give the location to a matlab data file
@@ -104,7 +104,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.useSameEMPath = true;
     
     % Whether to use OS code
-    calcParams.enableOS = true;
+    calcParams.enableOS = false;
     calcParams.OSType = 'linear'; % Types of OS, options are 'linear' 'biophys' 'identity'
     
     %% Convert the images to cached scenes for more analysis
