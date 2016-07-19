@@ -1,7 +1,7 @@
-function plotFittedPsychometricFunctions(calcIDList,noiseIdx)
+function plotFittedPsychometricFunctionsInterp(calcIDList,noiseIdx)
 % plotFittedPsychometricFunctions(calcIDList,noiseIdx)
 %
-% Plots the fitted psychometrix functions given a calcIDList containing
+% Plots the fitted psychometric functions given a calcIDList containing
 % interpolated calculations in order (e.g. Interp1, Interp2, ...). Data at
 % the specified noiseIdx will be plotted on one figure for each color
 % direction.
@@ -39,11 +39,11 @@ for cc = 1:4
     grid on;
     ylim(figParams.ylimit);
     
-    xl = xlabel(plotInfo.xlabel,'FontSize',figParams.labelFontSize);
-    yl = ylabel(plotInfo.ylabel,'FontSize',figParams.labelFontSize);
-    t = title(plotInfo.title,'FontSize',figParams.titleFontSize);
-
-    
+    xlabel(plotInfo.xlabel,'FontSize',figParams.labelFontSize);
+    ylabel(plotInfo.ylabel,'FontSize',figParams.labelFontSize);
+    title(plotInfo.title,'FontSize',figParams.titleFontSize);
 end
+
+suplabel(['Noise Level: ' num2str(noiseIdx)],'t');
 end
 
