@@ -30,8 +30,6 @@ for ii = 1:length(standardOIList)
     standardPool{ii} = oi;
 end
 
-
-
 %% Set up eye movement things
 % If saccadic movement is desired, the boundary of possible movement
 % locations will be set to the size of the optical image, allowing for
