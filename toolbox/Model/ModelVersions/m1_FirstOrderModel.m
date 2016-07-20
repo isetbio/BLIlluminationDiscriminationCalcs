@@ -96,7 +96,7 @@ for ii = 1:length(illumLevels);
     end
     % Print the time the calculation took
     fprintf('Calculation time for %s illumination step %u: %04.3f s\n',color,illumLevels(ii),toc);
-    
+
     % Update the last 5 correct and check if startKg needs to be shifted.
     % If the average of the last 5 is greater than 99.5%, we set the
     % remaining values for each illumination level for the startKg noise
