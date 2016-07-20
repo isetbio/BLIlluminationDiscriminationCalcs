@@ -18,7 +18,7 @@ for jj = 1:length(calcIDStrList)
     patchNumber = str2double(regexp(calcIDStrList{jj},'[\d]+$','match'));
     
     % Get thresholds
-    thresholds = loadChooserData(calcIDStrList{jj},['Thresholds' calcIDStrList{jj} '.mat']);
+    thresholds = loadThresholdData(calcIDStrList{jj},['Thresholds' calcIDStrList{jj} '.mat']);
     
     % Format Data
     thresholds(any(isnan(thresholds),2),:) = [];
@@ -40,9 +40,10 @@ for jj = 1:length(calcIDStrList)
     end
 end
 
-set(axisHandles,'YLim',[0 maxYValue+1],'XTick',[]);
-[~,superTitle] = suplabel('Difference in thresholds averaged over noise','t');
-set(superTitle,'FontSize',32);
+set(axisHandles,'YLim',[0 35],'XTick',[]);
+sTitle = sprintf('Thresholds averaged over noise, %s',calcIDStr);
+[~,superTitle] = suplabel(sTitle,'t');
+set(superTitle,'FontSize',32,'Interpreter','None');
 
 end
 
