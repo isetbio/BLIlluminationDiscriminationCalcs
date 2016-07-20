@@ -31,8 +31,8 @@ close all; ieInit; %parpool(50);
 % on the structure at runtime to make sure our caches are consistent with
 % the current parameters being used.
 
-c.calcIDStr = 'SVM_Static_Isomerizations';
-c.cacheFolderList = {'Neutral', 'Neutral_FullImage'};
+c.calcIDStr = 'SVM_Static_Isomerizations_NM1_TestRunToCheckNM2';
+c.cacheFolderList = {'NM1', 'NM1_FullImage'};
 c.sensorFOV = 0.83;
 tempScene = loadSceneData([c.cacheFolderList{2} '/Standard'],'TestImage0');
 numberofOI = numel(splitSceneIntoMultipleSmallerScenes(tempScene,c.sensorFOV));
