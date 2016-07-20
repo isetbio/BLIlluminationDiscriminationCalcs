@@ -1,4 +1,4 @@
-%% OSNoiseVIntensity
+%% OSNoiseVsIntensity
 %
 % The osAddNoise routine adds noise independent of signal intensity. This
 % demonstrates this by using the same scene, but reducing the intensity of

@@ -11,7 +11,7 @@ function runAllSecondOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs = {'SVM_NoEM_Isom_CompareToEM_100ms'};
+calcIDStrs = {'SVM_YesEM_Isom_CompareToEM_100ms'};
 
 %% Parameters of the calculation
 %
@@ -90,9 +90,9 @@ for k1 = 1:length(calcIDStrs)
     calcParams.numEMPositions = 10;
     
     % Enable or disable certain aspects of fixational eye movement
-    calcParams.enableTremor = false;
-    calcParams.enableDrift = false;
-    calcParams.enableMSaccades = false;
+    calcParams.enableTremor = true;
+    calcParams.enableDrift = true;
+    calcParams.enableMSaccades = true;
     
     % Whether or not to recreate a new eye movement path for the target and
     % two comparisons. We can also give the location to a matlab data file
