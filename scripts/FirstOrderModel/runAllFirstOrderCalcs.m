@@ -17,7 +17,7 @@
 % 7/29/15  xd                Renamed.
 
 %% Clear and initialize
-close all; ieInit; parpool(40);
+close all; ieInit; %parpool(50);
 
 %% Set identifiers to run
 calcIDStrs = {'SVM_Neutral_Control'};
@@ -31,8 +31,8 @@ calcIDStrs = {'SVM_Neutral_Control'};
 % on the structure at runtime to make sure our caches are consistent with
 % the current parameters being used.
 
-c.calcIDStr = 'SVM_Static_Isomerizations';
-c.cacheFolderList = {'Neutral', 'Neutral_FullImage'};
+c.calcIDStr = 'SVM_Static_Isomerizations_NM1_TestRunToCheckNM2';
+c.cacheFolderList = {'NM1', 'NM1_FullImage'};
 c.sensorFOV = 0.83;
 tempScene = loadSceneData([c.cacheFolderList{2} '/Standard'],'TestImage0');
 numberofOI = numel(splitSceneIntoMultipleSmallerScenes(tempScene,c.sensorFOV));
@@ -49,83 +49,87 @@ parfor k1 = 1:numberofOI
     calcParams.forceOICompute = false;    % Will overwrite any existing data.
     
     calcParams.RUN_MODEL = true;
-    calcParams.MODEL_ORDER = 1; 
-    calcParams.overWriteFlag = true;      % Whether or not to overwrite existing data.
+    calcParams.MODEL_ORDER = 1;
+    calcParams.overWriteFlag = false;      % Whether or not to overwrite existing data.
     
     calcParams.CALC_THRESH = false;
     
     % Set the calcID
     calcParams.calcIDStr = [c.calcIDStr '_' num2str(k1)];
     
-    % Folder list to run over for conversions into isetbio format
     calcParams.cacheFolderList = {c.cacheFolderList{1} calcParams.calcIDStr};
     
-    % Need to specify the calibration file to use
-    calcParams = assignCalibrationFile(calcParams);
+    analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
+    dirToRemovePath = fullfile(analysisDir,'OpticalImageData',calcParams.calcIDStr);
     
-    % Specify how to crop the image.  We don't want it all.
-    % Code further on makes the most sense if the image is square (because we
-    % define a square patch of cone mosaic when we build the sensor), so the
-    % cropped region should always be square.
-    calcParams.cropRect = [];              
-    calcParams.S = [380 8 51];
-    calcParams.spatialDensity = [0 0.62 0.31 0.07];
+    if exist(dirToRemovePath,'dir')
+        % Need to specify the calibration file to use
+        calcParams = assignCalibrationFile(calcParams);
         
-    % Parameters for creating the sensor. OIvSensorScale is a parameter
-    % that, if set to a value > 0, will subsample the optical image to the
-    % size sensorFOV*OIvSensorScale.
-    calcParams.coneIntegrationTime = 0.050;
-    calcParams.sensorFOV = c.sensorFOV;
-    calcParams.OIvSensorScale = 0;
-    
-    % Specify the number of trials for each combination of Kp Kg as well as
-    % the range of illuminants to use (max 50).
-    calcParams.trainingSetSize = 1000;
-    calcParams.testingSetSize = 1000;
-    calcParams.illumLevels = 1:50;
-    
-    % Here we specify which data function and classification function to use. 
-    calcParams.standardizeData = true;
-    calcParams.cFunction = 3;
-    calcParams.dFunction = 7;
-    calcParams.usePCA = true;
-    calcParams.numPCA = 400;
-
-    % Kp represents the scale factor for the Poisson noise.  This is the
-    % realistic noise representation of the photons arriving at the retina.
-    % Therefore, there should always be at least 1x Kp.
-    calcParams.KpLevels = 1;
-    
-    % Kg is the scale factor for Gaussian noise.  The standard deviation of 
-    % the Gaussian noise is equal to the square root of the mean 
-    % photoisomerizations across the available target image samples. 
-    calcParams.KgLevels = 0:3:30;
-    
-    % Update to calcIDStr to a uniformly formatted name
-    calcParams.calcIDStr = params2Name_FirstOrderModel(calcParams);
-
-    %% Convert the images to cached scenes for more analysis
-    if (calcParams.CACHE_SCENES)
-        convertRBGImagesToSceneFiles(calcParams,calcParams.forceSceneCompute);
-    end
-    
-    %% Convert cached scenes to optical images
-    if (calcParams.CACHE_OIS)
-        convertScenesToOpticalimages(calcParams,calcParams.forceOICompute);
-    end
-    
-    %% Create data sets using the simple chooser model
-    if (calcParams.RUN_MODEL)
-        RunModel(calcParams,calcParams.overWriteFlag);
-    end
-    git 
-    %% Calculate threshholds using chooser model data
-    if (calcParams.CALC_THRESH)
-        plotAllThresholds(calcParams.calcIDStr,'NoiseIndex',[0 1]);
+        % Specify how to crop the image.  We don't want it all.
+        % Code further on makes the most sense if the image is square (because we
+        % define a square patch of cone mosaic when we build the sensor), so the
+        % cropped region should always be square.
+        calcParams.cropRect = [];
+        calcParams.S = [380 8 51];
+        calcParams.spatialDensity = [0 0.62 0.31 0.07];
+        
+        % Parameters for creating the sensor. OIvSensorScale is a parameter
+        % that, if set to a value > 0, will subsample the optical image to the
+        % size sensorFOV*OIvSensorScale.
+        calcParams.coneIntegrationTime = 0.050;
+        calcParams.sensorFOV = c.sensorFOV;
+        calcParams.OIvSensorScale = 0;
+        
+        % Specify the number of trials for each combination of Kp Kg as well as
+        % the range of illuminants to use (max 50).
+        calcParams.trainingSetSize = 1000;
+        calcParams.testingSetSize = 1000;
+        calcParams.illumLevels = 1:50;
+        
+        % Here we specify which data function and classification function to use.
+        calcParams.standardizeData = true;
+        calcParams.cFunction = 3;
+        calcParams.dFunction = 7;
+        calcParams.usePCA = true;
+        calcParams.numPCA = 400;
+        
+        % Kp represents the scale factor for the Poisson noise.  This is the
+        % realistic noise representation of the photons arriving at the retina.
+        % Therefore, there should always be at least 1x Kp.
+        calcParams.KpLevels = 1;
+        
+        % Kg is the scale factor for Gaussian noise.  The standard deviation of
+        % the Gaussian noise is equal to the square root of the mean
+        % photoisomerizations across the available target image samples.
+        calcParams.KgLevels = 0:3:30;
+        
+        % Update to calcIDStr to a uniformly formatted name
+        calcParams.calcIDStr = params2Name_FirstOrderModel(calcParams);
+        
+        %% Convert the images to cached scenes for more analysis
+        if (calcParams.CACHE_SCENES)
+            convertRBGImagesToSceneFiles(calcParams,calcParams.forceSceneCompute);
+        end
+        
+        %% Convert cached scenes to optical images
+        if (calcParams.CACHE_OIS)
+            convertScenesToOpticalimages(calcParams,calcParams.forceOICompute);
+        end
+        
+        %% Create data sets using the simple chooser model
+        if (calcParams.RUN_MODEL)
+            RunModel(calcParams,calcParams.overWriteFlag);
+        end
+        git
+        %% Calculate threshholds using chooser model data
+        if (calcParams.CALC_THRESH)
+            plotAllThresholds(calcParams.calcIDStr,'NoiseIndex',[0 1]);
+        end
     end
 end
 
-deleteOIForParallelComputing(c);
+% deleteOIForParallelComputing(c);
 exit;
 
 % end
