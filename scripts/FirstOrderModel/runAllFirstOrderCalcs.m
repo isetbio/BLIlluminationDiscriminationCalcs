@@ -106,7 +106,7 @@ parfor k1 = 1:numberofOI
         
         % Update to calcIDStr to a uniformly formatted name
         calcParams.calcIDStr = params2Name_FirstOrderModel(calcParams);
-        
+
         %% Convert the images to cached scenes for more analysis
         if (calcParams.CACHE_SCENES)
             convertRBGImagesToSceneFiles(calcParams,calcParams.forceSceneCompute);
