@@ -17,7 +17,7 @@
 % 7/29/15  xd                Renamed.
 
 %% Clear and initialize
-close all; ieInit; parpool(40);
+close all; ieInit; %parpool(50);
 
 %% Set identifiers to run
 calcIDStrs = {'SVM_Neutral_Control'};
@@ -66,7 +66,7 @@ parfor k1 = 1:length(theIndex)
     if exist(dirToRemovePath,'dir')
         % Need to specify the calibration file to use
         calcParams = assignCalibrationFile(calcParams);
-        
+
         % Specify how to crop the image.  We don't want it all.
         % Code further on makes the most sense if the image is square (because we
         % define a square patch of cone mosaic when we build the sensor), so the
@@ -74,6 +74,7 @@ parfor k1 = 1:length(theIndex)
         calcParams.cropRect = [];
         calcParams.S = [380 8 51];
         calcParams.spatialDensity = [0 0.62 0.31 0.07];
+
         
         % Parameters for creating the sensor. OIvSensorScale is a parameter
         % that, if set to a value > 0, will subsample the optical image to the
@@ -122,7 +123,7 @@ parfor k1 = 1:length(theIndex)
         if (calcParams.RUN_MODEL)
             RunModel(calcParams,calcParams.overWriteFlag);
         end
-
+        
         %% Calculate threshholds using chooser model data
         if (calcParams.CALC_THRESH)
             plotAllThresholds(calcParams.calcIDStr,'NoiseIndex',[0 1]);

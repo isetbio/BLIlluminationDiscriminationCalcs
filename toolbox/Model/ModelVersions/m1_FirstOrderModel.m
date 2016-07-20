@@ -123,6 +123,28 @@ for ii = 1:length(illumLevels);
     end
     % Print the time the calculation took
     fprintf('Calculation time for %s illumination step %u: %04.3f s\n',color,illumLevels(ii),toc);
+
+    % Update the last 5 correct and check if startKg needs to be shifted.
+    % If the average of the last 5 is greater than 99.5%, we set the
+    % remaining values for each illumination level for the startKg noise
+    % level to equal 100%. We then add 1 to the start Kg. This should
+    % provide a nice boost to performance speed without affecting the model
+    % results.
+    if ii >= 5
+        lastFiveCorrect = squeeze(results(ii-4:ii,1,startKg));
+%         fprintf(num2str(lastFiveCorrect'));
+%         fprintf([' StartKg: ' num2str(startKg) '\n']);
+        if mean(lastFiveCorrect) > 99.6 
+            results(ii+1:end,1,startKg) = 100;
+            startKg = startKg + 1;
+        end
+        
+        % If startKg is greater than the number of kg levels, break out of
+        % this loop (since the calculation has effectively ended).
+        if startKg > length(KgLevels)
+            break
+        end
+    end
 end
 end
 
