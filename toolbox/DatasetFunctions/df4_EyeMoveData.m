@@ -23,6 +23,16 @@ for ii = 1:n/2
     
     % Generate data using the target stimulus
     mosaic.emGenSequence(calcParams.numEMPositions,'em',calcParams.em);
+    
+    % Make sure EM is not out of bounds of our image, maybe this should be
+    % the other way around?
+    tempEM = mosaic.emPositions;
+    outOfBoundsX = abs(tempEM(:,1)) > calcParams.rowPadding;
+    outOfBoundsY = abs(tempEM(:,2)) > calcParams.colPadding;
+    tempEM(outOfBoundsX,1) = sign(tempEM(outOfBoundsX,1)) * calcParams.rowPadding;
+    tempEM(outOfBoundsY,2) = sign(tempEM(outOfBoundsY,2)) * calcParams.colPadding;
+    mosaic.emPositions = tempEM;
+    
     isomerizations = mosaic.applyEMPath(targetPool{randsample(numel(targetPool),1)},...
         'padRows',calcParams.rowPadding,'padCols',calcParams.colPadding);
     if calcParams.enableOS
@@ -34,6 +44,14 @@ for ii = 1:n/2
     % Generate a new eyemovement path if we are to use different paths
     if ~calcParams.useSameEMPath
         mosaic.emGenSequence(calcParams.numEMPositions,'em',calcParams.em);
+        % Make sure EM is not out of bounds of our image, maybe this should be
+        % the other way around?
+        tempEM = mosaic.emPositions;
+        outOfBoundsX = abs(tempEM(:,1)) > calcParams.rowPadding;
+        outOfBoundsY = abs(tempEM(:,2)) > calcParams.colPadding;
+        tempEM(outOfBoundsX,1) = sign(tempEM(outOfBoundsX,1)) * calcParams.rowPadding;
+        tempEM(outOfBoundsY,2) = sign(tempEM(outOfBoundsY,2)) * calcParams.colPadding;
+        mosaic.emPositions = tempEM;
     end
     
     % Generate the data using the comparison stimulus
