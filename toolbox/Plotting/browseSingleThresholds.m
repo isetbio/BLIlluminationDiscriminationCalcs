@@ -45,11 +45,12 @@ noiseIdx = 1;
 while ~strcmp(THE_ONE_KEY,'escape')
     if inaction
         dataToUse = squeeze(formattedData{colorIdx}(:,noiseIdx));
-        [threshold,params] = singleThresholdExtraction(dataToUse,70.9);
+        [threshold,params] = singleThresholdExtraction(dataToUse,70.9,calcParams.illumLevels);
         
         plotInfo = createPlotInfoStruct;
         plotInfo.fitColor = calcParams.colors{colorIdx}(1);
         plotInfo.title = sprintf('Noise Level: %d',noiseIdx);
+        plotInfo.stimLevels = calcParams.illumLevels;
         plotFitForSingleThreshold(plotInfo,dataToUse,threshold,params);
         set(gcf,'KeyPressFcn',@myKeyPress);
         inaction = false;

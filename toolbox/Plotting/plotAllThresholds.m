@@ -47,7 +47,7 @@ if isempty(thresholds)
     % Once the data has been nicely formatted, we can extract the thresholds.
     thresholds = zeros(size(formattedData{1},2),length(calcParams.colors));
     for ii = 1:size(thresholds,2)
-        thresholds(:,ii) = multipleThresholdExtraction(formattedData{ii},plotInfo.criterion);
+        thresholds(:,ii) = multipleThresholdExtraction(formattedData{ii},plotInfo.criterion,calcParams.illumLevels);
     end
     
     % Save the thresholds in the same folder
