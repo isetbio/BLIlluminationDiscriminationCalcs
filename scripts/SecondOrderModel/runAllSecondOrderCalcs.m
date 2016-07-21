@@ -11,7 +11,7 @@ function runAllSecondOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs = {'SVM_YesEM_Isom_CompareToEM_100ms'};
+calcIDStrs = {'SVM_YesEM_LinearOS_TestTheory_500ms'};
 
 %% Parameters of the calculation
 %
@@ -84,10 +84,10 @@ for k1 = 1:length(calcIDStrs)
     % the mean photoisomerizations across the available target image
     % samples. If os is enabled, this multiplies the outer segment noise
     % instead.
-    calcParams.KgLevels = 0:4:40;
+    calcParams.KgLevels = 1;
     
     % EMPositions represents the number of positions of eye movement to sample.  
-    calcParams.numEMPositions = 10;
+    calcParams.numEMPositions = 50;
     
     % Enable or disable certain aspects of fixational eye movement
     calcParams.enableTremor = true;
@@ -104,7 +104,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.useSameEMPath = true;
     
     % Whether to use OS code
-    calcParams.enableOS = false;
+    calcParams.enableOS = true;
     calcParams.OSType = 'linear'; % Types of OS, options are 'linear' 'biophys' 'identity'
     
     %% Convert the images to cached scenes for more analysis

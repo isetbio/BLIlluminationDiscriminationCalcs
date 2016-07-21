@@ -76,13 +76,13 @@ for k1 = 1:length(calcIDStrs)
     
     % Specify the number of trials for each combination of Kp Kg as well as
     % the range of illuminants to use (max 50).
-    calcParams.trainingSetSize = 1000;
-    calcParams.testingSetSize = 1000;
+    calcParams.trainingSetSize = 2000;
+    calcParams.testingSetSize = 0;
     calcParams.illumLevels = 1:50;
     
     % Here we specify which data function and classification function to use. 
     calcParams.standardizeData = true;
-    calcParams.cFunction = 3;
+    calcParams.cFunction = 5;
     calcParams.dFunction = 1;
     calcParams.usePCA = true;
     calcParams.numPCA = 100;
@@ -95,7 +95,7 @@ for k1 = 1:length(calcIDStrs)
     % Kg is the scale factor for Gaussian noise.  The standard deviation of 
     % the Gaussian noise is equal to the square root of the mean 
     % photoisomerizations across the available target image samples. 
-    calcParams.KgLevels = 0:4:40;
+    calcParams.KgLevels = 0:3:30;
     
     %% Convert the images to cached scenes for more analysis
     if (calcParams.CACHE_SCENES)

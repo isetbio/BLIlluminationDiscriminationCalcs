@@ -15,19 +15,19 @@ fov = 0.10; rng(1);
 % Multipliers for the noise we add. Isomerizations always have at least 1x
 % Poisson noise built in.
 osNoiseFactor = 1;
-isomNoiseFactor = 0;
+isomNoiseFactor = 10;
 
 % Determines how long the sample time for eye movements is and how many eye
 % movements to have.
-integrationTimeInSeconds = 0.001;
-numberOfEMPositions = 500;
+integrationTimeInSeconds = 0.010;
+numberOfEMPositions = 10;
 
 % Number of noise draws
 numberOfSamples = 100;
 
 comparisonStimLevel = 50;
 
-osType = 'biophys';
+osType = 'linear';
 
 % Type of cone to plot, 2 = L, 3 = M, 4 = S
 coneTypeToMatch = 2;
