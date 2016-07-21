@@ -1,4 +1,4 @@
-function [threshold, paramsValues] = singleThresholdExtraction(data, criterion)
+function [threshold, paramsValues] = singleThresholdExtraction(data,criterion,stimLevels)
 % [threshold, paramValues] = singleThresholdExtraction(data)
 % 
 % This function fits a cumulative Weibull to the data variable and returns
@@ -11,6 +11,8 @@ function [threshold, paramsValues] = singleThresholdExtraction(data, criterion)
 % that the criterion is given as a percentage.
 %
 % xd  6/21/16 wrote it
+
+if notDefined('stimLevels'), stimLevels = 1:length(data); end;
 
 %% Check to make sure data is fittable
 % We check the average value of the first 5 and last 5 numbers to get an
@@ -25,7 +27,6 @@ criterion      = criterion/100;
 paramsEstimate = [10 1 0.5 0];
 numTrials      = 100;
 paramsFree     = [1 1 0 0];
-stimLevels     = 1:length(data);
 outOfNum       = repmat(numTrials,1,length(data));
 PF             = @PAL_Weibull;
 

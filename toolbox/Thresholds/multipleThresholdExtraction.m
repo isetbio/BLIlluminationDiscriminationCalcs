@@ -1,4 +1,4 @@
-function [thresholds, paramsValues] = multipleThresholdExtraction(data, criterion)
+function [thresholds, paramsValues] = multipleThresholdExtraction(data,criterion,stimLevels)
 % [thresholds, paramsValues] = multipleThresholdExtraction(data)
 %
 % Given a NxM data matrix containing M sets of data with N datapoints in
@@ -16,7 +16,11 @@ paramsValues = zeros(size(data,2),4);
 
 %% Get thresholds
 for ii = 1:size(data,2)
-    [thresholds(ii), paramsValues(ii,:)] = singleThresholdExtraction(data(:,ii), criterion);
+    if notDefined('stimLevels')
+        [thresholds(ii),paramsValues(ii,:)] = singleThresholdExtraction(data(:,ii),criterion);
+    else
+        [thresholds(ii),paramsValues(ii,:)] = singleThresholdExtraction(data(:,ii),criterion,stimLevels);
+    end
 end
 
 end
