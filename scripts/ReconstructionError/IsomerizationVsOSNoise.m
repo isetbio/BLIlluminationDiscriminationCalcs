@@ -8,7 +8,7 @@
 %
 % 7/18/16  xd  wrote it
 
-ieInit; clear;
+% ieInit; clear;
 %% Set parameters
 fov = 0.10; rng(1);
 
@@ -19,18 +19,18 @@ isomNoiseFactor = 10;
 
 % Determines how long the sample time for eye movements is and how many eye
 % movements to have.
-integrationTimeInSeconds = 0.010;
-numberOfEMPositions = 10;
+integrationTimeInSeconds = 0.001;
+numberOfEMPositions = 500;
 
 % Number of noise draws
 numberOfSamples = 100;
 
 comparisonStimLevel = 50;
 
-osType = 'linear';
+osType = 'biophys';
 
 % Type of cone to plot, 2 = L, 3 = M, 4 = S
-coneTypeToMatch = 2;
+coneTypeToMatch = 3;
 
 %% Load optical images and create mosaic
 % Create a cone mosaic that will be used to calculate things throughout the
@@ -110,6 +110,7 @@ theIsomerizationToPlot = squeeze(isomerizationData(coneRow,coneCol,:))';
 theIsomerizationToPlotWithNoise = coneMosaic.photonNoise(repmat(theIsomerizationToPlot,numberOfSamples,1));
 theIsomerizationToPlotWithNoise = theIsomerizationToPlotWithNoise + ...
     isomNoiseFactor * gaussianStd * randn(size(theIsomerizationToPlotWithNoise));
+theIsomerizationToPlotWithNoise(theIsomerizationToPlotWithNoise<0) = 0;
 for ii = 1:numberOfSamples
     
     h = plot(xaxis,theIsomerizationToPlotWithNoise(ii,:),'m');
@@ -120,6 +121,7 @@ theIsomerizationToPlot2 = squeeze(isomerizationData2(coneRow,coneCol,:))';
 theIsomerizationToPlotWithNoise2 = coneMosaic.photonNoise(repmat(theIsomerizationToPlot2,numberOfSamples,1));
 theIsomerizationToPlotWithNoise2 = theIsomerizationToPlotWithNoise2 + ...
     isomNoiseFactor * gaussianStd2 * randn(size(theIsomerizationToPlotWithNoise2));
+theIsomerizationToPlotWithNoise2(theIsomerizationToPlotWithNoise2<0) = 0;
 for ii = 1:numberOfSamples
     h = plot(xaxis,theIsomerizationToPlotWithNoise2(ii,:),'c');
     h.Color(4) = 0.5;
