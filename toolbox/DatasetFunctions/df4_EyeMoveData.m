@@ -36,7 +36,7 @@ for ii = 1:n/2
     isomerizations = mosaic.applyEMPath(targetPool{randsample(numel(targetPool),1)},...
         'padRows',calcParams.rowPadding,'padCols',calcParams.colPadding);
     if calcParams.enableOS
-        isomerizations = mosaic.os.compute(isomerizations,mosaic.pattern);
+        isomerizations = mosaic.os.compute(isomerizations/mosaic.integrationTime,mosaic.pattern);
         calcParams.coneCurrentSize = size(isomerizations);
     end
     dataset{ii} = isomerizations(:)';
@@ -57,7 +57,7 @@ for ii = 1:n/2
     % Generate the data using the comparison stimulus
     isomerizations = mosaic.applyEMPath(comparisonPool{1},'padRows',calcParams.rowPadding,'padCols',calcParams.colPadding);
     if calcParams.enableOS
-        isomerizations = mosaic.os.compute(isomerizations,mosaic.pattern);
+        isomerizations = mosaic.os.compute(isomerizations/mosaic.integrationTime,mosaic.pattern);
     end
     dataset{ii+n/2} = isomerizations(:)';
 end
