@@ -52,7 +52,7 @@ mosaic.noiseFlag = 'none';
 mosaic.integrationTime = calcParams.coneIntegrationTime;
 mosaic.spatialDensity = calcParams.spatialDensity;
 
-if calcParams.MODEL_ORDER == 2
+if calcParams.MODEL_ORDER >= 2
     % Adjust eye movements
     calcParams.em = emCreate;
     calcParams.em = emSet(calcParams.em,'emFlag',[calcParams.enableTremor calcParams.enableDrift calcParams.enableMSaccades]);
