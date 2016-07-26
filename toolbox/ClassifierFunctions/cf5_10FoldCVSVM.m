@@ -12,4 +12,3 @@ svm = fitcsvm(trainingData,trainingClasses,'KernelScale','auto','CrossVal','on',
 percentCorrect = (1 - kfoldLoss(svm,'lossfun','classiferror'))*100;
 
 end
-

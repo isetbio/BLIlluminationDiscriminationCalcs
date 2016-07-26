@@ -17,7 +17,7 @@
 % 7/29/15  xd                Renamed.
 
 %% Clear and initialize
-close all; ieInit; %parpool(50);
+close all; ieInit; parpool(50);
 
 %% Set identifiers to run
 % calcIDStrs = {'Constant_Plot'};
@@ -31,16 +31,16 @@ close all; ieInit; %parpool(50);
 % on the structure at runtime to make sure our caches are consistent with
 % the current parameters being used.
 
-c.calcIDStr = 'SVM_Static_Isomerizations_NM1_TestRunToCheckNM2';
-c.cacheFolderList = {'NM1', 'NM1_FullImage'};
+c.calcIDStr = 'SVM_Static_Isomerizations_Constant';
+c.cacheFolderList = {'Constant', 'Constant_FullImage'};
 c.sensorFOV = 0.83;
-tempScene = loadSceneData([c.cacheFolderList{2} '/Standard'],'TestImage0');
+tempScene = loadSceneData([c.cacheFolderList{2} '/Standard'],'CT1blue0-RGB');
 numberofOI = numel(splitSceneIntoMultipleSmallerScenes(tempScene,c.sensorFOV));
 % numberofOI = generateOIForParallelComputing(c);
 
 % This part loops through the calculations for all caldIDStrs specified
-parfor k1 = 1:numberofOI
-    
+theIndex = 1:2:numberofOI;
+parfor k1 = 1:length(theIndex)
     % Define the steps of the calculation that should be carried out.
     calcParams.CACHE_SCENES = false;
     calcParams.forceSceneCompute = false; % Will overwrite any existing data.
@@ -55,7 +55,7 @@ parfor k1 = 1:numberofOI
     calcParams.CALC_THRESH = false;
     
     % Set the calcID
-    calcParams.calcIDStr = [c.calcIDStr '_' num2str(k1)];
+    calcParams.calcIDStr = [c.calcIDStr '_' num2str(theIndex(k1))];
     
     analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
     dirToRemovePath = fullfile(analysisDir,'OpticalImageData',calcParams.calcIDStr);

@@ -44,7 +44,7 @@ mosaic.wave = SToWls(calcParams.S);
 mosaic.noiseFlag = false;
 mosaic.integrationTime = calcParams.coneIntegrationTime;
 
-if calcParams.MODEL_ORDER == 2
+if calcParams.MODEL_ORDER >= 2
     % Adjust eye movements
     calcParams.em = emCreate;
     calcParams.em = emSet(calcParams.em,'emFlag',[calcParams.enableTremor calcParams.enableDrift calcParams.enableMSaccades]);

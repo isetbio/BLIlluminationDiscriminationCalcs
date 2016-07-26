@@ -1,10 +1,7 @@
-function results = m2_SecondOrderModel(calcParams,mosaic,color)
-% results = m2_SecondOrderModel(calcParams,sensor,color)
-%
-% The revamped code for the second order model. Computes and performs
-% classification on data with eye movements and/or cone currents. 
-%
-% xd  6/24/16  wrote it
+function results = m3_SOMParForTemp(calcParams,mosaic,color)
+%M3_SOMPARFORTEMP Summary of this function goes here
+%   Detailed explanation goes here
+
 
 %% Set values for variables that will be used through the function
 illumLevels     = calcParams.illumLevels;
@@ -93,7 +90,7 @@ for ii = 1:length(illumLevels)
     for jj = 1:length(KpLevels)
         Kp = KpLevels(jj);
         
-        for kk = startKg:length(KgLevels)
+        parfor kk = startKg:length(KgLevels)
             Kg = KgLevels(kk);
             
             %% Replace below with new code
@@ -149,4 +146,5 @@ for ii = 1:length(illumLevels)
 end
 
 end
+
 

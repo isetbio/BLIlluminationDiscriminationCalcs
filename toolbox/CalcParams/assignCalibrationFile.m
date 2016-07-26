@@ -20,9 +20,14 @@ switch (calcParams.calcIDStr)
         calcParams.calibrationFile = 'StereoLCDLeft';
         calcParams.distance = 0.764;
     otherwise
-%         error('Unknown calcIDStr set');
-        calcParams.calibrationFile = 'StereoLCDLeft';
-        calcParams.distance = 0.764;
+        %         error('Unknown calcIDStr set');
+        if ~isempty(strfind(calcParams.calcIDStr,'Constant'))
+            calcParams.calibrationFile = 'EyeTrackerLCDNew';
+            calcParams.distance = 0.683;
+        else
+            calcParams.calibrationFile = 'StereoLCDLeft';
+            calcParams.distance = 0.764;
+        end
 end
 updatedParams = calcParams;
 
