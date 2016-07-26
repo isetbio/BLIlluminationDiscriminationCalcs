@@ -1,4 +1,4 @@
-function runAllSecondOrderCalcs
+% function runAllSecondOrderCalcs
 % runAllSecondOrderCalcs
 %
 % Run the full set of calculations for the second order model in the
@@ -8,7 +8,7 @@ function runAllSecondOrderCalcs
 % 7/29/15  xd  renamed
 
 %% Clear and initialize
-close all; ieInit;
+close all; ieInit; parpool(12);
 
 %% Set identifiers to run
 calcIDStrs = {'SVM_YesEM_LinearOS_TestTheory_500ms'};
@@ -33,7 +33,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.forceOICompute = false;    % Will overwrite any existing data.
     
     calcParams.RUN_MODEL = true;
-    calcParams.MODEL_ORDER = 2;           % Which model to run
+    calcParams.MODEL_ORDER = 3;           % Which model to run
     calcParams.overWriteFlag = true;      % Whether or not to overwrite existing data. An overwrite is required to run the same calculation name again.
     
     calcParams.CALC_THRESH = false;
@@ -55,7 +55,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.spatialDensity = [0 0.62 0.31 0.07];
     
     % Parameters for creating the sensor
-    calcParams.coneIntegrationTime = 0.010;  % Integration time in ms. Also determines eye movement and os sampling interval
+    calcParams.coneIntegrationTime = 0.050;  % Integration time in ms. Also determines eye movement and os sampling interval
     calcParams.sensorFOV = 0.83;             % Visual angle defining the size of the sensor
     calcParams.OIvSensorScale = 0;
     
@@ -72,7 +72,7 @@ for k1 = 1:length(calcIDStrs)
     
     % Keep this as 4 since that is the only function that supports eye
     % movements and the outer segment.
-    calcParams.dFunction = 4;
+    calcParams.dFunction = 5;
     
     % Kp represents the scale factor for the Poisson noise.  This is the
     % realistic noise representation of the photons arriving at the retina.
@@ -85,10 +85,10 @@ for k1 = 1:length(calcIDStrs)
     % the mean photoisomerizations across the available target image
     % samples. If os is enabled, this multiplies the outer segment noise
     % instead.
-    calcParams.KgLevels = 1;
+    calcParams.KgLevels = 0:3:30;
     
     % EMPositions represents the number of positions of eye movement to sample.  
-    calcParams.numEMPositions = 50;
+    calcParams.numEMPositions = 2;
     
     % Enable or disable certain aspects of fixational eye movement
     calcParams.enableTremor = true;
@@ -129,4 +129,4 @@ for k1 = 1:length(calcIDStrs)
     end
 end
 
-end
+% end
