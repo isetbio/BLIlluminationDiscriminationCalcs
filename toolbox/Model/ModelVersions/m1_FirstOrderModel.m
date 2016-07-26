@@ -59,6 +59,7 @@ for ii = 1:length(illumLevels);
     oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' [color 'Illumination']],imageName);
     oiTest = resizeOI(oiTest,calcParams.sensorFOV*calcParams.OIvSensorScale);
     absorptionsTest = mosaic.compute(oiTest,'currentFlag',false);
+
     
     % Loop through the two different noise levels and perform the
     % calculation at each combination.

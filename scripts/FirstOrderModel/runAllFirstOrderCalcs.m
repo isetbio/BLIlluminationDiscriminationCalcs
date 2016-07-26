@@ -44,6 +44,7 @@ numberofOI = numel(splitSceneIntoMultipleSmallerScenes(tempScene,c.sensorFOV));
 % This part loops through the calculations for all caldIDStrs specified
 theIndex = 1:2:numberofOI;
 parfor k1 = 1:length(theIndex)
+
     % Define the steps of the calculation that should be carried out.
     calcParams.CACHE_SCENES = false;
     calcParams.forceSceneCompute = false; % Will overwrite any existing data.

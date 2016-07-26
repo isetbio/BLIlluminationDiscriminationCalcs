@@ -97,10 +97,10 @@ for ii = 1:length(illumSteps)
         testingData  = (testingData - repmat(m,testingSetSize,1)) ./ repmat(s,testingSetSize,1);
         
         % Train SVM on raw data
-%         tic
-%         theSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto','CacheSize','maximal');
-%         SVMrunTime(1,ii,jj) = toc;
-%         fprintf('SVM trained in %f seconds!\n',SVMrunTime(1,ii,jj));
+        tic
+        theSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto','CacheSize','maximal');
+        SVMrunTime(1,ii,jj) = toc;
+        fprintf('SVM trained in %f seconds!\n',SVMrunTime(1,ii,jj));
         
         % Train SVM on pca data
         tic
@@ -117,8 +117,8 @@ for ii = 1:length(illumSteps)
         fprintf('SVD in %f seconds!\n',toc);
         
         % Do classification
-%         predictedClasses = predict(theSVM,testingData);
-%         SVMpercentCorrect(1,ii,jj) = sum(predictedClasses == testingClasses)/testingSetSize;
+        predictedClasses = predict(theSVM,testingData);
+        SVMpercentCorrect(1,ii,jj) = sum(predictedClasses == testingClasses)/testingSetSize;
 
         predictedClasses = predict(pcaSVM,testingData*coeff);
         SVMpercentCorrect(2,ii,jj) = sum(predictedClasses == testingClasses)/testingSetSize;
@@ -129,6 +129,11 @@ for ii = 1:length(illumSteps)
 end
 
 %% Save the data
+<<<<<<< HEAD
 fileName = sprintf('SVMv%dPCAv250SVD.mat',numPCA);
 save(fileName,'SVMpercentCorrect','SVMrunTime','dimensions');
 
+=======
+fileName = sprintf('SVMv%dPCA.mat',num2str(numPCA));
+save(fileName,'SVMpercentCorrect','SVMrunTime','dimensions');
+>>>>>>> b131baf614f06c5a8f15d6ef6141bddf5f90ad3a
