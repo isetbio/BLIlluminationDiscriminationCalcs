@@ -48,5 +48,8 @@ isomerizations = isomerizations + Kp * nP + Kg * nG;
 % Photons are whole numbers
 isomerizations = round(isomerizations);     % Disable rounding for bug testing
 
+% No negatives
+% isomerizations(isomerizations<0) = 0;
+
 end
 

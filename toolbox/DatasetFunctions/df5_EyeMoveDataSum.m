@@ -1,14 +1,6 @@
-function [dataset,classes] = df4_EyeMoveData(calcParams,targetPool,comparisonPool,kp,kg,n,mosaic)
-% [dataset,classes] = df4_EMData(calcParams,targetPool,comparisonPool,kp,kg,n,mosaic)
-% 
-% Generates a data set meant to be used with the second order model.
-% Because temporal data quickly inflates the size of a vector, we abandon
-% the AB/BA data generation paradigm here. This function will generate eye
-% movements as well as do a outer segment calculation if the flags are set.
-% Noise will be chosen appropriate to where the calcuation ends (photon for
-% isomerizations and osNoise for cone currents)
-%
-% xd  7/11/16  wrote it
+function [dataset,classes] = df5_EyeMoveDataSum(calcParams,targetPool,comparisonPool,kp,kg,n,mosaic)
+%DF5_EYEMOVEDATASUM Summary of this function goes here
+%   Detailed explanation goes here
 
 %% Pre allocate space for data and classes
 dataset = cell(n,1);
@@ -39,6 +31,7 @@ for ii = 1:n/2
         isomerizations = mosaic.os.compute(isomerizations/mosaic.integrationTime,mosaic.pattern);
         calcParams.coneCurrentSize = size(isomerizations);
     end
+    isomerizations = sum(isomerizations,3);
     dataset{ii} = isomerizations(:)';
     
     % Generate a new eyemovement path if we are to use different paths
@@ -59,6 +52,7 @@ for ii = 1:n/2
     if calcParams.enableOS
         isomerizations = mosaic.os.compute(isomerizations/mosaic.integrationTime,mosaic.pattern);
     end
+    isomerizations = sum(isomerizations,3);
     dataset{ii+n/2} = isomerizations(:)';
 end
 

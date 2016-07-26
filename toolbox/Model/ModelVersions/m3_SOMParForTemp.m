@@ -1,13 +1,7 @@
-function results = m1_FirstOrderModel(calcParams,mosaic,color)
-% results = m1_FirstOrderModel(calcParams,sensor,color)
-%
-% This function performs the computational observer calculation on a 'First
-% Order' level. By this, we mean that a static cone mosaic (without eye
-% movement) is used to calculate the number of isomerizations given a
-% scene. This information is used in desired classification function to
-% simulate our illumination discrimination experiment.
-%
-% xd  6/23/16  moved out of old code
+function results = m3_SOMParForTemp(calcParams,mosaic,color)
+%M3_SOMPARFORTEMP Summary of this function goes here
+%   Detailed explanation goes here
+
 
 %% Set values for variables that will be used through the function
 illumLevels     = calcParams.illumLevels;
@@ -17,69 +11,99 @@ trainingSetSize = calcParams.trainingSetSize;
 testingSetSize  = calcParams.testingSetSize;
 analysisDir     = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 
-%% Load standard optical images
-% We will load the pool of standard OI's here. The reason we have multiple
-% copies of these is to reduce the effect of rendering noise when we
-% perform the calculations. We also calculate the mean photon isomerization
-% here to be used for Gaussian noise later on.
+%% Load standard stuff
+% The way we store these data is that we keep the full sized OI as well as
+% the LMS absorptions as well as a mask which tells us which cones are at
+% each location. This allows for easy extraction of the cone signal at a
+% given location.
 folderPath = fullfile(analysisDir,'OpticalImageData',calcParams.cacheFolderList{2},'Standard');
 standardOIList = getFilenamesInDirectory(folderPath);
-standardPool = cell(1, length(standardOIList));
-calcParams.meanStandard = 0;
+standardPool = cell(1,length(standardOIList));
 for ii = 1:length(standardOIList)
     opticalImageName = standardOIList{ii};
     opticalImageName = strrep(opticalImageName,'OpticalImage.mat','');
     oi = loadOpticalImageData(fullfile(calcParams.cacheFolderList{2},'Standard'),opticalImageName);
     oi = resizeOI(oi,calcParams.sensorFOV*calcParams.OIvSensorScale);
-    
-    absorptionsStandard = mosaic.compute(oi,'currentFlag',false);
-    calcParams.meanStandard = calcParams.meanStandard + mean2(absorptionsStandard)/length(standardOIList);
-    standardPool{ii} = absorptionsStandard;
+    standardPool{ii} = oi;
 end
 
-%% Get a list of images
-% Here we load all the names of the optical images in the given folder
-% name. These are loaded alphanumerically so we can just index them freely.
-% Note: Alphanumerical loading presumes that the files are named in
-% alphanumeric order (image1, image2, image3,... etc.).
+%% Set up eye movement things
+% If saccadic movement is desired, the boundary of possible movement
+% locations will be set to the size of the optical image, allowing for
+% saccadic movement over the whole image.
+tempMosaic = mosaic.copy;
+tempMosaic.fov = oiGet(standardPool{1},'fov');
+
+% Our lives will be easier if the difference in mosaic sizes is even. The
+% values are used for some indexing scheme in the compute functions. There
+% may be some way to fix it but I have no interest in giving myself a
+% headache.
+colPadding = (tempMosaic.cols-mosaic.cols)/2;
+rowPadding = (tempMosaic.rows-mosaic.rows)/2;
+if mod(colPadding,1), tempMosaic.cols = tempMosaic.cols + 1; end
+if mod(rowPadding,1), tempMosaic.rows = tempMosaic.rows + 1; end
+calcParams.colPadding = (tempMosaic.cols-mosaic.cols)/2;
+calcParams.rowPadding = (tempMosaic.rows-mosaic.rows)/2;
+
+% The LMS mask thus is the whole image. Here we precompute it for the
+% standard image pool. Normally, the mean isomerizations in the stardard
+% images are calculated too in case some form of Gaussian noise is desired.
+% Because we can't really predict what the eye movements will be (and thus
+% what paths will be sampled) ahead of time, we will just the mean of the
+% entire LMS mask.
+calcParams.meanStandard = 0;
+for qq = 1:length(standardPool)
+    standardPool{qq} = tempMosaic.computeSingleFrame(standardPool{qq},'FullLMS',true);
+    
+    % Need to multiply mask with actual mosaic
+    tempMask = zeros([size(tempMosaic.pattern) 3]);
+    for ii = 2:4
+        tempMask(:,:,ii-1) = single(tempMosaic.pattern==ii);
+    end
+    calcParams.meanStandard = calcParams.meanStandard + mean2(sum(standardPool{qq}.*tempMask,3))/length(standardPool);
+end
+clearvars tempMask
+
+%% Calculation Body
+% Get a list of images
 folderPath = fullfile(analysisDir,'OpticalImageData',calcParams.cacheFolderList{2},[color 'Illumination']);
 OINamesList = getFilenamesInDirectory(folderPath);
 
 % Set a starting Kg value. This will allow us to stop calculating Kg values
 % when it is clear the remaining stimulus levels will return 100%. We set
-% this to be the last 5 by default.
+% this by checking the last five calculated performance values.
 startKg = 1;
 
-%% Do the actual calculation here
+% Preallocate space for the results of the calculations
 results = zeros(length(illumLevels),length(KpLevels),length(KgLevels));
-for ii = 1:length(illumLevels);
-    % Precompute the test optical image to save computational time.
+for ii = 1:length(illumLevels)
+    % Precompute the LMS for the test pool as well.
     imageName = OINamesList{illumLevels(ii)};
     imageName = strrep(imageName,'OpticalImage.mat','');
     oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' [color 'Illumination']],imageName);
     oiTest = resizeOI(oiTest,calcParams.sensorFOV*calcParams.OIvSensorScale);
-    absorptionsTest = mosaic.compute(oiTest,'currentFlag',false);
+    LMS = tempMosaic.computeSingleFrame(oiTest,'FullLMS',true);
+    testPool = {LMS};
     
-    % Loop through the two different noise levels and perform the
-    % calculation at each combination.
+    % Loop through the k values
     tic
     for jj = 1:length(KpLevels)
         Kp = KpLevels(jj);
         
-        for kk = startKg:length(KgLevels);
+        parfor kk = startKg:length(KgLevels)
             Kg = KgLevels(kk);
             
-            % Choose the data generation function
+            %% Replace below with new code
             datasetFunction = masterDataFunction(calcParams.dFunction);
-            [trainingData, trainingClasses] = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,trainingSetSize);
-            [testingData, testingClasses]   = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,testingSetSize);
+            [trainingData,trainingClasses] = datasetFunction(calcParams,standardPool,testPool,Kp,Kg,trainingSetSize,mosaic);
+            [testingData,testingClasses]   = datasetFunction(calcParams,standardPool,testPool,Kp,Kg,testingSetSize,mosaic);
             
             % Standardize data if flag is set to true
             if calcParams.standardizeData
                 m = mean(trainingData,1);
                 s = std(trainingData,1);
                 trainingData = (trainingData - repmat(m,trainingSetSize,1)) ./ repmat(s,trainingSetSize,1);
-                testingData  = (testingData - repmat(m,testingSetSize,1))   ./ repmat(s,testingSetSize,1);
+                testingData  = (testingData - repmat(m,testingSetSize,1)) ./ repmat(s,testingSetSize,1);
             end
             
             if calcParams.usePCA
@@ -89,14 +113,15 @@ for ii = 1:length(illumLevels);
                 testingData = testingData*coeff;
             end
             
-            % Compute performance based on chosen classifier method
+            % Perform classification
             classifierFunction = masterClassifierFunction(calcParams.cFunction);
             results(ii,jj,kk) = classifierFunction(trainingData,testingData,trainingClasses,testingClasses);
         end
     end
+    
     % Print the time the calculation took
     fprintf('Calculation time for %s illumination step %u: %04.3f s\n',color,illumLevels(ii),toc);
-
+    
     % Update the last 5 correct and check if startKg needs to be shifted.
     % If the average of the last 5 is greater than 99.5%, we set the
     % remaining values for each illumination level for the startKg noise
@@ -119,5 +144,7 @@ for ii = 1:length(illumLevels);
         end
     end
 end
+
 end
+
 
