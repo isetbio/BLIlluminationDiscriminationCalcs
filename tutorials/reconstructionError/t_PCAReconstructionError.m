@@ -13,19 +13,20 @@ ieInit;
 
 % Some parameters common to both static and eye movement calculations
 numPCA = 100;
+numEMPCA = 425;
 wave = [380 8 51];
 dataSetSize = 1000;
 
 % Some paramters of the static cone mosaic.
 staticMosaicParams.fov = 0.83;
-staticMosaicParams.integrationTimeInSeconds = 0.050;
+staticMosaicParams.integrationTimeInSeconds = 0.100;
 
 % Some parameters of the eye movement cone mosaic. We want to keep the fov
 % for both mosaic the same to ensure they are the same size.
 emMosaicParams.fov = staticMosaicParams.fov;
 emMosaicParams.integrationTimeInSeconds = 0.010;
-emMosaicParams.numberOfEM = 5;
-emMosaicParams.currentFlag = true;
+emMosaicParams.numberOfEM = 10;
+emMosaicParams.currentFlag = false;
 emMosaicParams.osType = 'linear';
 
 %% Create the cone mosaics
@@ -37,11 +38,11 @@ masterMosaic.fov = staticMosaicParams.fov;
 
 % Static Mosaic
 staticMosaic = masterMosaic.copy;
-staticMosaic.integrationTime = staticMosaicParams.integrationTimeInMS;
+staticMosaic.integrationTime = staticMosaicParams.integrationTimeInSeconds;
 
 % EM Mosaic
 emMosaic = masterMosaic.copy;
-emMosaic.integrationTime = emMosaicParams.integrationTimeInMS;
+emMosaic.integrationTime = emMosaicParams.integrationTimeInSeconds;
 emMosaic.os = osCreate(emMosaicParams.osType);
 
 %% Load optical image data.
@@ -87,7 +88,12 @@ projectedStaticDataset = staticDataset*staticCoeff;
 
 % Reconstruct data and calculate error
 reconstructStaticData = projectedStaticDataset*staticCoeff';
-staticError = norm(staticDataset(:)-reconstructStaticData(:))/norm(staticDataset(:));
+staticError = norm(staticDataset(:)-reconstructStaticData(:));
+staticPercentError = staticError/norm(staticDataset(:));
+
+fprintf('\n');
+fprintf('The static reconstruction from PCA has absolute error : %4.4f \n',staticError);
+fprintf('The static reconstruction from PCA has percent error : %2.2f \n',100*staticPercentError);
 
 clearvars staticDataset staticCoeff m s reconstructStaticData
 
@@ -116,12 +122,16 @@ s = std(EMIsomDataset);
 EMIsomDataset = (EMIsomDataset - repmat(m,dataSetSize,1)) ./ repmat(s,dataSetSize,1);
 
 % Do pca
-EMIsomCoeff = pca(EMIsomDataset,'NumComponents',numPCA);
+EMIsomCoeff = pca(EMIsomDataset,'NumComponents',numEMPCA);
 projectedEMIsomDataset = EMIsomDataset*EMIsomCoeff;
 
 % Reconstruct data and calculate error
 reconstructEMIsomData = projectedEMIsomDataset*EMIsomCoeff';
-EMIsomError = norm(EMIsomDataset(:)-reconstructEMIsomData(:))/norm(EMIsomDataset(:));
+EMIsomError = norm(EMIsomDataset(:)-reconstructEMIsomData(:));
+EMIsomPercentError = EMIsomError/norm(EMIsomDataset(:));
+
+fprintf('The EMIsom reconstruction from PCA has absolute error : %4.4f \n',EMIsomError);
+fprintf('The EMIsom reconstruction from PCA has percent error : %2.2f \n',100*EMIsomPercentError);
 
 clearvars EMIsomDataset EMIsomCoeff m s reconstructEMIsomData
 
@@ -130,7 +140,7 @@ clearvars EMIsomDataset EMIsomCoeff m s reconstructEMIsomData
 % We'll use the same settings as the EM Isomerizations case but with the OS
 % turned on.
 calcParams.enableOS = true;
-EMCurrDataset = df4_EyeMoveData(calcParams,EMStandardIsomerizations,{EMComparisonIsomerizations},1,0,dataSetSize,emMosaic);
+EMCurrDataset = df4_EyeMoveData(calcParams,EMStandardIsomerizations,{EMComparisonIsomerizations},1,1,dataSetSize,emMosaic);
 
 % Standardize the data
 m = mean(EMCurrDataset);
@@ -138,11 +148,15 @@ s = std(EMCurrDataset);
 EMCurrDataset = (EMCurrDataset - repmat(m,dataSetSize,1)) ./ repmat(s,dataSetSize,1);
 
 % Do pca
-EMCurrCoeff = pca(EMCurrDataset,'NumComponents',numPCA);
+EMCurrCoeff = pca(EMCurrDataset,'NumComponents',numEMPCA);
 projectedEMCurrDataset = EMCurrDataset*EMCurrCoeff;
 
 % Reconstruct data and calculate error
 reconstructEMCurrData = projectedEMCurrDataset*EMCurrCoeff';
-EMCurrError = norm(EMCurrDataset(:)-reconstructEMCurrData(:))/norm(EMCurrDataset(:));
+EMCurrError = norm(EMCurrDataset(:)-reconstructEMCurrData(:));
+EMCurrPercentError = EMCurrError/norm(EMCurrDataset(:));
+
+fprintf('The EMCurr reconstruction from PCA has absolute error : %4.4f \n',EMCurrError);
+fprintf('The EMCurr reconstruction from PCA has percent error : %2.2f \n',100*EMCurrPercentError);
 
 clearvars EMIsomDataset EMIsomCoeff m s reconstructEMCurrData

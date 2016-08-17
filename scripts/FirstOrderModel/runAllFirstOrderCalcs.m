@@ -24,7 +24,7 @@ close all; ieInit;
 %     'StaticPhoton_NM2_S2_6' 'StaticPhoton_NM2_S2_7' 'StaticPhoton_NM2_S2_8' 'StaticPhoton_NM2_S2_9' 'StaticPhoton_NM2_S2_10'...
 %     'StaticPhoton_NM2_S2_11' 'StaticPhoton_NM2_S2_12' 'StaticPhoton_NM2_S2_13' 'StaticPhoton_NM2_S2_14'...
 %     'StaticPhoton_NM2_S2_15' 'StaticPhoton_NM2_S2_1'};
-  calcIDStrs = {'SVM_Static_Isom_CompareToEM_100ms'};
+  calcIDStrs = {'Neutral_FullImage'};
 %% Parameters of the calculation
 %
 % We'll define this as a structure, with the fields providing the name of
@@ -38,13 +38,13 @@ close all; ieInit;
 for k1 = 1:length(calcIDStrs)
     
     % Define the steps of the calculation that should be carried out.
-    calcParams.CACHE_SCENES = false;
-    calcParams.forceSceneCompute = false; % Will overwrite any existing data.
+    calcParams.CACHE_SCENES = true;
+    calcParams.forceSceneCompute = true; % Will overwrite any existing data.
     
     calcParams.CACHE_OIS = false;
     calcParams.forceOICompute = false;    % Will overwrite any existing data.
     
-    calcParams.RUN_MODEL = true;
+    calcParams.RUN_MODEL = false;
     calcParams.MODEL_ORDER = 1; 
     calcParams.overWriteFlag = true;      % Whether or not to overwrite existing data.
     
@@ -54,8 +54,8 @@ for k1 = 1:length(calcIDStrs)
     calcParams.calcIDStr = calcIDStrs{k1};
     
     % Folder list to run over for conversions into isetbio format
-%     calcParams = updateCacheFolderList(calcParams);
-    calcParams.cacheFolderList = {'Neutral' 'SVM_Static_Interp_End_60'};
+    calcParams = updateCacheFolderList(calcParams);
+%     calcParams.cacheFolderList = {'Neutral' 'Neutral_FullImage'};
     % Need to specify the calibration file to use
     calcParams = assignCalibrationFile(calcParams);
     
@@ -63,26 +63,26 @@ for k1 = 1:length(calcIDStrs)
     % Code further on makes the most sense if the image is square (because we
     % define a square patch of cone mosaic when we build the sensor), so the
     % cropped region should always be square.
-%     calcParams = updateCropRect(calcParams);  
-    calcParams.cropRect = [];
+    calcParams = updateCropRect(calcParams);  
+%     calcParams.cropRect = [];
     calcParams.S = [380 8 51];
         
     % Parameters for creating the sensor. OIvSensorScale is a parameter
     % that, if set to a value > 0, will subsample the optical image to the
     % size sensorFOV*OIvSensorScale.
-    calcParams.coneIntegrationTime = 0.100;
+    calcParams.coneIntegrationTime = 0.050;
     calcParams.sensorFOV = 0.83;
     calcParams.OIvSensorScale = 0;
     
     % Specify the number of trials for each combination of Kp Kg as well as
     % the range of illuminants to use (max 50).
-    calcParams.trainingSetSize = 2000;
-    calcParams.testingSetSize = 0;
+    calcParams.trainingSetSize = 1000;
+    calcParams.testingSetSize = 1000;
     calcParams.illumLevels = 1:50;
     
     % Here we specify which data function and classification function to use. 
     calcParams.standardizeData = true;
-    calcParams.cFunction = 5;
+    calcParams.cFunction = 3;
     calcParams.dFunction = 1;
     calcParams.usePCA = true;
     calcParams.numPCA = 100;
