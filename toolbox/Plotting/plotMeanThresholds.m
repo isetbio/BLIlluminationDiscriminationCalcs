@@ -1,4 +1,4 @@
-function plotMeanThresholds(calcIDStr,noiseLevels)
+function plotMeanThresholds(calcIDStr)
 % plotMeanThresholds(calcIDStr)
 % 
 % Plots the mean thresholds against noise for an input calcIDStr, which is
@@ -13,6 +13,8 @@ function plotMeanThresholds(calcIDStr,noiseLevels)
 %% Load and calculate mean thresholds
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 calcIDList = getAllSubdirectoriesContainingString(fullfile(analysisDir,'SimpleChooserData'),calcIDStr);
+[~,calcParams] = loadModelData(calcIDList{1});
+noiseLevels = calcParams.KgLevels;
 t = meanThresholdOverSamples(calcIDList,70.9);
 
 %% Plot

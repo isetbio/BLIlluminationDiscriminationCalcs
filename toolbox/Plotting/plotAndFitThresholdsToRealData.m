@@ -14,6 +14,8 @@ parser = inputParser;
 parser.addParameter('ThresholdError',[],@isnumeric);
 parser.addParameter('DataError',zeros(size(data)),@isnumeric);
 parser.addParameter('NoiseLevel',-1,@isnumeric);
+parser.addParameter('NoiseVector',[],@isnumeric);
+parser.addParameter('NewFigure',true,@islogical);
 parser.parse(varargin{:});
 
 thresholdError = parser.Results.ThresholdError;
@@ -29,6 +31,7 @@ if size(thresholds,2) ~= length(data), error('thresholds and data size are not m
 % can then linearly interpolate up/down 1 entry to find a better fit.
 thresholdDistToData = thresholds - repmat(data(:)',size(thresholds,1),1);
 meanThresholdDistToData = mean(thresholdDistToData,2);
+% meanThresholdDistToData = sqrt(sum(thresholdDistToData.^2,2));
 
 % Since we want the minimal distance, we find the minimum magnitude. Then
 % we can interpolate using the actual values.
@@ -41,9 +44,12 @@ pointToInterpolate = idx;
 fittedThresholds = thresholds(idx,:);
 fittedError = zeros(size(fittedThresholds));
 interpolatedPoint = idx;
-if sign(meanThresholdDistToData(idx)) ~= sign(meanThresholdDistToData(idx + 1)), pointToInterpolate = idx + 1;
-elseif sign(meanThresholdDistToData(idx)) ~= sign(meanThresholdDistToData(idx - 1)), pointToInterpolate = idx - 1; end;
-
+if idx == length(meanThresholdDistToData) 
+    if sign(meanThresholdDistToData(idx)) ~= sign(meanThresholdDistToData(idx - 1)), pointToInterpolate = idx - 1; end;
+else
+    if sign(meanThresholdDistToData(idx)) ~= sign(meanThresholdDistToData(idx + 1)), pointToInterpolate = idx + 1;
+    elseif sign(meanThresholdDistToData(idx)) ~= sign(meanThresholdDistToData(idx - 1)), pointToInterpolate = idx - 1; end;
+end
 % Check against NaN
 if isnan(meanThresholdDistToData(pointToInterpolate)), pointToInterpolate = idx; end;
 
@@ -77,11 +83,20 @@ end
 %% Plot
 figParams = BLIllumDiscrFigParams([],'FitThresholdToData');
 if ~isempty(plotInfo.colors), figParams.colors = plotInfo.colors; end;
-plotInfo.title = sprintf('Data fitted at %.3f noise',interpolatedPoint);
+noiseVector = parser.Results.NoiseVector;
+if ~isempty(noiseVector)
+    interpNoise = noiseVector(floor(interpolatedPoint)) + (interpolatedPoint-floor(interpolatedPoint))*(noiseVector(2)-noiseVector(1));
+else
+    interpNoise = interpolatedPoint;
+end
+plotInfo.title = sprintf('Data fitted at %.3f noise',interpNoise);
 plotInfo.xlabel = 'Illumination Direction';
 plotInfo.ylabel = 'Stimulus Level (\DeltaE)';
 
-figure('Position',figParams.sqPosition); hold on;
+if parser.Results.NewFigure
+    figure('Position',figParams.sqPosition);
+end
+hold on;
 for ii = 1:length(data)
     errorbar(ii,data(ii),dataError(ii),figParams.markerType,'Color',figParams.colors{ii},...
         'MarkerFaceColor',figParams.colors{ii},'MarkerSize',figParams.markerSize,...
@@ -93,16 +108,18 @@ fittedThresholdHandle = errorbar(1:length(data),fittedThresholds,fittedError,...
 
 % Do some plot manipulations to make it look nice
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
-set(gca,'XTickLabel',figParams.XTickLabel);
+set(gca,'XTickLabel',figParams.XTickLabel,'XTick',figParams.XTick);
 set(gca,'YGrid','on');
 axis square;
-ylim(figParams.ylimit);
+% ylim(figParams.ylimit);
+ylim([0 50]);
 xlim(figParams.xlimit);
 
 legend(fittedThresholdHandle,{'Model Data'},'FontSize',figParams.legendFontSize); 
 xl = xlabel(plotInfo.xlabel,'FontSize',figParams.labelFontSize);
 yl = ylabel(plotInfo.ylabel,'FontSize',figParams.labelFontSize);
 t = title(plotInfo.title,'FontSize',figParams.titleFontSize);
-yl.Position = yl.Position + figParams.deltaYlabelPosition;
-xl.Position = xl.Position + figParams.deltaXlabelPosition;
-
+if parser.Results.NewFigure
+    yl.Position = yl.Position + figParams.deltaYlabelPosition;
+    xl.Position = xl.Position + figParams.deltaXlabelPosition;
+end
