@@ -37,15 +37,20 @@ end
 
 % Count how many NaN there are in the matrix
 validThresholds = meanThreshold > 0;
-[~,c] = find(validThresholds == 0);
-validThresholds(:,c) = false;
+for ii  = 1:size(validThresholds,2)
+    for jj = 1:size(validThresholds,3)
+        colSum = sum(validThresholds(:,ii,jj));
+        if colSum < 0.95 * size(validThresholds,1)
+            validThresholds(:,ii,jj) = false;
+        end
+    end
+end
+
 meanThreshold = meanThreshold .* double(int32(validThresholds));
+meanThreshold(meanThreshold == 0) = NaN;
 stdErr = squeeze(nanstd(meanThreshold,[],1)/sqrt(length(calcIDList)));
 
-% Set the NaN to 0 to calulcate mean
-meanThreshold(~validThresholds) = 0;
-meanThreshold = squeeze(mean(meanThreshold,1));
-meanThreshold(meanThreshold == 0) = NaN;
+meanThreshold = squeeze(nanmean(meanThreshold,1));
 
 end
 

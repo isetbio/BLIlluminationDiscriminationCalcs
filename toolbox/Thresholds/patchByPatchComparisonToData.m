@@ -17,10 +17,6 @@ NeutralExp = [data.meanMatchedBlue data.meanMatchedGreen data.meanMatchedRed dat
 NM1Exp = [data.meanNonMatched1Blue data.meanNonMatched1Green data.meanNonMatched1Red data.meanNonMatched1Yellow];
 NM2Exp = [data.meanNonMatched2Blue data.meanNonMatched2Green data.meanNonMatched2Red data.meanNonMatched2Yellow];
 
-[~,NeutralExpRank] = sort(NeutralExp);
-[~,NM1ExpRank] = sort(NM1Exp);
-[~,NM2ExpRank] = sort(NM2Exp);
-
 %% Loop over patches
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 NeutralList = getAllSubdirectoriesContainingString(fullfile(analysisDir,'SimpleChooserData'),NeutralFolder);
@@ -40,29 +36,40 @@ for ii = 1:length(NeutralList)
     NM1Data(any(isnan(NM1Data),2),:) = NaN;
     NM2Data(any(isnan(NM2Data),2),:) = NaN;
     
-    % Calculate difference from experimental
-    NeutralDiff = NeutralData - repmat(NeutralExp,size(NeutralData,1),1);
-    NM1Diff = NM1Data - repmat(NM1Exp,size(NM1Data,1),1);
-    NM2Diff = NM2Data - repmat(NM2Exp,size(NM2Data,1),1);
+    % Cosine
+    distanceMetric(ii,1,:) = dot(NeutralData,repmat(NeutralExp,size(NeutralData,1),1),2);
+    distanceMetric(ii,2,:) = dot(NM1Data,repmat(NM1Exp,size(NM1Data,1),1),2);
+    distanceMetric(ii,3,:) = dot(NM2Data,repmat(NM2Exp,size(NM2Data,1),1),2);
     
-    % Calculate distance??
-    distanceMetric(ii,1,:) = sqrt(sum(NeutralDiff,2).^2);
-    distanceMetric(ii,2,:) = sqrt(sum(NM1Diff,2).^2);
-    distanceMetric(ii,3,:) = sqrt(sum(NM2Diff,2).^2);
-    
-    % Calculate rank
-    [~,NeutralModelRank] = sort(NeutralData,2);
-    [~,NM1ModelRank] = sort(NM1Data,2);
-    [~,NM2ModelRank] = sort(NM2Data,2);
-    
-    NeutralRankEq = NeutralModelRank == repmat(NeutralExpRank,size(NeutralData,1),1);
-    NM1RankEq = NM1ModelRank == repmat(NM1ExpRank,size(NM1Data,1),1);
-    NM2RankEq = NM2ModelRank == repmat(NM2ExpRank,size(NM2Data,1),1);
-    
-    % Calculate weighted distance
-    distanceMetric(ii,1,:) = squeeze(distanceMetric(ii,1,:)) .* (1 + sum(NeutralRankEq,2));
-    distanceMetric(ii,2,:) = squeeze(distanceMetric(ii,2,:)) .* (1 + sum(NM1RankEq,2));
-    distanceMetric(ii,3,:) = squeeze(distanceMetric(ii,3,:)) .* (1 + sum(NM2RankEq,2)); 
+    % Normalize by vector length
+    distanceMetric(ii,1,:) = squeeze(distanceMetric(ii,1,:)) ./ (sqrt(sum(NeutralData,2))*norm(NeutralExp));
+    distanceMetric(ii,2,:) = squeeze(distanceMetric(ii,2,:)) ./ (sqrt(sum(NM1Data,2))*norm(NM1Exp));
+    distanceMetric(ii,3,:) = squeeze(distanceMetric(ii,3,:)) ./ (sqrt(sum(NM2Data,2))*norm(NM2Exp));
+
+        
+%     % Calculate difference from experimental
+%     NeutralDiff = NeutralData - repmat(NeutralExp,size(NeutralData,1),1);
+%     NM1Diff = NM1Data - repmat(NM1Exp,size(NM1Data,1),1);
+%     NM2Diff = NM2Data - repmat(NM2Exp,size(NM2Data,1),1);
+%     
+%     % Calculate distance??
+%     distanceMetric(ii,1,:) = sqrt(sum(NeutralDiff,2).^2);
+%     distanceMetric(ii,2,:) = sqrt(sum(NM1Diff,2).^2);
+%     distanceMetric(ii,3,:) = sqrt(sum(NM2Diff,2).^2);
+%     
+%     % Calculate rank
+%     [~,NeutralModelRank] = sort(NeutralData,2);
+%     [~,NM1ModelRank] = sort(NM1Data,2);
+%     [~,NM2ModelRank] = sort(NM2Data,2);
+%     
+%     NeutralRankEq = NeutralModelRank == repmat(NeutralExpRank,size(NeutralData,1),1);
+%     NM1RankEq = NM1ModelRank == repmat(NM1ExpRank,size(NM1Data,1),1);
+%     NM2RankEq = NM2ModelRank == repmat(NM2ExpRank,size(NM2Data,1),1);
+%     
+%     % Calculate weighted distance
+%     distanceMetric(ii,1,:) = squeeze(distanceMetric(ii,1,:)) .* (1 + sum(NeutralRankEq,2));
+%     distanceMetric(ii,2,:) = squeeze(distanceMetric(ii,2,:)) .* (1 + sum(NM1RankEq,2));
+%     distanceMetric(ii,3,:) = squeeze(distanceMetric(ii,3,:)) .* (1 + sum(NM2RankEq,2)); 
 end
 
 end
