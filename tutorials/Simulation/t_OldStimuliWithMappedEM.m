@@ -7,7 +7,7 @@
 %
 % 8/16/15  xd  wrote it
 
-clear; close all; ieInit; 
+clear; %close all; ieInit; 
 %% Set some parameters
 
 % The order of the subjects in the data file.
@@ -71,6 +71,7 @@ for ii = 1:4
     t{ii} = multipleThresholdExtraction(squeeze(results(ii,:,:)),70.9);
 end
 t = cell2mat(t);
+t = t(:,[1 4 2 3]);
 
 % Some plot things
 pI = createPlotInfoStruct;
@@ -84,7 +85,7 @@ pI.title  = 'Thresholds v Noise';
 % Load experimental data. Then fit and plot best fits. Also replace title
 % with something sensible.
 load('EasyFormatExp5Data.mat');
-plotAndFitThresholdsToRealData(pI,t,neutral,'DataError',neutralSE,'NoiseVector',0:3:30,'NewFigure',true);
+plotAndFitThresholdsToRealData(pI,t,neutral([1 4 2 3]),'DataError',neutralSE([1 4 2 3]),'NoiseVector',0:3:30,'NewFigure',true,'NoiseLevel',9);
 theTitle = get(gca,'title');
 theTitle = strrep(theTitle.String,'Data fitted at',[titleTag ',']);
 title(theTitle);
