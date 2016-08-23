@@ -89,13 +89,13 @@ for ii = 1:4
     dataRange = ((ii - 1)*5000+1:ii*5000) + 100;
     plot(dataMatrix(dataRange,PC1),dataMatrix(dataRange,PC2),'.','Color',colors{ii});
 end
-desiredIllumStep = 10;
-for ii = 1:4
-    dataStart = (ii - 1)*5000+1+desiredIllumStep*100;
-    dataRange = (dataStart:dataStart+99)+100;
-    meanPoints(ii,:) = [mean(dataMatrix(dataRange,PC1)) mean(dataMatrix(dataRange,PC2))];
-    plot(meanPoints(ii,PC1),meanPoints(ii,PC2),'o','Color',colors{ii},'MarkerSize',30);
-end
+% desiredIllumStep = 10;
+% for ii = 1:4
+%     dataStart = (ii - 1)*5000+1+desiredIllumStep*100;
+%     dataRange = (dataStart:dataStart+99)+100;
+%     meanPoints(ii,:) = [mean(dataMatrix(dataRange,PC1)) mean(dataMatrix(dataRange,PC2))];
+%     plot(meanPoints(ii,PC1),meanPoints(ii,PC2),'o','Color',colors{ii},'MarkerSize',30);
+% end
 
 axis square
 

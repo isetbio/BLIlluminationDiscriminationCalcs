@@ -77,22 +77,25 @@ dataMatrix = dataMatrix*coeff;
 %% Some plotting code
 % 10 and 4 seem to capture general illum directions! That was for the set
 % where I didn't save cones...will it be different this time around?
-PC1 = 1;
-PC2 = 2;
 
-standardStart = (0:2010:size(dataMatrix,1)-1)+1;
+% For shuffled 1 S-LM, 3 S-LM, 5 L-M, 6 L-M
+
+PC1 = 3;
+PC2 = 6;
+
+standardStart = (0:201:size(dataMatrix,1)-1)+1;
 standard = arrayfun(@colon,standardStart,standardStart+9,'UniformOutput',false);
 standard = cell2mat(standard);
 standard = standard(:);
 
-startIdx = 10;
+startIdx = 1;
 dataRanges = cell(4,1);
 for ii = 1:4
-blueStart = (startIdx:2010:size(dataMatrix,1)-1)+1;
-blue = arrayfun(@colon,blueStart,blueStart+499,'UniformOutput',false);
+blueStart = (startIdx:201:size(dataMatrix,1)-1)+1;
+blue = arrayfun(@colon,blueStart,blueStart+49,'UniformOutput',false);
 blue = cell2mat(blue);
 blue = blue(:);
-startIdx = startIdx + 500;
+startIdx = startIdx + 50;
 dataRanges{ii} = blue;
 end
 
@@ -101,11 +104,12 @@ colors = {'b' 'g' 'r' 'y'};
 figure('Position',[100 100 700 700]); hold on;
 plot(dataMatrix(standard,PC1),dataMatrix(standard,PC2),'k.');
 for ii = 1:4
-    dataRange = ((ii - 1)*5000+1:ii*5000) + 100;
     plot(dataMatrix(dataRanges{ii},PC1),dataMatrix(dataRanges{ii},PC2),'.','Color',colors{ii});
 end
-xlabel('PC 10');
-ylabel('PC 4');
+xlabel(['PC ' num2str(PC1)]);
+ylabel(['PC ' num2str(PC2)]);
 axis square
 
 set(gca,'FontSize',18,'LineWidth',2,'FontName','Helvetica');
+
+%%
