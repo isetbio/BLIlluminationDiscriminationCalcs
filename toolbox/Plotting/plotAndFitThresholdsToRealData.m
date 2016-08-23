@@ -1,4 +1,4 @@
-function plotAndFitThresholdsToRealData(plotInfo,thresholds,data,varargin)
+function fittedThresholds = plotAndFitThresholdsToRealData(plotInfo,thresholds,data,varargin)
 % plotAndFitThresholdsToRealData(plotInfo,thresholds,data)
 %
 % This function takes in thresholds extracted from the model simulation and
@@ -36,6 +36,9 @@ meanThresholdDistToData = mean(thresholdDistToData,2);
 % Since we want the minimal distance, we find the minimum magnitude. Then
 % we can interpolate using the actual values.
 [~,idx] = min(abs(meanThresholdDistToData));
+if parser.Results.NoiseLevel > 0,
+    idx = parser.Results.NoiseLevel;
+end
 
 % We will check if the neighboring threshold distances have a different
 % sign. If they do, we pick it and linearly interpolate to as close to 0 as
@@ -53,6 +56,13 @@ end
 % Check against NaN
 if isnan(meanThresholdDistToData(pointToInterpolate)), pointToInterpolate = idx; end;
 
+% If the NoiseLevel field is greater than 0, than the user specified an
+% input noise level. We will interpolate to that value instead of what
+% we just calculated.
+if parser.Results.NoiseLevel > 0,
+    pointToInterpolate = parser.Results.NoiseLevel;
+end
+
 % If the pointToInterpolate is not equal to the minimum magnitude, then we
 % interpolate. Otherwise, just continue using the thresholds at the minimum magnitude.
 if pointToInterpolate ~= idx
@@ -64,14 +74,7 @@ if pointToInterpolate ~= idx
     [~,interpIdx] = min(abs(interpolatedThresholds));
     interpOffset = interpIdx/1000;
     interpolatedPoint = interpolatedPoint + sign(pointToInterpolate-idx) * interpOffset;
-    
-    % If the NoiseLevel field is greater than 0, than the user specified an
-    % input noise level. We will interpolate to that value instead of what
-    % we just calculated.
-    if parser.Results.NoiseLevel > 0, 
-        interpolatedPoint = parser.Results.NoiseLevel;
-    end
-    
+
     % Use the interpolated point calculate the thresholds (and errors) that
     % we will plot.
     fittedThresholds = interp1([idx pointToInterpolate],thresholds([idx,pointToInterpolate],:),interpolatedPoint);
@@ -98,13 +101,18 @@ if parser.Results.NewFigure
 end
 hold on;
 for ii = 1:length(data)
-    errorbar(ii,data(ii),dataError(ii),figParams.markerType,'Color',figParams.colors{ii},...
+    if ii < 4
+        dataPad = -4 + ii; dataPadErr = 0;
+    else
+        dataPad = []; dataPadErr = [];
+    end
+    errorbar([ii dataPad],[data(ii) dataPad],[dataError(ii) dataPadErr],figParams.markerType,'Color',figParams.colors{ii},...
         'MarkerFaceColor',figParams.colors{ii},'MarkerSize',figParams.markerSize,...
         'LineWidth',figParams.lineWidth);
 end
-fittedThresholdHandle = errorbar(1:length(data),fittedThresholds,fittedError,...
-    figParams.modelMarkerType,'Color',figParams.modelMarkerColor,'MarkerSize',figParams.modelMarkerSize,...
-    'MarkerFaceColor',figParams.modelMarkerColor,'LineWidth',figParams.lineWidth);
+% fittedThresholdHandle = errorbar(1:length(data),fittedThresholds,fittedError,...
+%     figParams.modelMarkerType,'Color',figParams.modelMarkerColor,'MarkerSize',figParams.modelMarkerSize,...
+%     'MarkerFaceColor',figParams.modelMarkerColor,'LineWidth',figParams.lineWidth);
 
 % Do some plot manipulations to make it look nice
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
@@ -115,7 +123,7 @@ axis square;
 ylim([0 50]);
 xlim(figParams.xlimit);
 
-legend(fittedThresholdHandle,{'Model Data'},'FontSize',figParams.legendFontSize); 
+% legend(fittedThresholdHandle,{'Model Data'},'FontSize',figParams.legendFontSize); 
 xl = xlabel(plotInfo.xlabel,'FontSize',figParams.labelFontSize);
 yl = ylabel(plotInfo.ylabel,'FontSize',figParams.labelFontSize);
 t = title(plotInfo.title,'FontSize',figParams.titleFontSize);

@@ -16,7 +16,7 @@ function generateOIForParallelComputing(calcParams)
 %% Get some paths which we will use later
 dataDir = getpref('BLIlluminationDiscriminationCalcs','DataBaseDir');
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
-tempScene = loadSceneData([calcParams.cacheFolderList{2} '/Standard'],'TestImage0');
+tempScene = loadSceneData([calcParams.cacheFolderList{2} '/Standard'],'CT1blue0-RGB');
 
 % We also want to precompute the split on a 'dummy' image so that we know
 % how many OI we will be getting.
