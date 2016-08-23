@@ -100,12 +100,6 @@ p = struct(...
 generatePreferenceGroup(p);
 UnitTest.usePreferencesForProject(p.projectName);
 
-% Add path dynamically here.  Although this isn't a preference, it is
-% convenient to have one function that will make sure everything works.
-myDir = fileparts(fileparts(mfilename('fullpath')));
-pathDir = fullfile(myDir,'BLIlluminationDiscriminationCalcs','');
-AddToMatlabPathDynamically(pathDir);
-
 end
 
 function generatePreferenceGroup(p)

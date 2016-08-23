@@ -96,7 +96,7 @@ switch (calcParams.calcIDStr)
     case {'Parallel'}
         calcParams.cropRect = [];
     otherwise
-        error('Unknown calcIDStr set');
+        calcParams.cropRect = [];
 end
 
 updatedParams = calcParams;

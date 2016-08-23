@@ -9,7 +9,7 @@ function updatedParams = assignCalibrationFile(calcParams)
 % xd  5/25/16  wrote it
 
 switch (calcParams.calcIDStr)
-    case {'ConstantFullImage' 'ShuffledFullImage'}
+    case {'ConstantFullImage' 'ShuffledFullImage' 'Constant_Plot'}
         calcParams.calibrationFile = 'EyeTrackerLCDNew';
         calcParams.distance = 0.683;
     case {'StaticFullImageResizedOI2' 'NM1_FullImage' 'NM2_FullImage' ...
