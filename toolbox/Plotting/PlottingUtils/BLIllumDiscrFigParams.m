@@ -44,14 +44,15 @@ switch (modifier)
     case {'FitThresholdToData'}
         figParams.ylimit = [0 25];
         figParams.xlimit = [0 5];
-        figParams.markerSize = 30;
+        figParams.markerSize = 25;
         figParams.modelMarkerType = 'o';
         figParams.modelMarkerColor = 'k';
         figParams.modelMarkerSize = 20;
-        figParams.colors = {[0 191 255]/255 [46 139 87]/255 [178,34,34]/255 [255 215 0]/255}; 
-        figParams.markerType = 's';
-        figParams.XTickLabel = {'' 'Blue' 'Green' 'Red' 'Yellow' ''};
+        figParams.colors = {[0 191 255]/255 [255 215 0]/255 [46 139 87]/255 [178,34,34]/255}; 
+        figParams.markerType = 'o';
+        figParams.XTickLabel = {'' 'Blue' 'Yellow' 'Green' 'Red' ''};
         figParams.XTick = 0:5;
+        figParams.axisFontSize = 18;
     case {'SVMvPCA'}
         figParams.xlimit = [0 11];
         figParams.ylimit = [50 100];
