@@ -20,17 +20,14 @@ function runAllFirstOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-% calcIDStrs  = {'StaticPhoton_NM2_S2_2' 'StaticPhoton_NM2_S2_3' 'StaticPhoton_NM2_S2_4' 'StaticPhoton_NM2_S2_5'...
-%     'StaticPhoton_NM2_S2_6' 'StaticPhoton_NM2_S2_7' 'StaticPhoton_NM2_S2_8' 'StaticPhoton_NM2_S2_9' 'StaticPhoton_NM2_S2_10'...
-%     'StaticPhoton_NM2_S2_11' 'StaticPhoton_NM2_S2_12' 'StaticPhoton_NM2_S2_13' 'StaticPhoton_NM2_S2_14'...
-%     'StaticPhoton_NM2_S2_15' 'StaticPhoton_NM2_S2_1'};
-  calcIDStrs = {'Neutral_FullImage'};
+calcIDStrs = {'Constant_Plot'};
+
 %% Parameters of the calculation
 %
 % We'll define this as a structure, with the fields providing the name of
 % what is specified.  These fields could later be viewed as key-value pairs
 % either for override by key-value calling arguments or for saving out in
-% some sensible manner in a database.  We could also run some sort of check
+% some sensible manner in a database. We could also run some sort of check
 % on the structure at runtime to make sure our caches are consistent with
 % the current parameters being used.
 
@@ -38,13 +35,13 @@ close all; ieInit;
 for k1 = 1:length(calcIDStrs)
     
     % Define the steps of the calculation that should be carried out.
-    calcParams.CACHE_SCENES = true;
-    calcParams.forceSceneCompute = true; % Will overwrite any existing data.
+    calcParams.CACHE_SCENES = false;
+    calcParams.forceSceneCompute = false;  % Will overwrite any existing data.
     
     calcParams.CACHE_OIS = false;
     calcParams.forceOICompute = false;    % Will overwrite any existing data.
     
-    calcParams.RUN_MODEL = false;
+    calcParams.RUN_MODEL = true;
     calcParams.MODEL_ORDER = 1; 
     calcParams.overWriteFlag = true;      % Whether or not to overwrite existing data.
     
@@ -54,8 +51,8 @@ for k1 = 1:length(calcIDStrs)
     calcParams.calcIDStr = calcIDStrs{k1};
     
     % Folder list to run over for conversions into isetbio format
-    calcParams = updateCacheFolderList(calcParams);
-%     calcParams.cacheFolderList = {'Neutral' 'Neutral_FullImage'};
+%     calcParams = updateCacheFolderList(calcParams);
+    calcParams.cacheFolderList = {'Constant' 'Constant_PlottingOnly'};
     % Need to specify the calibration file to use
     calcParams = assignCalibrationFile(calcParams);
     
@@ -64,7 +61,6 @@ for k1 = 1:length(calcIDStrs)
     % define a square patch of cone mosaic when we build the sensor), so the
     % cropped region should always be square.
     calcParams = updateCropRect(calcParams);  
-%     calcParams.cropRect = [];
     calcParams.S = [380 8 51];
         
     % Parameters for creating the sensor. OIvSensorScale is a parameter
@@ -95,7 +91,7 @@ for k1 = 1:length(calcIDStrs)
     % Kg is the scale factor for Gaussian noise.  The standard deviation of 
     % the Gaussian noise is equal to the square root of the mean 
     % photoisomerizations across the available target image samples. 
-    calcParams.KgLevels = 0:3:30;
+    calcParams.KgLevels = 30;
     
     %% Convert the images to cached scenes for more analysis
     if (calcParams.CACHE_SCENES)
