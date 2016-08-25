@@ -51,8 +51,11 @@ if idx == length(meanThresholdDistToData)
     if sign(meanThresholdDistToData(idx)) ~= sign(meanThresholdDistToData(idx - 1)), pointToInterpolate = idx - 1; end;
 else
     if sign(meanThresholdDistToData(idx)) ~= sign(meanThresholdDistToData(idx + 1)), pointToInterpolate = idx + 1;
-    elseif sign(meanThresholdDistToData(idx)) ~= sign(meanThresholdDistToData(idx - 1)), pointToInterpolate = idx - 1; end;
+    elseif idx > 1
+        if sign(meanThresholdDistToData(idx)) ~= sign(meanThresholdDistToData(idx - 1)), pointToInterpolate = idx - 1; end;
+    end
 end
+
 % Check against NaN
 if isnan(meanThresholdDistToData(pointToInterpolate)), pointToInterpolate = idx; end;
 
@@ -110,9 +113,9 @@ for ii = 1:length(data)
         'MarkerFaceColor',figParams.colors{ii},'MarkerSize',figParams.markerSize,...
         'LineWidth',figParams.lineWidth);
 end
-% fittedThresholdHandle = errorbar(1:length(data),fittedThresholds,fittedError,...
-%     figParams.modelMarkerType,'Color',figParams.modelMarkerColor,'MarkerSize',figParams.modelMarkerSize,...
-%     'MarkerFaceColor',figParams.modelMarkerColor,'LineWidth',figParams.lineWidth);
+fittedThresholdHandle = errorbar(1:length(data),fittedThresholds,fittedError,...
+    figParams.modelMarkerType,'Color',figParams.modelMarkerColor,'MarkerSize',figParams.modelMarkerSize,...
+    'MarkerFaceColor',figParams.modelMarkerColor,'LineWidth',figParams.lineWidth);
 
 % Do some plot manipulations to make it look nice
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
@@ -123,7 +126,7 @@ axis square;
 ylim([0 50]);
 xlim(figParams.xlimit);
 
-% legend(fittedThresholdHandle,{'Model Data'},'FontSize',figParams.legendFontSize); 
+legend(fittedThresholdHandle,{'Model Data'},'FontSize',figParams.legendFontSize); 
 xl = xlabel(plotInfo.xlabel,'FontSize',figParams.labelFontSize);
 yl = ylabel(plotInfo.ylabel,'FontSize',figParams.labelFontSize);
 t = title(plotInfo.title,'FontSize',figParams.titleFontSize);
