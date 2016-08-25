@@ -5,17 +5,15 @@
 %
 % 8/04/16  xd  wrote it
 
-clear; %close all; ieInit; 
+clear; close all; ieInit; 
 %% Set some parameters
 orderOfSubjects = {'azm','bmj', 'vle', 'vvu', 'idh','hul','ijj','eom','dtm','ktv'}';
-
 
 figure('Position',[150 238 2265 1061]);
 for subjectNumber = 1:length(orderOfSubjects)
 subjectId = orderOfSubjects{subjectNumber};
 
 %% 
-
 r1 = load(['/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCodeTempLocation/Exp8ProcessedData/Exp8EMByScenePatches/' subjectId '-Constant-' num2str(1) '-EMInPatches.mat']);
 r2 = load(['/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCodeTempLocation/Exp8ProcessedData/Exp8EMByScenePatches/' subjectId '-Constant-' num2str(2) '-EMInPatches.mat']);
 
@@ -63,8 +61,8 @@ pI.title  = 'Thresholds v Noise';
 %% Get subject data
 
 subjectIdx = find(not(cellfun('isempty', strfind(orderOfSubjects,subjectId))));
-d1 = subject{subjectIdx}.Shuffled{1};
-d2 = subject{subjectIdx}.Shuffled{2};
+d1 = subject{subjectIdx}.Constant{1};
+d2 = subject{subjectIdx}.Constant{2};
 b = nanmean([d1.Bluer.threshold,d2.Bluer.threshold]);
 g = nanmean([d1.Greener.threshold,d2.Greener.threshold]);
 r = nanmean([d1.Redder.threshold,d2.Redder.threshold]);
