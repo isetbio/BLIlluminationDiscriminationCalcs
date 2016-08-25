@@ -129,7 +129,7 @@ standardIsomPool = cell(1, length(standardOIList));
 calcParams.meanStandard = 0;
 for jj = 1:length(standardOIList)
     standardOI = loadOpticalImageData([OIFolder '/Standard'],strrep(standardOIList{jj},'OpticalImage.mat',''));
-    standardIsomPool{jj} = mosaic.compute(standardOI,'currentFlag',false);
+    standardIsomPool{jj} = mosaic.compute(resizeOI(standardOI,sSize*OIvSensorScale),'currentFlag',false);
     calcParams.meanStandard = calcParams.meanStandard + mean2(standardIsomPool{jj}) / length(standardOIList);
 end
 
@@ -155,7 +155,7 @@ for colorIdx = 1:length(colors)
         % the mean absorptions and save them for SVM classification.
         OISubFolder = [OIFolder '/' colors{colorIdx} 'Illumination'];
         comparison = loadOpticalImageData(OISubFolder,strrep(OINames{illumSteps(illumStepIdx)},'OpticalImage.mat',''));
-        comparisonIsom = mosaic.compute(comparison,'currentFlag',false);
+        comparisonIsom = mosaic.compute(resizeOI(comparison,sSize*OIvSensorScale),'currentFlag',false);
         
         % Set variables to pass into data generation functions. kp
         % modulates Poisson noise which is kept at 1. kg modulates Gaussian

@@ -3,28 +3,32 @@
 % This script is meant to explore performance of the SVM as a function of
 % training data set size. This will be done for a single small patch at the
 % center of the image. To avoid bias in the results due to selection of
-% training/testing vectors, we will cross-validate by generating 1 training
-% and 10 testing sets of data at each training set size. This results in
-% 10x cross-validation for each SVM. The same testing sets will be used for
-% each classifier. The data will be saved into a 4-D matrix for plotting.
+% training/testing vectors, we will cross-validate via kFold validation.
+% The user can set a variable to determine how many folds to generate. This
+% script will record the cross validated performance as well as the
+% performance of the data on a brand new test set.
 %
-% xd  6/15/16  wrote it
-% xd  6/17/16  major modifications and moved to new folder
+% 6/15/16  xd  wrote it
+% 6/17/16  xd  major modifications and moved to new folder
+% 8/25/16  xd  minor updates for consistency in comments and code
 
 clear; close all;
 %% Set some parameters
 
 % Here we define the various training set sizes that we wish to test. In
-% addition, the size of the testing set will also be defined here. Since we
-% are doing this for an SVM, larger training set sizes (>1000) may be
-% painful to run. 
+% addition, the size of the testing set will also be defined here. The
+% training set sizes will be powers of 2 because the effect of trianing set
+% size on performance is easier to visualize in log space. We can set the
+% number of training set sizes to use below.
 testingSetSize   = 5000;
 trainingSetSizes = 10*2.^(8);
 
-% Define the size of the sensor here. For a small patch in the rest of the
-% calculations, we are using a 0.83 degree sensor which we specify here.
-% The OIvSensorScale variable tells the script to not downsample the
-% optical image in any manner.
+% Define the size of the sensor here. The calculations will use a 1 degree
+% mosaic so that is the size that will be used here. However, the size
+% variable can also be set as a vector. In this case, the script will loop
+% over all the sizes. When set to 0, the OIvSensorScale variable tells the
+% script to not downsample the entire image. If set to a value > 0, it will
+% instead downsample the entire OI by average over a uniform grid.
 sSizes = 1;
 OIvSensorScale = 0;
 
@@ -59,9 +63,6 @@ numPCA = 100;
 % rng('shuffled') to unfreeze the noise.
 rng(1);
 
-%% Create metadata struct to save later
-
-
 %% Pre-allocate space for results
 %
 % The dimensions struct will hold meta data about the parameters used for
@@ -70,25 +71,41 @@ rng(1);
 for sSizesIdx = 1:length(sSizes)
     sSize = sSizes(sSizesIdx);
 
-    % Create our sensor
+    % Create our mosaic. We get a default sensor for the project, which has
+    % integration time of 50 ms and a wavelength of [380 8 51]. We simply
+    % need to set the fov to the desired size.
     mosaic = getDefaultBLIllumDiscrMosaic;
     mosaic.fov = sSize;
     
     for illumStepIdx = 1:length(illumSteps)
         illumStep = illumSteps(illumStepIdx);
         
-        SVMpercentCorrect = zeros(length(folders),length(colors),length(trainingSetSizes),numCrossVal);
+        %% Create metadata struct to save with the data
+        %
+        % It's important to be able to decipher the data we save via this
+        % scipts months/years after we run it. By including the meta data
+        % in the mat file, we can keep track of what the values in this
+        % matrix represent.
                 
+        % The dimensions struct determines what values each dimension of
+        % the data matrix represents.
         dimensions.labels           = {'Folders' 'Colors' 'TrainingSetSizes' 'CVAndTest'};
         dimensions.Folders          = folders;
         dimensions.Colors           = colors;
         dimensions.TrainingSetSizes = trainingSetSizes;
         dimensions.CVAndTest        = {'CVResult' 'CVStd' 'TestResult'};
         
+        % The metadata struct contains the dimensions as well as some other
+        % meta data not included in the dimensions.
         MetaData.numCrossVal  = numCrossVal;
         MetaData.sSize        = sSize;
         MetaData.numIllumStep = illumStep;
         MetaData.dimensions   = dimensions;
+        
+        % We pre-allocate a data matrix using the dimensions struct. This
+        % allows us to avoid having to set variables twice.
+        SVMpercentCorrect = zeros(length(dimensions.Folders),length(dimensions.Colors),...
+            length(dimensions.TrainingSetSizes),length(dimensions.CVAndTest));
         
         %% Do calculations
         for folderIdx = 1:length(folders)
@@ -137,7 +154,7 @@ for sSizesIdx = 1:length(sSizes)
                 % data sets.
                 trainingData = single(trainingData);
                 testingData  = single(testingData);
-                fprintf('Yay! The Data for folder %d run %d has been created in %6.5f seconds!\n',folderIdx,kk,toc);
+                fprintf('Yay! The Data for folder %d run %d has been created in %5.5f seconds!\n',folderIdx,kk,toc);
                 
                 %% Train and apply classifiers
                 %
@@ -177,7 +194,7 @@ for sSizesIdx = 1:length(sSizes)
                     SVMpercentCorrect(colorIdx,1,illumStepIdx,1) = mean(percentCorrect);
                     SVMpercentCorrect(colorIdx,1,illumStepIdx,2) = std(percentCorrect)/sqrt(numCrossVal);
         
-                    fprintf('SVM trained and tested in %f seconds for set size: %d!\n',toc,ii);
+                    fprintf('SVM trained and tested in %5.5f seconds for set size: %d!\n',toc,ii);
                     clearvars theSVM
                 end
 

@@ -8,8 +8,7 @@
 %
 % xd  6/20/16  wrote it
 
-clear; 
-
+clear; close all;
 %% Flag to save figure
 saveFig = false;
 
@@ -34,21 +33,26 @@ for ii = 1:length(dimensions.folders)
     % Actual plotting here
     errorbar(dimensions.trainingSetSizes,DataToPlot*100,StdErr*100,'Color',figParams.colors{ii},'LineWidth',figParams.lineWidth,'LineStyle',figParams.lineStyles{ii});
 end
+
+
 ylim([45 100]);
 xlim([10^0 10^6]);
 
+% Legend, titles, and axes labels
 legend(cellfun(@(X)strtok(X,'_'),dimensions.folders,'UniformOutput',false),'Location','Northwest','FontSize',figParams.legendFontSize);
+t = title(dataFile(1:end-4),'FontSize',figParams.titleFontSize,'Interpreter','none');
+xl = xlabel('Training Set Size','FontSize',figParams.labelFontSize);
+yl = ylabel('% Correct','FontSize',figParams.labelFontSize);
+
+% Set some formatting and style things
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
 set(gca,'XTick',logspace(0,5,6))
 set(gca,'XScale','log');
 axis square;
 grid on;
 
-t = title(dataFile(1:end-4),'FontSize',figParams.titleFontSize,'Interpreter','none');
-xl = xlabel('Training Set Size','FontSize',figParams.labelFontSize);
-yl = ylabel('% Correct','FontSize',figParams.labelFontSize);
-
 yl.Position = yl.Position + figParams.deltaYlabelPosition;
 xl.Position = xl.Position + figParams.deltaXlabelPosition;
 
+%% Save the figure
 if saveFig, FigureSave(strrep(dataFile(1:end-4),'_',' '),f,figParams.figType); end;
