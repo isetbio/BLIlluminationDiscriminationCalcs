@@ -40,7 +40,7 @@ OIvSensorScale = 0;
 % on every single patch used for each calculation would take far too much
 % time and likely would not produce any worthwhile results.
 OIFolder = 'Neutral_FullImage';
-colors = {'Blue' 'Green' 'Red' 'Yellow'};
+colors   = {'Blue' 'Green' 'Red' 'Yellow'};
 
 % NoiseStep is chosen so that the SVM asymptote does not reach 100% (since
 % that would render the result rather meaningless). illumSteps is similarly
@@ -65,17 +65,15 @@ numPCA = [2 25 50 100 200 400 800];
 rng(1);
 
 %% Create the cone mosaic
-%
+% 
 % A single mosaic will be used throughout the entire script. This allows
 % for consistency (and is what the model does) in isomerization responses.
 % We set the integration time 50 ms and the wavelength to [380 5 51]
-% because they are what is used (generally) in the model. These values
-% should not be changed by the user.
-mosaic                 = coneMosaic;
-mosaic.fov             = sSize;
-mosaic.integrationTime = 0.050;
-mosaic.wave            = SToWls([380 8 51]);
-mosaic.noiseFlag       = false;
+% because they are what is used (generally) in the model. Tj
+% getDefaultBLIllumDiscrMosaic function returns a mosaic with these
+% parameters. We just need to resize it.
+mosaic     = getDefaultBLIllumDiscrMosaic;
+mosaic.fov = sSize;
 
 %% Pre-allocate space for results
 %
