@@ -1,4 +1,4 @@
-% performanceAsymptotes
+%% performanceAsymptotes
 %
 % This script is meant to explore performance of the SVM as a function of
 % training data set size. This will be done for a single small patch at the
@@ -11,7 +11,7 @@
 % xd  6/15/16  wrote it
 % xd  6/17/16  major modifications and moved to new folder
 
-clear;
+clear; close all;
 %% Set some parameters
 
 % Here we define the various training set sizes that we wish to test. In
@@ -25,7 +25,7 @@ trainingSetSizes = 10*2.^(8);
 % calculations, we are using a 0.83 degree sensor which we specify here.
 % The OIvSensorScale variable tells the script to not downsample the
 % optical image in any manner.
-sSizes = 1; %Maybe this should be 1 degree?
+sSizes = 1; % Maybe this should be 1 degree?
 OIvSensorScale = 0;
 
 % Some bookkeeping parameters. These should not be changed. NoiseStep is
