@@ -17,7 +17,7 @@
 % 7/29/15  xd                Renamed.
 
 %% Clear and initialize
-close all; ieInit; parpool(50);
+close all; ieInit; parpool(30);
 
 %% Set identifiers to run
 % calcIDStrs  = {'StaticPhoton_NM2_S2_2' 'StaticPhoton_NM2_S2_3' 'StaticPhoton_NM2_S2_4' 'StaticPhoton_NM2_S2_5'...
@@ -34,7 +34,7 @@ close all; ieInit; parpool(50);
 % on the structure at runtime to make sure our caches are consistent with
 % the current parameters being used.
 
-c.calcIDStr = 'SVM_Static_Isomerizations_Constant';
+c.calcIDStr = 'kNN_Static_Isom_C';
 c.cacheFolderList = {'Constant', 'Constant_FullImage'};
 c.sensorFOV = 0.83;
 tempScene = loadSceneData([c.cacheFolderList{2} '/Standard'],'CT1blue0-RGB');
@@ -42,7 +42,7 @@ numberofOI = numel(splitSceneIntoMultipleSmallerScenes(tempScene,c.sensorFOV));
 % numberofOI = generateOIForParallelComputing(c);
 
 % This part loops through the calculations for all caldIDStrs specified
-theIndex = 1:2:numberofOI;
+theIndex = 2:2:numberofOI;
 parfor k1 = 1:length(theIndex)
 
     % Define the steps of the calculation that should be carried out.
@@ -93,10 +93,10 @@ parfor k1 = 1:length(theIndex)
         calcParams.illumLevels = 1:50;
         
         % Here we specify which data function and classification function to use.
-        calcParams.standardizeData = true;
-        calcParams.cFunction = 3;
-        calcParams.dFunction = 1;
-        calcParams.usePCA = true;
+        calcParams.standardizeData = false;
+        calcParams.cFunction = 4;
+        calcParams.dFunction = 3;
+        calcParams.usePCA = false;
         calcParams.numPCA = 100;
         
         % Kp represents the scale factor for the Poisson noise.  This is the
@@ -107,7 +107,7 @@ parfor k1 = 1:length(theIndex)
         % Kg is the scale factor for Gaussian noise.  The standard deviation of
         % the Gaussian noise is equal to the square root of the mean
         % photoisomerizations across the available target image samples.
-        calcParams.KgLevels = 0:3:30;
+        calcParams.KgLevels = 0:10;
         
         %% Convert the images to cached scenes for more analysis
         if (calcParams.CACHE_SCENES)

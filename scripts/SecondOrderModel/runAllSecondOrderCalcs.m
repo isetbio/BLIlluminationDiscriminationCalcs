@@ -11,7 +11,7 @@
 close all; ieInit; parpool(12);
 
 %% Set identifiers to run
-calcIDStrs = {'SVM_NoEM_sum2slicesOf50ms_100ms'};
+calcIDStrs = {'SVM_Frozen_SlightConeDistChange'};
 
 %% Parameters of the calculation
 %
@@ -54,15 +54,18 @@ for k1 = 1:length(calcIDStrs)
     calcParams.S = [380 8 51];                            
     
     % Parameters for creating the sensor
-    calcParams.coneIntegrationTime = 0.050;  % Integration time in ms. Also determines eye movement and os sampling interval
+    calcParams.coneIntegrationTime = 0.100;  % Integration time in ms. Also determines eye movement and os sampling interval
     calcParams.sensorFOV = 0.83;             % Visual angle defining the size of the sensor
     calcParams.OIvSensorScale = 0;
+    
+    % EMPositions represents the number of positions of eye movement to sample.
+    calcParams.numEMPositions = 1;
     
     % Specify the number of trials for each combination of Kp Kg as well as
     % the highest illumination step (max 50) to go up to. 
     calcParams.trainingSetSize = 1000;
     calcParams.testingSetSize = 1000;
-    calcParams.illumLevels = 1:2:50;
+    calcParams.illumLevels = 1:50;
 
     calcParams.standardizeData = true;
     calcParams.usePCA = true;
@@ -71,7 +74,7 @@ for k1 = 1:length(calcIDStrs)
     
     % Keep this as 4 since that is the only function that supports eye
     % movements and the outer segment.
-    calcParams.dFunction = 5;
+    calcParams.dFunction = 4;
     
     % Kp represents the scale factor for the Poisson noise.  This is the
     % realistic noise representation of the photons arriving at the retina.
@@ -85,10 +88,7 @@ for k1 = 1:length(calcIDStrs)
     % samples. If os is enabled, this multiplies the outer segment noise
     % instead.
     calcParams.KgLevels = 0:3:30;
-    
-    % EMPositions represents the number of positions of eye movement to sample.  
-    calcParams.numEMPositions = 2;
-    
+        
     % Enable or disable certain aspects of fixational eye movement
     calcParams.enableTremor = false;
     calcParams.enableDrift = false;
@@ -119,7 +119,7 @@ for k1 = 1:length(calcIDStrs)
     
     %% Create data sets using the simple chooser model
     if (calcParams.RUN_MODEL)
-        RunModel(calcParams,calcParams.overWriteFlag);
+        RunModel(calcParams,calcParams.overWriteFlag,true);
     end
     
     %% Calculate threshholds using chooser model data
