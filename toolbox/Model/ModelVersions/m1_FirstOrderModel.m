@@ -53,13 +53,13 @@ startKg = 1;
 %% Do the actual calculation here
 results = zeros(length(illumLevels),length(KpLevels),length(KgLevels));
 for ii = 1:length(illumLevels);
-    
     % Precompute the test optical image to save computational time.
     imageName = OINamesList{illumLevels(ii)};
     imageName = strrep(imageName,'OpticalImage.mat','');
     oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' [color 'Illumination']],imageName);
     oiTest = resizeOI(oiTest,calcParams.sensorFOV*calcParams.OIvSensorScale);
     absorptionsTest = mosaic.compute(oiTest,'currentFlag',false);
+
     
     % Loop through the two different noise levels and perform the
     % calculation at each combination.

@@ -22,6 +22,7 @@ close all; ieInit; parpool(50);
 %% Set identifiers to run
 % calcIDStrs = {'Constant_Plot'};
 
+
 %% Parameters of the calculation
 %
 % We'll define this as a structure, with the fields providing the name of
@@ -103,7 +104,7 @@ parfor k1 = 1:length(theIndex)
         % Kg is the scale factor for Gaussian noise.  The standard deviation of
         % the Gaussian noise is equal to the square root of the mean
         % photoisomerizations across the available target image samples.
-        calcParams.KgLevels = 0:3:30;
+        calcParams.KgLevels = 0:10;
         
         %% Convert the images to cached scenes for more analysis
         if (calcParams.CACHE_SCENES)
@@ -132,3 +133,4 @@ end
 
 % deleteOIForParallelComputing(c);
 % end
+exit;

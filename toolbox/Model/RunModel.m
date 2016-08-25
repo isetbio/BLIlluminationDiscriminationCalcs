@@ -44,7 +44,7 @@ mosaic.wave = SToWls(calcParams.S);
 mosaic.noiseFlag = false;
 mosaic.integrationTime = calcParams.coneIntegrationTime;
 
-if calcParams.MODEL_ORDER >= 2
+if calcParams.MODEL_ORDER == 2 || calcParams.MODEL_ORDER == 3
     % Adjust eye movements
     calcParams.em = emCreate;
     calcParams.em = emSet(calcParams.em,'emFlag',[calcParams.enableTremor calcParams.enableDrift calcParams.enableMSaccades]);
@@ -52,8 +52,16 @@ if calcParams.MODEL_ORDER >= 2
     mosaic.os = osCreate(calcParams.OSType);
     mosaic.os.noiseFlag = false;
     mosaic.sampleTime = calcParams.coneIntegrationTime;
+    
+%     mosaic.spatialDensity = [0 0.62 0.31 0.7];
 end
 
+if calcParams.MODEL_ORDER == 4
+    databaseDir = getpref('BLIlluminationDiscriminationCalcs','DataBaseDir');
+    mosaicO = load(fullfile(databaseDir,'NeutralPCAData','MosaicForNeutral.mat'));
+    mosaicO = mosaicO.mosaic;
+    mosaic.pattern = mosaicO.pattern;
+end
 %% Run the desired model
 calcParams.colors = {'Blue' 'Green' 'Red' 'Yellow'};
 results = zeros(length(calcParams.colors),length(calcParams.illumLevels),length(calcParams.KpLevels),length(calcParams.KgLevels));

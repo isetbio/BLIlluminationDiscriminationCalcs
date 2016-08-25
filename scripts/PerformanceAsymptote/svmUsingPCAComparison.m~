@@ -232,5 +232,18 @@ for colorIdx = 1:length(colors)
 end
 
 %% Save the data
+<<<<<<< HEAD
 fileName = 'SVM_FullvPCA.mat';
 save(fileName,'SVMpercentCorrect','SVMrunTime','MetaData');
+
+
+=======
+<<<<<<< HEAD
+fileName = sprintf('SVMv%dPCAv250SVD.mat',numPCA);
+save(fileName,'SVMpercentCorrect','SVMrunTime','dimensions');
+
+=======
+fileName = sprintf('SVMv%dPCA.mat',num2str(numPCA));
+save(fileName,'SVMpercentCorrect','SVMrunTime','dimensions');
+>>>>>>> b131baf614f06c5a8f15d6ef6141bddf5f90ad3a
+>>>>>>> a3b113b0fbf44d2eec8c61924e1a00e0d5d23108

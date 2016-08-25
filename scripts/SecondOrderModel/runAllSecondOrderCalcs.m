@@ -11,7 +11,7 @@
 close all; ieInit; parpool(12);
 
 %% Set identifiers to run
-calcIDStrs = {'SVM_YesEM_LinearOS_TestTheory_500ms'};
+calcIDStrs = {'SVM_Frozen_SlightConeDistChange'};
 
 %% Parameters of the calculation
 %
@@ -58,11 +58,14 @@ for k1 = 1:length(calcIDStrs)
     calcParams.sensorFOV = 0.83;             % Visual angle defining the size of the sensor
     calcParams.OIvSensorScale = 0;
     
+    % EMPositions represents the number of positions of eye movement to sample.
+    calcParams.numEMPositions = 1;
+    
     % Specify the number of trials for each combination of Kp Kg as well as
     % the highest illumination step (max 50) to go up to. 
     calcParams.trainingSetSize = 1000;
     calcParams.testingSetSize = 1000;
-    calcParams.illumLevels = 1:2:50;
+    calcParams.illumLevels = 1:50;
 
     calcParams.standardizeData = true;
     calcParams.usePCA = true;
@@ -85,9 +88,6 @@ for k1 = 1:length(calcIDStrs)
     % samples. If os is enabled, this multiplies the outer segment noise
     % instead.
     calcParams.KgLevels = 0:3:30;
-    
-    % EMPositions represents the number of positions of eye movement to sample.  
-    calcParams.numEMPositions = 2;
     
     % Enable or disable certain aspects of fixational eye movement
     calcParams.enableTremor = true;
@@ -119,7 +119,7 @@ for k1 = 1:length(calcIDStrs)
     
     %% Create data sets using the simple chooser model
     if (calcParams.RUN_MODEL)
-        RunModel(calcParams,calcParams.overWriteFlag);
+        RunModel(calcParams,calcParams.overWriteFlag,true);
     end
     
     %% Calculate threshholds using chooser model data
