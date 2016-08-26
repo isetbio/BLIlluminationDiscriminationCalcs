@@ -54,13 +54,23 @@ switch (modifier)
         figParams.XTick = 0:5;
         figParams.axisFontSize = 18;
     case {'SVMvPCA'}
+        figParams.sqPosition = [100 100 1400 1400];
         figParams.xlimit = [0 11];
-        figParams.ylimit = [50 100];
-        figParams.insetPosition = [0.74 0.15 0.15 0.15];
-        figParams.colors = {[0 0.4470 0.7410] [0.8500 0.3250 0.0980] [0.9290 0.6940 0.1250]};
-        figParams.insetAxisLineWidth = 1;
+        figParams.ylimit = [45 100];
+        figParams.insetPositions = {[0.208571428571429 0.790348101265821 0.0528571428571429 0.126898734177215]...
+                                    [0.650000000000000 0.790348101265821 0.0528571428571429 0.126898734177215]...
+                                    [0.208571428571429 0.316455696202528 0.0528571428571429 0.126898734177215]...
+                                    [0.650000000000000 0.316455696202528 0.0528571428571429 0.126898734177215]};
+        figParams.insetAxisLineWidth = 2;
         figParams.insetAxisFontSize = 10;
         figParams.insetTitleFontSize = 12;
+        figParams.insetYLimit = [-9 0];
+        figParams.insetXLimit = [0 500];
+        figParams.insetTickLength = [0 0];
+        figParams.insetDeltaXLabelPos = [0 0.2 0];
+        figParams.s = 0.65;
+        figParams.v = 1;
+        figParams.alpha = 0.75;
     case {'ThresholdHistogram'}
         figParams.binNum = 20;
         figParams.faceColors = {[0 191 255]/255 [46 139 87]/255 [178,34,34]/255 [255 215 0]/255}; 
