@@ -42,9 +42,15 @@ emMosaic.integrationTime = emMosaicParams.integrationTime;
 emMosaic.emPositions = zeros(emMosaicParams.numberOfEMPositions,2);
 
 %% Load OI
+%
+% We load an arbitrary optical image used in the model. The results in this
+% script should hold irregardless of OI choice.
 OI = loadOpticalImageData('Neutral_FullImage/Standard','TestImage0');
 
 %% Calculate NF Isomerizations
+%
+% We compute the noise free currents. These will be used to determine the
+% noise we will be testing.
 staticIsom = staticMosaic.compute(OI,'currentFlag',false);
 EMIsom = emMosaic.compute(OI,'currentFlag',false);
 
@@ -53,8 +59,11 @@ EMIsom = emMosaic.compute(OI,'currentFlag',false);
 staticGaussianVar = mean2(staticIsom);
 emGaussianVar = mean2(EMIsom(:,:,1));
 
-% Verify that they are equal
+% Verify that the noise free signals are equal (something has gone wrong if
+% this is not the case).
 fprintf('Norm of difference between to matrices : %5.5f\n',norm(staticIsom - sum(EMIsom,3),'fro'));
+
+% Print a few lines on how we're testing distribution equality.
 fprintf('The following lines will display results of a Kolmogorov-Smirnov test, \nwith a null hypothesis of being from the same distribution.\n');
 fprintf('1 is reject, 0 is accept\n');
 
