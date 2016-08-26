@@ -1,5 +1,5 @@
 function [smallScenes,plotInfo] = splitSceneIntoMultipleSmallerScenes(largeScene,newFOV)
-% smallScenes = splitSceneIntoMultipleSmallerScenes(largeScene,newFOV)
+% [smallScenes,plotInfo] = splitSceneIntoMultipleSmallerScenes(largeScene,newFOV)
 %
 % The purpose of this function is to divide a large scene into many smaller
 % scenes (of equal size). This would allow us to perform calculations on

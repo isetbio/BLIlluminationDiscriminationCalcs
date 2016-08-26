@@ -4,7 +4,7 @@ function desiredFunction = masterDataFunction(functionChoice)
 % This function serves as a wrapper to load the desired data generation
 % function. 
 %
-% xd  6/24/16
+% 6/24/16  xd  wrote it
 
 dataFunctionPath = fileparts(mfilename('fullpath'));
 dfFolder = what(fullfile(dataFunctionPath));
