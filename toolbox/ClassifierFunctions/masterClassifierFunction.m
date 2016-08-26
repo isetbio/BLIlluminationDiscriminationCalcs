@@ -4,7 +4,7 @@ function desiredFunction = masterClassifierFunction(functionChoice)
 % This function serves as a wrapper to load the desired classification
 % function. 
 %
-% xd  6/24/16
+% 6/24/16  xd  wrote it
 
 classifierFunctionPath = fileparts(mfilename('fullpath'));
 cfFolder = what(fullfile(classifierFunctionPath));

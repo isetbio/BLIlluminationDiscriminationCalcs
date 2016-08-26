@@ -4,7 +4,7 @@ function figParams = getDimensionalityTutorialFigParams
 % Set figure parameters.
 %
 % 4/29/14  dhb  Wrote it.
-% 6/29/14  xd   Renamed and moved into tutorial folder
+% 6/29/15  xd   Renamed and moved into tutorial folder
 
 figParams.fontName = 'Helvetica';
 figParams.markerSize = 20;

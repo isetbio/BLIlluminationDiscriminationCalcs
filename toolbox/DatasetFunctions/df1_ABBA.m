@@ -6,7 +6,7 @@ function  [dataset,classes] = df1_ABBA(calcParams,targetPool,comparisonPool,kp,k
 % A is for the target and B is for the comparison. There will be equal
 % distributions of AB and BA vectors in the training and testing sets.
 %
-% xd  6/1/16  wrote it
+% 6/1/16  xd  wrote it
 
 %% Get size of photon data
 numberOfCones = numel(targetPool{1});
@@ -29,6 +29,7 @@ for jj = 1:n/2
     dataset(jj + n/2,:) = [comparisonPool{comparisonSample}(:); targetPool{targetSample(2)}(:)]';
 end
 
+% Add desired noise
 dataset = getNoisySensorImage(calcParams,dataset,kp,kg);
 
 end

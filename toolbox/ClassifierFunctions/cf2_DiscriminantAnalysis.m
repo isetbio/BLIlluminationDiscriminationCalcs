@@ -4,7 +4,7 @@ function percentCorrect = cf2_DiscriminantAnalysis(trainingData, testingData, tr
 % This function classifies the testingData using a pseudolinear
 % discriminant analysis. See fitcdiscr for more details.
 %
-% xd  5/26/16  wrote it
+% 5/26/16  xd  wrote it
 
 da = fitcdiscr(trainingData, trainingClasses, 'DiscrimType', 'pseudolinear');
 classifiedClasses = predict(da, testingData);

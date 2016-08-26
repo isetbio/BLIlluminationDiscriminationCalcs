@@ -10,6 +10,7 @@ svm = fitcsvm(trainingData,trainingClasses,'KernelScale','auto');
 classifiedClasses = predict(svm,testingData);
 percentCorrect = sum(classifiedClasses == testingClasses) / size(testingData,1) * 100;
 
+% Also return the svm in case it's needed.
 svm = compact(svm);
 svm = discardSupportVectors(svm);
 

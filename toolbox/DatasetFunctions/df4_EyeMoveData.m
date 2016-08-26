@@ -8,7 +8,7 @@ function [dataset,classes] = df4_EyeMoveData(calcParams,targetPool,comparisonPoo
 % Noise will be chosen appropriate to where the calcuation ends (photon for
 % isomerizations and osNoise for cone currents)
 %
-% xd  7/11/16  wrote it
+% 7/11/16  xd  wrote it
 
 %% Pre allocate space for data and classes
 dataset = cell(n,1);

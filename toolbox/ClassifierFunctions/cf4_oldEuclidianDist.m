@@ -1,8 +1,12 @@
 function percentCorrect = cf4_oldEuclidianDist(trainingData, testingData, trainingClasses, testingClasses)
 % percentCorrect = cf1_NearestNeighbor(trainingData, testingData, trainingClasses, testingClasses)
 % 
+% The old distance based classifier takes 2 draws of target and 1 draw of
+% comparison. It calculates the distance between the two targets and one of
+% the targets and the comparison. Then it picks the one which was closest
+% to the target. This replicates that using the data generated.
 %
-% xd   6/3/16  wrote it
+% 6/3/16  xd  wrote it
 
 %% Require equal number of training and testing data points
 if length(testingClasses) ~= length(trainingClasses), error('cf4: This decision function requires equal length training and testing sets!');end

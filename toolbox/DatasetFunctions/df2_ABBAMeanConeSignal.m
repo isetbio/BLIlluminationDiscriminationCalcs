@@ -1,46 +1,43 @@
-function [dataset, classes] = df2_ABBAMeanConeSignal(calcParams,targetPool,comparisonPool,kp,kg,n,os)
-% [dataset, classes] = df2_ABBAMeanConeSignal(calcParams,targetPool,comparisonPool,kp,kg,n)
+function [dataset,classes] = df2_ABBAMeanConeSignal(calcParams,targetPool,comparisonPool,kp,kg,n,mosaic)
+% [dataset,classes] = df2_ABBAMeanConeSignal(calcParams,targetPool,comparisonPool,kp,kg,n,mosaic)
 %
 % This function follows the same data organization as df1_ABBA, see that
 % function for more details. In addition, this function will change the
 % cone isomerizations in each cone to equal the mean isomerization of its
 % cone type (L,M,S).
 %
-% xd  6/1/16  wrote it
-%% Set appropriate function handle depending on if os is defined
-if notDefined('os'), os = []; end
-if isempty(os), calcFunction = @(s) sensorGet(s,'photons');
-else calcFunction = @(s) osCompute(os,s); end
+% 6/1/16  xd  wrote it
 
 %% Get size of photon data and cone types
-numberOfCones = numel(sensorGet(targetPool{1}, 'photons'));
-coneMatrix = sensorGet(targetPool{1}, 'conetype');
+numberOfCones = numel(targetPool{1});
+coneMatrix = mosaic.pattern;
 
 %% Change signals in each cone to the mean
+%
 % For each cone, the signal will be changed to be the mean signal for that
 % specific cone type.
 coneTypes = unique(coneMatrix(:));
 for ii = 1:length(targetPool)
-    currentPhotons = sensorGet(targetPool{ii},'photons');
+    currentPhotons = targetPool{ii};
     for jj = 1:length(coneTypes)
         currentPhotons(coneMatrix == coneTypes(jj)) = mean2(currentPhotons(coneMatrix == coneTypes(jj)));
     end
-    targetPool{ii} = sensorSet(targetPool{ii},'photons',currentPhotons);
+    targetPool{ii} = currentPhotons;
 end
 
 for ii = 1:length(comparisonPool)
-    currentPhotons = sensorGet(comparisonPool{ii},'photons');
+    currentPhotons = comparisonPool{ii};
     for jj = 1:length(coneTypes)
         currentPhotons(coneMatrix == coneTypes(jj)) = mean2(currentPhotons(coneMatrix == coneTypes(jj)));
     end
-    comparisonPool{ii} = sensorSet(comparisonPool{ii},'photons',currentPhotons);
+    comparisonPool{ii} = currentPhotons;
 end
 
 %% Generate the data set
 
 % Pre-allocate space for the dataset.
-dataset = zeros(n, 2 * numberOfCones);
-classes = ones(n, 1);
+dataset = zeros(n,2 * numberOfCones);
+classes = ones(n,1);
 classes(1:n/2) = 0;
 
 % The first half of the data will be AB format.  The second half will be BA
@@ -51,24 +48,12 @@ for jj = 1:n/2
     targetSample = randsample(length(targetPool), 2);
     comparisonSample = randsample(length(comparisonPool), 1);
     
-    sensorStandard = targetPool{targetSample(1)};
-    photonsStandard = getNoisySensorImage(calcParams, sensorStandard, kp, kg);
-    photonsComparison = getNoisySensorImage(calcParams, comparisonPool{comparisonSample}, kp, kg);
-    
-    photonsStandard = calcFunction(sensorSet(sensorStandard,'photons',photonsStandard));
-    photonsComparison = calcFunction(sensorSet(comparisonPool{comparisonSample},'photons',photonsComparison));
-    
-    dataset(jj,:) = [photonsStandard(:); photonsComparison(:)]';
-    
-    sensorStandard = targetPool{targetSample(2)};
-    photonsStandard = getNoisySensorImage(calcParams, sensorStandard, kp, kg);
-    photonsComparison = getNoisySensorImage(calcParams, comparisonPool{comparisonSample}, kp, kg);
-    
-    photonsStandard = calcFunction(sensorSet(sensorStandard,'photons',photonsStandard));
-    photonsComparison = calcFunction(sensorSet(comparisonPool{comparisonSample},'photons',photonsComparison));    
-    
-    dataset(jj + n/2,:) = [photonsComparison(:); photonsStandard(:)]';
+    dataset(jj,:) = [targetPool{targetSample(1)}(:); comparisonPool{comparisonSample}(:)]';
+    dataset(jj + n/2,:) = [comparisonPool{comparisonSample}(:); targetPool{targetSample(2)}(:)]';
 end
+
+% Add desired noise
+dataset = getNoisySensorImage(calcParams,dataset,kp,kg);
 
 end
 

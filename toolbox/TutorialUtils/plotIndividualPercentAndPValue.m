@@ -8,7 +8,6 @@ function plotIndividualPercentAndPValue(data, ii, jj)
 %
 % 6/29/15  xd  wrote it
 
-
 %% Load necessary info from data
 testDirectionName = data.testDirectionName;
 percentCorrectMeanMatrix = data.percentCorrectMeanMatrix;
@@ -51,7 +50,6 @@ xlabel('k','FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
 ylabel('p value','FontName',figParams.fontName,'FontSize',figParams.labelFontSize);
 xlim(figParams.pvalueXLim);
 ylim(figParams.pvalueYLim);
-
 
 suptitle(theTitle);
 savefig(fullfile(directoryName, theTitle));
