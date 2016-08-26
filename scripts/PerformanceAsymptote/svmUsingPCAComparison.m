@@ -195,7 +195,7 @@ for colorIdx = 1:length(colors)
         % the runtime because that is an important factor to keep in mind
         % when we decide what number of PCA components to use.
         tic
-        theSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto');
+        theSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto','CacheSize','maximal');
         predictedClasses = predict(theSVM,testingData);
         SVMpercentCorrect(colorIdx,1,illumStepIdx,3) = sum(predictedClasses == testingClasses)/testingSetSize;
         SVMrunTime(colorIdx,1,illumStepIdx,2) = toc;
@@ -214,7 +214,7 @@ for colorIdx = 1:length(colors)
             tic
             coeff = pca(trainingData,'NumComponents',numPCA(numPCAIdx));
             
-            pcaSVM = fitcsvm(trainingData*coeff,trainingClasses,'KernelScale','auto');
+            pcaSVM = fitcsvm(trainingData*coeff,trainingClasses,'KernelScale','auto','CacheSize','maximal');
             predictedClasses = predict(pcaSVM,testingData*coeff);
             SVMpercentCorrect(colorIdx,numPCAIdx+1,illumStepIdx,3) = sum(predictedClasses == testingClasses)/testingSetSize;
             SVMrunTime(colorIdx,numPCAIdx+1,illumStepIdx,2) = toc;
