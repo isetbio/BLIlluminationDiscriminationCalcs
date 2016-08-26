@@ -202,7 +202,7 @@ for sSizesIdx = 1:length(sSizes)
                 %
                 % We save inside the loop so that if the program crashes,
                 % at least we can get some data out of it.
-                fileName = sprintf('SVMPerformance_%03.1fdeg_%dPCA.mat',sSize,numPCA);
+                fileName = sprintf('SVMPerformance_Illum%d_%03.1fdeg_%dPCA.mat',illumStep,sSize,numPCA);
                 save(fileName,'SVMpercentCorrect','MetaData');
             end
         end
