@@ -21,7 +21,7 @@ clear; close all;
 % size on performance is easier to visualize in log space. We can set the
 % number of training set sizes to use below.
 testingSetSize   = 5000;
-trainingSetSizes = 10*2.^(8);
+trainingSetSizes = 10*2.^(4:10);
 
 % Define the size of the sensor here. The calculations will use a 1 degree
 % mosaic so that is the size that will be used here. However, the size
@@ -53,7 +53,7 @@ numCrossVal = 10;
 % We are also reducing the dimensionality of our data via a PCA. This
 % variable determines how many components to use. The value is chosen to
 % maintain performance while minimizing runtime.
-numPCA = 100;
+numPCA = 400;
 
 %% Frozen noise
 %
