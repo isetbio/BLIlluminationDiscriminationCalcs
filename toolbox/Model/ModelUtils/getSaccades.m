@@ -1,5 +1,5 @@
-function path = getSaccades(n, b, varargin)
-% path = getSaccades(n, mu, sigma)
+function path = getSaccades(n,b,varargin)
+% path = getSaccades(n,b,varargin)
 %
 % This function generates saccadic eye movement by randomly sampling from
 % a Gaussian with defined mu and sigma.  The eye position always starts at
@@ -17,11 +17,11 @@ function path = getSaccades(n, b, varargin)
 %             bounds and error if not so. This is a n-by-2 matrix
 %             representing n locations.
 %
-% 8/5/15  xd  moved from getEMPaths
-% 3/14/16 xd  changed saccade locations to be chosen randomly instead of
-%             based on current location
-% 3/16/16 xd  Added option to generate saccades from existing list of
-%             locations
+% 8/5/15   xd  moved from getEMPaths
+% 3/14/16  xd  changed saccade locations to be chosen randomly instead of
+%              based on current location
+% 3/16/16  xd  Added option to generate saccades from existing list of
+%              locations
 
 %% InputParser for optional set of predefined locations
 p = inputParser;

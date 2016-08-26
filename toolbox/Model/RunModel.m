@@ -7,7 +7,7 @@ function results = RunModel(calcParams,overWrite,frozen)
 % overWrite flag must be set to true if data should be overwritten.
 % Similarly, to generate reproducable results, set frozen to true.
 %
-% xd  6/23/16  extracted from old code
+% 6/23/16  xd  extracted from old code
 
 %% Set defaults for inputs
 if notDefined('overWrite'), overWrite = false; end

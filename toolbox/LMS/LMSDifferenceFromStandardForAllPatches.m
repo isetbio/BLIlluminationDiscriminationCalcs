@@ -1,5 +1,5 @@
 function [data,patchInfo] = LMSDifferenceFromStandardForAllPatches(sceneFolder,fov,illumLevel)
-% data = LMSDifferenceFromStandardForAllPatches(sceneFolder,fov,illumLevel)
+% [data,patchInfo] = LMSDifferenceFromStandardForAllPatches(sceneFolder,fov,illumLevel)
 % 
 % Generates data representing the difference between the mean cone
 % absorptions for each color direction and the standard stimulus at a given

@@ -1,4 +1,4 @@
-function allPaths = getEMPaths(sensor, numPaths, varargin)
+function allPaths = getEMPaths(sensor,numPaths,varargin)
 % allPaths = getEMPaths(sensor, numPaths)
 %
 % This function will return numPaths eye movement paths associated with the
@@ -11,15 +11,15 @@ function allPaths = getEMPaths(sensor, numPaths, varargin)
 %    numPaths - The total number of paths desired
 %
 %  {name-value pairs}
-%    'bound'    - A boundary box for the paths.  If this is set, the paths
-%                 will not exceed to boundary.  The format is [minX maxX
+%    'bound'    - A boundary box for the paths. If this is set, the paths
+%                 will not exceed to boundary. The format is [minX maxX
 %                 minY maxY].
 %
 %    'saccades' - A struct containing information relevant for generating
-%                 saccadic eye movement.  This will used along with the
+%                 saccadic eye movement. This will used along with the
 %                 fixational eye movements if specified.
-%       {fields}
-%            n     - The total number of positions (there will be n-1 saccades)
+%  {fields}
+%     n         - The total number of positions (there will be n-1 saccades)
 %
 %    'sPath'    - A pre-generated saccadic eye movement path.  This will
 %                 used along with the fixational eye movements if specified.
@@ -97,7 +97,7 @@ end
 %% Adjust the final path
 % Since we do not check the path locations after adding the fixational eye
 % movements, it is possible that a few positions are actually out of the
-% bounding area.  We fix this by simply setting any positions outside the
+% bounding area. We fix this by simply setting any positions outside the
 % bounding area equal to the extrema of the bounds.
 for ii = 1:numPaths
     allPaths(allPaths(:,1,ii) > b(2),1,ii) = b(2);

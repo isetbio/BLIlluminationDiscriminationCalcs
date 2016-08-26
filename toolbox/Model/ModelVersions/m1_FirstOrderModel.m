@@ -1,5 +1,5 @@
 function results = m1_FirstOrderModel(calcParams,mosaic,color)
-% results = m1_FirstOrderModel(calcParams,sensor,color)
+% results = m1_FirstOrderModel(calcParams,mosaic,color)
 %
 % This function performs the computational observer calculation on a 'First
 % Order' level. By this, we mean that a static cone mosaic (without eye
@@ -7,7 +7,7 @@ function results = m1_FirstOrderModel(calcParams,mosaic,color)
 % scene. This information is used in desired classification function to
 % simulate our illumination discrimination experiment.
 %
-% xd  6/23/16  moved out of old code
+% 6/23/16  xd  moved out of old code
 
 %% Set values for variables that will be used through the function
 illumLevels     = calcParams.illumLevels;
@@ -85,7 +85,6 @@ for ii = 1:length(illumLevels);
             
             if calcParams.usePCA
                 coeff = pca(trainingData,'NumComponents',calcParams.numPCA);
-%                 [~,~,coeff] = fsvd(trainingData,2.5*calcParams.numPCA);
                 trainingData = trainingData*coeff;
                 testingData = testingData*coeff;
             end
@@ -106,8 +105,6 @@ for ii = 1:length(illumLevels);
     % results.
     if ii >= 5
         lastFiveCorrect = squeeze(results(ii-4:ii,1,startKg));
-%         fprintf(num2str(lastFiveCorrect'));
-%         fprintf([' StartKg: ' num2str(startKg) '\n']);
         if mean(lastFiveCorrect) > 99.6 
             results(ii+1:end,1,startKg) = 100;
             startKg = startKg + 1;
