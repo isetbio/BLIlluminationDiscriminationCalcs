@@ -154,7 +154,7 @@ for sSizesIdx = 1:length(sSizes)
                 % data sets.
                 trainingData = single(trainingData);
                 testingData  = single(testingData);
-                fprintf('Yay! The Data for folder %d run %d has been created in %5.5f seconds!\n',folderIdx,kk,toc);
+                fprintf('Yay! The Data for folder %d has been created in %5.5f seconds!\n',folderIdx,toc);
                 
                 %% Train and apply classifiers
                 %
