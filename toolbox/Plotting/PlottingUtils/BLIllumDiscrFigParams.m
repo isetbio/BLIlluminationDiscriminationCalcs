@@ -4,7 +4,7 @@ function figParams = BLIllumDiscrFigParams(figParams, modifier)
 % Sets figure parameters for this project. Adapted from example code
 % by David Brainard.
 %
-% xd  6/20/16  wrote it
+% 6/20/16  xd  wrote it
 if notDefined('modifier'), modifier = ''; end;
 
 figParams.basicSize = 700;

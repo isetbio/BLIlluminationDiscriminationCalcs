@@ -5,12 +5,12 @@ function deleteOIForParallelComputing(calcParams)
 % remove any OI folders used in the calculation so that we are not
 % clustered with hundreds of OI.
 % 
-% xd  7/1/16  wrote it
+% 7/1/16  xd  wrote it
 
 
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
-tempScene = loadSceneData([calcParams.cacheFolderList{2} '/Standard'],'TestImage0');
-numberOfOI = numel(splitSceneIntoMultipleSmallerScenes(tempScene,calcParams.sensorFOV));
+tempScene   = loadSceneData([calcParams.cacheFolderList{2} '/Standard'],'TestImage0');
+numberOfOI  = numel(splitSceneIntoMultipleSmallerScenes(tempScene,calcParams.sensorFOV));
 
 for ii = 1:numberOfOI
     dirName = [calcParams.calcIDStr '_' num2str(ii)];

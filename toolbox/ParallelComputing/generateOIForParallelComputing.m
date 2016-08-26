@@ -11,12 +11,12 @@ function generateOIForParallelComputing(calcParams)
 % the files generated. This way we are not stuck with hundreds of folders
 % of optical images.
 %
-% xd  7/1/16 wrote it
+% 7/1/16  xd  wrote it
 
 %% Get some paths which we will use later
-dataDir = getpref('BLIlluminationDiscriminationCalcs','DataBaseDir');
+dataDir     = getpref('BLIlluminationDiscriminationCalcs','DataBaseDir');
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
-tempScene = loadSceneData([calcParams.cacheFolderList{2} '/Standard'],'CT1blue0-RGB');
+tempScene   = loadSceneData([calcParams.cacheFolderList{2} '/Standard'],'CT1blue0-RGB');
 
 % We also want to precompute the split on a 'dummy' image so that we know
 % how many OI we will be getting.

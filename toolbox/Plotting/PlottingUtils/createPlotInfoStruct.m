@@ -4,7 +4,7 @@ function plotInfo = createPlotInfoStruct
 % This function generates a default plotInfo struct which is passed around
 % and used to plot various data in this project.
 %
-% xd  6/21/16  wrote it
+% 6/21/16  xd  wrote it
 
 plotInfo.fitColor = [];
 plotInfo.stimLevels = 1:50;
