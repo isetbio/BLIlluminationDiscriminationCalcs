@@ -1,4 +1,4 @@
-%% SummedNoiseVariances
+%% t_SummedNoiseVariances
 %
 % Looks at the noise of 100 ms v 10x 10 ms slices to examine whether the
 % sum of the 10 ms noise is indeed equal to the 100 ms noise as is expected
