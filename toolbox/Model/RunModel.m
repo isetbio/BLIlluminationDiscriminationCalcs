@@ -14,6 +14,7 @@ if notDefined('overWrite'), overWrite = false; end
 if notDefined('frozen'), frozen = false; end
 
 %% Take care of some housekeeping
+%
 % Here we set a constant seed in case we want to freeze the noise. This
 % allows us to generate reproducable data. Otherwise we'll use random noise
 % so that the model does not do the same thing everytime. Since we run
@@ -38,6 +39,10 @@ else
 end
 
 %% Create sensor
+%
+% Here, we create a mosaic according to the specifications in the
+% calcParams struct. Certain models have more variables than others so we
+% need to pay careful attention when doing.
 mosaic = coneMosaic;
 mosaic.fov = calcParams.sensorFOV;
 mosaic.wave = SToWls(calcParams.S);
@@ -55,6 +60,10 @@ if calcParams.MODEL_ORDER == 2
 end
 
 %% Run the desired model
+%
+% We loop over the colors and compute the result. This is all saved into a
+% single matrix. We'll keep the order of the colors fixed here so that
+% there is less confusion when many different calculations are run.
 calcParams.colors = {'Blue' 'Green' 'Red' 'Yellow'};
 results = zeros(length(calcParams.colors),length(calcParams.illumLevels),length(calcParams.KpLevels),length(calcParams.KgLevels));
 
@@ -64,6 +73,8 @@ modelFolder = what(fullfile(modelPath,'ModelVersions'));
 modelList = modelFolder.m;
 modelFunction = str2func(strrep(modelList{calcParams.MODEL_ORDER},'.m',''));
 
+% Perform calculations and save results. Also, save the color order into
+% calcParams just in case.
 for ii = 1:length(calcParams.colors)
     results(ii,:,:,:) = modelFunction(calcParams,mosaic,calcParams.colors{ii});
 end
