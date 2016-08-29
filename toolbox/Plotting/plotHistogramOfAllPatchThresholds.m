@@ -1,5 +1,5 @@
 function plotHistogramOfAllPatchThresholds(calcIDStr)
-% plotHistogramOfAllPatchThresholds(calcIDStr,noiseLevels)
+% plotHistogramOfAllPatchThresholds(calcIDStr)
 % 
 % Plots histograms of the thresholds (for all patches) against noise
 % levels. Each subplot contains threshold histograms for all 4 color

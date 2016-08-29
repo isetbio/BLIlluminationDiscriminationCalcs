@@ -8,7 +8,7 @@ function plotFitForSingleThreshold(plotInfo,data,threshold,fitParams)
 % information for that will be used to add details such as the axis labels
 % and title.
 %
-% xd  6/21/16  wrote it
+% 6/21/16  xd  wrote it
 
 %% Generate a default set of figure parameters used in this project
 figParams = BLIllumDiscrFigParams([],'sThreshold');

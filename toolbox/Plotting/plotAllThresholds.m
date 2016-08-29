@@ -1,13 +1,14 @@
 function plotAllThresholds(calcIDStr,varargin)
-% plotAllThresholds(calcParams)
+% plotAllThresholds(calcIDStr,varargin)
 %
 % This function takes in a calcParams struct and attempts to plot the data
 % associated with the calcID. If the data does exist in the location (set
 % in preferences), then nothing will be plotted.
 %
-% xd  6/22/16  wrote it
+% 6/22/16  xd  wrote it
 
 %% Setup the input parser
+%
 % If the simulation was run across both Poisson and Gaussian noise, we
 % might want to have a specific combination of noise indices that we want
 % to plot. The default assumption is 1x Poisson noise and all Gaussian
@@ -31,6 +32,7 @@ thresholds = loadThresholdData(calcIDStr,['Thresholds' calcIDStr '.mat']);
 
 if isempty(thresholds)
     %% Format data
+    %
     % The data will be stored in a 4D matrix (depending on what type of
     % noise used for the simulation). The first index will represent the color,
     % so we should take each slice of the matrix and format accordingly.
@@ -50,7 +52,10 @@ if isempty(thresholds)
         thresholds(:,ii) = multipleThresholdExtraction(formattedData{ii},plotInfo.criterion,calcParams.illumLevels);
     end
     
-    % Save the thresholds in the same folder
+    % Save the thresholds in the same folder. This allows us to just load
+    % the saved data next time instead of having to redo the calculation.
+    % This saves time for things like calculating the mean, which requires
+    % us to gather the threshold for many patches.
     analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
     saveFile = fullfile(analysisDir,'SimpleChooserData',calcIDStr,['Thresholds' calcIDStr '.mat']);
     if ~exist(saveFile,'file')

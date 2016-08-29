@@ -5,9 +5,10 @@ function browseSingleThresholds(calcIDStr,varargin)
 % psychometric threshold fits using the arrow keys. Press escape to end the
 % program.
 %
-% xd  6/27/16
+% 6/27/16  xd  wrote it
 
 %% Setup the input parser
+%
 % If the simulation was run across both Poisson and Gaussian noise, we
 % might want to have a specific combination of noise indices that we want
 % to plot. The default assumption is 1x Poisson noise and all Gaussian
@@ -21,6 +22,7 @@ parser.parse(varargin{:});
 [data,calcParams] = loadModelData(calcIDStr);
 
 %% Format data
+%
 % The data will be stored in a 4D matrix (depending on what type of
 % noise used for the simulation). The first index will represent the color,
 % so we should take each slice of the matrix and format accordingly.
@@ -35,28 +37,58 @@ for ii = 1:length(calcParams.colors)
 end
 
 %% Loop browsing
+%
+% The code below is a bit questionable, especially the use of global
+% variables. However, it does its job very well and I have not found an
+% alternative that performs nearly as well.
+TheOldKey = 'Hello';
 global THE_ONE_KEY;
-THE_ONE_KEY = 'Hello'; TheOldKey = 'Hello';
+THE_ONE_KEY = TheOldKey; 
 
+% Initialize some variables in for the loop
 inaction = true; closeFig = true;
 colorIdx = 1;
 noiseIdx = 1;
 
+% Extract the relevant noise levels for plot title and indexing
+if parser.Results.NoiseIndex(1)
+    noiseLevels = calcParams.KgLevels;
+else
+    noiseLevels = calcParams.KpLevels;
+end
+maxNoiseIdx = length(noiseLevels);
+
+% Loop until user presses the escape key. In the loop, the arrow keys are
+% used to move between illumination levels (left/right) and color
+% directions (up/down). s signifies that a copy of the figure should be
+% kept. This is done by opening the current plot in a new figure. We
+% utilize the figure's keypressfunction to read user inputs (thus
+% requiring the global variable).
 while ~strcmp(THE_ONE_KEY,'escape')
     if inaction
+        % Extract thresholds
         dataToUse = squeeze(formattedData{colorIdx}(:,noiseIdx));
         [threshold,params] = singleThresholdExtraction(dataToUse,70.9,calcParams.illumLevels);
         
+        % Some plotting metadata (titles, axes, and such)
         plotInfo = createPlotInfoStruct;
         plotInfo.fitColor = calcParams.colors{colorIdx}(1);
-        plotInfo.title = sprintf('Noise Level: %d',noiseIdx);
+        plotInfo.title = sprintf('Noise Level: %d',noiseLevels(noiseIdx));
         plotInfo.stimLevels = calcParams.illumLevels;
+        
+        % This creates a new plot so we need to assign the keypressfunction
+        % every time.
         plotFitForSingleThreshold(plotInfo,dataToUse,threshold,params);
         set(gcf,'KeyPressFcn',@myKeyPress);
+        
+        % Reset the global variable
         inaction = false;
         THE_ONE_KEY = TheOldKey;
     end
     
+    % If the global is different from the original key, then the user has
+    % pressed something. Parse the input and update loop variables as
+    % necessary.
     if ~strcmp(THE_ONE_KEY,TheOldKey)
         inaction = true;
         
@@ -68,9 +100,9 @@ while ~strcmp(THE_ONE_KEY,'escape')
                 if colorIdx == 0, colorIdx = 4; end
             case 'leftarrow'
                 noiseIdx = noiseIdx - 1;
-                if noiseIdx == 0, noiseIdx = 10; end
+                if noiseIdx == 0, noiseIdx = maxNoiseIdx; end
             case 'rightarrow'
-                noiseIdx = mod(noiseIdx,10) + 1;
+                noiseIdx = mod(noiseIdx,maxNoiseIdx) + 1;
             case 's'
                 closeFig = false;
         end

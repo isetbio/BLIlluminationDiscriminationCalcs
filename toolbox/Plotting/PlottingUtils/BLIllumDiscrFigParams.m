@@ -42,7 +42,7 @@ switch (modifier)
         figParams.lineStyles = {'-' '--' '-.'};
         figParams.colors = {[0.2 0.2 0.4] [0.2 0.4 0.4] [0.4 0.4 0.4]};
     case {'FitThresholdToData'}
-        figParams.ylimit = [0 25];
+        figParams.ylimit = [0 50];
         figParams.xlimit = [0 5];
         figParams.markerSize = 25;
         figParams.modelMarkerType = 'o';
@@ -76,5 +76,9 @@ switch (modifier)
         figParams.faceColors = {[0 191 255]/255 [46 139 87]/255 [178,34,34]/255 [255 215 0]/255}; 
         figParams.subplotsize = 600;
         figParams.xlim = [0 50];
-        
+    case {'AllPatches'}
+        figParams.colors = {[0 191 255]/255 [46 139 87]/255 [178,34,34]/255 [255 215 0]/255};
+        figParams.YTick = [0 35];
+        figParams.XTick = [];
+        figParams.superTitleFontSize = 32;
 end

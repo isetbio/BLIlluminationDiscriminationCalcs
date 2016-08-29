@@ -6,11 +6,19 @@ function plotReflectancesOfAllPatches(largeScene,fov)
 %
 % 7/13/16  xd  wrote it
 
+%% Set up variables
+%
+% Calculate the small scenes in the patch so that we can get the
+% reflectance of each patch. Also load some variables that will be used for
+% formatting the plot.
 [smallScenes,patchInfo] = splitSceneIntoMultipleSmallerScenes(largeScene,fov);
 smallScenes = smallScenes(:);
 patchSubplotIdx = reshape(1:patchInfo.hNum*patchInfo.vNum,patchInfo.hNum,patchInfo.vNum).';
 axisHandles = zeros(length(smallScenes),1);
 
+%% Do plotting
+%
+% Size the plot so according to the number of patches we have.
 figure('Position',[133 849 patchInfo.hNum*100 patchInfo.vNum*100]);
 for jj = 1:length(smallScenes)
     % Get reflectances
@@ -22,7 +30,8 @@ for jj = 1:length(smallScenes)
     
     sizeOfReflectances = size(reflectances);
 
-    % Format Data
+    % Format data so that the vectors will line up to be the same size. We
+    % also want just the mean reflectance.
     stddev = zeros(sizeOfReflectances(3),1);
     meanReflectance = zeros(sizeOfReflectances(3),1);
     for ii = 1:sizeOfReflectances(3)

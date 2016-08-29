@@ -9,14 +9,14 @@ function plotThresholdsAgainstNoise(plotInfo,thresholds,noiseLevels)
 % thresholds and noiseLevels will be matched up when plotted. This function
 % also requires a stimLevels filed in plotInfo to be specified.
 %
-% xd  6/21/16  wrote it
+% 6/21/16  xd  wrote it
 
 %% Check that inputs are correct
 if size(noiseLevels,2) ~= 1 && size(noiseLevels,2) ~= size(thresholds,2),error('noiseLevels format incorrect!'); end;
 if isempty(plotInfo.stimLevels), error('No stimLevels specified in plotInfo!'); end;
 
 % If noiseLevels is a vector, rearrange into a matrix for ease of use later on
-if size(noiseLevels,2) == 1, noiseLevels = repmat(noiseLevels,1,size(thresholds,2));
+if size(noiseLevels,2) == 1, noiseLevels = repmat(noiseLevels,1,size(thresholds,2)); end
     
 %% Generate some default parameters for this figure
 figParams = BLIllumDiscrFigParams([], 'ThresholdvNoise');
@@ -25,7 +25,8 @@ if ~isempty(plotInfo.colors), figParams.colors = plotInfo.colors; end;
 %% Plot
 figure('Position',figParams.sqPosition); hold on;
 for ii = 1:size(thresholds,2)
-
+    
+    % Find locations where data makes sense
     nonzeroIdx = thresholds(:,ii) > 0;
     
     % Fit a line to the data

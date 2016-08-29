@@ -1,5 +1,5 @@
 function fittedThresholds = plotAndFitThresholdsToRealData(plotInfo,thresholds,data,varargin)
-% plotAndFitThresholdsToRealData(plotInfo,thresholds,data)
+% fittedThresholds = plotAndFitThresholdsToRealData(plotInfo,thresholds,data,varargin)
 %
 % This function takes in thresholds extracted from the model simulation and
 % determines the best fit to the values in data. thresholds is a NxM matrix
@@ -7,7 +7,7 @@ function fittedThresholds = plotAndFitThresholdsToRealData(plotInfo,thresholds,d
 % function will try find the best overall fit for each column of thresholds
 % to the corresponding value in data.
 %
-% xd  6/22/16  wrote it
+% 6/22/16  xd  wrote it
 
 %% Create input parser for possible error bar data
 parser = inputParser;
@@ -25,13 +25,13 @@ dataError = parser.Results.DataError;
 if size(thresholds,2) ~= length(data), error('thresholds and data size are not matching!'); end;
 
 %% Determine the best average match
+%
 % We can determine the best match by finding the distance from the data
 % points to each threshold value. We will then average the distances across
 % all the data points. This will allow us to determine a minimal point. We
 % can then linearly interpolate up/down 1 entry to find a better fit.
 thresholdDistToData = thresholds - repmat(data(:)',size(thresholds,1),1);
 meanThresholdDistToData = mean(thresholdDistToData,2);
-% meanThresholdDistToData = sqrt(sum(thresholdDistToData.^2,2));
 
 % Since we want the minimal distance, we find the minimum magnitude. Then
 % we can interpolate using the actual values.
@@ -89,6 +89,9 @@ end
 %% Plot
 figParams = BLIllumDiscrFigParams([],'FitThresholdToData');
 if ~isempty(plotInfo.colors), figParams.colors = plotInfo.colors; end;
+
+% Here we use the noise index to find the actual noise level in the data.
+% This information is used in the plot title.
 noiseVector = parser.Results.NoiseVector;
 if ~isempty(noiseVector)
     interpNoise = noiseVector(floor(interpolatedPoint)) + (interpolatedPoint-floor(interpolatedPoint))*(noiseVector(2)-noiseVector(1));
@@ -103,7 +106,12 @@ if parser.Results.NewFigure
     figure('Position',figParams.sqPosition);
 end
 hold on;
+
 for ii = 1:length(data)
+    % Because the horizontal lines on the error bar function scales with
+    % the range of the data set (and for some reason the range is 0->data
+    % if the data is a scalar) we will create a dummy data point so that
+    % the horizontal lines look roughly the same size.
     if ii < 4
         dataPad = -4 + ii; dataPadErr = 0;
     else
@@ -122,14 +130,17 @@ set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWid
 set(gca,'XTickLabel',figParams.XTickLabel,'XTick',figParams.XTick);
 set(gca,'YGrid','on');
 axis square;
-% ylim(figParams.ylimit);
-ylim([0 50]);
+ylim(figParams.ylimit);
 xlim(figParams.xlimit);
 
 legend(fittedThresholdHandle,{'Model Data'},'FontSize',figParams.legendFontSize); 
 xl = xlabel(plotInfo.xlabel,'FontSize',figParams.labelFontSize);
 yl = ylabel(plotInfo.ylabel,'FontSize',figParams.labelFontSize);
 t = title(plotInfo.title,'FontSize',figParams.titleFontSize);
+
+% If it is a new figure, then we move the label axes slightly to make it
+% look better. Otherwise, we will just leave it where the subplot puts it
+% by default.
 if parser.Results.NewFigure
     yl.Position = yl.Position + figParams.deltaYlabelPosition;
     xl.Position = xl.Position + figParams.deltaXlabelPosition;
