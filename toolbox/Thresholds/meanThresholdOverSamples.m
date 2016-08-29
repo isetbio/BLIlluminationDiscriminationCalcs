@@ -1,5 +1,5 @@
-function [meanThreshold, stdErr] = meanThresholdOverSamples(calcIDList,criterion)
-% [meanThreshold, stdErr] = meanThresholdOverSamples(calcIDList)
+function [meanThreshold,stdErr] = meanThresholdOverSamples(calcIDList,criterion)
+% [meanThreshold,stdErr] = meanThresholdOverSamples(calcIDList,criterion)
 %
 % Given a cell array of calcID strings, this function will calculate and
 % return the mean thresholds and errors in the data. This function
@@ -7,19 +7,22 @@ function [meanThreshold, stdErr] = meanThresholdOverSamples(calcIDList,criterion
 % noise/stimulus level conditions. We only take the average over data
 % points in which NaN does not appear at any entry.
 %
-% xd  6/23/16  wrote it
+% 6/23/16  xd  wrote it
 
 %% Initialize return variables to 0
+%
 % We'll load the first calcID to get how large our mean threshold variable
 % needs to be.
 dummyData = loadModelData(calcIDList{1});
 meanThreshold = zeros(length(calcIDList),max(size(dummyData,3),size(dummyData,4)),size(dummyData,1));
+analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 
 %% Loop over calcIDList and do calculations
 for ii = 1:length(calcIDList)
     % Save the thresholds in the same folder
-    analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
     saveFile = fullfile(analysisDir,'SimpleChooserData',calcIDList{ii},['Thresholds' calcIDList{ii} '.mat']);
+    
+    % Load file if it exists, otherwise calculate and save
     if exist(saveFile,'file')
         thresholds = loadThresholdData(calcIDList{ii},['Thresholds' calcIDList{ii} '.mat']);
         meanThreshold(ii,:,:) = thresholds;
@@ -46,6 +49,7 @@ for ii  = 1:size(validThresholds,2)
     end
 end
 
+% Calculate the mean and standard error to return
 meanThreshold = meanThreshold .* double(int32(validThresholds));
 meanThreshold(meanThreshold == 0) = NaN;
 stdErr = squeeze(nanstd(meanThreshold,[],1)/sqrt(length(calcIDList)));

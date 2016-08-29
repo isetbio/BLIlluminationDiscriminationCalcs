@@ -9,7 +9,7 @@ analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 calcIDStrList = getAllSubdirectoriesContainingString(fullfile(analysisDir,'SimpleChooserData'),calcIDStr);
 calcIDStrList = datasample(calcIDStrList,N);
 
-% Initialize data values to something not realistic
+% Initialize data values to zeros
 dummyData = loadThresholdData(calcIDStrList{1},['Thresholds' calcIDStrList{1} '.mat']);
 threshold = zeros(size(dummyData));
 

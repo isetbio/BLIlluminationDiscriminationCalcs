@@ -4,7 +4,7 @@ function subdir = getAllSubdirectoriesContainingString(path,string)
 % Looks in a directory and returns all subdirectory names that contain a
 % given target string.
 % 
-% xd  7/10/16  wrote it
+% 7/10/16  xd  wrote it
 
 allsubDir = dir(path);
 allsubDir = {allsubDir(:).name};

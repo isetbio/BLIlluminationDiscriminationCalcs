@@ -1,5 +1,5 @@
-function [thresholds, paramsValues] = multipleThresholdExtraction(data,criterion,stimLevels)
-% [thresholds, paramsValues] = multipleThresholdExtraction(data)
+function [thresholds,paramsValues] = multipleThresholdExtraction(data,criterion,stimLevels)
+% [thresholds,paramsValues] = multipleThresholdExtraction(data,criterion,stimLevels)
 %
 % Given a NxM data matrix containing M sets of data with N datapoints in
 % each, this function will return a length M vector of thresholds and a Mx4
@@ -8,7 +8,7 @@ function [thresholds, paramsValues] = multipleThresholdExtraction(data,criterion
 % and the data paramsValues will be a zero vector. The thresholds will be
 % extracted at the given criterion, which should be a percentage.
 %
-% xd  6/21/16  wrote it
+% 6/21/16  xd  wrote it
 
 %% Preallocate space for the data
 thresholds = zeros(size(data,2),1);

@@ -8,34 +8,30 @@ function results = randomSampleOnExistingData(calcIDStr,N)
 %
 % 7/21/16  xd  wrote it
 
+%% Load paths and setup data
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 calcIDStrList = getAllSubdirectoriesContainingString(fullfile(analysisDir,'SimpleChooserData'),calcIDStr);
 
+% We load dummy data to find out how large the output matrix should be.
 dummyData = loadModelData(calcIDStrList{1});
 results = zeros(size(dummyData));
 
+%% Loop over simulation
 tic
 for ii = 1:N
     currentPatchSample = datasample(calcIDStrList,1);
 %     disp(currentPatchSample); % For debugging
     currentPatchData = loadModelData(currentPatchSample{1});
     
+    % Use RNG to find out whether or not this specific trial "passes" by
+    % using the random numbers and comparing against the performance of the
+    % SVM.
     RN = 100*rand(size(currentPatchData));
     results = results + (RN < currentPatchData);
 end
 toc
 
+% Scale results into a percentage
 results = results / N * 100;
 
 end
-% Z2 = squeeze(Z(2,:,:,:));
-% Zg = multipleThresholdExtraction(Z2,70.9);
-% Z2 = squeeze(Z(3,:,:,:));
-% Zr = multipleThresholdExtraction(Z2,70.9);
-% Z2 = squeeze(Z(4,:,:,:));
-% Zy = multipleThresholdExtraction(Z2,70.9);
-% hold on;
-% plot(0:3:30,Zb,'bo')
-% plot(0:3:30,Zr,'ro')
-% plot(0:3:30,Zg,'go')
-% plot(0:3:30,Zy,'yo')

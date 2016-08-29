@@ -1,9 +1,9 @@
 function [bestPatchNumber,minThresh] = findBestPerformancePatch(calcIDStr,N)
-% findBestPerformancePatch(calcIDStr)
+% [bestPatchNumber,minThresh] = findBestPerformancePatch(calcIDStr,N)
 % 
 % Finds the patch that provides the best (minimum) thresholds for each
-% noise level and color combination. Only returns results for combinations that
-% do not have NaN threshold for any patch.
+% noise level and color combination. Only returns results for combinations
+% that do not have NaN threshold for any patch.
 %
 % 7/20/16  xd  wrote it
 

@@ -1,5 +1,5 @@
-function [threshold, paramsValues] = singleThresholdExtraction(data,criterion,stimLevels)
-% [threshold, paramValues] = singleThresholdExtraction(data)
+function [threshold,paramsValues] = singleThresholdExtraction(data,criterion,stimLevels,numTrials)
+% [threshold,paramsValues] = singleThresholdExtraction(data,criterion,stimLevels,numTrials)
 % 
 % This function fits a cumulative Weibull to the data variable and returns
 % the threshold at the criterion as well as the parameters needed to plot the
@@ -10,11 +10,13 @@ function [threshold, paramsValues] = singleThresholdExtraction(data,criterion,st
 % be NaN and the paramsValues will a zero row vector. It is also assumed
 % that the criterion is given as a percentage.
 %
-% xd  6/21/16 wrote it
+% 6/21/16  xd  wrote it
 
 if notDefined('stimLevels'), stimLevels = 1:length(data); end;
+if notDefined('numTrials'), numTrials = 100; end;
 
 %% Check to make sure data is fittable
+%
 % We check the average value of the first 5 and last 5 numbers to get an
 % idea of if the data is fittable to a curve. If the first 5 values are
 % less than criterion and the last 5 are greater than criterion+10, we proceed with the
@@ -23,14 +25,20 @@ if notDefined('stimLevels'), stimLevels = 1:length(data); end;
 if mean(data(1:5)) > criterion+10 || mean(data(end-4:end)) < criterion, threshold = nan; paramsValues = zeros(1,4); return; end; 
 
 %% Set some parameters for the curve fitting
+%
+% Our input criterion is a percentage which needs to converted to a decimal
+% value. The paramsEstimate is just a rough estimate of the results and
+% shouldn't affect the outcome too much. 
 criterion      = criterion/100;
 paramsEstimate = [10 1 0.5 0];
-numTrials      = 100;
 paramsFree     = [1 1 0 0];
 outOfNum       = repmat(numTrials,1,length(data));
 PF             = @PAL_Weibull;
 
 %% Some optimization settings for the fit
+%
+% Some parameters for the fit. These are set so that the functions make a
+% solid attempt at fitting before deciding that it is not possible.
 options             = optimset('fminsearch');
 options.TolFun      = 1e-09;
 options.MaxFunEvals = 10000*100;
