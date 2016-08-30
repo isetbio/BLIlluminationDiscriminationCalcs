@@ -114,12 +114,12 @@ for sSizesIdx = 1:length(sSizes)
             folderPath = fullfile(analysisDir, 'OpticalImageData', folders{folderIdx}, 'Standard');
             standardOIList = getFilenamesInDirectory(folderPath);
             
-            standardSensorPool = cell(1, length(standardOIList));
+            standardPhotonPool = cell(1, length(standardOIList));
             calcParams.meanStandard = 0;
             for jj = 1:length(standardOIList)
                 standard = loadOpticalImageData([folders{folderIdx} '/Standard'], strrep(standardOIList{jj}, 'OpticalImage.mat', ''));
-                standardSensorPool{jj} = mosaic.compute(resizeOI(standard,sSize*OIvSensorScale),'currentFlag',false);
-                calcParams.meanStandard = calcParams.meanStandard + mean2(standardSensorPool{jj}) / length(standardOIList);
+                standardPhotonPool{jj} = mosaic.compute(resizeOI(standard,sSize*OIvSensorScale),'currentFlag',false);
+                calcParams.meanStandard = calcParams.meanStandard + mean2(standardPhotonPool{jj}) / length(standardOIList);
             end
             
             %% Calculation body
@@ -130,8 +130,8 @@ for sSizesIdx = 1:length(sSizes)
                 % illumination steps.
                 comparisonOIPath = fullfile(analysisDir,'OpticalImageData',folders{folderIdx},[colors{colorIdx} 'Illumination']);
                 OINames = getFilenamesInDirectory(comparisonOIPath);
-                comparison = loadOpticalImageData([folders{folderIdx} '/' colors{colorIdx} 'Illumination'],strrep(OINames{illumStep},'OpticalImage.mat', ''));
-                sensorComparison = mosaic.compute(resizeOI(comparison,sSize*OIvSensorScale));
+                comparisonOI = loadOpticalImageData([folders{folderIdx} '/' colors{colorIdx} 'Illumination'],strrep(OINames{illumStep},'OpticalImage.mat', ''));
+                photonComparison = mosaic.compute(resizeOI(comparisonOI,sSize*OIvSensorScale));
                 
                 % Set variables to pass into data generation functions. kp
                 % modulates Poisson noise which is kept at 1. kg modulates
@@ -147,8 +147,8 @@ for sSizesIdx = 1:length(sSizes)
                 % data sets will be subsets of the larger training data
                 % sets. This makes sense to do, for consistency reasons.
                 tic
-                [trainingData,trainingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,max(trainingSetSizes));
-                [testingData,testingClasses]   = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
+                [trainingData,trainingClasses] = df1_ABBA(calcParams,standardPhotonPool,{photonComparison},kp,kg,max(trainingSetSizes));
+                [testingData,testingClasses]   = df1_ABBA(calcParams,standardPhotonPool,{photonComparison},kp,kg,testingSetSize);
                 
                 % Turn into singles to save space. Necessary for the large
                 % data sets.
@@ -191,8 +191,8 @@ for sSizesIdx = 1:length(sSizes)
                     % kFold CV
                     CVSVM = crossval(theSVM,'kFold',numCrossVal);
                     percentCorrect = 1 - kfoldLoss(CVSVM,'lossfun','classiferror','mode','individual');
-                    SVMpercentCorrect(colorIdx,1,illumStepIdx,1) = mean(percentCorrect);
-                    SVMpercentCorrect(colorIdx,1,illumStepIdx,2) = std(percentCorrect)/sqrt(numCrossVal);
+                    SVMpercentCorrect(folderIdx,colorIdx,ii,1) = mean(percentCorrect);
+                    SVMpercentCorrect(folderIdx,colorIdx,ii,2) = std(percentCorrect)/sqrt(numCrossVal);
         
                     fprintf('SVM trained and tested in %5.5f seconds for set size: %d!\n',toc,ii);
                     clearvars theSVM

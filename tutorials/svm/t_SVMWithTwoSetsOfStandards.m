@@ -22,11 +22,22 @@ OIvMosaicResize     = 0;
 % How many times to perform the classification.
 numOfClassificationLoops = 10;
 
+% Number of PCA components to use
+numPCA = 400;
+
 %% Create a cone mosaic
+%
+% We use a default mosaic for testing things. The only change needed is to
+% resize the OI according to the specifications in the parameters set above
+% at the top of the script.
 mosaic = getDefaultBLIllumDiscrMosaic;
 mosaic.fov = mosaicSizeInDegrees;
 
 %% Load the standards
+%
+% Load the standard OI from an arbitrary OI set. In this case, it is the
+% Neutral_FullImage OI's. It doesn't really matter what we load it from
+% because we are testing the SVM performance between two identical classes.
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 folderPath = fullfile(analysisDir,'OpticalImageData','Neutral_FullImage','Standard');
 data = what(folderPath);
@@ -41,7 +52,7 @@ for jj = 1:length(standardOIList)
 end
 
 %% Perform classification
-kp = 1; kg = 15;
+kp = 1; kg = 0;
 for ii = 1:numOfClassificationLoops
     [trainingData,trainingClasses] = df1_ABBA(calcParams,standardPhotonPool,standardPhotonPool,kp,kg,trainingSetSize);
     [testingData,testingClasses]   = df1_ABBA(calcParams,standardPhotonPool,standardPhotonPool,kp,kg,testingSetSize);
@@ -54,7 +65,7 @@ for ii = 1:numOfClassificationLoops
     testingData  = (testingData  - repmat(m,testingSetSize,1))  ./ repmat(s,testingSetSize,1);
     
     % Perform pca analysis
-    coeff = pca([trainingData;testingData]);
+    coeff = pca([trainingData;testingData],'NumComponents',numPCA);
     trainingData = trainingData*coeff;
     testingData  = testingData*coeff;
     

@@ -117,7 +117,7 @@ for ff = 1:length(folders)
                 end
                 
                 %% Perform pca analysis
-                [coeff,d.score,~,~,d.explained] = pca([trainingData;testingData]);
+                [coeff,d.score,~,~,d.explained] = pca([trainingData;testingData],'NumComponents',numPCA);
                 d.score = d.score(:,1:10);
                 trainingData = trainingData*coeff;
                 testingData  = testingData*coeff;
