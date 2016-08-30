@@ -1,29 +1,31 @@
-%% TODO:
-% Comment this function
+%% ComparingClassifiersWithData
+%
+% Looks at how three different classfiers perform using the same set of
+% data. This gives us an idea of the strengths and weaknesses of each
+% classifier.  The three classifiers used in this script are a kNN, a
+% linear discriminant, and a SVM. The latter two are linear classifiers and
+% while the kNN can also be linear, it often is not.
+% 
+% 6/XX/16  xd  wrote it
 
-clear;
+clear; close all;
 %% Set some parameters for the calculation
+%
 % These two variables determine the size of the testing and training data
 % sets respectively. For the NN calculation, we compute the pairwise
 % distance between each vector in the training and testing sets. Then for
 % each entry in the testing set, we look at which vector it is closest to
 % in the training set. If the AB/BA format for both the test and training
 % vector is the same, we consider the classification as correct.
-trainingSetSize = 100;
-testingSetSize = 100;
+trainingSetSize = 1000;
+testingSetSize  = 1000;
 
 % This determines the size of the sensor in degrees. The optical image will
 % be scaled to OIvSensorScale times this value to avoid having parts of the edge of the
 % sensor miss any stimulus. This should be OK since the optical image pads
 % the original stimulus with the average color at the edges.
-sSize = 0.07;
+sSize = 1;
 OIvSensorScale = 1.3;
-
-% If set to true, variable Poisson noise will be used in the simulation. If
-% set to false variable Gaussian noise, with a variance equal to the mean
-% of all cone absorptions in the target scene will be used. However, 1x
-% Poisson noise will still be enable to simulate photon noise.
-usePoissonNoise = true;
 
 % If set to true, the data will be standardized using the mean and standard
 % deviation of the training set. This is generally used to help the
@@ -36,26 +38,30 @@ standardizeData = true;
 additionalNamingText = '_NewOI';
 
 % Just some variables that tell the script which folders and data files to use
-Colors = {'Blue' 'Yellow' 'Red' 'Green'};
+colors  = {'Blue' 'Yellow' 'Red' 'Green'};
 folders = {'Neutral' 'NM1' 'NM2'}; % Rename to OIFolders?
 
 % These variables specify the number of illumination steps and the noise
 % multipliers to use. Generally keep the number of steps constant and vary
 % the noise as necessary.
-numIllumSteps = 50;
-NoiseSteps = 1:2:20;
+illumSteps = 1:50;
+noiseSteps = 1:2:20;
 
-%% Create a sensor
-% Create a sensor here. This sensor will be used to calculate the
-% isomerizations for every optical image later in the calculation.  This
-% keeps parameters related to the sensor constant.
+% Number of PCA components to use
+numPCA = 400;
+
+%% Frozen noise
+%
+% We'd like to keep the noise frozen so that the results can be replicated.
+% Because we are doing machine learning classification with large data
+% sets, it is likely that the variation due to random noise is not enough
+% to offset the results by a significant amount even if the noise is not
+% frozen.
 rng(1);
+
 %% Using the coneMosaic object here
-sensor = coneMosaic;
-sensor.setSizeToFOV(sSize);
-sensor.integrationTime = 0.050;
-sensor.wave = SToWls([380 8 51]);
-sensor.noiseFlag = 0;
+mosaic = getDefaultBLIllumDiscrMosaic;
+mosaic.fov = sSize;
 
 %% Perform calculation
 for ff = 1:length(folders)
@@ -65,47 +71,41 @@ for ff = 1:length(folders)
     data = what(folderPath);
     standardOIList = data.mat;
     
-    standardSensorPool = cell(1, length(standardOIList));
+    standardPhotonPool = cell(1, length(standardOIList));
     calcParams.meanStandard = 0;
     for jj = 1:length(standardOIList)
-        standard = loadOpticalImageData([folders{ff} '/Standard'], strrep(standardOIList{jj}, 'OpticalImage.mat', ''));
-        standardSensorPool{jj} = sensor.compute(standard,'currentFlag',false);
-        calcParams.meanStandard = calcParams.meanStandard + mean2(standardSensorPool{jj}) / length(standardOIList);
+        standardOI = loadOpticalImageData([folders{ff} '/Standard'], strrep(standardOIList{jj}, 'OpticalImage.mat', ''));
+        standardPhotonPool{jj} = mosaic.compute(standardOI,'currentFlag',false);
+        calcParams.meanStandard = calcParams.meanStandard + mean2(standardPhotonPool{jj}) / length(standardOIList);
     end
     
     %% Calculation body
     
     % Pre-allocate space for results
-    DApercentCorrect = zeros(numIllumSteps,length(NoiseSteps),length(Colors));
-    NNpercentCorrect = zeros(numIllumSteps,length(NoiseSteps),length(Colors));
-    SVMpercentCorrect = zeros(numIllumSteps,length(NoiseSteps),length(Colors));
-    pcaData = cell(length(Colors),numIllumSteps,length(NoiseSteps));
-    DApca = zeros(numIllumSteps,length(NoiseSteps),length(Colors));
-    NNpca = zeros(numIllumSteps,length(NoiseSteps),length(Colors));
-    SVMpca = zeros(numIllumSteps,length(NoiseSteps),length(Colors));
-    for cc = 1:length(Colors)
+    DApercentCorrect = zeros(length(illumSteps),length(noiseSteps),length(colors));
+    NNpercentCorrect = zeros(length(illumSteps),length(noiseSteps),length(colors));
+    SVMpercentCorrect = zeros(length(illumSteps),length(noiseSteps),length(colors));
+    pcaData = cell(length(colors),length(illumSteps),length(noiseSteps));
+    
+    for cc = 1:length(colors)
         
         % Load all Optical image names in the target directory in
         % alphanumerical order. This corresponds to increasing illumination steps.
-        comparisonOIPath = fullfile(analysisDir, 'OpticalImageData', folders{ff}, [Colors{cc} 'Illumination']);
+        comparisonOIPath = fullfile(analysisDir, 'OpticalImageData', folders{ff}, [colors{cc} 'Illumination']);
         OINames = getFilenamesInDirectory(comparisonOIPath);
         
-        for kk = 1:numIllumSteps
+        for kk = illumSteps
             
-            comparison = loadOpticalImageData([folders{ff} '/' Colors{cc} 'Illumination'], strrep(OINames{kk}, 'OpticalImage.mat', ''));
-            sensorComparison = sensor.compute(comparison,'currentFlag',false);
+            comparison = loadOpticalImageData([folders{ff} '/' colors{cc} 'Illumination'], strrep(OINames{kk}, 'OpticalImage.mat', ''));
+            photonComparison = mosaic.compute(comparison,'currentFlag',false);
 
             tic
-            for nn = 1:length(NoiseSteps)
-                if usePoissonNoise
-                    kp = NoiseSteps(nn); kg = 0;
-                else
-                    kg = NoiseSteps(nn); kp = 1;
-                end
+            for nn = 1:length(noiseSteps)
+                kg = noiseSteps(nn); kp = 1;
                 
                 %% Generate the data set
-                [trainingData,trainingClasses] = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,trainingSetSize);
-                [testingData,testingClasses]   = df1_ABBA(calcParams,standardSensorPool,{sensorComparison},kp,kg,testingSetSize);
+                [trainingData,trainingClasses] = df1_ABBA(calcParams,standardPhotonPool,{photonComparison},kp,kg,trainingSetSize);
+                [testingData,testingClasses]   = df1_ABBA(calcParams,standardPhotonPool,{photonComparison},kp,kg,testingSetSize);
                 
                 % Standardize data if flag is set to true
                 if standardizeData
@@ -116,15 +116,17 @@ for ff = 1:length(folders)
                     testingData  = (testingData  - repmat(m,testingSetSize,1))  ./ repmat(s,testingSetSize,1);
                 end
                 
+                %% Perform pca analysis
+                [coeff,d.score,~,~,d.explained] = pca([trainingData;testingData]);
+                d.score = d.score(:,1:10);
+                trainingData = trainingData*coeff;
+                testingData  = testingData*coeff;
+                
                 %% Apply classifiers
                 [SVMpercentCorrect(kk, nn, cc),svm] = cf3_SupportVectorMachine(trainingData,testingData,trainingClasses,testingClasses);
                 DApercentCorrect(kk, nn, cc) = cf2_DiscriminantAnalysis(trainingData,testingData,trainingClasses,testingClasses);
                 NNpercentCorrect(kk, nn, cc) = cf1_NearestNeighbor(trainingData,testingData,trainingClasses,testingClasses);
                 
-                %% Perform pca analysis
-                [coeff,d.score,~,~,d.explained] = pca([trainingData;testingData]);
-                d.score = d.score(:,1:10);
-%                 d.firstPC = coeff(:,1);
                 % We take the SVM discriminant function and project onto
                 % the first 2 principal components. Then, we find the
                 % vector orthogonal to the projected image.  This should
@@ -134,16 +136,14 @@ for ff = 1:length(folders)
                 % but is capable of doing the calculation using projections
                 % onto the PCA vectors.
                 
-%                 svm.Beta = [];
                 if ~isempty(svm.Beta)
-                    projectedBeta = coeff(:,1:2)'*svm.Beta;
-                    d.decisionBoundary = null(projectedBeta');
+                    d.decisionBoundary = null(svm.Beta');
                 else
                     d.decisionBoundary = [0 0];
                 end
                 pcaData{cc,kk,nn} = d;
             end
-            fprintf('Calculation time for %s, dE %.2f = %2.1f\n', Colors{cc} , kk, toc);
+            fprintf('Calculation time for %s, dE %.2f = %2.1f\n', colors{cc} , kk, toc);
         end
     end
     
