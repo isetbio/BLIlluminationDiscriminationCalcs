@@ -1,4 +1,4 @@
-%% ComparingClassifiersWithData
+%% t_ComparingClassifiersWithData
 %
 % Looks at how three different classfiers perform using the same set of
 % data. This gives us an idea of the strengths and weaknesses of each

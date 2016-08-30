@@ -1,8 +1,10 @@
-% PlotResults
+%% t_PlotResults
 % 
 % This function was written to  be used in conjunction with
 % ComparingClassifiersWithData. This is not guaranteed to work with data
 % generated through other means (due for formatting).
+%
+% 6/XX/16  xd  wrote it
 
 %% Load data
 clear;
