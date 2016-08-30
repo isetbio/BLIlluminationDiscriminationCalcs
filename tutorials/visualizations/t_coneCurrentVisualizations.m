@@ -1,11 +1,11 @@
-% coneCurrentVisualizations
+%% t_coneCurrentVisualizations
 %
 % This tutorial applies the code found in the ISETBIO tutorial
 % t_osHyperSpectralSceneEyeScan to the BLIlluminationDiscrimination
 % project.  The EM generation code in this project will be used to create
 % saccadic movements and the full image of the stimuli will be used.
 %
-% xd    2/29/2016  wrote it
+% 2/29/2016  xd  wrote it
 
 ieInit;
 

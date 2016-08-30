@@ -21,9 +21,9 @@ trainingSetSize = 1000;
 testingSetSize  = 1000;
 
 % This determines the size of the sensor in degrees. The optical image will
-% be scaled to OIvSensorScale times this value to avoid having parts of the edge of the
-% sensor miss any stimulus. This should be OK since the optical image pads
-% the original stimulus with the average color at the edges.
+% be scaled to OIvSensorScale times this value to avoid having parts of the
+% edge of the sensor miss any stimulus. This should be OK since the optical
+% image pads the original stimulus with the average color at the edges.
 sSize = 1;
 OIvSensorScale = 1.3;
 
