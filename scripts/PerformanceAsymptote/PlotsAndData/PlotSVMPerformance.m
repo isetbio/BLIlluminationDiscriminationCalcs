@@ -13,7 +13,7 @@ clear; close all;
 saveFig = false;
 
 %% Load the data
-dataFile = 'SVMPerformance_0.3deg.mat';
+dataFile = 'SVMPerformance_Illum5_1.0deg_400PCA.mat';
 load(dataFile);
 
 %% Plot
@@ -24,14 +24,14 @@ load(dataFile);
 figParams = BLIllumDiscrFigParams([],'Asymptote');
 f = figure('Position',figParams.sqPosition); hold on;
 
-for ii = 1:length(dimensions.folders)
+for ii = 1:length(MetaData.dimensions.Folders)
     % Process the data by calculating the mean and std err for each cross validated point.
-    CurrentData = SVMpercentCorrect(ii,:,:,:);
-    DataToPlot = squeeze(mean(CurrentData,4));
-    StdErr = std(squeeze(CurrentData),[],2) / sqrt(dimensions.numCrossVal); 
+    
+    DataToPlot = squeeze(SVMpercentCorrect(ii,1,:,1));
+    StdErr = squeeze(SVMpercentCorrect(ii,1,:,2));
 
     % Actual plotting here
-    errorbar(dimensions.trainingSetSizes,DataToPlot*100,StdErr*100,'Color',figParams.colors{ii},'LineWidth',figParams.lineWidth,'LineStyle',figParams.lineStyles{ii});
+    errorbar(MetaData.dimensions.TrainingSetSizes,DataToPlot*100,StdErr*100,'Color',figParams.colors{ii},'LineWidth',figParams.lineWidth,'LineStyle',figParams.lineStyles{ii});
 end
 
 
@@ -39,14 +39,14 @@ ylim([45 100]);
 xlim([10^0 10^6]);
 
 % Legend, titles, and axes labels
-legend(cellfun(@(X)strtok(X,'_'),dimensions.folders,'UniformOutput',false),'Location','Northwest','FontSize',figParams.legendFontSize);
+legend(cellfun(@(X)strtok(X,'_'),MetaData.dimensions.Folders,'UniformOutput',false),'Location','Northwest','FontSize',figParams.legendFontSize);
 t = title(dataFile(1:end-4),'FontSize',figParams.titleFontSize,'Interpreter','none');
 xl = xlabel('Training Set Size','FontSize',figParams.labelFontSize);
 yl = ylabel('% Correct','FontSize',figParams.labelFontSize);
 
 % Set some formatting and style things
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
-set(gca,'XTick',logspace(0,5,6))
+set(gca,'XTick',logspace(0,5,6));
 set(gca,'XScale','log');
 axis square;
 grid on;

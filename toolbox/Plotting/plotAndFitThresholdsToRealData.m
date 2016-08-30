@@ -77,7 +77,7 @@ if pointToInterpolate ~= idx
     [~,interpIdx] = min(abs(interpolatedThresholds));
     interpOffset = interpIdx/1000;
     interpolatedPoint = interpolatedPoint + sign(pointToInterpolate-idx) * interpOffset;
-
+    
     % Use the interpolated point calculate the thresholds (and errors) that
     % we will plot.
     fittedThresholds = interp1([idx pointToInterpolate],thresholds([idx,pointToInterpolate],:),interpolatedPoint);

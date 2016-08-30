@@ -35,7 +35,7 @@ for il = 1:length(illumLevels)
     for ii = 1:length(MetaData.dimensions.Folders)
         % Process the data by calculating the mean and std err for each cross validated point.
         CurrentData = SVMpercentCorrect(ii,1,:,:);
-        DataToPlot = squeeze(SVMpercentCorrect(ii,2,:,1));
+        DataToPlot = squeeze(SVMpercentCorrect(ii,1,:,1));
         StdErr = squeeze(SVMpercentCorrect(ii,1,:,2));
         
         % Actual plotting here
@@ -46,7 +46,7 @@ for il = 1:length(illumLevels)
     
     legend(cellfun(@(X)strtok(X,'_'),MetaData.dimensions.Folders,'UniformOutput',false),'Location','Northeast','FontSize',figParams.legendFontSize);
     set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
-    set(gca,'XTick',logspace(0,5,6))
+    set(gca,'XTick',logspace(0,5,6));
     set(gca,'XScale','log');
     axis square;
     grid on;
