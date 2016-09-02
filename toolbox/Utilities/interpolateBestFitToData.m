@@ -6,7 +6,6 @@ function interpDist = interpolateBestFitToData(thresholds,data)
 %
 % 8/30/16  xd  extracted from plotAndFitThresholdsToRealData
 
-
 %% Determine the best average match
 %
 % We can determine the best match by finding the distance from the data
