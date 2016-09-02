@@ -114,20 +114,32 @@ for subjectNumber = 1:length(orderOfSubjects)
     ys = 0.5*sqrt(d1.Yellower.std^2 + d2.Yellower.std^2);
     
         
+    b = d1.Bluer.threshold;
+    g = d1.Greener.threshold;
+    r = d1.Redder.threshold;
+    y = d1.Yellower.threshold;
+    bs = d1.Bluer.std;
+    gs = d1.Greener.std;
+    rs = d1.Redder.std;
+    ys = d1.Yellower.std;
+    
     th1 = plotAndFitThresholdsToRealData(pI,th1,[b y g r],'DataError',[bs ys gs rs],'CreatePlot',false);
+    
+    b = d2.Bluer.threshold;
+    g = d2.Greener.threshold;
+    r = d2.Redder.threshold;
+    y = d2.Yellower.threshold;
+    bs = d2.Bluer.std;
+    gs = d2.Greener.std;
+    rs = d2.Redder.std;
+    ys = d2.Yellower.std;
     th2 = plotAndFitThresholdsToRealData(pI,th2,[b y g r],'DataError',[bs ys gs rs],'CreatePlot',false);
     t = nanmean(cat(3,th1,th2),3);
     
-%     b = d1.Bluer.threshold;
-%     g = d1.Greener.threshold;
-%     r = d1.Redder.threshold;
-%     y = d1.Yellower.threshold;
-%     bs = d1.Bluer.std;
-%     gs = d1.Greener.std;
-%     rs = d1.Redder.std;
-%     ys = d1.Yellower.std;
-    
+
     subplot(2,5,subjectNumber);
+%     plotAndFitThresholdsToRealData(pI,t,[b y g r],'DataError',[bs ys gs rs],'NoiseVector',0:3:30,'NewFigure',false);
+    
     hold on;
     figParams = BLIllumDiscrFigParams([],'FitThresholdToData');
     data = [b y g r];
@@ -161,29 +173,3 @@ for subjectNumber = 1:length(orderOfSubjects)
 end
 t = suptitle('Constant');
 set(t,'FontSize',30);
-
-%% OLD
-%     %% 
-%     dataset      = [r1.resultData{2}(:);r1.resultData{3}(:);r2.resultData{2}(:);r2.resultData{3}(:)];
-%     uniqueValues = unique(dataset);
-%     totalNumber  = numel(dataset);
-%     
-%     weightedPatchImage = zeros(p.vNum,p.hNum);
-%     for ii = 1:length(uniqueValues)
-%         weight = sum(dataset == uniqueValues(ii)) / totalNumber;
-%         weightedPatchImage(uniqueValues(ii)) = weight;
-%     end
-
-%     %%
-%     weightedPatchImage = weightedPatchImage(:);
-%     nonZeroProbIdx     = find(weightedPatchImage);
-%     weightedPatchImage = weightedPatchImage / sum(weightedPatchImage);
-%     for ii = 1:length(nonZeroProbIdx)
-%         thePatch = nonZeroProbIdx(ii);
-%         [currentPatchData,cp] = loadModelData(['SVM_Static_Isomerizations_Constant_' num2str(thePatch)]);
-%         results = results + (weightedPatchImage(thePatch) * currentPatchData);
-%     end
-    
-%     for ii = 1:4
-%         t{ii} = multipleThresholdExtraction(squeeze(results(ii,:,:)),70.9);
-%     end
