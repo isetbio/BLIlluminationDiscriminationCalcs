@@ -1,4 +1,4 @@
-% PlotSVMPerformance
+%% PlotSVMPerformance
 %
 % This function will plot the data generated through the
 % svmPerformanceAsymptote script. The data contains performance asymptotes
@@ -13,10 +13,11 @@ clear; close all;
 saveFig = false;
 
 %% Load the data
-dataFile = 'SVMPerformance_Illum5_1.0deg_400PCA.mat';
+dataFile = 'SVMPerformance_Illum1_0.3deg_400PCA.mat';
 load(dataFile);
 
 %% Plot
+%
 % The first index of the data matrix will be image condition. The second
 % index is illumination color. We only ran blue, so it should be 1 in this
 % case. The third index represents the training set sizes which is stored
@@ -27,7 +28,7 @@ f = figure('Position',figParams.sqPosition); hold on;
 for ii = 1:length(MetaData.dimensions.Folders)
     % Process the data by calculating the mean and std err for each cross validated point.
     
-    DataToPlot = squeeze(SVMpercentCorrect(ii,1,:,1));
+    DataToPlot = squeeze(SVMpercentCorrect(ii,1,:,3));
     StdErr = squeeze(SVMpercentCorrect(ii,1,:,2));
 
     % Actual plotting here
@@ -51,8 +52,8 @@ set(gca,'XScale','log');
 axis square;
 grid on;
 
-yl.Position = yl.Position + figParams.deltaYlabelPosition;
-xl.Position = xl.Position + figParams.deltaXlabelPosition;
+% yl.Position = yl.Position + figParams.deltaYlabelPosition;
+% xl.Position = xl.Position + figParams.deltaXlabelPosition;
 
 %% Save the figure
 if saveFig, FigureSave(strrep(dataFile(1:end-4),'_',' '),f,figParams.figType); end;
