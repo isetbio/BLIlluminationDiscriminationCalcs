@@ -8,7 +8,7 @@
 %
 % 7/18/16  xd  wrote it
 
-% ieInit; clear;
+clear; ieInit; 
 %% Set parameters
 %
 % These parameters control what calculations get done in this script. We'll
@@ -48,6 +48,7 @@ osType = 'linear';
 coneTypeToMatch = 3;
 
 %% Load optical images and create mosaic
+%
 % Create a cone mosaic that will be used to calculate things throughout the
 % entire script. We also create a large mosaic which will be used to
 % generate the LMS for quickly calculating EM samples.

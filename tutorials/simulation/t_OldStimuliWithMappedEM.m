@@ -7,7 +7,7 @@
 %
 % 8/16/15  xd  wrote it
 
-clear; %close all; ieInit; 
+clear; close all; ieInit; 
 %% Set some parameters
 
 % The order of the subjects in the data file.

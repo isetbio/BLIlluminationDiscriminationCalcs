@@ -5,7 +5,7 @@
 % classifier.  The three classifiers used in this script are a kNN, a
 % linear discriminant, and a SVM. The latter two are linear classifiers and
 % while the kNN can also be linear, it often is not.
-% 
+%
 % 6/XX/16  xd  wrote it
 
 clear; close all;
@@ -34,7 +34,7 @@ standardizeData = true;
 
 % Additional text to add to the end of the name of the saved data file.
 % This will help add specificity if the current naming scheme is not
-% enough. 
+% enough.
 additionalNamingText = '_NewOI';
 
 % Just some variables that tell the script which folders and data files to use
@@ -85,7 +85,6 @@ for ff = 1:length(folders)
     DApercentCorrect = zeros(length(illumSteps),length(noiseSteps),length(colors));
     NNpercentCorrect = zeros(length(illumSteps),length(noiseSteps),length(colors));
     SVMpercentCorrect = zeros(length(illumSteps),length(noiseSteps),length(colors));
-    pcaData = cell(length(colors),length(illumSteps),length(noiseSteps));
     
     for cc = 1:length(colors)
         
@@ -96,9 +95,10 @@ for ff = 1:length(folders)
         
         for kk = illumSteps
             
+            % Load the OI for this illumination step
             comparison = loadOpticalImageData([folders{ff} '/' colors{cc} 'Illumination'], strrep(OINames{kk}, 'OpticalImage.mat', ''));
             photonComparison = mosaic.compute(comparison,'currentFlag',false);
-
+            
             tic
             for nn = 1:length(noiseSteps)
                 kg = noiseSteps(nn); kp = 1;
@@ -116,32 +116,19 @@ for ff = 1:length(folders)
                     testingData  = (testingData  - repmat(m,testingSetSize,1))  ./ repmat(s,testingSetSize,1);
                 end
                 
-                %% Perform pca analysis
-                [coeff,d.score,~,~,d.explained] = pca([trainingData;testingData],'NumComponents',numPCA);
-                d.score = d.score(:,1:10);
+                %% Perform pca dimension reduction
+                %
+                % We calculate the first numPCA components. These should
+                % explain the most variance out of all the components. We
+                % then project our original dataset onto there component.
+                coeff = pca([trainingData;testingData],'NumComponents',numPCA);
                 trainingData = trainingData*coeff;
                 testingData  = testingData*coeff;
                 
                 %% Apply classifiers
-                [SVMpercentCorrect(kk, nn, cc),svm] = cf3_SupportVectorMachine(trainingData,testingData,trainingClasses,testingClasses);
+                SVMpercentCorrect(kk, nn, cc) = cf3_SupportVectorMachine(trainingData,testingData,trainingClasses,testingClasses);
                 DApercentCorrect(kk, nn, cc) = cf2_DiscriminantAnalysis(trainingData,testingData,trainingClasses,testingClasses);
                 NNpercentCorrect(kk, nn, cc) = cf1_NearestNeighbor(trainingData,testingData,trainingClasses,testingClasses);
-                
-                % We take the SVM discriminant function and project onto
-                % the first 2 principal components. Then, we find the
-                % vector orthogonal to the projected image.  This should
-                % represent the decision boundary that the SVM uses to make
-                % a decision. It seems that the SVM sometimes has issues
-                % classifying the noAB vectors in high dimensional space,
-                % but is capable of doing the calculation using projections
-                % onto the PCA vectors.
-                
-                if ~isempty(svm.Beta)
-                    d.decisionBoundary = null(svm.Beta');
-                else
-                    d.decisionBoundary = [0 0];
-                end
-                pcaData{cc,kk,nn} = d;
             end
             fprintf('Calculation time for %s, dE %.2f = %2.1f\n', colors{cc} , kk, toc);
         end
@@ -150,9 +137,9 @@ for ff = 1:length(folders)
     %% Save stuff
     stdText = {'nostd' 'std'};
     nameOfFile = sprintf('ClassifierAnalysis_%d_%d_%s_%s%s',trainingSetSize,testingSetSize,stdText{standardizeData+1},strtok(folders{ff},'_'),additionalNamingText);
-%     fullSavePath = fullfile(analysisDir, 'ClassifierComparisons',nameOfFile);
+    fullSavePath = fullfile(analysisDir, 'ClassifierComparisons',nameOfFile);
+    save(fullSavePath, 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect',...
+        'Colors','NoiseSteps');
 
-    save(nameOfFile, 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect',...
-        'pcaData', 'colors','noiseSteps');
 end
 
