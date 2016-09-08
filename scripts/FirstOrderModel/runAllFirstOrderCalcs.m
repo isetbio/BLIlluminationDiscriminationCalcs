@@ -20,7 +20,7 @@ function runAllFirstOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs = {'SVM_Neutral_UniformDensity'};
+calcIDStrs = {'SVM_Neutral_NoSCones'};
 
 %% Parameters of the calculation
 %
@@ -80,7 +80,7 @@ for k1 = 1:length(calcIDStrs)
     % Here we specify which data function and classification function to use. 
     calcParams.standardizeData = true;
     calcParams.cFunction = 3;
-    calcParams.dFunction = 1;
+    calcParams.dFunction = 5;
     calcParams.usePCA = true;
     calcParams.numPCA = 400;
     

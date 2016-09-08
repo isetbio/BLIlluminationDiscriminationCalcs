@@ -83,6 +83,9 @@ for ii = 1:length(illumLevels);
                 testingData  = (testingData - repmat(m,testingSetSize,1))   ./ repmat(s,testingSetSize,1);
             end
             
+            trainingData(isnan(trainingData)) = 0;
+            testingData(isnan(testingData)) = 0;
+            
             if calcParams.usePCA
                 coeff = pca(trainingData,'NumComponents',calcParams.numPCA);
                 trainingData = trainingData*coeff;
