@@ -39,12 +39,12 @@ additionalNamingText = '_NewOI';
 
 % Just some variables that tell the script which folders and data files to use
 colors  = {'Blue' 'Yellow' 'Red' 'Green'};
-folders = {'Neutral' 'NM1' 'NM2'}; % Rename to OIFolders?
+folders = {'Neutral_FullImage' 'NM1_FullImage' 'NM2_FullImage'}; % Rename to OIFolders?
 
 % These variables specify the number of illumination steps and the noise
 % multipliers to use. Generally keep the number of steps constant and vary
 % the noise as necessary.
-illumSteps = 1:50;
+illumSteps = 1:2:50;
 noiseSteps = 1:2:20;
 
 % Number of PCA components to use
@@ -150,9 +150,9 @@ for ff = 1:length(folders)
     %% Save stuff
     stdText = {'nostd' 'std'};
     nameOfFile = sprintf('ClassifierAnalysis_%d_%d_%s_%s%s',trainingSetSize,testingSetSize,stdText{standardizeData+1},strtok(folders{ff},'_'),additionalNamingText);
-    fullSavePath = fullfile(analysisDir, 'ClassifierComparisons',nameOfFile);
+%     fullSavePath = fullfile(analysisDir, 'ClassifierComparisons',nameOfFile);
 
-    save(fullSavePath, 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect',...
-        'pcaData', 'Colors','NoiseSteps');
+    save(nameOfFile, 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect',...
+        'pcaData', 'colors','noiseSteps');
 end
 
