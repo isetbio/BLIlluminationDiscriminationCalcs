@@ -1,7 +1,9 @@
 %% t_UseRealEMDistributionMatchTrials
 %
 % Uses a real EM Distrbution data file from the psychophysical experiments
-% in order to come to a prediction of performance.
+% in order to come to a prediction of performance. In this script, we will
+% match by trial instead of taking the fixation distribution during the
+% whole experiment.
 %
 % 8/04/16  xd  wrote it
 
@@ -15,7 +17,8 @@ for subjectNumber = 1:length(orderOfSubjects)
     
     %% Load the data
     %
-    % We need to load the 
+    % We need to load the fixations from the experiment. These paths are
+    % stored locally and may need to be changed depending on your setup.
     r1 = load(['/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCodeTempLocation/Exp8ProcessedData/Exp8EMByScenePatches/' subjectId '-Constant-' num2str(1) '-EMInPatches.mat']);
     r2 = load(['/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCodeTempLocation/Exp8ProcessedData/Exp8EMByScenePatches/' subjectId '-Constant-' num2str(2) '-EMInPatches.mat']);
     r1 = r1.resultData;
@@ -100,20 +103,14 @@ for subjectNumber = 1:length(orderOfSubjects)
     % plotThresholdsAgainstNoise(pI,t,(0:3:30)');
     
     %% Get subject data
-    
+    %
+    % We're only looking at Constant run data for now because that's all
+    % that really works.
     subjectIdx = find(not(cellfun('isempty', strfind(orderOfSubjects,subjectId))));
     d1 = subject{subjectIdx}.Constant{1};
     d2 = subject{subjectIdx}.Constant{2};
-    b = nanmean([d1.Bluer.threshold,d2.Bluer.threshold]);
-    g = nanmean([d1.Greener.threshold,d2.Greener.threshold]);
-    r = nanmean([d1.Redder.threshold,d2.Redder.threshold]);
-    y = nanmean([d1.Yellower.threshold,d2.Yellower.threshold]);
-    bs = 0.5*sqrt(d1.Bluer.std^2 + d2.Bluer.std^2);
-    gs = 0.5*sqrt(d1.Greener.std^2 + d2.Greener.std^2);
-    rs = 0.5*sqrt(d1.Redder.std^2 + d2.Redder.std^2);
-    ys = 0.5*sqrt(d1.Yellower.std^2 + d2.Yellower.std^2);
     
-        
+    % Calculate run 1 results to fit.
     b = d1.Bluer.threshold;
     g = d1.Greener.threshold;
     r = d1.Redder.threshold;
@@ -122,9 +119,9 @@ for subjectNumber = 1:length(orderOfSubjects)
     gs = d1.Greener.std;
     rs = d1.Redder.std;
     ys = d1.Yellower.std;
+    [th1,n1] = plotAndFitThresholdsToRealData(pI,th1,[b y g r],'DataError',[bs ys gs rs],'CreatePlot',false);
     
-    th1 = plotAndFitThresholdsToRealData(pI,th1,[b y g r],'DataError',[bs ys gs rs],'CreatePlot',false);
-    
+    % Calculate run 2 results to fit.
     b = d2.Bluer.threshold;
     g = d2.Greener.threshold;
     r = d2.Redder.threshold;
@@ -133,40 +130,21 @@ for subjectNumber = 1:length(orderOfSubjects)
     gs = d2.Greener.std;
     rs = d2.Redder.std;
     ys = d2.Yellower.std;
-    th2 = plotAndFitThresholdsToRealData(pI,th2,[b y g r],'DataError',[bs ys gs rs],'CreatePlot',false);
+    [th2,n2] = plotAndFitThresholdsToRealData(pI,th2,[b y g r],'DataError',[bs ys gs rs],'CreatePlot',false);
     t = nanmean(cat(3,th1,th2),3);
     
-
+    % Calculate mean threshold from experiment
+    b = nanmean([d1.Bluer.threshold,d2.Bluer.threshold]);
+    g = nanmean([d1.Greener.threshold,d2.Greener.threshold]);
+    r = nanmean([d1.Redder.threshold,d2.Redder.threshold]);
+    y = nanmean([d1.Yellower.threshold,d2.Yellower.threshold]);
+    bs = 0.5*sqrt(d1.Bluer.std^2 + d2.Bluer.std^2);
+    gs = 0.5*sqrt(d1.Greener.std^2 + d2.Greener.std^2);
+    rs = 0.5*sqrt(d1.Redder.std^2 + d2.Redder.std^2);
+    ys = 0.5*sqrt(d1.Yellower.std^2 + d2.Yellower.std^2);
     subplot(2,5,subjectNumber);
-%     plotAndFitThresholdsToRealData(pI,t,[b y g r],'DataError',[bs ys gs rs],'NoiseVector',0:3:30,'NewFigure',false);
+    plotAndFitThresholdsToRealData(pI,t,[b y g r],'DataError',[bs ys gs rs],'NoiseVector',nanmean([n1,n2]),'NewFigure',false);
     
-    hold on;
-    figParams = BLIllumDiscrFigParams([],'FitThresholdToData');
-    data = [b y g r];
-    dataError = [bs ys gs rs];
-    for ii = 1:length(data)
-        % Because the horizontal lines on the error bar function scales with
-        % the range of the data set (and for some reason the range is 0->data
-        % if the data is a scalar) we will create a dummy data point so that
-        % the horizontal lines look roughly the same size.
-        if ii < 4
-            dataPad = -4 + ii; dataPadErr = 0;
-        else
-            dataPad = []; dataPadErr = [];
-        end
-        errorbar([ii dataPad],[data(ii) dataPad],[dataError(ii) dataPadErr],figParams.markerType,'Color',figParams.colors{ii},...
-            'MarkerFaceColor',figParams.colors{ii},'MarkerSize',figParams.markerSize,...
-            'LineWidth',figParams.lineWidth);
-    end
-    fittedThresholdHandle = errorbar(1:length(data),t,[0 0 0 0],...
-        figParams.modelMarkerType,'Color',figParams.modelMarkerColor,'MarkerSize',figParams.modelMarkerSize,...
-        'MarkerFaceColor',figParams.modelMarkerColor,'LineWidth',figParams.lineWidth);
-    ylim(figParams.ylimit);
-    xlim(figParams.xlimit);
-    
-    theTitle = get(gca,'title');
-    theTitle = theTitle.String;
-    title(strrep(theTitle,'Data fitted at',[subjectId ',']));
     % FigureSave(subjectId,gcf,'pdf');
     clearvars th1 th2;
     Z{subjectIdx} = t;

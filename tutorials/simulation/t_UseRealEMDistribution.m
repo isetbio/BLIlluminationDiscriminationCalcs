@@ -15,7 +15,8 @@ for subjectNumber = 1:length(orderOfSubjects)
     
     %% Load the data
     %
-    % We need to load the 
+    % We need to load the fixations from the experiment. These paths are
+    % stored locally and may need to be changed depending on your setup.
     r1 = load(['/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCodeTempLocation/Exp8ProcessedData/Exp8EMByScenePatches/' subjectId '-Constant-' num2str(1) '-EMInPatches.mat']);
     r2 = load(['/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCodeTempLocation/Exp8ProcessedData/Exp8EMByScenePatches/' subjectId '-Constant-' num2str(2) '-EMInPatches.mat']);
     r1 = r1.resultData;
@@ -29,7 +30,11 @@ for subjectNumber = 1:length(orderOfSubjects)
     result1 = zeros(size(dummyData));
     result2 = zeros(size(dummyData));
     results = zeros(size(dummyData));
-    %% 
+    
+    %% Put all the data into one matrix
+    %
+    % This let's us calculate the weighted patch values based on a desired
+    % set of fixations.
     dataset      = [r1{:,2} r1{:,3} r2{:,2} r2{:,3}];
     uniqueValues = unique(dataset);
     totalNumber  = numel(dataset);
@@ -40,7 +45,11 @@ for subjectNumber = 1:length(orderOfSubjects)
         weightedPatchImage(uniqueValues(ii)) = weight;
     end
 
-    %%
+    %% Calculate performance
+    %
+    % We calculate the performance by mutliplying the patch weights with
+    % their percent correct. Then, we extract thresholds for these
+    % performance values.
     weightedPatchImage = weightedPatchImage(:);
     nonZeroProbIdx     = find(weightedPatchImage);
     weightedPatchImage = weightedPatchImage / sum(weightedPatchImage);
@@ -53,25 +62,9 @@ for subjectNumber = 1:length(orderOfSubjects)
     for ii = 1:4
         t{ii} = multipleThresholdExtraction(squeeze(results(ii,:,:)),70.9);
     end
-
-%     %% Loop over trials and allocate trial performance as necessary
-%     colorToIdxMap = containers.Map({'B' 'G' 'R' 'Y'},{1 2 3 4});
-%     countPerEntry = zeros(size(dummyData,1),size(dummyData,2));
-%  
-%     fixationPatches = [r2{:,2:3}];
-%     for ii = 1:numel(fixationPatches)
-%         [currentPatchData,cp] = loadModelData(['SVM_Static_Isomerizations_Constant_' num2str(fixationPatches(ii))]);
-%         result2 = result2 + currentPatchData;
-%     end
-%     result2 = result2 ./ numel(fixationPatches);
-%     
-%     %% Find stimulus levels for each color direction and extract thresholds
-%     for ii = 1:colorToIdxMap.length
-%         stimLevels = 1:50;
-%         data = squeeze(result2(ii,stimLevels,:,:));
-%         t{ii} = multipleThresholdExtraction(data,70.9,stimLevels);
-%     end
-
+    
+    % Turn from cell into matrix. This allows for easier plotting later. We
+    % also reorganize the matrix so that the color order is b, y, g, r.
     t = cell2mat(t);
     t = t(:,[1 4 2 3]);    
     stimLevels = 1:50;
@@ -84,7 +77,9 @@ for subjectNumber = 1:length(orderOfSubjects)
     % plotThresholdsAgainstNoise(pI,t,(0:3:30)');
     
     %% Get subject data
-    
+    %
+    % Load the subject performances. We need to calculate the mean
+    % thresholds for the constant runs as well as the standard deviations.
     subjectIdx = find(not(cellfun('isempty', strfind(orderOfSubjects,subjectId))));
     d1 = subject{subjectIdx}.Constant{1};
     d2 = subject{subjectIdx}.Constant{2};
@@ -96,16 +91,8 @@ for subjectNumber = 1:length(orderOfSubjects)
     gs = 0.5*sqrt(d1.Greener.std^2 + d2.Greener.std^2);
     rs = 0.5*sqrt(d1.Redder.std^2 + d2.Redder.std^2);
     ys = 0.5*sqrt(d1.Yellower.std^2 + d2.Yellower.std^2);
-
-%     b = d1.Bluer.threshold;
-%     g = d1.Greener.threshold;
-%     r = d1.Redder.threshold;
-%     y = d1.Yellower.threshold;
-%     bs = d1.Bluer.std;
-%     gs = d1.Greener.std;
-%     rs = d1.Redder.std;
-%     ys = d1.Yellower.std;
     
+    % Plot a the thresholds along with the model predictions.
     subplot(2,5,subjectNumber);
     Z{subjectNumber} = plotAndFitThresholdsToRealData(pI,t,[b y g r],'DataError',[bs ys gs rs],'NoiseVector',0:3:30,'NewFigure',false);
     theTitle = get(gca,'title');
