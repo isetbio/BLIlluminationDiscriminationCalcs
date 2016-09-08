@@ -3,7 +3,7 @@
 % Performs pca from all the patches in a given image. This will require the
 % classification to use the same mosaic throughout.
 
-ieInit; clear; close all;
+ clear; close all; ieInit;
 %% Parameters
 numberOfSamplesPerStimulusLevel = 10;
 illuminationColors = {'blue' 'green' 'red' 'yellow'};
@@ -16,7 +16,6 @@ integrationTimeInSeconds = 0.050;
 mosaic                 = coneMosaic;
 mosaic.fov             = fov;
 mosaic.integrationTime = integrationTimeInSeconds;
-mosaic.sampleTime      = integrationTimeInSeconds;
 mosaic.noiseFlag       = false;
 mosaic.spatialDensity  = [0 0.62 0.31 0.07];
 
@@ -111,5 +110,3 @@ ylabel(['PC ' num2str(PC2)]);
 axis square
 
 set(gca,'FontSize',18,'LineWidth',2,'FontName','Helvetica');
-
-%%

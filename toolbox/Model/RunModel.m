@@ -48,6 +48,7 @@ mosaic.fov = calcParams.sensorFOV;
 mosaic.wave = SToWls(calcParams.S);
 mosaic.noiseFlag = false;
 mosaic.integrationTime = calcParams.coneIntegrationTime;
+mosaic.spatialDensity = calcParams.spatialDensity;
 
 if calcParams.MODEL_ORDER == 2
     % Adjust eye movements

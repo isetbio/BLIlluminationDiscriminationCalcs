@@ -52,6 +52,7 @@ for k1 = 1:length(calcIDStrs)
 %     calcParams = updateCropRect(calcParams);   
     calcParams.cropRect = [];
     calcParams.S = [380 8 51];                            
+    calcParams.spatialDensity = [0 0.62 0.31 0.07];
     
     % Parameters for creating the sensor
     calcParams.coneIntegrationTime = 0.010;  % Integration time in ms. Also determines eye movement and os sampling interval
