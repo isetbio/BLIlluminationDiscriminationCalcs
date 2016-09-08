@@ -1,4 +1,4 @@
-function fittedThresholds = plotAndFitThresholdsToRealData(plotInfo,thresholds,data,varargin)
+function [fittedThresholds,interpNoise] = plotAndFitThresholdsToRealData(plotInfo,thresholds,data,varargin)
 % fittedThresholds = plotAndFitThresholdsToRealData(plotInfo,thresholds,data,varargin)
 %
 % This function takes in thresholds extracted from the model simulation and
@@ -48,12 +48,14 @@ pointToInterpolate = idx;
 fittedThresholds = thresholds(idx,:);
 fittedError = zeros(size(fittedThresholds));
 interpolatedPoint = idx;
-if idx == length(meanThresholdDistToData)
-    if sign(meanThresholdDistToData(idx)) ~= sign(meanThresholdDistToData(idx - 1)), pointToInterpolate = idx - 1; end;
-else
-    if sign(meanThresholdDistToData(idx)) ~= sign(meanThresholdDistToData(idx + 1)), pointToInterpolate = idx + 1;
-    elseif idx > 1
+if size(meanThresholdDistToData,1) > 1
+    if idx == length(meanThresholdDistToData)
         if sign(meanThresholdDistToData(idx)) ~= sign(meanThresholdDistToData(idx - 1)), pointToInterpolate = idx - 1; end;
+    else
+        if sign(meanThresholdDistToData(idx)) ~= sign(meanThresholdDistToData(idx + 1)), pointToInterpolate = idx + 1;
+        elseif idx > 1
+            if sign(meanThresholdDistToData(idx)) ~= sign(meanThresholdDistToData(idx - 1)), pointToInterpolate = idx - 1; end;
+        end
     end
 end
 
@@ -87,19 +89,22 @@ if pointToInterpolate ~= idx
     end
 end
 
+% Here we use the noise index to find the actual noise level in the data.
+% This information is used in the plot title.
+noiseVector = parser.Results.NoiseVector;
+if length(noiseVector) == 1
+    interpNoise = noiseVector;
+elseif ~isempty(noiseVector)
+    interpNoise = noiseVector(floor(interpolatedPoint)) + (interpolatedPoint-floor(interpolatedPoint))*(noiseVector(2)-noiseVector(1));
+else
+    interpNoise = interpolatedPoint;
+end
+
 %% Plot
 if parser.Results.CreatePlot
     figParams = BLIllumDiscrFigParams([],'FitThresholdToData');
     if ~isempty(plotInfo.colors), figParams.colors = plotInfo.colors; end;
     
-    % Here we use the noise index to find the actual noise level in the data.
-    % This information is used in the plot title.
-    noiseVector = parser.Results.NoiseVector;
-    if ~isempty(noiseVector)
-        interpNoise = noiseVector(floor(interpolatedPoint)) + (interpolatedPoint-floor(interpolatedPoint))*(noiseVector(2)-noiseVector(1));
-    else
-        interpNoise = interpolatedPoint;
-    end
     plotInfo.title = sprintf('Data fitted at %.3f noise',interpNoise);
     plotInfo.xlabel = 'Illumination Direction';
     plotInfo.ylabel = 'Stimulus Level (\DeltaE)';
