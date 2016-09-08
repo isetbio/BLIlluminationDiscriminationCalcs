@@ -20,7 +20,7 @@ function runAllFirstOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs = {'Constant_Plot'};
+calcIDStrs = {'SVM_Neutral_UniformDensity'};
 
 %% Parameters of the calculation
 %
@@ -52,7 +52,7 @@ for k1 = 1:length(calcIDStrs)
     
     % Folder list to run over for conversions into isetbio format
 %     calcParams = updateCacheFolderList(calcParams);
-    calcParams.cacheFolderList = {'Constant' 'Constant_PlottingOnly'};
+    calcParams.cacheFolderList = {'Neutral' 'Neutral'};
     % Need to specify the calibration file to use
     calcParams = assignCalibrationFile(calcParams);
     
@@ -62,27 +62,27 @@ for k1 = 1:length(calcIDStrs)
     % cropped region should always be square.
     calcParams = updateCropRect(calcParams);  
     calcParams.S = [380 8 51];
-    calcParams.spatialDensity = [0 0.62 0.31 0.07];
+    calcParams.spatialDensity = [0 0.62 0.31 0.7];
         
     % Parameters for creating the sensor. OIvSensorScale is a parameter
     % that, if set to a value > 0, will subsample the optical image to the
     % size sensorFOV*OIvSensorScale.
     calcParams.coneIntegrationTime = 0.050;
-    calcParams.sensorFOV = 0.83;
+    calcParams.sensorFOV = 1;
     calcParams.OIvSensorScale = 0;
     
     % Specify the number of trials for each combination of Kp Kg as well as
     % the range of illuminants to use (max 50).
     calcParams.trainingSetSize = 1000;
     calcParams.testingSetSize = 1000;
-    calcParams.illumLevels = 1:50;
+    calcParams.illumLevels = 1:2:50;
     
     % Here we specify which data function and classification function to use. 
     calcParams.standardizeData = true;
     calcParams.cFunction = 3;
     calcParams.dFunction = 1;
     calcParams.usePCA = true;
-    calcParams.numPCA = 100;
+    calcParams.numPCA = 400;
     
     % Kp represents the scale factor for the Poisson noise.  This is the
     % realistic noise representation of the photons arriving at the retina.
@@ -92,7 +92,7 @@ for k1 = 1:length(calcIDStrs)
     % Kg is the scale factor for Gaussian noise.  The standard deviation of 
     % the Gaussian noise is equal to the square root of the mean 
     % photoisomerizations across the available target image samples. 
-    calcParams.KgLevels = 30;
+    calcParams.KgLevels = 0:3:30;
     
     %% Convert the images to cached scenes for more analysis
     if (calcParams.CACHE_SCENES)
