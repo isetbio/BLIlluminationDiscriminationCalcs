@@ -21,7 +21,7 @@ clear; close all;
 % size on performance is easier to visualize in log space. We can set the
 % number of training set sizes to use below.
 testingSetSize   = 5000;
-trainingSetSizes = 10*2.^(4:10);
+trainingSetSizes = 10*2.^(6:14);
 
 % Define the size of the sensor here. The calculations will use a 1 degree
 % mosaic so that is the size that will be used here. However, the size
@@ -29,7 +29,7 @@ trainingSetSizes = 10*2.^(4:10);
 % over all the sizes. When set to 0, the OIvSensorScale variable tells the
 % script to not downsample the entire image. If set to a value > 0, it will
 % instead downsample the entire OI by average over a uniform grid.
-sSizes = 1;
+sSizes = 0.3;
 OIvSensorScale = 0;
 
 % Some bookkeeping parameters. These determine which folder the OI's come
@@ -44,7 +44,7 @@ colors  = {'Blue'};
 % that would render the result rather meaningless). illumSteps is similarly
 % chosen to only include samples that are not at 100%.
 noiseStep  = 15;
-illumSteps = [1 5 10 15];
+illumSteps = 1;
 
 % We use kFold CV in this script. This variable determines how many folds
 % to use. CV is performed using the default Matlab implementation for SVMs.
