@@ -72,8 +72,8 @@ for ii = 1:length(illumLevels);
             
             % Choose the data generation function
             datasetFunction = masterDataFunction(calcParams.dFunction);
-            [trainingData, trainingClasses] = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,trainingSetSize);
-            [testingData, testingClasses]   = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,testingSetSize);
+            [trainingData, trainingClasses] = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,trainingSetSize,mosaic);
+            [testingData, testingClasses]   = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,testingSetSize,mosaic);
             
             % Standardize data if flag is set to true
             if calcParams.standardizeData
