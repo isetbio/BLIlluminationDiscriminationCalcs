@@ -13,10 +13,14 @@ numberOfCones = numel(targetPool{1});
 
 %% Get cone pattern and set S cones to 0
 for ii = 1:length(targetPool)
-    targetPool{ii}(mosaic.pattern == 4) = 0;
+    tempPattern = targetPool{ii};
+    tempPattern(mosaic.pattern == 4) = 0;
+    targetPool{ii} = tempPattern;
 end
 for ii = 1:length(comparisonPool)
-    comparisonPool{ii}(mosaic.pattern == 4) = 0;
+    tempPattern = comparisonPool{ii};
+    tempPattern(mosaic.pattern == 4) = 0;
+    comparisonPool{ii} = tempPattern;
 end
 
 %% Generate the data set
