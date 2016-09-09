@@ -53,6 +53,7 @@ for k1 = 1:length(calcIDStrs)
     % Folder list to run over for conversions into isetbio format
 %     calcParams = updateCacheFolderList(calcParams);
     calcParams.cacheFolderList = {'Neutral' 'Neutral'};
+    
     % Need to specify the calibration file to use
     calcParams = assignCalibrationFile(calcParams);
     
@@ -62,7 +63,7 @@ for k1 = 1:length(calcIDStrs)
     % cropped region should always be square.
     calcParams = updateCropRect(calcParams);  
     calcParams.S = [380 8 51];
-    calcParams.spatialDensity = [0 0.62 0.31 0.7];
+    calcParams.spatialDensity = [0 0.62 0.31 0.07];
         
     % Parameters for creating the sensor. OIvSensorScale is a parameter
     % that, if set to a value > 0, will subsample the optical image to the
@@ -93,6 +94,9 @@ for k1 = 1:length(calcIDStrs)
     % the Gaussian noise is equal to the square root of the mean 
     % photoisomerizations across the available target image samples. 
     calcParams.KgLevels = 0:3:30;
+    
+    % Update to calcIDStr to a uniformly formatted name
+    calcParams.calcIDStr = params2Name_FirstOrderModel(calcParams);
     
     %% Convert the images to cached scenes for more analysis
     if (calcParams.CACHE_SCENES)
