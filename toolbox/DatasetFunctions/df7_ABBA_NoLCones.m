@@ -1,9 +1,9 @@
-function [dataset,classes] = df5_ABBA_NoSCones(calcParams,targetPool,comparisonPool,kp,kg,n,mosaic)
-% [dataset,classes] = df5_NoSCones(calcParams,targetPool,comparisonPool,kp,kg,n,mosaic)
+function [dataset,classes] = df7_ABBA_NoLCones(calcParams,targetPool,comparisonPool,kp,kg,n,mosaic)
+% [dataset,classes] = df7_ABBA_NoLCones(calcParams,targetPool,comparisonPool,kp,kg,n,mosaic)
 %
-% This functions removes all the S cones from the mosaic and replaces the
+% This functions removes all the L cones from the mosaic and replaces the
 % values with 0. Then it creates an AB/BA format vector.  The reason we do
-% it this way is to maintain the same data size (removing the S cones
+% it this way is to maintain the same data size (removing the L cones
 % altogether will reduce vector size), but this needs testing to determine
 % whether this methodology is appropriate.
 %
@@ -15,12 +15,12 @@ numberOfCones = numel(targetPool{1});
 %% Get cone pattern and set S cones to 0
 for ii = 1:length(targetPool)
     tempPattern = targetPool{ii};
-    tempPattern(mosaic.pattern == 4) = 0;
+    tempPattern(mosaic.pattern == 2) = 0;
     targetPool{ii} = tempPattern;
 end
 for ii = 1:length(comparisonPool)
     tempPattern = comparisonPool{ii};
-    tempPattern(mosaic.pattern == 4) = 0;
+    tempPattern(mosaic.pattern == 2) = 0;
     comparisonPool{ii} = tempPattern;
 end
 
@@ -44,6 +44,5 @@ end
 
 % Add desired noise
 dataset = getNoisySensorImage(calcParams,dataset,kp,kg);
-
 end
 

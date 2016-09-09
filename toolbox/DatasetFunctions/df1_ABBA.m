@@ -1,5 +1,5 @@
 function  [dataset,classes] = df1_ABBA(calcParams,targetPool,comparisonPool,kp,kg,n,~)
-% [dataset, classes] = df1_ABBA(calcParams,targetPool,comparisonPool,kp,kg,n)
+% [dataset, classes] = df1_ABBA(calcParams,targetPool,comparisonPool,kp,kg,n,~)
 %
 % This function will take the photon isomerizations in the targetPool
 % sensors and comparisonPool sensors and turn them into AB and BA vectors.

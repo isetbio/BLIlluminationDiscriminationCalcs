@@ -1,9 +1,9 @@
-function [dataset,classes] = df5_ABBA_NoSCones(calcParams,targetPool,comparisonPool,kp,kg,n,mosaic)
-% [dataset,classes] = df5_NoSCones(calcParams,targetPool,comparisonPool,kp,kg,n,mosaic)
+function [dataset,classes] = df6_ABBA_NoMCones(calcParams,targetPool,comparisonPool,kp,kg,n,mosaic)
+% [dataset,classes] = df6_ABBA_NoMCones(calcParams,targetPool,comparisonPool,kp,kg,n,mosaic)
 %
-% This functions removes all the S cones from the mosaic and replaces the
+% This functions removes all the M cones from the mosaic and replaces the
 % values with 0. Then it creates an AB/BA format vector.  The reason we do
-% it this way is to maintain the same data size (removing the S cones
+% it this way is to maintain the same data size (removing the M cones
 % altogether will reduce vector size), but this needs testing to determine
 % whether this methodology is appropriate.
 %
@@ -15,12 +15,12 @@ numberOfCones = numel(targetPool{1});
 %% Get cone pattern and set S cones to 0
 for ii = 1:length(targetPool)
     tempPattern = targetPool{ii};
-    tempPattern(mosaic.pattern == 4) = 0;
+    tempPattern(mosaic.pattern == 3) = 0;
     targetPool{ii} = tempPattern;
 end
 for ii = 1:length(comparisonPool)
     tempPattern = comparisonPool{ii};
-    tempPattern(mosaic.pattern == 4) = 0;
+    tempPattern(mosaic.pattern == 3) = 0;
     comparisonPool{ii} = tempPattern;
 end
 
