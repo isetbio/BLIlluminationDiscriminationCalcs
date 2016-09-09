@@ -6,23 +6,17 @@ function updatedParams = assignCalibrationFile(calcParams)
 % functions that require a calibration file to know which one to use. We
 % also assign the distance associated with each monitor in this function.
 %
-% xd  5/25/16  wrote it
+% 5/25/16  xd  wrote it
 
-switch (calcParams.calcIDStr)
-    case {'ConstantFullImage' 'ShuffledFullImage' 'Constant_Plot'}
+switch (calcParams.cacheFolderList{1})
+    case {'Constant' 'Shuffled'}
         calcParams.calibrationFile = 'EyeTrackerLCDNew';
         calcParams.distance = 0.683;
-    case {'StaticFullImageResizedOI2' 'NM1_FullImage' 'NM2_FullImage' ...
-            'StaticFullImageResizedOI3' 'StaticFullImageResizedOI4'...
-            'StaticFullImageResizedOI5' 'StaticFullImageResizedOI6'...
-            'StaticFullImageResizedOI7' 'StaticFullImageResizedOI8'...
-            'FullImageTest' 'StaticPhoton_newclass'}
+    case {'Neutral' 'NM1' 'NM2'}
         calcParams.calibrationFile = 'StereoLCDLeft';
         calcParams.distance = 0.764;
     otherwise
-%         error('Unknown calcIDStr set');
-        calcParams.calibrationFile = 'StereoLCDLeft';
-        calcParams.distance = 0.764;
+        error('Unknown calcIDStr set');
 end
 updatedParams = calcParams;
 

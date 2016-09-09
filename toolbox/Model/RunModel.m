@@ -42,7 +42,8 @@ end
 %
 % Here, we create a mosaic according to the specifications in the
 % calcParams struct. Certain models have more variables than others so we
-% need to pay careful attention when doing.
+% need to pay careful attention to what model is being run when performing
+% this step.
 mosaic = coneMosaic;
 mosaic.fov = calcParams.sensorFOV;
 mosaic.wave = SToWls(calcParams.S);
