@@ -32,24 +32,6 @@ load(fileName);
 %
 % Loads some aesthetic parameters related to the plots.
 figParams = BLIllumDiscrFigParams([],'SVMvPCA');
-<<<<<<< HEAD
-=======
-f = figure('Position',figParams.sqPosition); hold on;
-errorbar(dimensions.illumSteps,meanFullDataResults*100,stderrWithFullData*100,'LineWidth',figParams.lineWidth,...
-    'Color',figParams.colors{1});
-errorbar(dimensions.illumSteps,meanPCAResults*100,stderrWithPCA*100,'LineWidth',figParams.lineWidth,...
-    'Color',figParams.colors{2});
-errorbar(dimensions.illumSteps,meanSVDResults*100,stderrWithSVD*100,'LineWidth',figParams.lineWidth,...
-    'Color',figParams.colors{3});
-
-legend({'Full Data','100 PCA Components'},'Location','Northwest','FontSize',figParams.legendFontSize);
-set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
-axis square;
-grid on;
-
-xlim(figParams.xlimit);
-ylim(figParams.ylimit);
->>>>>>> 97ae84bd660df81fefddef0dca356519ec6f8176
 
 %% Format and plot
 %
@@ -125,8 +107,5 @@ for colorIdx = 1:length(MetaData.dimensions.(firstDimension))
     ixl.Position = ixl.Position + figParams.insetDeltaXLabelPos;
 end
 
-<<<<<<< HEAD
 %% Save the figure
-=======
->>>>>>> 97ae84bd660df81fefddef0dca356519ec6f8176
 if saveFig, FigureSave(fileName,f,figParams.figType); end;

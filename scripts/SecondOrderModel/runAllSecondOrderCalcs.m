@@ -89,12 +89,9 @@ for k1 = 1:length(calcIDStrs)
     % samples. If os is enabled, this multiplies the outer segment noise
     % instead.
     calcParams.KgLevels = 0:3:30;
-<<<<<<< HEAD
     
     % EMPositions represents the number of positions of eye movement to sample.  
     calcParams.numEMPositions = 2;
-=======
->>>>>>> 97ae84bd660df81fefddef0dca356519ec6f8176
     
     % Enable or disable certain aspects of fixational eye movement
     calcParams.enableTremor = true;
