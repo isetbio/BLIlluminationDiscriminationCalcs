@@ -16,7 +16,7 @@ calcParams = calcParams.calcParams;
 % try our best to convert the old data the format required. If it is in the
 % new format, then we can load the data with minimal editting.
 if isfield(calcParams,'colors')
-    theData = load(fullfile(analysisDir,'SimpleChooserData',calcIDStr,['ModelData' calcIDStr]));
+    theData = load(fullfile(analysisDir,'SimpleChooserData',calcIDStr,['ModelData' calcIDStr '.mat']));
     modelData = theData.results;
     
     calcParams.stimLevels = calcParams.illumLevels;
