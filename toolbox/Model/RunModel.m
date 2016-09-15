@@ -85,8 +85,8 @@ calcParams.colors = lower(calcParams.colors);
 % Save the results
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 TargetPath = fullfile(analysisDir,'SimpleChooserData',calcParams.calcIDStr);
-calcParamFileName = fullfile(TargetPath,['calcParams' calcParams.calcIDStr]);
-dataFileName = fullfile(TargetPath,['ModelData' calcParams.calcIDStr]);
+calcParamFileName = fullfile(TargetPath,['calcParams' calcParams.calcIDStr '.mat']);
+dataFileName = fullfile(TargetPath,['ModelData' calcParams.calcIDStr '.mat']);
 save(calcParamFileName,'calcParams');
 save(dataFileName,'results');
 
