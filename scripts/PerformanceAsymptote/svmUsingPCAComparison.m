@@ -230,5 +230,5 @@ for colorIdx = 1:length(colors)
 end
 
 %% Save the data
-fileName = 'SVM_FullvPCA.mat';
-save(fileName,'SVMpercentCorrect','SVMrunTime','MetaData');
+fileName = params2Name_SVMPCAComparison(struct('sSize',sSize));
+save([fileName '.mat'],'SVMpercentCorrect','SVMrunTime','MetaData');
