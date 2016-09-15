@@ -40,7 +40,7 @@ OIvSensorScale = 0;
 % on every single patch used for each calculation would take far too much
 % time and likely would not produce any worthwhile results.
 OIFolder = 'Neutral_FullImage';
-colors   = {'Blue' 'Green' 'Red' 'Yellow'};
+colors = {'Blue' 'Green' 'Red' 'Yellow'};
 
 % NoiseStep is chosen so that the SVM asymptote does not reach 100% (since
 % that would render the result rather meaningless). illumSteps is similarly
@@ -65,15 +65,17 @@ numPCA = [2 25 50 100 200 400 800];
 rng(1);
 
 %% Create the cone mosaic
-% 
+%
 % A single mosaic will be used throughout the entire script. This allows
 % for consistency (and is what the model does) in isomerization responses.
 % We set the integration time 50 ms and the wavelength to [380 5 51]
-% because they are what is used (generally) in the model. Tj
-% getDefaultBLIllumDiscrMosaic function returns a mosaic with these
-% parameters. We just need to resize it.
-mosaic     = getDefaultBLIllumDiscrMosaic;
-mosaic.fov = sSize;
+% because they are what is used (generally) in the model. These values
+% should not be changed by the user.
+mosaic                 = coneMosaic;
+mosaic.fov             = sSize;
+mosaic.integrationTime = 0.050;
+mosaic.wave            = SToWls([380 8 51]);
+mosaic.noiseFlag       = false;
 
 %% Pre-allocate space for results
 %
@@ -129,7 +131,7 @@ standardIsomPool = cell(1, length(standardOIList));
 calcParams.meanStandard = 0;
 for jj = 1:length(standardOIList)
     standardOI = loadOpticalImageData([OIFolder '/Standard'],strrep(standardOIList{jj},'OpticalImage.mat',''));
-    standardIsomPool{jj} = mosaic.compute(resizeOI(standardOI,sSize*OIvSensorScale),'currentFlag',false);
+    standardIsomPool{jj} = mosaic.compute(standardOI,'currentFlag',false);
     calcParams.meanStandard = calcParams.meanStandard + mean2(standardIsomPool{jj}) / length(standardOIList);
 end
 
@@ -155,7 +157,7 @@ for colorIdx = 1:length(colors)
         % the mean absorptions and save them for SVM classification.
         OISubFolder = [OIFolder '/' colors{colorIdx} 'Illumination'];
         comparison = loadOpticalImageData(OISubFolder,strrep(OINames{illumSteps(illumStepIdx)},'OpticalImage.mat',''));
-        comparisonIsom = mosaic.compute(resizeOI(comparison,sSize*OIvSensorScale),'currentFlag',false);
+        comparisonIsom = mosaic.compute(comparison,'currentFlag',false);
         
         % Set variables to pass into data generation functions. kp
         % modulates Poisson noise which is kept at 1. kg modulates Gaussian
@@ -193,7 +195,7 @@ for colorIdx = 1:length(colors)
         % the runtime because that is an important factor to keep in mind
         % when we decide what number of PCA components to use.
         tic
-        theSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto','CacheSize','maximal');
+        theSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto');
         predictedClasses = predict(theSVM,testingData);
         SVMpercentCorrect(colorIdx,1,illumStepIdx,3) = sum(predictedClasses == testingClasses)/testingSetSize;
         SVMrunTime(colorIdx,1,illumStepIdx,2) = toc;
@@ -212,7 +214,7 @@ for colorIdx = 1:length(colors)
             tic
             coeff = pca(trainingData,'NumComponents',numPCA(numPCAIdx));
             
-            pcaSVM = fitcsvm(trainingData*coeff,trainingClasses,'KernelScale','auto','CacheSize','maximal');
+            pcaSVM = fitcsvm(trainingData*coeff,trainingClasses,'KernelScale','auto');
             predictedClasses = predict(pcaSVM,testingData*coeff);
             SVMpercentCorrect(colorIdx,numPCAIdx+1,illumStepIdx,3) = sum(predictedClasses == testingClasses)/testingSetSize;
             SVMrunTime(colorIdx,numPCAIdx+1,illumStepIdx,2) = toc;
@@ -231,9 +233,17 @@ end
 
 %% Save the data
 <<<<<<< HEAD
-fileName = params2Name_SVMPCAComparison(struct('sSize',sSize));
-save([fileName '.mat'],'SVMpercentCorrect','SVMrunTime','MetaData');
-=======
 fileName = 'SVM_FullvPCA.mat';
 save(fileName,'SVMpercentCorrect','SVMrunTime','MetaData');
->>>>>>> 97ae84bd660df81fefddef0dca356519ec6f8176
+
+
+=======
+<<<<<<< HEAD
+fileName = sprintf('SVMv%dPCAv250SVD.mat',numPCA);
+save(fileName,'SVMpercentCorrect','SVMrunTime','dimensions');
+
+=======
+fileName = sprintf('SVMv%dPCA.mat',num2str(numPCA));
+save(fileName,'SVMpercentCorrect','SVMrunTime','dimensions');
+>>>>>>> b131baf614f06c5a8f15d6ef6141bddf5f90ad3a
+>>>>>>> a3b113b0fbf44d2eec8c61924e1a00e0d5d23108

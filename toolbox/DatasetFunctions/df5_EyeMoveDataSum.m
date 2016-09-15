@@ -31,7 +31,10 @@ for ii = 1:n/2
         isomerizations = mosaic.os.compute(isomerizations/mosaic.integrationTime,mosaic.pattern);
         calcParams.coneCurrentSize = size(isomerizations);
     end
+<<<<<<< HEAD
     isomerizations = sum(isomerizations,3);
+=======
+>>>>>>> 97ae84bd660df81fefddef0dca356519ec6f8176
     dataset{ii} = isomerizations(:)';
     
     % Generate a new eyemovement path if we are to use different paths
@@ -52,7 +55,10 @@ for ii = 1:n/2
     if calcParams.enableOS
         isomerizations = mosaic.os.compute(isomerizations/mosaic.integrationTime,mosaic.pattern);
     end
+<<<<<<< HEAD
     isomerizations = sum(isomerizations,3);
+=======
+>>>>>>> 97ae84bd660df81fefddef0dca356519ec6f8176
     dataset{ii+n/2} = isomerizations(:)';
 end
 
@@ -64,5 +70,15 @@ else
     dataset = getNoisySensorImage(calcParams,dataset,kp,kg);
 end
 
+<<<<<<< HEAD
+=======
+tempDataset = 0;
+numOfDataPerSlice = size(dataset,2)/calcParams.numEMPositions;
+for ii = 1:calcParams.numEMPositions
+    tempDataset = tempDataset + dataset(:,(ii-1)*numOfDataPerSlice+1:ii*numOfDataPerSlice);
+end
+dataset = tempDataset;
+
+>>>>>>> 97ae84bd660df81fefddef0dca356519ec6f8176
 end
 

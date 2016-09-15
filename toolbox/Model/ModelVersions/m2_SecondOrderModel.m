@@ -111,6 +111,10 @@ for ii = 1:length(illumLevels)
             
             if calcParams.usePCA
                 coeff = pca(trainingData,'NumComponents',calcParams.numPCA);
+<<<<<<< HEAD
+=======
+%                 [~,~,coeff] = fsvd(trainingData,2.5*calcParams.numPCA);
+>>>>>>> 97ae84bd660df81fefddef0dca356519ec6f8176
                 trainingData = trainingData*coeff;
                 testingData = testingData*coeff;
             end

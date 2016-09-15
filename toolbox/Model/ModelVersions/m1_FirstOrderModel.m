@@ -53,7 +53,6 @@ startKg = 1;
 %% Do the actual calculation here
 results = zeros(length(illumLevels),length(KpLevels),length(KgLevels));
 for ii = 1:length(illumLevels);
-    
     % Precompute the test optical image to save computational time.
     imageName = OINamesList{illumLevels(ii)};
     imageName = strrep(imageName,'OpticalImage.mat','');
@@ -61,6 +60,10 @@ for ii = 1:length(illumLevels);
     oiTest = resizeOI(oiTest,calcParams.sensorFOV*calcParams.OIvSensorScale);
     absorptionsTest = mosaic.compute(oiTest,'currentFlag',false);
 
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 97ae84bd660df81fefddef0dca356519ec6f8176
     % Loop through the two different noise levels and perform the
     % calculation at each combination.
     tic
@@ -98,10 +101,14 @@ for ii = 1:length(illumLevels);
         end
     end
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
     
 >>>>>>> Trying to keep this up to date before branching
+=======
+    
+>>>>>>> 97ae84bd660df81fefddef0dca356519ec6f8176
     % Update the last 5 correct and check if startKg needs to be shifted.
     % If the average of the last 5 is greater than 99.5%, we set the
     % remaining values for each illumination level for the startKg noise
@@ -110,6 +117,11 @@ for ii = 1:length(illumLevels);
     % results.
     if ii >= 5
         lastFiveCorrect = squeeze(results(ii-4:ii,1,startKg));
+<<<<<<< HEAD
+=======
+%         fprintf(num2str(lastFiveCorrect'));
+%         fprintf([' StartKg: ' num2str(startKg) '\n']);
+>>>>>>> 97ae84bd660df81fefddef0dca356519ec6f8176
         if mean(lastFiveCorrect) > 99.6 
             results(ii+1:end,1,startKg) = 100;
             startKg = startKg + 1;

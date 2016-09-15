@@ -58,7 +58,7 @@ parfor k1 = 1:length(theIndex)
     calcParams.calcIDStr = [c.calcIDStr '_' num2str(theIndex(k1))];
     
     calcParams.cacheFolderList = {c.cacheFolderList{1} calcParams.calcIDStr};
-    
+
     analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
     dirToRemovePath = fullfile(analysisDir,'OpticalImageData',calcParams.calcIDStr);
     
@@ -73,7 +73,6 @@ parfor k1 = 1:length(theIndex)
         calcParams.cropRect = [];
         calcParams.S = [380 8 51];
         calcParams.spatialDensity = [0 0.62 0.31 0.07];
-
         
         % Parameters for creating the sensor. OIvSensorScale is a parameter
         % that, if set to a value > 0, will subsample the optical image to the
@@ -132,3 +131,5 @@ end
 
 % deleteOIForParallelComputing(c);
 % end
+exit;
+
