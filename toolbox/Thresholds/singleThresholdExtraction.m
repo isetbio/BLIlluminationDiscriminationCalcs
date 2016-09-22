@@ -22,7 +22,7 @@ if notDefined('numTrials'), numTrials = 100; end;
 % less than criterion and the last 5 are greater than criterion+10, we proceed with the
 % fitting.  Otherwise, we return 0 for the threshold, which indicates that
 % the data cannot be fit.
-if mean(data(1:5)) > criterion+10 || mean(data(end-4:end)) < criterion, threshold = nan; paramsValues = zeros(1,4); return; end; 
+% if mean(data(1:5)) > criterion+10 || mean(data(end-4:end)) < criterion, threshold = nan; paramsValues = zeros(1,4); return; end; 
 
 %% Set some parameters for the curve fitting
 %
@@ -30,23 +30,22 @@ if mean(data(1:5)) > criterion+10 || mean(data(end-4:end)) < criterion, threshol
 % value. The paramsEstimate is just a rough estimate of the results and
 % shouldn't affect the outcome too much. 
 criterion      = criterion/100;
-paramsEstimate = [10 1 0.5 0];
-paramsFree     = [1 1 0 0];
+paramsEstimate = [10 5 0.5 0.01];
+paramsFree     = [1 1 0 1];
 outOfNum       = repmat(numTrials,1,length(data));
 PF             = @PAL_Weibull;
+lapseLimits = [0 0.05];
 
 %% Some optimization settings for the fit
 %
 % Some parameters for the fit. These are set so that the functions make a
 % solid attempt at fitting before deciding that it is not possible.
-options             = optimset('fminsearch');
-options.TolFun      = 1e-09;
-options.MaxFunEvals = 10000*100;
-options.MaxIter     = 500*100;
+options = PAL_minimize('options');
 
 %% Fit the data to a curve
 paramsValues = PAL_PFML_Fit(stimLevels(:), data(:), outOfNum(:), ...
-    paramsEstimate, paramsFree, PF, 'SearchOptions', options);
+    paramsEstimate, paramsFree, PF, 'SearchOptions', options,...
+    'lapseLimits',lapseLimits);
 
 threshold = PF(paramsValues, criterion, 'inverse');
 end
