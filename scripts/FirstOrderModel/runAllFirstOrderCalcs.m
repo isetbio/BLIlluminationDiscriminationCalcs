@@ -20,7 +20,7 @@ function runAllFirstOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs = {'SVM_Neutral_NoLCones'};
+calcIDStrs = {'SVM_Neutral_Control'};
 
 %% Parameters of the calculation
 %
