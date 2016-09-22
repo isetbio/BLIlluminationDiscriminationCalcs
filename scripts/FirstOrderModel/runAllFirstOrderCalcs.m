@@ -74,14 +74,14 @@ for k1 = 1:length(calcIDStrs)
     
     % Specify the number of trials for each combination of Kp Kg as well as
     % the range of illuminants to use (max 50).
-    calcParams.trainingSetSize = 1000;
+    calcParams.trainingSetSize = 200;
     calcParams.testingSetSize = 1000;
-    calcParams.illumLevels = 1:2:50;
+    calcParams.illumLevels = 1:50;
     
     % Here we specify which data function and classification function to use. 
     calcParams.standardizeData = true;
     calcParams.cFunction = 3;
-    calcParams.dFunction = 5;
+    calcParams.dFunction = 1;
     calcParams.usePCA = true;
     calcParams.numPCA = 400;
     

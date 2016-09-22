@@ -22,7 +22,7 @@ clear; close all;
 % are doing this for an SVM, larger training set sizes (>1000) may be
 % painful to run.
 testingSetSize  = 1000;
-trainingSetSize = 1000;
+trainingSetSize = 100;
 
 % Define the size of the sensor here. For a small patch in the rest of the
 % calculations, we are using a 0.83 degree sensor which we specify here.
@@ -54,7 +54,7 @@ numCrossVal = 10;
 
 % The number of PCA components to use. This can be set to a vector so that
 % the script loops over all values in the vector.
-numPCA = [2 25 50 100 200 400 800];
+numPCA = [400];
 
 %% Frozen noise
 %
