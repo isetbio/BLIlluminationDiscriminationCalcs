@@ -101,5 +101,5 @@ for subjectNumber = 1:length(orderOfSubjects)
     % FigureSave(subjectId,gcf,'pdf');
     clearvars t;
 end
-t = suptitle('Constant');
-set(t,'FontSize',30);
+st = suptitle('Constant');
+set(st,'FontSize',30);
