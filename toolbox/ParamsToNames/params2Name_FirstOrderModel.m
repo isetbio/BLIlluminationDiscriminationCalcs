@@ -23,5 +23,8 @@ end
 % Things about data and classifier
 name = [name '_' dataFunctionText(params.dFunction) '_' classifierFunctionText(params.cFunction)];
 
+% Add number of training samples
+name = sprintf([name '_NumSamples%d'],params.trainingSetSize);
+
 end
 
