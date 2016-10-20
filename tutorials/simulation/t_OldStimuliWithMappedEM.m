@@ -22,7 +22,7 @@ titleTag = 'Neutral';
 % We want to use the fixation data from the comparison intervals in all
 % experiments/subjects. This will be used to generate a probability
 % distribution of where the subjects are looking during an experiment.
-load(fullfile(fileparts(fileparts(fileparts(mfilename('fullpath')))),'plotInfoMatFile.mat'))
+load(fullfile(fileparts(fileparts(fileparts(mfilename('fullpath')))),'plotInfoMatConstant_1deg.mat'))
 theData = [];
 for subjectNumber = 1:length(orderOfSubjects)
     for runNumber = 1:2

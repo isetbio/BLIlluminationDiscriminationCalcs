@@ -6,10 +6,10 @@
 %
 % 9/22/16  xd  wrote it
 
-clear; close all;
+clear; %close all;
 %% 
 mosaicFOV = 1;
-kg = 5;
+kg = 0;
 
 trainingSetSize = 1000;
 numPCA = 2;
@@ -22,7 +22,7 @@ mosaic = getDefaultBLIllumDiscrMosaic;
 mosaic.fov = mosaicFOV;
 
 %% Load Standard
-[standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir('Neutral_FullImage',mosaic);
+[standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir('Constant_FullImage',mosaic);
 
 %% Load a comparison
 colorDir = 'BlueIllumination';
@@ -32,9 +32,10 @@ comparisonOIPath = fullfile(analysisDir, 'OpticalImageData', 'Neutral_FullImage'
 OINames = getFilenamesInDirectory(comparisonOIPath);
 comparison = loadOpticalImageData(['Neutral_FullImage' '/' colorDir], strrep(OINames{illumStep}, 'OpticalImage.mat', ''));
 photonComparison = mosaic.compute(comparison,'currentFlag',false);
+comparisonPhotonPool = {photonComparison};
 
 %% Generate Data
-[trainingData,trainingClasses] = df3_noABBA(calcParams,standardPhotonPool,{photonComparison},1,kg,2*trainingSetSize);
+[trainingData,trainingClasses] = df3_noABBA(calcParams,standardPhotonPool,standardPhotonPool,1,kg,2*trainingSetSize);
 % trainingClasses(:) = 1;
 
 s = std(trainingData,[],1);

@@ -5,7 +5,7 @@
 %
 % 9/22/16  xd  wrote it
 
-clear; close all;
+clear; %close all;
 %%
 trainingSetSize = 1000;
 testingSetSize = 1000;
@@ -13,7 +13,7 @@ testingSetSize = 1000;
 mosaicFOV = 1;
 kg = 3;
 
-colors = {'Blue' 'Yellow' 'Green' 'Red'};
+colors = {'Blue'};% 'Yellow' 'Green' 'Red'};
 
 %% Create a mosaic
 mosaic = getDefaultBLIllumDiscrMosaic;
@@ -28,7 +28,8 @@ trainingClasses(:) = 1;
 
 %% Train 1-class SVM
 tic
-theSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto','OutlierFraction',0.00,'KernelFunction','gaussian');
+theSVM = fitcsvm(trainingData,trainingClasses,'KernelScale','auto','OutlierFraction',0.00,'KernelFunction','gaussian',...
+    'Standardize',false);
 toc
 
 %% Test
@@ -54,5 +55,5 @@ for cc = 1:length(colors)
 end
 
 %% Plot
-[t,p] = singleThresholdExtraction(data(4,:)*1000,70.9,[],1000);
-plotFitForSingleThreshold(createPlotInfoStruct,data(4,:)*100,t,p);
+[t,p] = singleThresholdExtraction(data(1,:)*1000,70.9,[],1000);
+plotFitForSingleThreshold(createPlotInfoStruct,data(1,:)*100,t,p);
