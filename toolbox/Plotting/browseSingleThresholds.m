@@ -58,6 +58,9 @@ else
 end
 maxNoiseIdx = length(noiseLevels);
 
+% Get figure parameters
+figParams = BLIllumDiscrFigParams([],'browse');
+
 % Loop until user presses the escape key. In the loop, the arrow keys are
 % used to move between illumination levels (left/right) and color
 % directions (up/down). s signifies that a copy of the figure should be
@@ -72,7 +75,7 @@ while ~strcmp(THE_ONE_KEY,'escape')
         
         % Some plotting metadata (titles, axes, and such)
         plotInfo = createPlotInfoStruct;
-        plotInfo.fitColor = calcParams.colors{colorIdx}(1);
+        plotInfo.fitColor = figParams.colors{colorIdx};
         plotInfo.title = sprintf('Noise Level: %d',noiseLevels(noiseIdx));
         plotInfo.stimLevels = calcParams.illumLevels;
         

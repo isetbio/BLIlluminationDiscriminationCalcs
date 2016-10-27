@@ -22,9 +22,10 @@ parser.parse(varargin{:});
 [data,calcParams] = loadModelData(calcIDStr);
 
 % PlotInfo things
+figParams = BLIllumDiscrFigParams;
 plotInfo = createPlotInfoStruct;
 plotInfo.stimLevels = calcParams.stimLevels;
-plotInfo.colors = calcParams.plotColor;
+plotInfo.colors = figParams.colors;
 plotInfo.xlabel = sprintf('%s Noise Levels',subsref({'Poisson' 'Gaussian'},struct('type','{}','subs',{{find(parser.Results.NoiseIndex==0,1)}})));
 plotInfo.ylabel = 'Stimulus Levels (\DeltaE)';
 plotInfo.title  = ['Thresholds v Noise, ' calcParams.calcIDStr];
