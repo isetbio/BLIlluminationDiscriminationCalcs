@@ -19,6 +19,7 @@ figParams.labelFontSize = 24;
 figParams.legendFontSize = 18;
 figParams.titleFontSize = 26;
 figParams.figType = {'pdf'};
+figParams.colors = {[0 191 255]/255 [46 139 87]/255 [178,34,34]/255 [255 215 0]/255}; 
 
 figParams.deltaXlabelPosition = [0 -0.25 0];
 figParams.deltaYlabelPosition = [-0.05 0 0];
@@ -81,4 +82,6 @@ switch (modifier)
         figParams.YTick = [0 35];
         figParams.XTick = [];
         figParams.superTitleFontSize = 32;
+    case {'browse'}
+        figParams.colors = {[0 191 255]/255 [46 139 87]/255 [178,34,34]/255 [255 215 0]/255};
 end

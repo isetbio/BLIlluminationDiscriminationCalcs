@@ -47,6 +47,9 @@ end
 pointToInterpolate = idx;
 fittedThresholds = thresholds(idx,:);
 fittedError = zeros(size(fittedThresholds));
+if (~isempty(thresholdError))
+    fittedError = thresholdError
+end
 interpolatedPoint = idx;
 if size(meanThresholdDistToData,1) > 1
     if idx == length(meanThresholdDistToData)
@@ -149,8 +152,8 @@ if parser.Results.CreatePlot
     % look better. Otherwise, we will just leave it where the subplot puts it
     % by default.
     if parser.Results.NewFigure
-        yl.Position = yl.Position + figParams.deltaYlabelPosition;
-        xl.Position = xl.Position + figParams.deltaXlabelPosition;
+%         yl.Position = yl.Position + figParams.deltaYlabelPosition;
+%         xl.Position = xl.Position + figParams.deltaXlabelPosition;
     end
 end
 end

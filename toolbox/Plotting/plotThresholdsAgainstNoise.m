@@ -47,8 +47,8 @@ xlim([0 max([noiseLevels(:); 10])]);
 xl = xlabel(plotInfo.xlabel);
 yl = ylabel(plotInfo.ylabel);
 t = title(plotInfo.title,'Interpreter','none');
-yl.Position = yl.Position + figParams.deltaYlabelPosition;
-xl.Position = xl.Position + figParams.deltaXlabelPosition;
+% yl.Position = yl.Position + figParams.deltaYlabelPosition;
+% xl.Position = xl.Position + figParams.deltaXlabelPosition;
 
 end
 

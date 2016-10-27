@@ -1,15 +1,40 @@
 %% t_UseRealEMDistribution
 %
 % Uses a real EM Distrbution data file from the psychophysical experiments
-% in order to come to a prediction of performance.
+% in order to come to a prediction of performance. The data is also saved
+% at then end of the script so that we can have easy access for plotting!
+% Note that this script requires you to have experimental data from our
+% experiment available. 
+
+% Please send an email to David Brainard (brainard@psych.upenn.edu).
 %
 % 8/04/16  xd  wrote it
 
 clear; %close all; ieInit;
-%% Set some parameters
+%% Some parameters
+%
+% If set to true, each subject fit get's it's own individual figure window.
+% Otherwise, everything is plotted as a subplot on 1 figure.
+singlePlots = true;
+
+%% Subject ID's
+% DON'T CHANGE
 orderOfSubjects = {'azm','bmj', 'vle', 'vvu', 'idh','hul','ijj','eom','dtm','ktv'}';
 
-figure('Position',[150 238 2265 1061]);
+%% Preallocate some space for data
+%
+% We save the aggregate thresholds, the fitted thresholds, and the
+% experimental thresholds. This should be enough for any auxiliary plot we
+% want to create.
+perSubjectAggregateThresholds = cell(length(orderOfSubjects),1);
+perSubjectFittedThresholds = cell(length(orderOfSubjects),1);
+perSubjectExperimentalThresholds = cell(length(orderOfSubjects),1);
+
+%% Calculation and plotting loop
+if ~singlePlots
+    figure('Position',[150 238 2265 1061]);
+end
+
 for subjectNumber = 1:length(orderOfSubjects)
     subjectId = orderOfSubjects{subjectNumber};
     
@@ -39,6 +64,8 @@ for subjectNumber = 1:length(orderOfSubjects)
     uniqueValues = unique(dataset);
     totalNumber  = numel(dataset);
     
+    % Count the number of times each patch appears so that we can have a
+    % set of weights by which to multiply the SVM performance values.
     weightedPatchImage = zeros(p.vNum,p.hNum);
     for ii = 1:length(uniqueValues)
         weight = sum(dataset == uniqueValues(ii)) / totalNumber;
@@ -59,6 +86,7 @@ for subjectNumber = 1:length(orderOfSubjects)
         results = results + (weightedPatchImage(thePatch) * currentPatchData);
     end
     
+    % Extract the thresholds for each color direction.
     for ii = 1:4
         t{ii} = multipleThresholdExtraction(squeeze(results(ii,:,:)),70.9);
     end
@@ -67,15 +95,16 @@ for subjectNumber = 1:length(orderOfSubjects)
     % also reorganize the matrix so that the color order is b, y, g, r.
     t = cell2mat(t);
     t = t(:,[1 4 2 3]);    
+    perSubjectAggregateThresholds{subjectNumber} = t;
+    
+    % Create some label information for plotting.
     stimLevels = 1:50;
     pI = createPlotInfoStruct;
     pI.stimLevels = stimLevels;
     pI.xlabel = 'Gaussian Noise Levels';
     pI.ylabel = 'Stimulus Levels (\DeltaE)';
     pI.title  = 'Thresholds v Noise';
-    
-    % plotThresholdsAgainstNoise(pI,t,(0:3:30)');
-    
+        
     %% Get subject data
     %
     % Load the subject performances. We need to calculate the mean
@@ -87,19 +116,21 @@ for subjectNumber = 1:length(orderOfSubjects)
     g = nanmean([d1.Greener.threshold,d2.Greener.threshold]);
     r = nanmean([d1.Redder.threshold,d2.Redder.threshold]);
     y = nanmean([d1.Yellower.threshold,d2.Yellower.threshold]);
-    bs = 0.5*sqrt(d1.Bluer.std^2 + d2.Bluer.std^2);
-    gs = 0.5*sqrt(d1.Greener.std^2 + d2.Greener.std^2);
-    rs = 0.5*sqrt(d1.Redder.std^2 + d2.Redder.std^2);
-    ys = 0.5*sqrt(d1.Yellower.std^2 + d2.Yellower.std^2);
     
     % Plot a the thresholds along with the model predictions.
-    subplot(2,5,subjectNumber);
-    Z{subjectNumber} = plotAndFitThresholdsToRealData(pI,t,[b y g r],'DataError',[bs ys gs rs],'NoiseVector',0:3:30,'NewFigure',false);
+    if ~singlePlots
+        subplot(2,5,subjectNumber);
+    end
+    perSubjectFittedThresholds{subjectNumber} = plotAndFitThresholdsToRealData(pI,t,[b y g r],'NoiseVector',0:3:30,'NewFigure',true);
+    perSubjectExperimentalThresholds{subjectNumber} = [b y g r];
     theTitle = get(gca,'title');
     theTitle = theTitle.String;
     title(strrep(theTitle,'Data fitted at',[subjectId ',']));
     % FigureSave(subjectId,gcf,'pdf');
     clearvars t;
 end
-st = suptitle('Constant');
-set(st,'FontSize',30);
+
+if ~singlePlots
+    st = suptitle('Constant');
+    set(st,'FontSize',30);
+end
