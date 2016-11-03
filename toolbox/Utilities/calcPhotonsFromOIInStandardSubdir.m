@@ -16,9 +16,11 @@ standardOIList = data.mat;
 standardPhotonPool = cell(1, length(standardOIList));
 calcParams.meanStandard = 0;
 for jj = 1:length(standardOIList)
+    tic
     standardOI = loadOpticalImageData([OIFolder '/Standard'], strrep(standardOIList{jj},'OpticalImage.mat',''));
     standardPhotonPool{jj}  = mosaic.compute(standardOI,'currentFlag',false);
     calcParams.meanStandard = calcParams.meanStandard + mean2(standardPhotonPool{jj}) / length(standardOIList);
+    fprintf('%d Stimulus: %2.2f min\n',jj,toc/60);
 end
 
 end
