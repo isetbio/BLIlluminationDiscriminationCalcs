@@ -1,0 +1,101 @@
+%% t_UseRealEMDistribution
+%
+% Uses a real EM Distrbution data file from the psychophysical experiments
+% in order to come to a prediction of performance. The data is also saved
+% at then end of the script so that we can have easy access for plotting!
+% Note that this script requires you to have experimental data from our
+% experiment available. 
+% Please send an email to David Brainard (brainard@psych.upenn.edu).
+%
+% 8/04/16  xd  wrote it
+% 10/27/16  xd  added some file saving and plotting options
+
+clear; %close all; ieInit;
+%% Some parameters
+%
+% If set to true, each subject fit get's it's own individual figure window.
+% Otherwise, everything is plotted as a subplot on 1 figure.
+singlePlots = false;
+
+% This is the calcIDStr for the SVM dataset we want to use to fit to the
+% experimental results.
+modelDataIDStr = 'SVM_Static_Isomerizations_Constant_';
+
+% Set to true to save the data after the script has finished running. Will
+% be saved into local directory where this script is called from.
+saveData = 0;
+
+%% Subject ID's
+% DON'T CHANGE
+orderOfSubjects = {'azm','bmj', 'vle', 'vvu', 'idh','hul','ijj','eom','dtm','ktv'}';
+
+%% Preallocate some space for data
+%
+% We save the aggregate thresholds, the fitted thresholds, and the
+% experimental thresholds. This should be enough for any auxiliary plot we
+% want to create.
+perSubjectFittedThresholds = cell(length(orderOfSubjects),1);
+perSubjectExperimentalThresholds = cell(length(orderOfSubjects),1);
+
+%% Calculation and plotting loop
+if ~singlePlots
+    figure('Position',[150 238 2265 1061]);
+end
+
+t = plotThresholdForMeanPerformance('SVM_Static_Isomerizations_Constant_',false);
+t = t(:,[1 4 2 3]);
+
+for subjectNumber = 1:length(orderOfSubjects)
+    subjectId = orderOfSubjects{subjectNumber};
+    load('/Users/Shared/Matlab/Experiments/Newcastle/stereoChromaticDiscriminationExperiment/analysis/FitThresholdsAllSubjectsExp8.mat')
+            
+    % Create some label information for plotting.
+    stimLevels = 1:50;
+    pI = createPlotInfoStruct;
+    pI.stimLevels = stimLevels;
+    pI.xlabel = 'Gaussian Noise Levels';
+    pI.ylabel = 'Stimulus Levels (\DeltaE)';
+    pI.title  = 'Thresholds v Noise';
+        
+    
+    %% Get subject data
+    %
+    % Load the subject performances. We need to calculate the mean
+    % thresholds for the constant runs as well as the standard deviations.
+    subjectIdx = find(not(cellfun('isempty', strfind(orderOfSubjects,subjectId))));
+    d1 = subject{subjectIdx}.Constant{1};
+    d2 = subject{subjectIdx}.Constant{2};
+    b = nanmean([d1.Bluer.threshold,d2.Bluer.threshold]);
+    g = nanmean([d1.Greener.threshold,d2.Greener.threshold]);
+    r = nanmean([d1.Redder.threshold,d2.Redder.threshold]);
+    y = nanmean([d1.Yellower.threshold,d2.Yellower.threshold]);
+    
+    % Plot a the thresholds along with the model predictions.
+    if ~singlePlots
+        subplot(2,5,subjectNumber);
+    end
+    perSubjectFittedThresholds{subjectNumber} = plotAndFitThresholdsToRealData(pI,t,[b y g r],'NoiseVector',0:3:30,'NewFigure',singlePlots);
+    perSubjectExperimentalThresholds{subjectNumber} = [b y g r];
+    theTitle = get(gca,'title');
+    theTitle = theTitle.String;
+    title(strrep(theTitle,'Data fitted at',[subjectId ',']));
+    % FigureSave(subjectId,gcf,'pdf');
+
+end
+
+if ~singlePlots
+    st = suptitle('Constant');
+    set(st,'FontSize',30);
+end
+
+close;
+
+%% Fit the aggregate
+Z = mean(cell2mat(perSubjectFittedThresholds));
+Zs =  std(cell2mat(perSubjectFittedThresholds))/sqrt(10);
+Zr = mean(cell2mat(perSubjectExperimentalThresholds));
+Zrs = std(cell2mat(perSubjectExperimentalThresholds))/sqrt(10);
+
+plotAndFitThresholdsToRealData(pI,Z,Zr,'ThresholdError',Zs,'DataError',Zrs,'NoiseVector',0:3:30,'NewFigure',true);
+ylim([0 20])
+title('Aggr Thresholds Individual Fits')
