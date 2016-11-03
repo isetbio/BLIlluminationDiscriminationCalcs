@@ -22,7 +22,7 @@ clear; close all;
 % are doing this for an SVM, larger training set sizes (>1000) may be
 % painful to run.
 testingSetSize  = 1000;
-trainingSetSize = 100;
+trainingSetSize = 1000;
 
 % Define the size of the sensor here. For a small patch in the rest of the
 % calculations, we are using a 0.83 degree sensor which we specify here.
@@ -39,7 +39,7 @@ OIvSensorScale = 0;
 % stimulus condition. This is because doing such a large scale calculation
 % on every single patch used for each calculation would take far too much
 % time and likely would not produce any worthwhile results.
-OIFolder = 'Neutral_FullImage';
+OIFolder = 'Constant_1';
 colors   = {'Blue' 'Green' 'Red' 'Yellow'};
 
 % NoiseStep is chosen so that the SVM asymptote does not reach 100% (since

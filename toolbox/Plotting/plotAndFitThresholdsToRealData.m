@@ -48,7 +48,7 @@ pointToInterpolate = idx;
 fittedThresholds = thresholds(idx,:);
 fittedError = zeros(size(fittedThresholds));
 if (~isempty(thresholdError))
-    fittedError = thresholdError
+    fittedError = thresholdError;
 end
 interpolatedPoint = idx;
 if size(meanThresholdDistToData,1) > 1

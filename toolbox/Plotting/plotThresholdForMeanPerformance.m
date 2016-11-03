@@ -1,11 +1,13 @@
-function thresholds = plotThresholdForMeanPerformance(calcIDStr)
+function thresholds = plotThresholdForMeanPerformance(calcIDStr, plot)
 % threshold = thresholdForMeanPerformance(calcIDStr)
-% 
+%
 % Instead of taking the mean over a set of thresholds, we can also
 % calculate the mean performance over a set of patches. Then, using this
 % mean performance we extract a single thresold.
 %
 % 10/27/16  xd  wrote it.
+
+if notDefined('plot'), plot = true; end
 
 %% Load and calculate mean thresholds
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
@@ -26,11 +28,12 @@ for ii = 1:size(thresholds,2)
 end
 
 %% Do plotting
-p = createPlotInfoStruct;
-p.title = 'Mean Thresholds';
-p.xlabel = 'Noise level';
-p.ylabel = 'Stimulus Level (\DeltaE)';
-plotThresholdsAgainstNoise(p,thresholds,(0:3:30)');
-
+if plot
+    p = createPlotInfoStruct;
+    p.title = 'Aggregate Thresholds';
+    p.xlabel = 'Noise level';
+    p.ylabel = 'Stimulus Level (\DeltaE)';
+    plotThresholdsAgainstNoise(p,thresholds,(0:3:30)');
+end
 end
 
