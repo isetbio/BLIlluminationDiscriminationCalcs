@@ -5,10 +5,10 @@
 % at then end of the script so that we can have easy access for plotting!
 % Note that this script requires you to have experimental data from our
 % experiment available. 
-
 % Please send an email to David Brainard (brainard@psych.upenn.edu).
 %
 % 8/04/16  xd  wrote it
+% 10/27/16  xd  added some file saving and plotting options
 
 clear; %close all; ieInit;
 %% Some parameters
@@ -16,6 +16,14 @@ clear; %close all; ieInit;
 % If set to true, each subject fit get's it's own individual figure window.
 % Otherwise, everything is plotted as a subplot on 1 figure.
 singlePlots = true;
+
+% This is the calcIDStr for the SVM dataset we want to use to fit to the
+% experimental results.
+modelDataIDStr = 'SVM_Static_Isomerizations_Constant_';
+
+% Set to true to save the data after the script has finished running. Will
+% be saved into local directory where this script is called from.
+saveData = false;
 
 %% Subject ID's
 % DON'T CHANGE
@@ -47,16 +55,16 @@ for subjectNumber = 1:length(orderOfSubjects)
     r1 = r1.resultData;
     r2 = r2.resultData;
     
-    load(fullfile(fileparts(fileparts(fileparts(mfilename('fullpath')))),'plotInfoMatConstant.mat'))
+    load(fullfile(fileparts(mfilename('fullpath')),'plotInfoMatConstant.mat'))
     load('/Users/Shared/Matlab/Experiments/Newcastle/stereoChromaticDiscriminationExperiment/analysis/FitThresholdsAllSubjectsExp8.mat')
     
-    %% Load dummy data to preallocate results
-    dummyData = loadModelData('SVM_Static_Isomerizations_Constant_1');
+    %% Load dummy data to preallocate results matrix
+    [dummyData, calcParams] = loadModelData([modelDataIDStr '1']);
     result1 = zeros(size(dummyData));
     result2 = zeros(size(dummyData));
     results = zeros(size(dummyData));
     
-    %% Put all the data into one matrix
+    %% Put all the experimental data into one matrix
     %
     % This let's us calculate the weighted patch values based on a desired
     % set of fixations.
@@ -82,7 +90,7 @@ for subjectNumber = 1:length(orderOfSubjects)
     weightedPatchImage = weightedPatchImage / sum(weightedPatchImage);
     for ii = 1:length(nonZeroProbIdx)
         thePatch = nonZeroProbIdx(ii);
-        [currentPatchData,cp] = loadModelData(['SVM_Static_Isomerizations_Constant_' num2str(thePatch)]);
+        [currentPatchData,cp] = loadModelData([modelDataIDStr num2str(thePatch)]);
         results = results + (weightedPatchImage(thePatch) * currentPatchData);
     end
     
@@ -98,7 +106,7 @@ for subjectNumber = 1:length(orderOfSubjects)
     perSubjectAggregateThresholds{subjectNumber} = t;
     
     % Create some label information for plotting.
-    stimLevels = 1:50;
+    stimLevels = calcParams.stimLevels;
     pI = createPlotInfoStruct;
     pI.stimLevels = stimLevels;
     pI.xlabel = 'Gaussian Noise Levels';
@@ -121,7 +129,7 @@ for subjectNumber = 1:length(orderOfSubjects)
     if ~singlePlots
         subplot(2,5,subjectNumber);
     end
-    perSubjectFittedThresholds{subjectNumber} = plotAndFitThresholdsToRealData(pI,t,[b y g r],'NoiseVector',0:3:30,'NewFigure',true);
+    perSubjectFittedThresholds{subjectNumber} = plotAndFitThresholdsToRealData(pI,t,[b y g r],'NoiseVector',0:3:30,'NewFigure',singlePlots);
     perSubjectExperimentalThresholds{subjectNumber} = [b y g r];
     theTitle = get(gca,'title');
     theTitle = theTitle.String;
@@ -133,4 +141,10 @@ end
 if ~singlePlots
     st = suptitle('Constant');
     set(st,'FontSize',30);
+end
+
+%% Save the data
+if saveData
+    save('IndividualFitThresholds','perSubjectAggregateThresholds','perSubjectExperimentalThresholds',...
+        'perSubjectFittedThresholds');
 end
