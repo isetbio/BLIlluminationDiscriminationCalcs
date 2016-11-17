@@ -15,7 +15,7 @@ clear; %close all; ieInit;
 %
 % If set to true, each subject fit get's it's own individual figure window.
 % Otherwise, everything is plotted as a subplot on 1 figure.
-singlePlots = true;
+singlePlots = false;
 
 % This is the calcIDStr for the SVM dataset we want to use to fit to the
 % experimental results.
@@ -24,6 +24,9 @@ modelDataIDStr = 'SVM_Static_Isomerizations_Constant_';
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
 saveData = false;
+
+% Set to true to save the weighted performance matrices.
+savePerf = false;
 
 %% Subject ID's
 % DON'T CHANGE
@@ -129,12 +132,18 @@ for subjectNumber = 1:length(orderOfSubjects)
     if ~singlePlots
         subplot(2,5,subjectNumber);
     end
-    perSubjectFittedThresholds{subjectNumber} = plotAndFitThresholdsToRealData(pI,t,[b y g r],'NoiseVector',0:3:30,'NewFigure',singlePlots);
+    [perSubjectFittedThresholds{subjectNumber},itpN] = plotAndFitThresholdsToRealData(pI,t,[b y g r],'NoiseVector',0:3:30,'NewFigure',singlePlots);
     perSubjectExperimentalThresholds{subjectNumber} = [b y g r];
     theTitle = get(gca,'title');
     theTitle = theTitle.String;
     title(strrep(theTitle,'Data fitted at',[subjectId ',']));
-    % FigureSave(subjectId,gcf,'pdf');
+   
+    % Save the weighted thresholds along with the proper noise level at
+    % which to interpolate the results.
+    if savePerf
+        save([subjectId '-weightedPerf'],'results','itpN');
+    end
+    
     clearvars t;
 end
 
@@ -142,6 +151,20 @@ if ~singlePlots
     st = suptitle('Constant');
     set(st,'FontSize',30);
 end
+
+%% Plot mean
+meanExpThreshold = mean(cell2mat(perSubjectExperimentalThresholds));
+semExpThreshold  = std(cell2mat(perSubjectExperimentalThresholds))/sqrt(length(perSubjectExperimentalThresholds));
+meanModelThreshold = mean(cell2mat(perSubjectFittedThresholds));
+semModelThreshold  = std(cell2mat(perSubjectFittedThresholds))/sqrt(length(perSubjectFittedThresholds));
+plotAndFitThresholdsToRealData(pI,meanModelThreshold,meanExpThreshold,...
+    'ThresholdError',semModelThreshold,...
+    'DataError',semExpThreshold,...
+    'NoiseVector',0:3:30,'NewFigure',true);
+
+% Format plot
+ylim([0 20]);
+title('Weighted Aggregate Fit');
 
 %% Save the data
 if saveData
