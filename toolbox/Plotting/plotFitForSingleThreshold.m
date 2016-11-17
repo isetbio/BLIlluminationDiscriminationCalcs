@@ -19,7 +19,8 @@ if isempty(plotInfo.stimLevels), plotInfo.stimLevels = 1:length(data); end;
 if ~isempty(plotInfo.fitColor), figParams.defaultFitLineColor = plotInfo.fitColor; end;
 
 % Create a finely spaced data vector to generate data points along a curve for plotting.
-stimLevelsFine = min(plotInfo.stimLevels):(max(plotInfo.stimLevels)-min(plotInfo.stimLevels))/1000:max(plotInfo.stimLevels);
+% stimLevelsFine = min(plotInfo.stimLevels):(max(plotInfo.stimLevels)-min(plotInfo.stimLevels))/1000:max(plotInfo.stimLevels);
+stimLevelsFine = 0:(max(plotInfo.stimLevels)-min(plotInfo.stimLevels))/1000:max(plotInfo.stimLevels);
 curveFit = PAL_Weibull(fitParams,stimLevelsFine) * 100;
 
 %% Create the plot

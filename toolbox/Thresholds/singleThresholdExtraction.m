@@ -32,9 +32,13 @@ if notDefined('numTrials'), numTrials = 100; end;
 criterion      = criterion/100;
 paramsEstimate = [10 5 0.5 0.01];
 paramsFree     = [1 1 0 1];
-outOfNum       = repmat(numTrials,1,length(data));
+if length(numTrials) == 1
+    outOfNum = repmat(numTrials,1,length(data));
+else
+    outOfNum = numTrials;
+end
 PF             = @PAL_Weibull;
-lapseLimits = [0 0.05];
+lapseLimits    = [0 0.05];
 
 %% Some optimization settings for the fit
 %
