@@ -1,11 +1,6 @@
-%% t_UseRealEMDistribution
+%% t_fitAggrThresholdsToIndividuals
 %
-% Uses a real EM Distrbution data file from the psychophysical experiments
-% in order to come to a prediction of performance. The data is also saved
-% at then end of the script so that we can have easy access for plotting!
-% Note that this script requires you to have experimental data from our
-% experiment available. 
-% Please send an email to David Brainard (brainard@psych.upenn.edu).
+% Uses the uniform mean over the model data to fit performance to subjects.
 %
 % 8/04/16  xd  wrote it
 % 10/27/16  xd  added some file saving and plotting options
@@ -42,6 +37,8 @@ if ~singlePlots
     figure('Position',[150 238 2265 1061]);
 end
 
+% Data is ordered blue, green, red, yellow so we need to reorganize it to
+% become blue, yellow, green, red.
 t = plotThresholdForMeanPerformance('SVM_Static_Isomerizations_Constant_',false);
 t = t(:,[1 4 2 3]);
 
@@ -56,7 +53,6 @@ for subjectNumber = 1:length(orderOfSubjects)
     pI.xlabel = 'Gaussian Noise Levels';
     pI.ylabel = 'Stimulus Levels (\DeltaE)';
     pI.title  = 'Thresholds v Noise';
-        
     
     %% Get subject data
     %
@@ -79,23 +75,23 @@ for subjectNumber = 1:length(orderOfSubjects)
     theTitle = get(gca,'title');
     theTitle = theTitle.String;
     title(strrep(theTitle,'Data fitted at',[subjectId ',']));
-    % FigureSave(subjectId,gcf,'pdf');
-
 end
 
 if ~singlePlots
     st = suptitle('Constant');
     set(st,'FontSize',30);
 end
-
-close;
+% close all;
 
 %% Fit the aggregate
-Z = mean(cell2mat(perSubjectFittedThresholds));
-Zs =  std(cell2mat(perSubjectFittedThresholds))/sqrt(10);
-Zr = mean(cell2mat(perSubjectExperimentalThresholds));
+%
+% Calculate the mean and std of thresholds for both the experimental
+% condition as well as the model performance. Use these to make plots.
+Z   = mean(cell2mat(perSubjectFittedThresholds));
+Zs  = std(cell2mat(perSubjectFittedThresholds))/sqrt(10);
+Zr  = mean(cell2mat(perSubjectExperimentalThresholds));
 Zrs = std(cell2mat(perSubjectExperimentalThresholds))/sqrt(10);
 
 plotAndFitThresholdsToRealData(pI,Z,Zr,'ThresholdError',Zs,'DataError',Zrs,'NoiseVector',0:3:30,'NewFigure',true);
 ylim([0 20])
-title('Aggr Thresholds Individual Fits')
+title('Uniform Aggregate Fit')

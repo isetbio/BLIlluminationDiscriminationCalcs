@@ -13,7 +13,7 @@ clear; close all;
 % Choose which blue stimulus to plot as well as how much additive noise.
 % Pick 0 (no Gaussian noise) and some value > 0.
 comparisonToPlot = 1;
-kg = [0 15];
+kg = [0 3];
 
 % Size of the testing and training sets. The larger the training set, the
 % better the reproducibility of the result. However, it will also take
@@ -67,7 +67,7 @@ for ii = 1:length(kg)
         gaussianOverlay = df1_ABBA(calcParams,standardPhotonPool(1),{photonComparison},1,kg(2),trainingSetSize);
         gaussianOverlay = (gaussianOverlay - repmat(m,trainingSetSize,1)) ./ repmat(s,trainingSetSize,1);
         gaussianCoeff = pca(gaussianOverlay,'NumComponents',numPCA);
-        gaussianOverlay = gaussianOverlay * gaussianCoeff;
+        gaussianOverlay = gaussianOverlay * coeff;
     end
     
     %% Get hyperplane
