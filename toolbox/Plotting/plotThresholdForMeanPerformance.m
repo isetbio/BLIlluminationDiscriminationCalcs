@@ -12,7 +12,7 @@ if notDefined('plot'), plot = true; end
 %% Load and calculate mean thresholds
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 calcIDList = getAllSubdirectoriesContainingString(fullfile(analysisDir,'SimpleChooserData'),calcIDStr);
-dummyData = loadModelData(calcIDList{1});
+[dummyData,calcParams] = loadModelData(calcIDList{1});
 
 %% Find average performance
 avgPerformance = zeros(size(dummyData));
@@ -33,7 +33,7 @@ if plot
     p.title = 'Aggregate Thresholds';
     p.xlabel = 'Noise level';
     p.ylabel = 'Stimulus Level (\DeltaE)';
-    plotThresholdsAgainstNoise(p,thresholds,(0:3:30)');
+    plotThresholdsAgainstNoise(p,thresholds,calcParams.noiseLevels');
 end
 end
 

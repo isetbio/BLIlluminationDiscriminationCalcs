@@ -30,12 +30,13 @@ for ii = 1:size(thresholds,2)
     nonzeroIdx = thresholds(:,ii) > 0;
     
     % Fit a line to the data
-    [p, S] = polyfit(noiseLevels(nonzeroIdx,ii), thresholds(nonzeroIdx,ii), 1);
-    noiseLevelsFine = 0:(max(noiseLevels(:))-min(noiseLevels(:)))/1000:max(noiseLevels(:));
-    fitToLine = polyval(p, noiseLevelsFine,S);
+%     [p, S] = polyfit(noiseLevels(nonzeroIdx,ii), thresholds(nonzeroIdx,ii), 1);
+%     noiseLevelsFine = 0:(max(noiseLevels(:))-min(noiseLevels(:)))/1000:max(noiseLevels(:));
+%     fitToLine = polyval(p, noiseLevelsFine,S);
     
-    plot(noiseLevels(nonzeroIdx,ii),thresholds(nonzeroIdx,ii),'.','Color',figParams.colors{ii},'MarkerSize',figParams.markerSize);
-    plot(noiseLevelsFine,fitToLine,'Color',figParams.colors{ii},'LineStyle',figParams.lineStyle,'LineWidth',figParams.lineWidth);
+    plot(noiseLevels(nonzeroIdx,ii),thresholds(nonzeroIdx,ii),'o-','Color',figParams.colors{ii},...
+        'MarkerSize',figParams.markerSize,'LineWidth',figParams.lineWidth);
+%     plot(noiseLevelsFine,fitToLine,'Color',figParams.colors{ii},'LineStyle',figParams.lineStyle,'LineWidth',figParams.lineWidth);
 end
 
 % Make figure look nicer

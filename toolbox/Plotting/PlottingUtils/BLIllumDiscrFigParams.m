@@ -35,10 +35,10 @@ switch (modifier)
         figParams.criterionLineStyle = '--';
         figParams.ylimit = [0 100];
     case {'ThresholdvNoise'}
-        figParams.markerSize = 30;
+        figParams.markerSize = 15;
         figParams.colors = {[0 191 255]/255 [46 139 87]/255 [178,34,34]/255 [255 215 0]/255}; 
         figParams.lineStyle = '--';
-        figParams.lineWidth = 2;
+        figParams.lineWidth = 3;
     case {'Asymptote'}
         figParams.lineStyles = {'-' '--' '-.'};
         figParams.colors = {[0.2 0.2 0.4] [0.2 0.4 0.4] [0.4 0.4 0.4]};
