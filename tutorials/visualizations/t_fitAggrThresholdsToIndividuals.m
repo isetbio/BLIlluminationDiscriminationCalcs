@@ -14,7 +14,7 @@ singlePlots = false;
 
 % This is the calcIDStr for the SVM dataset we want to use to fit to the
 % experimental results.
-modelDataIDStr = 'SVM_Static_Isomerizations_Constant_';
+modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
 
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
@@ -39,8 +39,12 @@ end
 
 % Data is ordered blue, green, red, yellow so we need to reorganize it to
 % become blue, yellow, green, red.
-t = plotThresholdForMeanPerformance('SVM_Static_Isomerizations_Constant_',false);
+t = plotThresholdForMeanPerformance(modelDataIDStr,false);
 t = t(:,[1 4 2 3]);
+
+analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
+allDirs = getAllSubdirectoriesContainingString(fullfile(analysisDir,'SimpleChooserData'),modelDataIDStr);
+[~, calcParams] = loadModelData(allDirs{1});
 
 for subjectNumber = 1:length(orderOfSubjects)
     subjectId = orderOfSubjects{subjectNumber};
@@ -70,7 +74,8 @@ for subjectNumber = 1:length(orderOfSubjects)
     if ~singlePlots
         subplot(2,5,subjectNumber);
     end
-    perSubjectFittedThresholds{subjectNumber} = plotAndFitThresholdsToRealData(pI,t,[b y g r],'NoiseVector',0:3:30,'NewFigure',singlePlots);
+    perSubjectFittedThresholds{subjectNumber} = plotAndFitThresholdsToRealData(pI,t,[b y g r],...
+        'NoiseVector',calcParams.noiseLevels,'NewFigure',singlePlots);
     perSubjectExperimentalThresholds{subjectNumber} = [b y g r];
     theTitle = get(gca,'title');
     theTitle = theTitle.String;
@@ -95,3 +100,9 @@ Zrs = std(cell2mat(perSubjectExperimentalThresholds))/sqrt(10);
 plotAndFitThresholdsToRealData(pI,Z,Zr,'ThresholdError',Zs,'DataError',Zrs,'NoiseVector',0:3:30,'NewFigure',true);
 ylim([0 20])
 title('Uniform Aggregate Fit')
+
+%%
+if saveData
+    save('UniformIndividualFitThresholds','perSubjectAggregateThresholds','perSubjectExperimentalThresholds',...
+        'perSubjectFittedThresholds');
+end

@@ -19,7 +19,7 @@ singlePlots = false;
 
 % This is the calcIDStr for the SVM dataset we want to use to fit to the
 % experimental results.
-modelDataIDStr = 'SVM_Static_Isomerizations_Constant_';
+modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
 
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
@@ -53,16 +53,18 @@ for subjectNumber = 1:length(orderOfSubjects)
     %
     % We need to load the fixations from the experiment. These paths are
     % stored locally and may need to be changed depending on your setup.
-    r1 = load(['/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCodeTempLocation/Exp8ProcessedData/Exp8EMByScenePatches/' subjectId '-Constant-' num2str(1) '-EMInPatches.mat']);
-    r2 = load(['/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCodeTempLocation/Exp8ProcessedData/Exp8EMByScenePatches/' subjectId '-Constant-' num2str(2) '-EMInPatches.mat']);
+    r1 = load(['/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCodeTempLocation/Exp8ProcessedData/Exp8EMByScenePatches_1deg/' subjectId '-Constant-' num2str(1) '-EMInPatches.mat']);
+    r2 = load(['/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCodeTempLocation/Exp8ProcessedData/Exp8EMByScenePatches_1deg/' subjectId '-Constant-' num2str(2) '-EMInPatches.mat']);
     r1 = r1.resultData;
     r2 = r2.resultData;
     
-    load(fullfile(fileparts(mfilename('fullpath')),'plotInfoMatConstant.mat'))
+    load(fullfile(fileparts(mfilename('fullpath')),'plotInfoMatConstant_1deg.mat'))
     load('/Users/Shared/Matlab/Experiments/Newcastle/stereoChromaticDiscriminationExperiment/analysis/FitThresholdsAllSubjectsExp8.mat')
     
     %% Load dummy data to preallocate results matrix
-    [dummyData, calcParams] = loadModelData([modelDataIDStr '1']);
+    analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
+    allDirs = getAllSubdirectoriesContainingString(fullfile(analysisDir,'SimpleChooserData'),modelDataIDStr);
+    [dummyData, calcParams] = loadModelData(allDirs{1});
     result1 = zeros(size(dummyData));
     result2 = zeros(size(dummyData));
     results = zeros(size(dummyData));
@@ -93,7 +95,7 @@ for subjectNumber = 1:length(orderOfSubjects)
     weightedPatchImage = weightedPatchImage / sum(weightedPatchImage);
     for ii = 1:length(nonZeroProbIdx)
         thePatch = nonZeroProbIdx(ii);
-        [currentPatchData,cp] = loadModelData([modelDataIDStr num2str(thePatch)]);
+        [currentPatchData,cp] = loadModelData(allDirs{thePatch});
         results = results + (weightedPatchImage(thePatch) * currentPatchData);
     end
     
@@ -132,7 +134,8 @@ for subjectNumber = 1:length(orderOfSubjects)
     if ~singlePlots
         subplot(2,5,subjectNumber);
     end
-    [perSubjectFittedThresholds{subjectNumber},itpN] = plotAndFitThresholdsToRealData(pI,t,[b y g r],'NoiseVector',0:3:30,'NewFigure',singlePlots);
+    [perSubjectFittedThresholds{subjectNumber},itpN] = plotAndFitThresholdsToRealData(pI,t,...
+        [b y g r],'NoiseVector',calcParams.noiseLevels,'NewFigure',singlePlots);
     perSubjectExperimentalThresholds{subjectNumber} = [b y g r];
     theTitle = get(gca,'title');
     theTitle = theTitle.String;
