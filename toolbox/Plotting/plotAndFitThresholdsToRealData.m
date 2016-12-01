@@ -49,7 +49,7 @@ fittedThresholds = thresholds(interpolateStartPoint,:);
 fittedError = zeros(size(fittedThresholds));
 
 if (~isempty(thresholdError))
-    fittedError = thresholdError;
+    fittedError = thresholdError(interpolateStartPoint,:);
 end
 
 % Target to which to interpolate. We initialize it to the start point and
@@ -79,6 +79,7 @@ end
 
 % Check against NaN
 if isnan(meanLSE(interpolateStartPoint)), interpolateEndPoint = interpolateStartPoint; end;
+if isnan(meanLSE(interpolateEndPoint)),   interpolateEndPoint = interpolateStartPoint; end;
 
 % If the NoiseLevel field is greater than 0, than the user specified an
 % input noise level. We will interpolate to that value instead of what
