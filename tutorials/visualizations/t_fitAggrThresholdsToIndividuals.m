@@ -77,6 +77,7 @@ for subjectNumber = 1:length(orderOfSubjects)
     perSubjectFittedThresholds{subjectNumber} = plotAndFitThresholdsToRealData(pI,t,[b y g r],...
         'NoiseVector',calcParams.noiseLevels,'NewFigure',singlePlots);
     perSubjectExperimentalThresholds{subjectNumber} = [b y g r];
+    
     theTitle = get(gca,'title');
     theTitle = theTitle.String;
     title(strrep(theTitle,'Data fitted at',[subjectId ',']));
@@ -97,7 +98,9 @@ Zs  = std(cell2mat(perSubjectFittedThresholds))/sqrt(10);
 Zr  = mean(cell2mat(perSubjectExperimentalThresholds));
 Zrs = std(cell2mat(perSubjectExperimentalThresholds))/sqrt(10);
 
-plotAndFitThresholdsToRealData(pI,Z,Zr,'ThresholdError',Zs,'DataError',Zrs,'NoiseVector',0:3:30,'NewFigure',true);
+plotAndFitThresholdsToRealData(pI,Z,Zr,'ThresholdError',Zs,'DataError',Zrs,...
+    'NoiseVector',calcParams.noiseLevels,'NewFigure',true);
+
 ylim([0 20])
 title('Uniform Aggregate Fit')
 
