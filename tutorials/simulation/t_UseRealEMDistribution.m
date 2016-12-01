@@ -4,10 +4,12 @@
 % in order to come to a prediction of performance. The data is also saved
 % at then end of the script so that we can have easy access for plotting!
 % Note that this script requires you to have experimental data from our
-% experiment available. 
-% Please send an email to David Brainard (brainard@psych.upenn.edu).
+% experiment available.
 %
-% 8/04/16  xd  wrote it
+% Please send an email to David Brainard (brainard@psych.upenn.edu) for
+% data requests.
+%
+% 8/04/16  xd  wrote it 
 % 10/27/16  xd  added some file saving and plotting options
 
 clear; %close all; ieInit;
@@ -20,6 +22,7 @@ singlePlots = false;
 % This is the calcIDStr for the SVM dataset we want to use to fit to the
 % experimental results.
 modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'SVM_Static_Isomerizations_Constant_';
 
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
@@ -28,9 +31,11 @@ saveData = false;
 % Set to true to save the weighted performance matrices.
 savePerf = false;
 
-%% Subject ID's
+%% Some constant values
+% Subject ID's
 % DON'T CHANGE
 orderOfSubjects = {'azm','bmj', 'vle', 'vvu', 'idh','hul','ijj','eom','dtm','ktv'}';
+pathToFixationData = '/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCodeTempLocation/Exp8ProcessedData/';
 
 %% Preallocate some space for data
 %
@@ -53,8 +58,8 @@ for subjectNumber = 1:length(orderOfSubjects)
     %
     % We need to load the fixations from the experiment. These paths are
     % stored locally and may need to be changed depending on your setup.
-    r1 = load(['/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCodeTempLocation/Exp8ProcessedData/Exp8EMByScenePatches_1deg/' subjectId '-Constant-' num2str(1) '-EMInPatches.mat']);
-    r2 = load(['/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCodeTempLocation/Exp8ProcessedData/Exp8EMByScenePatches_1deg/' subjectId '-Constant-' num2str(2) '-EMInPatches.mat']);
+    r1 = load([pathToFixationData 'Exp8EMByScenePatches_1deg/' subjectId '-Constant-' num2str(1) '-EMInPatches.mat']);
+    r2 = load([pathToFixationData 'Exp8EMByScenePatches_1deg/' subjectId '-Constant-' num2str(2) '-EMInPatches.mat']);
     r1 = r1.resultData;
     r2 = r2.resultData;
     
@@ -65,8 +70,6 @@ for subjectNumber = 1:length(orderOfSubjects)
     analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
     allDirs = getAllSubdirectoriesContainingString(fullfile(analysisDir,'SimpleChooserData'),modelDataIDStr);
     [dummyData, calcParams] = loadModelData(allDirs{1});
-    result1 = zeros(size(dummyData));
-    result2 = zeros(size(dummyData));
     results = zeros(size(dummyData));
     
     %% Put all the experimental data into one matrix
@@ -160,10 +163,11 @@ meanExpThreshold = mean(cell2mat(perSubjectExperimentalThresholds));
 semExpThreshold  = std(cell2mat(perSubjectExperimentalThresholds))/sqrt(length(perSubjectExperimentalThresholds));
 meanModelThreshold = mean(cell2mat(perSubjectFittedThresholds));
 semModelThreshold  = std(cell2mat(perSubjectFittedThresholds))/sqrt(length(perSubjectFittedThresholds));
+
 plotAndFitThresholdsToRealData(pI,meanModelThreshold,meanExpThreshold,...
     'ThresholdError',semModelThreshold,...
     'DataError',semExpThreshold,...
-    'NoiseVector',0:3:30,'NewFigure',true);
+    'NoiseVector',calcParams.noiseLevels,'NewFigure',true);
 
 % Format plot
 ylim([0 20]);
