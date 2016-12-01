@@ -33,9 +33,9 @@ if size(thresholds,2) ~= length(data), error('thresholds and data size are not m
 % across all the colors. This will allow us to determine a minimal LSE. We
 % can then linearly interpolate up/down 1 entry to find a better fit.
 thresholdLSE = (thresholds - repmat(data(:)',size(thresholds,1),1)).^2;
-meanLSE = mean(thresholdLSE,2);
+sumLSE = sum(thresholdLSE,2);
 
-[~,minLSEIdx] = min(meanLSE);
+[~,minLSEIdx] = min(sumLSE);
 if parser.Results.NoiseLevel > 0,
     minLSEIdx = parser.Results.NoiseLevel;
 end
@@ -60,13 +60,13 @@ interpolateEndPoint = interpolateStartPoint;
 % If x is the minimum point, we want to interpolate between x-1 and x+1
 % since our error is a quadratic function, meaning that the true minimum
 % must be between these two points.
-if size(meanLSE,1) > 1
+if size(sumLSE,1) > 1
     % If it is the start point, just interpolate from x to x+1
     if interpolateStartPoint == 1
         interpolateEndPoint = interpolateStartPoint + 1;
         
     % If it is the end point, interpolate from x-1 to x
-    elseif interpolateStartPoint == length(meanLSE)
+    elseif interpolateStartPoint == length(sumLSE)
         interpolateEndPoint = interpolateStartPoint;
         interpolateStartPoint = interpolateStartPoint - 1;
         
@@ -78,8 +78,8 @@ if size(meanLSE,1) > 1
 end
 
 % Check against NaN
-if isnan(meanLSE(interpolateStartPoint)), interpolateEndPoint = interpolateStartPoint; end;
-if isnan(meanLSE(interpolateEndPoint)),   interpolateEndPoint = interpolateStartPoint; end;
+if isnan(sumLSE(interpolateStartPoint)), interpolateEndPoint = interpolateStartPoint; end;
+if isnan(sumLSE(interpolateEndPoint)),   interpolateEndPoint = interpolateStartPoint; end;
 
 % If the NoiseLevel field is greater than 0, than the user specified an
 % input noise level. We will interpolate to that value instead of what
@@ -104,7 +104,7 @@ if interpolateStartPoint ~= interpolateEndPoint
     
     % Calculate the LSE for the interpolated thresholds and take the mean.
     interpLSE = (interpolatedThresholds - repmat(data(:)',size(interpolatedThresholds,1),1)).^2;
-    interpLSE = mean(interpLSE,2);
+    interpLSE = sum(interpLSE,2);
     
     % Find the min LSE, this is the point we want.
     [~,interpIdx] = min(interpLSE);
