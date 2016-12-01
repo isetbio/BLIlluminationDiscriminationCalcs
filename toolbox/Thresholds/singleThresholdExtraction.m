@@ -30,7 +30,7 @@ if notDefined('numTrials'), numTrials = 100; end;
 % value. The paramsEstimate is just a rough estimate of the results and
 % shouldn't affect the outcome too much. 
 criterion      = criterion/100;
-paramsEstimate = [10 5 0.5 0.01];
+paramsEstimate = [10 5 0.5 0.05];
 paramsFree     = [1 1 0 1];
 if length(numTrials) == 1
     outOfNum = repmat(numTrials,1,length(data));
