@@ -47,7 +47,7 @@ end
 mosaic = coneMosaic;
 mosaic.fov = calcParams.sensorFOV;
 mosaic.wave = SToWls(calcParams.S);
-mosaic.noiseFlag = false;
+mosaic.noiseFlag = 'none';
 mosaic.integrationTime = calcParams.coneIntegrationTime;
 mosaic.spatialDensity = calcParams.spatialDensity;
 
