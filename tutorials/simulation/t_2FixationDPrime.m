@@ -1,40 +1,28 @@
-%% t_UseRealEMDistribution
+%% t_2FixationDPrime
 %
-% Uses a real EM Distrbution data file from the psychophysical experiments
-% in order to come to a prediction of performance. The data is also saved
-% at then end of the script so that we can have easy access for plotting!
-% Note that this script requires you to have experimental data from our
-% experiment available.
+% In many of the trials, subjects fixated at two locations in the stimuli.
+% Using the performances of the two patches in which the fixation is binned
+% into, we can calculate what a theoretical performance percentage for
+% using both fixations would be. This script implements this type of
+% analysis using a d-prime mapping for 2AFC tasks.
 %
-% Please send an email to David Brainard (brainard@psych.upenn.edu) for
-% data requests.
-%
-% 8/04/16  xd  wrote it 
-% 10/27/16  xd  added some file saving and plotting options
+% 12/6/16  xd  wrote it
 
-clear; %close all; ieInit;
-%% Some parameters
-%
-% If set to true, each subject fit get's it's own individual figure window.
-% Otherwise, everything is plotted as a subplot on 1 figure.
+clear; %close all;
+%% Some parameters and settings
+
+modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
+
 singlePlots = false;
 
-% This is the calcIDStr for the SVM dataset we want to use to fit to the
-% experimental results.
-modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
-% modelDataIDStr = 'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
-% modelDataIDStr = 'SVM_Static_Isomerizations_Constant_';
-
-% Set to true to save the data after the script has finished running. Will
-% be saved into local directory where this script is called from.
 saveData = true;
 
-% Set to true to save the weighted performance matrices.
-savePerf = false;
+%% Load some things
+load(fullfile(mfilename('fullpath'),'../../tutorialData/uniformIndividualFitThresholds'));
 
-%% Some constant values
-% Subject ID's
-% DON'T CHANGE
+%% Fixed variables
+%
+% Don't change these
 orderOfSubjects = {'azm','bmj', 'vle', 'vvu', 'idh','hul','ijj','eom','dtm','ktv'}';
 pathToFixationData = '/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCodeTempLocation/Exp8ProcessedData/';
 
@@ -46,9 +34,17 @@ pathToFixationData = '/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCod
 perSubjectAggregateThresholds = cell(length(orderOfSubjects),1);
 perSubjectFittedThresholds = cell(length(orderOfSubjects),1);
 perSubjectExperimentalThresholds = cell(length(orderOfSubjects),1);
-perSubjectFittedNoiseLevel = cell(length(orderOfSubjects),1);
 
-%% Calculation and plotting loop
+%% Load d-prime lookup table
+%
+% Multiply percentages by 100 since the lookup table is in decimals and the
+% saved data is in percentages.
+dpl = load('dPrimeLookup');
+percentTable = dpl.probCorrectAreaROC * 100;
+dprimeTable  = dpl.dPrimesTAFC;
+clear dpl;
+
+%% Calculation loop
 if ~singlePlots
     figure('Position',[150 238 2265 1061]);
 end
@@ -73,38 +69,52 @@ for subjectNumber = 1:length(orderOfSubjects)
     allDirs = getAllSubdirectoriesContainingString(fullfile(analysisDir,'SimpleChooserData'),modelDataIDStr);
     [dummyData, calcParams] = loadModelData(allDirs{1});
     results = zeros(size(dummyData));
+    noiseVector = calcParams.noiseLevels;
     
-    %% Put all the experimental data into one matrix
+    %% Generate performance matrix
     %
-    % This let's us calculate the weighted patch values based on a desired
-    % set of fixations.
-    dataset      = [r1{:,2} r1{:,3} r2{:,2} r2{:,3}];
-    uniqueValues = unique(dataset);
-    totalNumber  = numel(dataset);
+    % We first pool all the fixation data available. Then, for each trial,
+    % we take the fixation and calculated the adjusted performance based
+    % on the d-prime calulcation as follows. d'_final = sqrt(sum((d'_i)^2))
+    % where i is an individual fixation during the trial.
     
-    % Count the number of times each patch appears so that we can have a
-    % set of weights by which to multiply the SVM performance values.
-    weightedPatchImage = zeros(p.vNum,p.hNum);
-    for ii = 1:length(uniqueValues)
-        weight = sum(dataset == uniqueValues(ii)) / totalNumber;
-        weightedPatchImage(uniqueValues(ii)) = weight;
-    end
-
-    %% Calculate performance
-    %
-    % We calculate the performance by mutliplying the patch weights with
-    % their percent correct. Then, we extract thresholds for these
-    % performance values.
-    weightedPatchImage = weightedPatchImage(:);
-    nonZeroProbIdx     = find(weightedPatchImage);
-    weightedPatchImage = weightedPatchImage / sum(weightedPatchImage);
-    for ii = 1:length(nonZeroProbIdx)
-        thePatch = nonZeroProbIdx(ii);
-        currentPatchData = loadModelData(allDirs{thePatch});
-        results = results + (weightedPatchImage(thePatch) * currentPatchData);
-    end
+    % Pool together all fixations in one cell array.
+    allFixations = [r1(:,2); r1(:,3); r2(:,2); r2(:,3)];
     
-    % Extract the thresholds for each color direction.
+    tic
+    % Loop over fixations to calculate performance
+    for ff = 1:length(allFixations)
+        theCurrentFixations = allFixations{ff};
+        dPrimeTemp = zeros(size(results));
+        
+        % Load model results for these fixations
+        for ii = 1:length(theCurrentFixations)
+            thePatch = theCurrentFixations(ii);
+            currentPatchData = loadModelData(allDirs{thePatch});
+            
+            % Find the percentTable idx for the performances in
+            % currentPatchData. These are used to look up the d-prime
+            % values.
+            [~,pIdx] = min(abs(bsxfun(@minus,percentTable,currentPatchData(:)')));
+            
+            % Add d-prime squared
+            dPrimeTemp = dPrimeTemp + reshape(dprimeTable(pIdx).^2,size(dPrimeTemp));
+        end
+        
+        % Take square root of sums of d-primed squares
+        dPrimeTemp = sqrt(dPrimeTemp);
+        
+        % Look up performance based on calculated d-prime and add to
+        % running total.
+        [~,pIdx] = min(abs(bsxfun(@minus,dprimeTable,dPrimeTemp(:)')));
+        results = results + reshape(percentTable(pIdx),size(results));
+        if mod(ff,100) == 0
+            toc
+        end
+    end
+    results = results / length(allFixations);
+    
+    %% Extract the thresholds for each color direction.
     for ii = 1:4
         t{ii} = multipleThresholdExtraction(squeeze(results(ii,:,:)),70.9);
     end
@@ -112,8 +122,11 @@ for subjectNumber = 1:length(orderOfSubjects)
     % Turn from cell into matrix. This allows for easier plotting later. We
     % also reorganize the matrix so that the color order is b, y, g, r.
     t = cell2mat(t);
-    t = t(:,[1 4 2 3]);    
+    t = t(:,[1 4 2 3]);
     perSubjectAggregateThresholds{subjectNumber} = t;
+    
+    noise = 1 + perSubjectFittedNoiseLevel{subjectNumber}/(noiseVector(2) - noiseVector(1));
+    fitThreshold = interpolateThreshold(noise,t);
     
     % Create some label information for plotting.
     stimLevels = calcParams.stimLevels;
@@ -122,7 +135,7 @@ for subjectNumber = 1:length(orderOfSubjects)
     pI.xlabel = 'Gaussian Noise Levels';
     pI.ylabel = 'Stimulus Levels (\DeltaE)';
     pI.title  = 'Thresholds v Noise';
-        
+    
     %% Get subject data
     %
     % Load the subject performances. We need to calculate the mean
@@ -139,27 +152,21 @@ for subjectNumber = 1:length(orderOfSubjects)
     if ~singlePlots
         subplot(2,5,subjectNumber);
     end
-    [perSubjectFittedThresholds{subjectNumber},perSubjectFittedNoiseLevel{subjectNumber}]...
-        = plotAndFitThresholdsToRealData(pI,t,...
+    [perSubjectFittedThresholds{subjectNumber},itpN] = plotAndFitThresholdsToRealData(pI,fitThreshold,...
         [b y g r],'NoiseVector',calcParams.noiseLevels,'NewFigure',singlePlots);
     perSubjectExperimentalThresholds{subjectNumber} = [b y g r];
     theTitle = get(gca,'title');
     theTitle = theTitle.String;
     title(strrep(theTitle,'Data fitted at',[subjectId ',']));
-   
-    % Save the weighted thresholds along with the proper noise level at
-    % which to interpolate the results.
-    if savePerf
-        itpN = perSubjectFittedNoiseLevel{subjectNumber}; %#ok<UNRCH>
-        save([subjectId '-weightedPerf'],'results','itpN');
-    end
+    
+    %     % Save the weighted thresholds along with the proper noise level at
+    %     % which to interpolate the results.
+    %     if savePerf
+    %         save([subjectId '-weightedPerf'],'results','itpN');
+    %     end
     
     clearvars t;
-end
-
-if ~singlePlots
-    st = suptitle('Constant');
-    set(st,'FontSize',30);
+    
 end
 
 %% Plot mean
@@ -179,6 +186,6 @@ title('Weighted Aggregate Fit');
 
 %% Save the data
 if saveData
-    save('IndividualFitThresholds','perSubjectAggregateThresholds','perSubjectExperimentalThresholds',...
-        'perSubjectFittedThresholds','perSubjectFittedNoiseLevel'); %#ok<UNRCH>
+    save('IndividualFitThresholds_dPrime','perSubjectAggregateThresholds','perSubjectExperimentalThresholds',...
+        'perSubjectFittedThresholds','perSubjectFittedNoiseLevel');
 end
