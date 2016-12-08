@@ -20,7 +20,7 @@ if notDefined('numTrials'), numTrials = 100; end;
 % We check the average value of the first 5 and last 5 numbers to get an
 % idea of if the data is fittable to a curve. If the first 5 values are
 % less than criterion and the last 5 are greater than criterion+10, we proceed with the
-% fitting.  Otherwise, we return 0 for the threshold, which indicates that
+% fitting.  Otherwise, we return NaN for the threshold, which indicates that
 % the data cannot be fit.
 % if mean(data(1:5)) > criterion+10 || mean(data(end-4:end)) < criterion, threshold = nan; paramsValues = zeros(1,4); return; end; 
 
