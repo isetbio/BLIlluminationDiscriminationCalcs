@@ -52,7 +52,7 @@ for k1 = 1:length(calcIDStrs)
     
     % Folder list to run over for conversions into isetbio format
 %     calcParams = updateCacheFolderList(calcParams);
-    calcParams.cacheFolderList = {'Neutral' 'Neutral'};
+    calcParams.cacheFolderList = {'Constant', 'Constant_FullImage'};
     
     % Need to specify the calibration file to use
     calcParams = assignCalibrationFile(calcParams);
@@ -74,7 +74,7 @@ for k1 = 1:length(calcIDStrs)
     
     % Specify the number of trials for each combination of Kp Kg as well as
     % the range of illuminants to use (max 50).
-    calcParams.trainingSetSize = 200;
+    calcParams.trainingSetSize = 1000;
     calcParams.testingSetSize = 1000;
     calcParams.illumLevels = 1:50;
     
@@ -83,7 +83,7 @@ for k1 = 1:length(calcIDStrs)
     calcParams.cFunction = 3;
     calcParams.dFunction = 1;
     calcParams.usePCA = true;
-    calcParams.numPCA = 400;
+    calcParams.numPCA = 100;
     
     % Kp represents the scale factor for the Poisson noise.  This is the
     % realistic noise representation of the photons arriving at the retina.
@@ -93,7 +93,7 @@ for k1 = 1:length(calcIDStrs)
     % Kg is the scale factor for Gaussian noise.  The standard deviation of 
     % the Gaussian noise is equal to the square root of the mean 
     % photoisomerizations across the available target image samples. 
-    calcParams.KgLevels = 0:3:30;
+    calcParams.KgLevels = 0:5:50;
     
     % Update to calcIDStr to a uniformly formatted name
     calcParams.calcIDStr = params2Name_FirstOrderModel(calcParams);
