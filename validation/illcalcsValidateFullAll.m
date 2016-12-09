@@ -71,6 +71,6 @@ function illcalcsValidateFullAll(varargin)
 
     %% How to validate
     % Run a FULL validation session (comparing actual data)
-    UnitTest.runValidationSession(vScriptsList, 'FULL');
+    UnitTest.runValidationSession(vScriptsList, 'FULLONLY');
 
 end

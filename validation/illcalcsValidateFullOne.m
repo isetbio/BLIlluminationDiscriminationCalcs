@@ -23,6 +23,6 @@ function illcalcsValidateFullOne(varargin)
     singleScriptToValidate = UnitTest.selectScriptFromExistingOnes();
     
     %% Validate
-    UnitTest.runValidationSession({{singleScriptToValidate, []}}, 'FULL');
+    UnitTest.runValidationSession({{singleScriptToValidate, []}}, 'FULLONE');
     
 end
