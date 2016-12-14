@@ -16,45 +16,45 @@ pathDir = fullfile(myDir,'Toolbox','');
 AddToMatlabPathDynamically(pathDir);
 
 %% Validation
-rng(1);
+rng('default');
 tolerance = 200;
 
 % Generate a default sensor that will be used in many of the validation
 % scripts.
-sensor = getDefaultBLIllumDiscrSensor;
+mosaic = getDefaultBLIllumDiscrMosaic;
+mosaic.integrationTime = 0.05;
+mosaic.noiseFlag = 'none';
 
 % Load optical image data
 data = load('TestImage0OpticalImage');
 oi = data.opticalimage;
 
-% Calculate the cone absorptions to get the mean photons absorbed
-sensor = coneAbsorptions(sensor, oi);
-photons = sensorGet(sensor, 'photons');
+% Calculate the cone isomerizations to get the mean photons absorbed
+isomerizations = mosaic.compute(oi,'currentFlag',false);
 
 % Apply the three different noise functions.
-%   noiseShot is found in ISETBIO and uses iePoisson, the Poisson generator found in ISETBIO.
+%   iePoisson is found in ISETBIO.
 %   poissrnd is the Poisson generator that comes in MATLAB's Statistics Toolbox. 
 %   approx is a Gaussian approximation to the Poisson.
-[~, noiseShotRes] = noiseShot(sensor);
-noiseShotRes = photons + noiseShotRes;
-poissrndRes = poissrnd(photons);
-approx = normrnd(photons, sqrt(photons));
+iePoisson = iePoisson(isomerizations);
+poissrndRes = poissrnd(isomerizations);
+approx = normrnd(isomerizations, sqrt(isomerizations));
 
 UnitTest.validationRecord('SIMPLE_MESSAGE', '***** Noise Functions *****');   
 
 % Calculate the Euclidian distance between the results of the different
 % types of noise.  We want to validate that this values are within a
 % certain range, specified by the tolerance, of each other.
-A = norm(noiseShotRes(:) - poissrndRes(:));
-B = norm(noiseShotRes(:) - approx(:));
+A = norm(iePoisson(:) - poissrndRes(:));
+B = norm(iePoisson(:) - approx(:));
 C = norm(poissrndRes(:) - approx(:));
 
-UnitTest.validationData('noiseShot', noiseShotRes);
+UnitTest.validationData('iePoisson', iePoisson);
 UnitTest.validationData('poissrnd', poissrndRes);
 UnitTest.validationData('approx', approx);
 
-UnitTest.assertIsZero(A - B, 'DIFFERENCE from noiseShot to poissrnd', tolerance);
-UnitTest.assertIsZero(B - C, 'DIFFERENCE from noiseShot to approx', tolerance);
+UnitTest.assertIsZero(A - B, 'DIFFERENCE from iePoisson to poissrnd', tolerance);
+UnitTest.assertIsZero(B - C, 'DIFFERENCE from isPoisson to approx', tolerance);
 UnitTest.assertIsZero(C - A, 'DIFFERENCE from poissrnd to approx', tolerance);
 
 end

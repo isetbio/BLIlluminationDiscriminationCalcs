@@ -1,28 +1,48 @@
 function illcalcsValidateFullOne(varargin)
-    
-    %% We will use preferences for the project at hand
-    UnitTest.usePreferencesForProject('BLIlluminationDiscrimCalcsValidation', 'reset');
+% illcalcsValidateFullOne(varargin)
+%
+% Optional key/value pairs
+%   'verbosity' - string (default 'low').  How chatty to be about output.
+%      'none' - Don't say anything.
+%      'low' - Minimal.
+%      'medium' - As the name suggests.
+%      'high' - More than medium.
+%      'max' - As much as possible
+%   'generatePlots' - true/false (default false).  Generate plots?
+%   'graphMismatchedData' - true/false (default true).  Make a graph when
+%       validation fails?
+%   'numericTolerance' - value (default 500*eps).  Tolerance to use for numeric checks.
 
-    % Run time error behavior
-    % valid options are: 'rethrowExceptionAndAbort', 'catchExceptionAndContinue'
-    UnitTest.setPref('onRunTimeErrorBehavior', 'catchExceptionAndContinue');
+%% Close all figures so that we start with a clean slate
+close all; 
 
-    % Plot generation
-    UnitTest.setPref('generatePlots',  false);
-    UnitTest.setPref('closeFigsOnInit', true);
+%% We will use preferences for the 'isetbioValidation' project
+thisProject = 'BLIlluminationDiscrimCalcsValidation';
+UnitTest.usePreferencesForProject(thisProject);
 
-    %% Verbosity Level
-    % valid options are: 'none', min', 'low', 'med', 'high', 'max'
-    UnitTest.setPref('verbosity', 'high');
-    
+%% Parse input and set settable prefs
+p = inputParser;
+p.addParameter('verbosity','high',@ischar);
+p.addParameter('generatePlots',false,@islogical);
+p.addParameter('graphMismatchedData',false,@islogical);
+p.addParameter('numericTolerance',500*eps,@isnumeric);
+p.parse(varargin{:});
+UnitTest.setPref('verbosity',p.Results.verbosity);
+UnitTest.setPref('generatePlots',p.Results.generatePlots);
+UnitTest.setPref('graphMismatchedData',p.Results.graphMismatchedData);
+UnitTest.setPref('numericTolerance',p.Results.numericTolerance);
 
-    %% Whether to plot data that do not agree with the ground truth
-    UnitTest.setPref('graphMismatchedData', true);
+% Run time error behavior
+% valid options are: 'rethrowExceptionAndAbort', 'catchExceptionAndContinue'
+UnitTest.setPref('onRunTimeErrorBehavior', 'rethrowExceptionAndAbort');
 
-    %% Print all existing validation scripts and ask the user to select one for validation
-    singleScriptToValidate = UnitTest.selectScriptFromExistingOnes();
-    
-    %% Validate
-    UnitTest.runValidationSession({{singleScriptToValidate, []}}, 'FULLONE');
-    
+% Plot generation
+UnitTest.setPref('closeFigsOnInit', true);
+
+%% Print all existing validation scripts and ask the user to select one for validation
+singleScriptToValidate = UnitTest.selectScriptFromExistingOnes();
+
+%% Validate
+UnitTest.runValidationSession({{singleScriptToValidate, []}}, 'FULLONLY');
+
 end
