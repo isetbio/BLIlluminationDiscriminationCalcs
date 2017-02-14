@@ -23,7 +23,7 @@ tolerance = 200;
 
 % Generate a default sensor that will be used in many of the validation
 % scripts.
-sensor = getDefaultBLIllumDiscrSensor;
+mosaic = getDefaultBLIllumDiscrMosaic;
 
 % Load several different renderings of the target image from the experiment.
 try
@@ -37,17 +37,11 @@ catch
 end
 
 % Calculate the photon absorptions
-s1 = coneAbsorptions(sensor, oi1);
-s2 = coneAbsorptions(sensor, oi2);
-s3 = coneAbsorptions(sensor, oi3);
-s4 = coneAbsorptions(sensor, oi4);
-s5 = coneAbsorptions(sensor, oi5);
-
-p1 = sensorGet(s1, 'photons');
-p2 = sensorGet(s2, 'photons');
-p3 = sensorGet(s3, 'photons');
-p4 = sensorGet(s4, 'photons');
-p5 = sensorGet(s5, 'photons');
+p1 = mosaic.compute(oi1);
+p2 = mosaic.compute(oi2);
+p3 = mosaic.compute(oi3);
+p4 = mosaic.compute(oi4);
+p5 = mosaic.compute(oi5);
 
 UnitTest.validationRecord('SIMPLE_MESSAGE', '***** Photon Distances *****');
 

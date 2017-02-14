@@ -20,7 +20,7 @@ pathDir = fullfile(myDir,'Toolbox','');
 AddToMatlabPathDynamically(pathDir);
 
 %% Generate a default sensor
-sensor = getDefaultBLIllumDiscrSensor;
+mosaic = getDefaultBLIllumDiscrMosaic;
 
 %% Load optical image data
 data = load('TestImage0OpticalImage');
@@ -30,32 +30,39 @@ oi = data.opticalimage;
 % We will sample nFrames of eye movement using the default settings in ISETBIO.
 nFrames = 20;
 em = emCreate;
-em = emSet(em, 'sample time', sensorGet(sensor, 'exp time') / nFrames);
+em = emSet(em, 'sample time', mosaic.integrationTime / nFrames);
 
-% Put eye movement object into sensor
-sensorEM = sensorSet(sensor,'eyemove',em);
-sensorEM = sensorSet(sensorEM,'positions',zeros(nFrames,2));
-sensorEM = sensorSet(sensorEM, 'exp time', sensorGet(sensor, 'exp time') / 20);
+mosaicEM = mosaic.copy;
+mosaicEM0 = mosaic.copy;
+
+mosaicEM.integrationTime = mosaic.integrationTime / nFrames;
+mosaicEM0.integrationTime = mosaic.integrationTime / nFrames;
+
+mosaicEM.emGenSequence(nFrames,'em',em);
 
 % Generate sensor positions, and then force them to be all zero movement.
-sensorEM = emGenSequence(sensorEM);
-positions = sensorGet(sensorEM,'sensor positions');
+% sensorEM = emGenSequence(sensorEM);
+positions = mosaicEM.emPositions;
 positions = zeros(size(positions));
-sensorEM0 = sensorSet(sensorEM,'sensor positions',positions);
+mosaicEM0.emPositions = positions;
 
 %% Calculate the absorptions
-sensor = coneAbsorptions(sensor, oi);
-sensorEM0 = coneAbsorptions(sensorEM0, oi);
-sensorEM = coneAbsorptions(sensorEM, oi);
+% sensor = coneAbsorptions(sensor, oi);
+% sensorEM0 = coneAbsorptions(sensorEM0, oi);
+% sensorEM = coneAbsorptions(sensorEM, oi);
+
+photons = mosaic.compute(oi,'currentFlag',false);
+photonsEM0 = mosaicEM0.compute(oi,'currentFlag',false);
+photonsEM = mosaicEM.compute(oi,'currentFlag',false);
 
 %% Compare the total cone absorptions 
 % They should be very very close when we don't move the eyes, and pretty close
 % for fixational eye movements.
 tolerance = 1;
-photons = sensorGet(sensor, 'photons');
-photonsEM0 = sensorGet(sensorEM0, 'photons');
+% photons = sensorGet(sensor, 'photons');
+% photonsEM0 = sensorGet(sensorEM0, 'photons');
 photonsEM0 = sum(photonsEM0, 3);
-photonsEM = sensorGet(sensorEM, 'photons');
+% photonsEM = sensorGet(sensorEM, 'photons');
 photonsEM = sum(photonsEM, 3);
 
 % Plot, left should lie along diagnonal, right should be close

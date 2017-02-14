@@ -38,10 +38,10 @@ for k1 = 1:length(calcIDStrs)
     calcParams.CACHE_SCENES = false;
     calcParams.forceSceneCompute = false;  % Will overwrite any existing data.
     
-    calcParams.CACHE_OIS = false;
+    calcParams.CACHE_OIS = true;
     calcParams.forceOICompute = false;    % Will overwrite any existing data.
     
-    calcParams.RUN_MODEL = true;
+    calcParams.RUN_MODEL = false;
     calcParams.MODEL_ORDER = 1; 
     calcParams.overWriteFlag = true;      % Whether or not to overwrite existing data.
     
@@ -52,7 +52,7 @@ for k1 = 1:length(calcIDStrs)
     
     % Folder list to run over for conversions into isetbio format
 %     calcParams = updateCacheFolderList(calcParams);
-    calcParams.cacheFolderList = {'Constant', 'Constant_FullImage'};
+    calcParams.cacheFolderList = {'Neutral', 'Neutral'};
     
     % Need to specify the calibration file to use
     calcParams = assignCalibrationFile(calcParams);

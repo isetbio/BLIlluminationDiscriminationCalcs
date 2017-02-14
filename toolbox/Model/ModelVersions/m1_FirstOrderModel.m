@@ -48,7 +48,7 @@ OINamesList = getFilenamesInDirectory(folderPath);
 % Set a starting Kg value. This will allow us to stop calculating Kg values
 % when it is clear the remaining stimulus levels will return 100%. We set
 % this to be the last 5 by default.
-startKg = 1;
+startKg = ones(length(calcParams.KpLevels),1);
 
 %% Do the actual calculation here
 results = zeros(length(illumLevels),length(KpLevels),length(KgLevels));
@@ -67,58 +67,61 @@ for ii = 1:length(illumLevels);
     for jj = 1:length(KpLevels)
         Kp = KpLevels(jj);
         
-        for kk = startKg:length(KgLevels);
-            Kg = KgLevels(kk);
-            
-            % Choose the data generation function
-            datasetFunction = masterDataFunction(calcParams.dFunction);
-            [trainingData, trainingClasses] = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,trainingSetSize,mosaic);
-            [testingData, testingClasses]   = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,testingSetSize,mosaic);
-            
-            % Standardize data if flag is set to true
-            if calcParams.standardizeData
-                m = mean(trainingData,1);
-                s = std(trainingData,1);
-                trainingData = (trainingData - repmat(m,trainingSetSize,1)) ./ repmat(s,trainingSetSize,1);
-                testingData  = (testingData - repmat(m,testingSetSize,1))   ./ repmat(s,testingSetSize,1);
+        if startKg(jj) <= length(KgLevels)
+            for kk = startKg(jj):length(KgLevels);
+                Kg = KgLevels(kk);
+                
+                % Choose the data generation function
+                datasetFunction = masterDataFunction(calcParams.dFunction);
+                [trainingData, trainingClasses] = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,trainingSetSize,mosaic);
+                [testingData, testingClasses]   = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,testingSetSize,mosaic);
+                
+                % Standardize data if flag is set to true
+                if calcParams.standardizeData
+                    m = mean(trainingData,1);
+                    s = std(trainingData,1);
+                    trainingData = (trainingData - repmat(m,trainingSetSize,1)) ./ repmat(s,trainingSetSize,1);
+                    testingData  = (testingData - repmat(m,testingSetSize,1))   ./ repmat(s,testingSetSize,1);
+                end
+                
+                trainingData(isnan(trainingData)) = 0;
+                testingData(isnan(testingData)) = 0;
+                
+                if calcParams.usePCA
+                    coeff = pca(trainingData,'NumComponents',calcParams.numPCA);
+                    trainingData = trainingData*coeff;
+                    testingData = testingData*coeff;
+                end
+                
+                % Compute performance based on chosen classifier method
+                classifierFunction = masterClassifierFunction(calcParams.cFunction);
+                results(ii,jj,kk) = classifierFunction(trainingData,testingData,trainingClasses,testingClasses);
             end
             
-            trainingData(isnan(trainingData)) = 0;
-            testingData(isnan(testingData)) = 0;
-            
-            if calcParams.usePCA
-                coeff = pca(trainingData,'NumComponents',calcParams.numPCA);
-                trainingData = trainingData*coeff;
-                testingData = testingData*coeff;
+            % Update the last 5 correct and check if startKg needs to be shifted.
+            % If the average of the last 5 is greater than 99.5%, we set the
+            % remaining values for each illumination level for the startKg noise
+            % level to equal 100%. We then add 1 to the start Kg. This should
+            % provide a nice boost to performance speed without affecting the model
+            % results.
+            if ii >= 5
+                lastFiveCorrect = squeeze(results(ii-4:ii,jj,startKg(jj)));
+                if mean(lastFiveCorrect) > 99.6
+                    results(ii+1:end,jj,startKg(jj)) = 100;
+                    startKg(jj) = startKg(jj) + 1;
+                end
+                
+                % If startKg is greater than the number of kg levels, break out of
+                % this loop (since the calculation has effectively ended).
+%                 if startKg(jj) > length(KgLevels)
+%                     break
+%                 end
             end
-            
-            % Compute performance based on chosen classifier method
-            classifierFunction = masterClassifierFunction(calcParams.cFunction);
-            results(ii,jj,kk) = classifierFunction(trainingData,testingData,trainingClasses,testingClasses);
         end
     end
     % Print the time the calculation took
     fprintf('Calculation time for %s illumination step %u: %04.3f s\n',color,illumLevels(ii),toc);
     
-    % Update the last 5 correct and check if startKg needs to be shifted.
-    % If the average of the last 5 is greater than 99.5%, we set the
-    % remaining values for each illumination level for the startKg noise
-    % level to equal 100%. We then add 1 to the start Kg. This should
-    % provide a nice boost to performance speed without affecting the model
-    % results.
-    if ii >= 5
-        lastFiveCorrect = squeeze(results(ii-4:ii,1,startKg));
-        if mean(lastFiveCorrect) > 99.6 
-            results(ii+1:end,1,startKg) = 100;
-            startKg = startKg + 1;
-        end
-        
-        % If startKg is greater than the number of kg levels, break out of
-        % this loop (since the calculation has effectively ended).
-        if startKg > length(KgLevels)
-            break
-        end
-    end
 end
 end
 

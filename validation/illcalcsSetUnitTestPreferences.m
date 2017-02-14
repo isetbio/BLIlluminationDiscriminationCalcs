@@ -7,9 +7,9 @@ function illcalcsSetUnitTestPreferences
     % Specify project-specific preferences
     p = struct(...
             'projectName',                         'BLIlluminationDiscrimCalcsValidation', ... 	                         % The project name (also the preferences group name)
-            'validationRootDir',                   '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcs/validation', ... % Directory location where the 'scripts' subdirectory resides.
+            'validationRootDir',                   '/Users/xiaomaoding/Documents/MATLAB/BLIlluminationDiscriminationCalcs/validation', ... % Directory location where the 'scripts' subdirectory resides.
             'alternateFastDataDir',                '',  ...  	                                                         % Alternate FAST (hash) data directory location. Specify '' to use the default location, i.e., $validationRootDir/data/fast
-            'alternateFullDataDir',                '/Volumes/Users1/Dropbox (Aguirre-Brainard Lab)/IBIO_data/BLIlluminationDiscrimination/Validation/data/full',  ...  	 % Alternate FULL (hash) data directory location. Specify '' to use the default location, i.e., $validationRootDir/data/full
+            'alternateFullDataDir',                '/Users/xiaomaoding/Dropbox (Aguirre-Brainard Lab)/IBIO_data/BLIlluminationDiscrimination/Validation/data/full',  ...  	 % Alternate FULL (hash) data directory location. Specify '' to use the default location, i.e., $validationRootDir/data/full
             'useRemoteDataToolbox',  false, ...                                                                          % If true use Remote Data Toolbox to fetch validation data on demand.
             'remoteDataToolboxConfig', '', ...                                                                           % Struct, file path, or project name with Remote Data Toolbox configuration.
             'clonedWikiLocation',                  '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcsWiki/BLIlluminationDiscriminationCalcs.wiki', ... 	 % Local path to the directory where the wiki is cloned. Only relevant for publishing tutorials.

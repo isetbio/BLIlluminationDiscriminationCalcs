@@ -15,11 +15,12 @@ modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Con
 
 singlePlots = false;
 
-saveData = true;
+saveData = false;
 
 %% Load some things
-load(fullfile(mfilename('fullpath'),'../../tutorialData/uniformIndividualFitThresholds'));
-
+Z = load(fullfile(mfilename('fullpath'),'../../tutorialData/IndividualFitThresholds'));
+load(fullfile(mfilename('fullpath'),'../../tutorialData/IndividualFitThresholds_dPrime'));
+perSubjectFittedNoiseLevel = Z.perSubjectFittedNoiseLevel;
 %% Fixed variables
 %
 % Don't change these
@@ -31,9 +32,10 @@ pathToFixationData = '/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCod
 % We save the aggregate thresholds, the fitted thresholds, and the
 % experimental thresholds. This should be enough for any auxiliary plot we
 % want to create.
-perSubjectAggregateThresholds = cell(length(orderOfSubjects),1);
-perSubjectFittedThresholds = cell(length(orderOfSubjects),1);
-perSubjectExperimentalThresholds = cell(length(orderOfSubjects),1);
+
+% perSubjectAggregateThresholds = cell(length(orderOfSubjects),1);
+% perSubjectFittedThresholds = cell(length(orderOfSubjects),1);
+% perSubjectExperimentalThresholds = cell(length(orderOfSubjects),1);
 
 %% Load d-prime lookup table
 %
@@ -43,6 +45,9 @@ dpl = load('dPrimeLookup');
 percentTable = dpl.probCorrectAreaROC * 100;
 dprimeTable  = dpl.dPrimesTAFC;
 clear dpl;
+
+%% Something
+fittedNoiseLevel = zeros(length(orderOfSubjects),1);
 
 %% Calculation loop
 if ~singlePlots
@@ -81,52 +86,53 @@ for subjectNumber = 1:length(orderOfSubjects)
     % Pool together all fixations in one cell array.
     allFixations = [r1(:,2); r1(:,3); r2(:,2); r2(:,3)];
     
-    tic
-    % Loop over fixations to calculate performance
-    for ff = 1:length(allFixations)
-        theCurrentFixations = allFixations{ff};
-        dPrimeTemp = zeros(size(results));
-        
-        % Load model results for these fixations
-        for ii = 1:length(theCurrentFixations)
-            thePatch = theCurrentFixations(ii);
-            currentPatchData = loadModelData(allDirs{thePatch});
-            
-            % Find the percentTable idx for the performances in
-            % currentPatchData. These are used to look up the d-prime
-            % values.
-            [~,pIdx] = min(abs(bsxfun(@minus,percentTable,currentPatchData(:)')));
-            
-            % Add d-prime squared
-            dPrimeTemp = dPrimeTemp + reshape(dprimeTable(pIdx).^2,size(dPrimeTemp));
-        end
-        
-        % Take square root of sums of d-primed squares
-        dPrimeTemp = sqrt(dPrimeTemp);
-        
-        % Look up performance based on calculated d-prime and add to
-        % running total.
-        [~,pIdx] = min(abs(bsxfun(@minus,dprimeTable,dPrimeTemp(:)')));
-        results = results + reshape(percentTable(pIdx),size(results));
-        if mod(ff,100) == 0
-            toc
-        end
-    end
-    results = results / length(allFixations);
+%     tic
+%     % Loop over fixations to calculate performance
+%     for ff = 1:length(allFixations)
+%         theCurrentFixations = allFixations{ff};
+%         dPrimeTemp = zeros(size(results));
+%         
+%         % Load model results for these fixations
+%         for ii = 1:length(theCurrentFixations)
+%             thePatch = theCurrentFixations(ii);
+%             currentPatchData = loadModelData(allDirs{thePatch});
+%             
+%             % Find the percentTable idx for the performances in
+%             % currentPatchData. These are used to look up the d-prime
+%             % values.
+%             [~,pIdx] = min(abs(bsxfun(@minus,percentTable,currentPatchData(:)')));
+%             
+%             % Add d-prime squared
+%             dPrimeTemp = dPrimeTemp + reshape(dprimeTable(pIdx).^2,size(dPrimeTemp));
+%         end
+%         
+%         % Take square root of sums of d-primed squares
+%         dPrimeTemp = sqrt(dPrimeTemp);
+%         
+%         % Look up performance based on calculated d-prime and add to
+%         % running total.
+%         [~,pIdx] = min(abs(bsxfun(@minus,dprimeTable,dPrimeTemp(:)')));
+%         results = results + reshape(percentTable(pIdx),size(results));
+%         if mod(ff,100) == 0
+%             toc
+%         end
+%     end
+%     results = results / length(allFixations);
     
     %% Extract the thresholds for each color direction.
-    for ii = 1:4
-        t{ii} = multipleThresholdExtraction(squeeze(results(ii,:,:)),70.9);
-    end
+%     for ii = 1:4
+%         t{ii} = multipleThresholdExtraction(squeeze(results(ii,:,:)),70.9);
+%     end
     
     % Turn from cell into matrix. This allows for easier plotting later. We
     % also reorganize the matrix so that the color order is b, y, g, r.
-    t = cell2mat(t);
-    t = t(:,[1 4 2 3]);
-    perSubjectAggregateThresholds{subjectNumber} = t;
+%     t = cell2mat(t);
+%     t = t(:,[1 4 2 3]);
+%     perSubjectAggregateThresholds{subjectNumber} = t;
+    t = perSubjectAggregateThresholds{subjectNumber};
     
     noise = 1 + perSubjectFittedNoiseLevel{subjectNumber}/(noiseVector(2) - noiseVector(1));
-    fitThreshold = interpolateThreshold(noise,t);
+    t = interpolateThreshold(noise,t);
     
     % Create some label information for plotting.
     stimLevels = calcParams.stimLevels;
@@ -152,7 +158,8 @@ for subjectNumber = 1:length(orderOfSubjects)
     if ~singlePlots
         subplot(2,5,subjectNumber);
     end
-    [perSubjectFittedThresholds{subjectNumber},itpN] = plotAndFitThresholdsToRealData(pI,fitThreshold,...
+    [perSubjectFittedThresholds{subjectNumber},fittedNoiseLevel(subjectNumber)]...
+        = plotAndFitThresholdsToRealData(pI,t,...
         [b y g r],'NoiseVector',calcParams.noiseLevels,'NewFigure',singlePlots);
     perSubjectExperimentalThresholds{subjectNumber} = [b y g r];
     theTitle = get(gca,'title');
@@ -182,7 +189,10 @@ plotAndFitThresholdsToRealData(pI,meanModelThreshold,meanExpThreshold,...
 
 % Format plot
 ylim([0 20]);
-title('Weighted Aggregate Fit');
+if exist('perSubjectFittedNoiseLevel','var')
+    fittedNoiseLevel = cell2mat(perSubjectFittedNoiseLevel);
+end
+title(['Weighted Aggregate Fit, d-prime, ' num2str(mean(fittedNoiseLevel))]);
 
 %% Save the data
 if saveData
