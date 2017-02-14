@@ -19,9 +19,11 @@ function BLIlluminationDiscriminationCalcs
 %% Say hello
 fprintf('Running BLIlluminationDiscriminationCalcs local hook\n');
 
-%% Put project toolbox onto path
+%% Put project toolbox onto path, projectBaseDir is computer specific
 %
-% Specify project name and location
+% Specify project name and location.
+%
+% You may need to customize projectBaseDir
 projectName = 'BLIlluminationDiscriminationCalcs';
 projectUrl = 'https://github.com/isetbio/BLIlluminationDiscriminationCalcs.git';
 projectBaseDir = '/Users/xiaomaoding/Documents/MATLAB';
@@ -46,7 +48,7 @@ config = [tbToolboxRecord( ...
     'update', 'never', ...
     'url', projectUrl, ...
     'subfolder', 'tutorials')];
-tbDeployToolboxes('config', config, 'toolboxRoot', projectBaseDir);
+tbDeployToolboxes('config', config, 'toolboxRoot', projectBaseDir, 'runLocalHooks', false);
 
 %% Figure out what computer we are running on
 %
