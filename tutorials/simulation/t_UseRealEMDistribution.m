@@ -21,10 +21,11 @@ singlePlots = false;
 
 % This is the calcIDStr for the SVM dataset we want to use to fit to the
 % experimental results.
-modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
 % modelDataIDStr = 'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
-% modelDataIDStr = 'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
 % modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.93_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+modelDataIDStr = 'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
 % modelDataIDStr = 'SVM_Static_Isomerizations_Constant_';
 
 % Set to true to save the data after the script has finished running. Will
@@ -177,7 +178,7 @@ plotAndFitThresholdsToRealData(pI,meanModelThreshold,meanExpThreshold,...
 
 % Format plot
 ylim([0 20]);
-% title(['Weighted Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
+title(['Weighted Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
 disp(['Weighted Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
 
 %% Save the data
