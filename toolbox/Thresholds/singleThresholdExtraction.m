@@ -31,14 +31,14 @@ if notDefined('numTrials'), numTrials = 100; end;
 % shouldn't affect the outcome too much. 
 criterion      = criterion/100;
 paramsEstimate = [10 5 0.5 0.05];
-paramsFree     = [1 1 0 1];
+paramsFree     = [1 1 0 (mean(data(end-4:end)) > 99)]; % Need to remove lapse rate if data does not reach 100%
 if length(numTrials) == 1
     outOfNum = repmat(numTrials,1,length(data));
 else
     outOfNum = numTrials;
 end
 PF             = @PAL_Weibull;
-lapseLimits    = [0 0.05];
+lapseLimits    = [0 0.5];
 
 %% Some optimization settings for the fit
 %

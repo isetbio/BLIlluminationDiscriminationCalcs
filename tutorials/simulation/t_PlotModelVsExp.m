@@ -7,7 +7,7 @@
 
 clear; close all;
 %% Load data
-load('IndividualFitThresholds.mat');
+load('UniformIndividualFitThresholds.mat');
 
 %% Plot data
 numSubjects = length(perSubjectExperimentalThresholds);
@@ -16,6 +16,10 @@ c = figParams.colors;
 c = c([1 4 2 3]);
 
 figure; hold on;
+% Plot identity line
+plot([0 1000],[0 1000],'k','linewidth',2);
+
+% Plot data
 for ii = 1:numSubjects
     x = perSubjectExperimentalThresholds{ii};
     y = perSubjectFittedThresholds{ii};
@@ -24,9 +28,6 @@ for ii = 1:numSubjects
         plot(x(jj),y(jj),'.','Color',c{jj},'MarkerSize',20);
     end
 end
-
-% Plot identity line
-plot([0 1000],[0 1000],'k','linewidth',2);
 
 % Set limits
 lmax = max([cell2mat(perSubjectExperimentalThresholds') cell2mat(perSubjectFittedThresholds')]);

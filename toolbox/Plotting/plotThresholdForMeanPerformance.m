@@ -27,6 +27,9 @@ for ii = 1:size(thresholds,2)
     thresholds(:,ii) = multipleThresholdExtraction(squeeze(avgPerformance(ii,:,:,:)),70.9);
 end
 
+% Remove negatives and replace with NaN's
+thresholds(thresholds < 0) = nan;
+
 %% Do plotting
 if plot
     p = createPlotInfoStruct;

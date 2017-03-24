@@ -7,7 +7,7 @@ function name = params2Name_FirstOrderModel(params)
 %
 % 9/9/16  xd  wrote it
 
-name = 'FirstOrderModel';
+name = [params.calcIDStr 'FirstOrderModel'];
 
 % OI folder information
 name = [name '_' params.cacheFolderList{2}];

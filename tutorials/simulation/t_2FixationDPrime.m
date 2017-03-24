@@ -18,9 +18,9 @@ singlePlots = false;
 saveData = false;
 
 %% Load some things
-Z = load(fullfile(mfilename('fullpath'),'../../tutorialData/IndividualFitThresholds'));
+% Z = load(fullfile(mfilename('fullpath'),'../../tutorialData/IndividualFitThresholds'));
 load(fullfile(mfilename('fullpath'),'../../tutorialData/IndividualFitThresholds_dPrime'));
-perSubjectFittedNoiseLevel = Z.perSubjectFittedNoiseLevel;
+% perSubjectFittedNoiseLevel = Z.perSubjectFittedNoiseLevel;
 %% Fixed variables
 %
 % Don't change these

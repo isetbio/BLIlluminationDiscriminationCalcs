@@ -44,6 +44,7 @@ for jj = 1:length(calcIDStrList)
     hold on;
     for ii = 1:4
         bar(ii,rankings(ii),'FaceColor',figParams.colors{ii});
+%         title(patchNumber);
         axis square
         if rankings(ii) > maxYValue, maxYValue = rankings(ii); end;
     end
