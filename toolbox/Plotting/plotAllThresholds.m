@@ -16,6 +16,7 @@ function plotAllThresholds(calcIDStr,varargin)
 % format [Poisson Gaussian].
 parser = inputParser;
 parser.addParameter('NoiseIndex', [1 0], @isnumeric);
+parser.addParameter('Reset',false,@islogical);
 parser.parse(varargin{:});
 
 %% Load the data and calcParams here
@@ -31,7 +32,7 @@ plotInfo.ylabel = 'Stimulus Levels (\DeltaE)';
 plotInfo.title  = ['Thresholds v Noise, ' calcParams.calcIDStr];
 thresholds = loadThresholdData(calcIDStr,['Thresholds' calcIDStr '.mat']);
 
-if isempty(thresholds)
+if isempty(thresholds) || parser.Results.Reset
     %% Format data
     %
     % The data will be stored in a 4D matrix (depending on what type of
@@ -59,7 +60,7 @@ if isempty(thresholds)
     % us to gather the threshold for many patches.
     analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
     saveFile = fullfile(analysisDir,'SimpleChooserData',calcIDStr,['Thresholds' calcIDStr '.mat']);
-    if ~exist(saveFile,'file')
+    if ~exist(saveFile,'file') || parser.Results.Reset
         save(saveFile,'thresholds');
     end
 end
