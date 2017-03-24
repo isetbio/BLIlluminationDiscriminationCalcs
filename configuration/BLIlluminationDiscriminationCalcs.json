@@ -6,7 +6,7 @@
 		"localHookTemplate": "configuration/BLIlluminationDiscriminationCalcsLocalHookTemplate.m",
 		"name": "BLIlluminationDiscriminationCalcs",
 		"pathPlacement": "append",
-		"subfolder": ["toolbox", "tutorials", "scripts"],
+		"subfolder": ["toolbox", "tutorials", "scripts", "validation"],
 		"toolboxRoot": "",
 		"type": "git",
 		"update": "",
