@@ -24,13 +24,12 @@ singlePlots = false;
 % modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
 % modelDataIDStr = 'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
 % modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.93_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
-% modelDataIDStr = 'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
-% modelDataIDStr = 'SVM_Static_Isomerizations_Constant_';
+modelDataIDStr = 'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant'; 
 
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
-saveData = false;
+saveData = true;
+saveFilename = 'LSMosaicFitDataWeighted';
 
 % Set to true to save the weighted performance matrices.
 savePerf = false;
@@ -181,8 +180,14 @@ ylim([0 20]);
 title(['Weighted Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
 disp(['Weighted Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
 
+%% Calculate LSE
+LSE = zeros(length(perSubjectFittedThresholds),1);
+for i = 1:length(perSubjectFittedThresholds)
+    LSE(i) = sqrt(sum((perSubjectFittedThresholds{i} - perSubjectExperimentalThresholds{i}).^2));
+end
+
 %% Save the data
 if saveData
-    save('IndividualFitThresholds','perSubjectAggregateThresholds','perSubjectExperimentalThresholds',...
-        'perSubjectFittedThresholds','perSubjectFittedNoiseLevel'); %#ok<UNRCH>
+    save(saveFilename,'perSubjectAggregateThresholds','perSubjectExperimentalThresholds',...
+        'perSubjectFittedThresholds','perSubjectFittedNoiseLevel','LSE'); %#ok<UNRCH>
 end
