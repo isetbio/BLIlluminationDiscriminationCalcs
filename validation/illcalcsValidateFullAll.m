@@ -14,6 +14,7 @@ function illcalcsValidateFullAll(varargin)
 %   'graphMismatchedData' - true/false (default true).  Make a graph when
 %       validation fails?
 %   'numericTolerance' - value (default 500*eps).  Tolerance to use for numeric checks.
+%   'asAssertion' - true/false (default false).  Throw error if validation fails?
 
 % Examples:
 %   IBIOColorDetectValidateFullAll('verbosity','high');
@@ -33,6 +34,7 @@ p.addParameter('verbosity','low',@ischar);
 p.addParameter('generatePlots',false,@islogical);
 p.addParameter('graphMismatchedData',false,@islogical);
 p.addParameter('numericTolerance',500*eps,@isnumeric);
+p.addParameter('asAssertion',false,@islogical);
 p.parse(varargin{:});
 UnitTest.setPref('verbosity',p.Results.verbosity);
 UnitTest.setPref('generatePlots',p.Results.generatePlots);
@@ -59,5 +61,13 @@ vScriptsList = eval(listingScript);
 %
 % Run a FULL validation session (comparing actual data)
 UnitTest.runValidationSession(vScriptsList, 'FULLONLY');
+
+if p.Results.asAssertion
+    % assert no failed validations
+    summary = [obj.summaryReport{:}];
+    success = ~any([summary.fullFailed]);
+    assert(success, 'One or more validations failed.');
+end
+
 
 end
