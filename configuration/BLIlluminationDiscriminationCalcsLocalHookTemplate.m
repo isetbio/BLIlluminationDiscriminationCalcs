@@ -45,7 +45,8 @@ if (isCluster)
     sharedRootDir = fullfile(filesep,'/data/shared/brainardlab/dropbox');
     clonedWikiDir = '';
     clonedGhPagesLocation = '';
-    validationRootDir = '/data/shared/brainardlab/analysis/BLIlluminationDiscriminationCalcs/validation';   
+    validationRootDir = '/data/shared/brainardlab/analysis/BLIlluminationDiscriminationCalcs/validation'; 
+    
 % Brainard Lab Mac
 else  
     sysInfo = GetComputerInfo();
@@ -55,7 +56,7 @@ else
             sharedRootDir = fullfile(filesep,'Volumes','Users1','Dropbox (Aguirre-Brainard Lab)');
             clonedWikiDir = '/Users/Shared/GitWebSites/BLIlluminationDiscriminationCalcs.wiki';
             clonedGhPagesLocation = '/Users/Shared/GitWebSites/BLIlluminationDiscriminationCalcs';
-            validationRootDir = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcs/validation';
+            validationRootDir = fullfile(projectDir,'validation');
             
         otherwise
             % Some unspecified machine, try user specific customization
@@ -64,12 +65,12 @@ else
                     sharedRootDir = fullfile(filesep, 'Users', 'xiaomaoding', 'Dropbox (Aguirre-Brainard Lab)');
                     clonedWikiDir = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcsWiki/BLIlluminationDiscriminationCalcs.wiki';
                     clonedGhPagesLocation = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscrimCalcsGhPages/BLIlluminationDiscriminationCalcs';
-                    validationRootDir = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcs/validation';
+                    validationRootDir = fullfile(projectDir,'validation');
                 otherwise
-                    sharedRootDir = fullfile(filesep, 'Users', sysInfo.userShortName, 'Dropbox (Aguirre-Brainard Lab)');
-                    clonedWikiDir = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcsWiki/BLIlluminationDiscriminationCalcs.wiki';
-                    clonedGhPagesLocation = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscrimCalcsGhPages/BLIlluminationDiscriminationCalcs';
-                    validationRootDir = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcs/validation';
+                    sharedRootDir = fullfile(userpath,'output');
+                    clonedWikiDir = '';
+                    clonedGhPagesLocation = '';
+                    validationRootDir = fullfile(projectDir,'validation');
             end
     end 
 end
