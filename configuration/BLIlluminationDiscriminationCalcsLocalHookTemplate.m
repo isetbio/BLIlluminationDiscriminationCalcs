@@ -56,7 +56,7 @@ else
             sharedRootDir = fullfile(filesep,'Volumes','Users1','Dropbox (Aguirre-Brainard Lab)');
             clonedWikiDir = '/Users/Shared/GitWebSites/BLIlluminationDiscriminationCalcs.wiki';
             clonedGhPagesLocation = '/Users/Shared/GitWebSites/BLIlluminationDiscriminationCalcs';
-            validationRootDir = fullfile(projectDir,'validation');
+            validationRootDir = fullfile(projectBaseDir,'validation');
             
         otherwise
             % Some unspecified machine, try user specific customization
@@ -65,12 +65,12 @@ else
                     sharedRootDir = fullfile(filesep, 'Users', 'xiaomaoding', 'Dropbox (Aguirre-Brainard Lab)');
                     clonedWikiDir = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcsWiki/BLIlluminationDiscriminationCalcs.wiki';
                     clonedGhPagesLocation = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscrimCalcsGhPages/BLIlluminationDiscriminationCalcs';
-                    validationRootDir = fullfile(projectDir,'validation');
+                    validationRootDir = fullfile(projectBaseDir,'validation');
                 otherwise
                     sharedRootDir = fullfile(userpath,'output');
                     clonedWikiDir = '';
                     clonedGhPagesLocation = '';
-                    validationRootDir = fullfile(projectDir,'validation');
+                    validationRootDir = fullfile(projectBaseDir,'validation');
             end
     end 
 end
