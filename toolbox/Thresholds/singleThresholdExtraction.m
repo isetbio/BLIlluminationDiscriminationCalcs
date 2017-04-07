@@ -1,6 +1,6 @@
 function [threshold,paramsValues] = singleThresholdExtraction(data,criterion,stimLevels,numTrials)
 % [threshold,paramsValues] = singleThresholdExtraction(data,criterion,stimLevels,numTrials)
-% 
+%
 % This function fits a cumulative Weibull to the data variable and returns
 % the threshold at the criterion as well as the parameters needed to plot the
 % fitted curve. It is assumed that the data vector contains percentage
@@ -22,13 +22,13 @@ if notDefined('numTrials'), numTrials = 100; end;
 % less than criterion and the last 5 are greater than criterion+10, we proceed with the
 % fitting.  Otherwise, we return NaN for the threshold, which indicates that
 % the data cannot be fit.
-% if mean(data(1:5)) > criterion+10 || mean(data(end-4:end)) < criterion, threshold = nan; paramsValues = zeros(1,4); return; end; 
+% if mean(data(1:5)) > criterion+10 || mean(data(end-4:end)) < criterion, threshold = nan; paramsValues = zeros(1,4); return; end;
 
 %% Set some parameters for the curve fitting
 %
 % Our input criterion is a percentage which needs to converted to a decimal
 % value. The paramsEstimate is just a rough estimate of the results and
-% shouldn't affect the outcome too much. 
+% shouldn't affect the outcome too much.
 criterion      = criterion/100;
 paramsEstimate = [10 5 0.5 0.05];
 paramsFree     = [1 1 0 (mean(data(end-4:end)) > 99.5)]; % Need to remove lapse rate if data does not reach 100%
@@ -47,9 +47,14 @@ lapseLimits    = [0 0.5];
 options = PAL_minimize('options');
 
 %% Fit the data to a curve
-paramsValues = PAL_PFML_Fit(stimLevels(:), data(:), outOfNum(:), ...
-    paramsEstimate, paramsFree, PF, 'SearchOptions', options,...
-    'lapseLimits',lapseLimits);
+if paramsFree(4)
+    paramsValues = PAL_PFML_Fit(stimLevels(:), data(:), outOfNum(:), ...
+        paramsEstimate, paramsFree, PF, 'SearchOptions', options,...
+        'lapseLimits',lapseLimits);
+else
+    paramsValues = PAL_PFML_Fit(stimLevels(:), data(:), outOfNum(:), ...
+        paramsEstimate, paramsFree, PF, 'SearchOptions', options);
+end
 
 threshold = PF(paramsValues, criterion, 'inverse');
 end
