@@ -103,8 +103,8 @@ p = struct(...
     'validationRootDir',                   validationRootDir, ...                                                % Directory location where the 'scripts' subdirectory resides.
     'alternateFastDataDir',                '',  ...  	                                                         % Alternate FAST (hash) data directory location. Specify '' to use the default location, i.e., $validationRootDir/data/fast
     'alternateFullDataDir',                '',  ...                                                              % Alternate FULL (hash) data directory location. Specify '' to use the default location, i.e., $validationRootDir/data/full
-    'useRemoteDataToolbox',  true, ...                                                                          % If true use Remote Data Toolbox to fetch validation data on demand.
-    'remoteDataToolboxConfig', '', ...                                                                           % Struct, file path, or project name with Remote Data Toolbox configuration.
+    'useRemoteDataToolbox',  true, ...                                                                           % If true use Remote Data Toolbox to fetch validation data on demand.
+    'remoteDataToolboxConfig', rdtConfig, ...                                                                    % Struct, file path, or project name with Remote Data Toolbox configuration.
     'clonedWikiLocation',                  clonedWikiDir, ... 	                                                 % Local path to the directory where the wiki is cloned. Only relevant for publishing tutorials.
     'clonedGhPagesLocation',               clonedGhPagesLocation, ... 	                                         % Local path to the directory where the gh-pages repository is cloned. Only relevant for publishing tutorials.
     'githubRepoURL',                       'http://isetbio.github.io/BLIlluminationDiscriminationCalcs', ... 	 % Github URL for the project. This is only used for publishing tutorials.
