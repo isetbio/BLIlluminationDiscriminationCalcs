@@ -1,3 +1,5 @@
+[![Build Status](http://50.112.42.141/buildStatus/icon?job=BLIlluminationDiscriminationCalcs)](http://50.112.42.141/job/BLIlluminationDiscriminationCalcs/)
+
 # BLIlluminationDiscriminationCalcs
 BrainardLab Illumination Discrimination Calculations
 
