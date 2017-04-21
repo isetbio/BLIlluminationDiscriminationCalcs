@@ -5,7 +5,7 @@
 % 8/04/16  xd  wrote it
 % 10/27/16  xd  added some file saving and plotting options
 
-clear; %close all; ieInit;
+clear; close all; ieInit;
 %% Some parameters
 %
 % If set to true, each subject fit get's it's own individual figure window.
@@ -14,14 +14,15 @@ singlePlots = false;
 
 % This is the calcIDStr for the SVM dataset we want to use to fit to the
 % % experimental results.
-% modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
+modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
 % modelDataIDStr = 'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
 % modelDataIDStr = 'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.93_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
-
+% modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.93_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
+modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.00_1.00_FOV1.00_PCA200_ABBA_SVM_Constant';
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
 saveData = false;
+saveFilename = 'MSMosaicFitDataUniform';
 
 %% Subject ID's
 % DON'T CHANGE
@@ -109,8 +110,14 @@ plotAndFitThresholdsToRealData(pI,Z,Zr,'ThresholdError',Zs,'DataError',Zrs,...
 ylim([0 20]);
 title('Uniform Aggregate Fit');
 
+%% Calculate LSE
+LSE = zeros(length(perSubjectFittedThresholds),1);
+for i = 1:length(perSubjectFittedThresholds)
+    LSE(i) = sqrt(sum((perSubjectFittedThresholds{i} - perSubjectExperimentalThresholds{i}).^2));
+end
+
 %%
 if saveData
-    save('UniformIndividualFitThresholds','perSubjectFittedNoiseLevel','perSubjectExperimentalThresholds',...
-        'perSubjectFittedThresholds');
+    save(saveFilename,'perSubjectFittedNoiseLevel','perSubjectExperimentalThresholds',...
+        'perSubjectFittedThresholds','LSE');
 end

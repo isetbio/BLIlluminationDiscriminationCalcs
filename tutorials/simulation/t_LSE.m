@@ -11,10 +11,15 @@ clear;
 dataFiles = {'StandardMosaicFitDataWeighted',...
              'LMMosaicFitDataWeighted',...
              'LSMosaicFitDataWeighted',...
-             'MSMosaicFitDataWeighted'};
+             'MSMosaicFitDataWeighted',...
+             'StandardMosaicFitDataUniform',...
+             'LMMosaicFitDataUniform',...
+             'LSMosaicFitDataUniform',...
+             'MSMosaicFitDataUniform'};
          
 % Corresponding labels for x axis
-xAxisLabels = {'Standard', 'LM', 'LS', 'MS'};
+xAxisLabels = {'Standard_w', 'LM_w', 'LS_w', 'MS_w',...
+               'Standard_u', 'LM_u', 'LS_u', 'MS_u'};
 
 %% Load LSE data for each mosaic
 % Vectors to save mean and std error
@@ -31,7 +36,8 @@ end
 %% Plot the data
 figParams = BLIllumDiscrFigParams;
 
-figure; hold on;
+figure('Position',[1000 900 960 420]); 
+hold on;
 bar(1:length(dataFiles), meanLSE);
 errorbar(1:length(dataFiles),meanLSE,stderrLSE,'.','LineWidth',figParams.lineWidth);
 
