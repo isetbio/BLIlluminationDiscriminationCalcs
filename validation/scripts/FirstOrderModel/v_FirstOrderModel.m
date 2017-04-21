@@ -46,7 +46,7 @@ end
 
 %% Create data sets using the simple chooser model
 if (calcParams.RUN_MODEL)
-	results = RunModel(calcParams,calcParams.overWriteFlag,calcParams.frozen);
+	results = RunModel(calcParams,calcParams.overWriteFlag,calcParams.frozen,true);
 end
    
 UnitTest.validationData('FirstOrderModelResults', results);

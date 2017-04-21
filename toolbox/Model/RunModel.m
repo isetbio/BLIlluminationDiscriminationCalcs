@@ -1,4 +1,4 @@
-function results = RunModel(calcParams,overWrite,frozen)
+function results = RunModel(calcParams,overWrite,frozen,validation)
 % results = RunModel(calcParams,overwrite,frozen)
 %
 % This function will run the computational observer model according to
@@ -12,6 +12,7 @@ function results = RunModel(calcParams,overWrite,frozen)
 %% Set defaults for inputs
 if notDefined('overWrite'), overWrite = false; end
 if notDefined('frozen'), frozen = false; end
+if notDefined('validation'), validation = false; end
 
 %% Take care of some housekeeping
 %
@@ -83,12 +84,14 @@ end
 calcParams.colors = lower(calcParams.colors);
 
 % Save the results
-analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
-TargetPath = fullfile(analysisDir,'SimpleChooserData',calcParams.calcIDStr);
-calcParamFileName = fullfile(TargetPath,['calcParams' calcParams.calcIDStr '.mat']);
-dataFileName = fullfile(TargetPath,['ModelData' calcParams.calcIDStr '.mat']);
-save(calcParamFileName,'calcParams');
-save(dataFileName,'results');
+if ~validation
+    analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
+    TargetPath = fullfile(analysisDir,'SimpleChooserData',calcParams.calcIDStr);
+    calcParamFileName = fullfile(TargetPath,['calcParams' calcParams.calcIDStr '.mat']);
+    dataFileName = fullfile(TargetPath,['ModelData' calcParams.calcIDStr '.mat']);
+    save(calcParamFileName,'calcParams');
+    save(dataFileName,'results');
+end
 
 end
 
