@@ -46,8 +46,8 @@ for ii = 2:length(OINames)+1
     comparison = loadOpticalImageData([calcIDStr '/' 'BlueIllumination'], strrep(OINames{ii-1}, 'OpticalImage.mat', ''));
     photonComparison = mosaic.compute(comparison,'currentFlag',false);
     
-    startIdx = 1 + (ii-1) * numberOfSamplesPerStep + (ss-1) * length(OINames);
-    endIdx = ii * numberOfSamplesPerStep + (ss-1) * length(OINames);
+    startIdx = 1 + (ii-1) * numberOfSamplesPerStep;
+    endIdx = ii * numberOfSamplesPerStep;
     testingData(startIdx:endIdx,:) = df3_noABBA(calcParams,{photonComparison},{photonComparison},1,0,numberOfSamplesPerStep);
     testingDataOnlyOneTarget(startIdx:endIdx,:) = testingData(startIdx:endIdx,:);
     fprintf('%d Comparison Stimulus: %2.2f min\n',ii,toc/60);
