@@ -25,13 +25,16 @@ tolerance = 200;
 % scripts.
 mosaic = getDefaultBLIllumDiscrMosaic;
 
+% Create Remote Data Toolbox client
+
+
 % Load several different renderings of the target image from the experiment.
 try
-    oi1 = loadOpticalImageData('Neutral/Standard', 'TestImage0');
-    oi2 = loadOpticalImageData('Neutral/Standard', 'TestImage1');
-    oi3 = loadOpticalImageData('Neutral/Standard', 'TestImage2');
-    oi4 = loadOpticalImageData('Neutral/Standard', 'TestImage4');
-    oi5 = loadOpticalImageData('Neutral/Standard', 'TestImage6');
+    oi1 = loadOpticalImageDataWithRDT('Neutral/Standard', 'TestImage0');
+    oi2 = loadOpticalImageDataWithRDT('Neutral/Standard', 'TestImage1');
+    oi3 = loadOpticalImageDataWithRDT('Neutral/Standard', 'TestImage2');
+    oi4 = loadOpticalImageDataWithRDT('Neutral/Standard', 'TestImage4');
+    oi5 = loadOpticalImageDataWithRDT('Neutral/Standard', 'TestImage6');
 catch
     error('It seems that you do not have the OI required for this validation. Please contact the project developers to obtain it');
 end

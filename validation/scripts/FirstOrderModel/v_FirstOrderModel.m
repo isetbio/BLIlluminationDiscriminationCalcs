@@ -28,22 +28,7 @@ calcParams = calcParams.calcParams;
 rng(1);
 calcParams.frozen = true;
 
-%% Check if necessary data exists
-if ~exist(fullfile(getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir'), 'ImageData', 'Neutral'), 'dir')
-    error('Please set up the data file directories approriately.  Consult the project wiki on GitHub for instructions.');
-end
 fprintf('Please note that the first order model validation script will take 6-7 minutes to run\n');
-
-%% Convert the images to cached scenes for more analysis
-if (calcParams.CACHE_SCENES)
-    convertRBGImagesToSceneFiles(calcParams,calcParams.forceSceneCompute);
-end
-
-%% Convert cached scenes to optical images
-if (calcParams.CACHE_OIS)
-    convertScenesToOpticalimages(calcParams, calcParams.forceOICompute);
-end
-
 %% Create data sets using the simple chooser model
 if (calcParams.RUN_MODEL)
 	results = RunModel(calcParams,calcParams.overWriteFlag,calcParams.frozen,true);

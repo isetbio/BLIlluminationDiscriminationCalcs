@@ -14,6 +14,13 @@ trainingSetSize = calcParams.trainingSetSize;
 testingSetSize  = calcParams.testingSetSize;
 analysisDir     = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 
+% Set a function to load optical images depending on whether we are running
+% for real or validating the code.
+oiLoaderFunction = @(x,y) loadOpticalImageData(x,y);
+if calcParams.validation
+    oiLoaderFunction = @(x,y) loadOpticalImageDataWithRDT(x,y);
+end
+
 %% Load standard stuff
 % The way we store these data is that we keep the full sized OI as well as
 % the LMS absorptions as well as a mask which tells us which cones are at
@@ -25,7 +32,7 @@ standardPool = cell(1,length(standardOIList));
 for ii = 1:length(standardOIList)
     opticalImageName = standardOIList{ii};
     opticalImageName = strrep(opticalImageName,'OpticalImage.mat','');
-    oi = loadOpticalImageData(fullfile(calcParams.cacheFolderList{2},'Standard'),opticalImageName);
+    oi = oiLoaderFunction(fullfile(calcParams.cacheFolderList{2},'Standard'),opticalImageName);
     oi = resizeOI(oi,calcParams.sensorFOV*calcParams.OIvSensorScale);
     standardPool{ii} = oi;
 end
@@ -83,7 +90,7 @@ for ii = 1:length(illumLevels)
     % Precompute the LMS for the test pool as well.
     imageName = OINamesList{illumLevels(ii)};
     imageName = strrep(imageName,'OpticalImage.mat','');
-    oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' [color 'Illumination']],imageName);
+    oiTest = oiLoaderFunction([calcParams.cacheFolderList{2} '/' [color 'Illumination']],imageName);
     oiTest = resizeOI(oiTest,calcParams.sensorFOV*calcParams.OIvSensorScale);
     LMS = tempMosaic.computeSingleFrame(oiTest,'FullLMS',true);
     testPool = {LMS};

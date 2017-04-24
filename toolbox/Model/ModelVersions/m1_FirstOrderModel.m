@@ -17,6 +17,13 @@ trainingSetSize = calcParams.trainingSetSize;
 testingSetSize  = calcParams.testingSetSize;
 analysisDir     = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 
+% Set a function to load optical images depending on whether we are running
+% for real or validating the code.
+oiLoaderFunction = @(x,y) loadOpticalImageData(x,y);
+if calcParams.validation
+    oiLoaderFunction = @(x,y) loadOpticalImageDataWithRDT(x,y);
+end
+
 %% Load standard optical images
 % We will load the pool of standard OI's here. The reason we have multiple
 % copies of these is to reduce the effect of rendering noise when we
@@ -29,7 +36,7 @@ calcParams.meanStandard = 0;
 for ii = 1:length(standardOIList)
     opticalImageName = standardOIList{ii};
     opticalImageName = strrep(opticalImageName,'OpticalImage.mat','');
-    oi = loadOpticalImageData(fullfile(calcParams.cacheFolderList{2},'Standard'),opticalImageName);
+    oi = oiLoaderFunction(fullfile(calcParams.cacheFolderList{2},'Standard'),opticalImageName);
     oi = resizeOI(oi,calcParams.sensorFOV*calcParams.OIvSensorScale);
     
     absorptionsStandard = mosaic.compute(oi,'currentFlag',false);
@@ -57,7 +64,7 @@ for ii = 1:length(illumLevels);
     % Precompute the test optical image to save computational time.
     imageName = OINamesList{illumLevels(ii)};
     imageName = strrep(imageName,'OpticalImage.mat','');
-    oiTest = loadOpticalImageData([calcParams.cacheFolderList{2} '/' [color 'Illumination']],imageName);
+    oiTest = oiLoaderFunction([calcParams.cacheFolderList{2} '/' [color 'Illumination']],imageName);
     oiTest = resizeOI(oiTest,calcParams.sensorFOV*calcParams.OIvSensorScale);
     absorptionsTest = mosaic.compute(oiTest,'currentFlag',false);
     

@@ -28,7 +28,7 @@ end
 
 % We'll check if the target directory for our data exists. If it does not,
 % we'll make it here. Also check if we want to overwrite existing data.
-baseDir   = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
+baseDir    = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
 targetPath = fullfile(baseDir, 'SimpleChooserData', calcParams.calcIDStr);
 if exist(targetPath, 'dir')
     if ~overWrite
@@ -69,6 +69,9 @@ end
 % there is less confusion when many different calculations are run.
 calcParams.colors = {'Blue' 'Green' 'Red' 'Yellow'};
 results = zeros(length(calcParams.colors),length(calcParams.illumLevels),length(calcParams.KpLevels),length(calcParams.KgLevels));
+
+% Pass validation flag to model script
+calcParams.validation = validation;
 
 % Choose the appropriate model function which should be specified in calcParams.
 modelPath = fileparts(mfilename('fullpath'));
