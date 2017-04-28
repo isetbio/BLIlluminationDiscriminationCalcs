@@ -36,8 +36,16 @@ end
 
 %% Calculate noisy sample
 
+% Check if noise flag is set
+noiseFlag = 'random';
+if isfield(calcParams,'frozen')
+    if calcParams.frozen
+        noiseFlag = 'frozen';
+    end
+end
+
 % Get poisson noise, this is in photons
-[~,nP] = coneMosaic.photonNoise(isomerizations);
+[~,nP] = coneMosaic.photonNoise(isomerizations, 'noiseFlag', noiseFlag);
 
 % Get the Gaussian noise
 nG = sqrt(calcParams.meanStandard) * randn(size(isomerizations));

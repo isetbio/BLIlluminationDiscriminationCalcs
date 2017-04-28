@@ -29,10 +29,11 @@ rng(1);
 calcParams.frozen = true;
 
 fprintf('Please note that the first order model validation script will take 6-7 minutes to run\n');
+
 %% Create data sets using the simple chooser model
 if (calcParams.RUN_MODEL)
 	results = RunModel(calcParams,calcParams.overWriteFlag,calcParams.frozen,true);
 end
-   
+
 UnitTest.validationData('FirstOrderModelResults', results);
 end
