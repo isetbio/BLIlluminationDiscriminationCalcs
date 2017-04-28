@@ -17,8 +17,10 @@ analysisDir     = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 % Set a function to load optical images depending on whether we are running
 % for real or validating the code.
 oiLoaderFunction = @(x,y) loadOpticalImageData(x,y);
+filenameFunction = @(x) getFilenamesInDirectory(x);
 if calcParams.validation
     oiLoaderFunction = @(x,y) loadOpticalImageDataWithRDT(x,y);
+    filenameFunction = @(x) getFilenamesInDirectoryWithRDT(x);
 end
 
 %% Load standard stuff
@@ -27,7 +29,7 @@ end
 % each location. This allows for easy extraction of the cone signal at a
 % given location.
 folderPath = fullfile(analysisDir,'OpticalImageData',calcParams.cacheFolderList{2},'Standard');
-standardOIList = getFilenamesInDirectory(folderPath);
+standardOIList = filenameFunction(folderPath);
 standardPool = cell(1,length(standardOIList));
 for ii = 1:length(standardOIList)
     opticalImageName = standardOIList{ii};
@@ -77,7 +79,7 @@ clearvars tempMask
 %% Calculation Body
 % Get a list of images
 folderPath = fullfile(analysisDir,'OpticalImageData',calcParams.cacheFolderList{2},[color 'Illumination']);
-OINamesList = getFilenamesInDirectory(folderPath);
+OINamesList = filenameFunction(folderPath);
 
 % Set a starting Kg value. This will allow us to stop calculating Kg values
 % when it is clear the remaining stimulus levels will return 100%. We set

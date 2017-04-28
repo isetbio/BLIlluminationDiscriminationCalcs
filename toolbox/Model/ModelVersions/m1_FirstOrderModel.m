@@ -20,8 +20,10 @@ analysisDir     = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 % Set a function to load optical images depending on whether we are running
 % for real or validating the code.
 oiLoaderFunction = @(x,y) loadOpticalImageData(x,y);
+filenameFunction = @(x) getFilenamesInDirectory(x);
 if calcParams.validation
     oiLoaderFunction = @(x,y) loadOpticalImageDataWithRDT(x,y);
+    filenameFunction = @(x) getFilenamesInDirectoryWithRDT(x);
 end
 
 %% Load standard optical images
@@ -30,7 +32,7 @@ end
 % perform the calculations. We also calculate the mean photon isomerization
 % here to be used for Gaussian noise later on.
 folderPath = fullfile(analysisDir,'OpticalImageData',calcParams.cacheFolderList{2},'Standard');
-standardOIList = getFilenamesInDirectory(folderPath);
+standardOIList = filenameFunction(folderPath);
 standardPool = cell(1, length(standardOIList));
 calcParams.meanStandard = 0;
 for ii = 1:length(standardOIList)
@@ -50,7 +52,7 @@ end
 % Note: Alphanumerical loading presumes that the files are named in
 % alphanumeric order (image1, image2, image3,... etc.).
 folderPath = fullfile(analysisDir,'OpticalImageData',calcParams.cacheFolderList{2},[color 'Illumination']);
-OINamesList = getFilenamesInDirectory(folderPath);
+OINamesList = filenameFunction(folderPath);
 
 % Set a starting Kg value. This will allow us to stop calculating Kg values
 % when it is clear the remaining stimulus levels will return 100%. We set
