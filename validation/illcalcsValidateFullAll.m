@@ -60,7 +60,7 @@ vScriptsList = eval(listingScript);
 %% How to validate
 %
 % Run a FULL validation session (comparing actual data)
-UnitTest.runValidationSession(vScriptsList, 'FULLONLY');
+obj = UnitTest.runValidationSession(vScriptsList, 'FULLONLY');
 
 if p.Results.asAssertion
     % assert no failed validations
