@@ -45,9 +45,16 @@ end
 %
 % Mark a target patch using WHITE.
 
-% line([hLines(16) hLines(17)],[vLines(12) vLines(12)],'linewidth',2,'Color','w');
-% line([hLines(16) hLines(17)],[vLines(13) vLines(13)],'linewidth',2,'Color','w');
-% line([hLines(16) hLines(16)],[vLines(12) vLines(13)],'linewidth',2,'Color','w');
-% line([hLines(17) hLines(17)],[vLines(12) vLines(13)],'linewidth',2,'Color','w');
+% % Block 3
+% line([hLines(1) hLines(2)],[vLines(4) vLines(4)],'linewidth',2,'Color','w');
+% line([hLines(1) hLines(2)],[vLines(3) vLines(3)],'linewidth',2,'Color','w');
+% line([hLines(1) hLines(1)],[vLines(3) vLines(4)],'linewidth',2,'Color','w');
+% line([hLines(2) hLines(2)],[vLines(3) vLines(4)],'linewidth',2,'Color','w');
+% 
+% % Block 162
+% line([hLines(11) hLines(12)],[vLines(12) vLines(12)],'linewidth',2,'Color','w');
+% line([hLines(11) hLines(12)],[vLines(13) vLines(13)],'linewidth',2,'Color','w');
+% line([hLines(11) hLines(11)],[vLines(12) vLines(13)],'linewidth',2,'Color','w');
+% line([hLines(12) hLines(12)],[vLines(12) vLines(13)],'linewidth',2,'Color','w');
 end
 

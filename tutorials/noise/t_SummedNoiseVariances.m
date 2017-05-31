@@ -29,7 +29,7 @@ emMosaicParams.numberOfEMPositions = 10;
 % identical.
 masterMosaic = coneMosaic;
 masterMosaic.fov = fov;
-masterMosaic.noiseFlag = false;
+masterMosaic.noiseFlag = 'none';
 
 % Static Mosaic
 staticMosaic = masterMosaic.copy;
@@ -45,7 +45,7 @@ emMosaic.emPositions = zeros(emMosaicParams.numberOfEMPositions,2);
 %
 % We load an arbitrary optical image used in the model. The results in this
 % script should hold irregardless of OI choice.
-OI = loadOpticalImageData('Neutral_FullImage/Standard','TestImage0');
+OI = loadOpticalImageData('Constant_1/Standard','CT1blue0-RGB');
 
 %% Calculate NF Isomerizations
 %
