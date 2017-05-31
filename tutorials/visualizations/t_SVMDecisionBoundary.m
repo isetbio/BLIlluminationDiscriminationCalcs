@@ -9,11 +9,11 @@
 
 clear; close all;
 %% Set parameters
-%
+
 % Choose which blue stimulus to plot as well as how much additive noise.
 % Pick 0 (no Gaussian noise) and some value > 0.
 comparisonToPlot = 1;
-kg = [0 3];
+kg = [0 15];
 
 % Size of the testing and training sets. The larger the training set, the
 % better the reproducibility of the result. However, it will also take
@@ -27,9 +27,12 @@ numPCA = 400;
 % Which section of the grid to use.
 calcIDStr = 'Constant_1';
 
+% Size of mosaic
+fov = 1;
+
 %% Make mosaic
 mosaic = getDefaultBLIllumDiscrMosaic;
-mosaic.fov = 1;
+mosaic.fov = fov;
 
 %% Load data
 %
@@ -61,15 +64,7 @@ for ii = 1:length(kg)
     
     %% Do SVM
     [~,svm] = cf3_SupportVectorMachine(trainingData,testingData,trainingClasses,testingClasses);
-    
-    %% Generate a Gaussian set of data to plot over the no noise condition
-    if ii == 1
-        gaussianOverlay = df1_ABBA(calcParams,standardPhotonPool(1),{photonComparison},1,kg(2),trainingSetSize);
-        gaussianOverlay = (gaussianOverlay - repmat(m,trainingSetSize,1)) ./ repmat(s,trainingSetSize,1);
-        gaussianCoeff = pca(gaussianOverlay,'NumComponents',numPCA);
-        gaussianOverlay = gaussianOverlay * coeff;
-    end
-    
+
     %% Get hyperplane
     b = svm.Beta;
     n = null(b');
@@ -80,12 +75,8 @@ for ii = 1:length(kg)
     hold on;
     plot(trainingData(trainingSetSize/2+1:end,1),trainingData(trainingSetSize/2+1:end,2),'*','MarkerSize',8);
     plot(trainingData(1:trainingSetSize/2,1),trainingData(1:trainingSetSize/2,2),'o','MarkerSize',8);
-    
-    if ii == 1
-        plot(gaussianOverlay(trainingSetSize/2+1:end,1),gaussianOverlay(trainingSetSize/2+1:end,2),'s','MarkerSize',8);
-        plot(gaussianOverlay(1:trainingSetSize/2,1),gaussianOverlay(1:trainingSetSize/2,2),'s','MarkerSize',8);
-    end
-    ylim([min(trainingData(:,2)) max(trainingData(:,2))]);
+    % ylim([min(trainingData(:,2)) max(trainingData(:,2))]);
+    ylim([-4 4]);
     
     % Plot decision boundary
     plot([0,h(1)]*100,[0,h(2)]*100,'k--','LineWidth',2);
@@ -99,7 +90,7 @@ for ii = 1:length(kg)
     xlabel('Principal Component 1','FontSize',18,'FontName','Helvetica');
     tp = {'No ' ''};
     title([tp{ii} 'Gaussian Noise'],'FontSize',24,'FontName','Helvetica');
-    legend({'Blue 1','Target'},'FontSize',14,'FontName','Helvetica');
+    legend({'AB','BA'},'FontSize',14,'FontName','Helvetica','Location','northwest');
     set(gca,'LineWidth',2,'FontSize',28,'FontName','Helvetica');
-    
+
 end
