@@ -1,4 +1,4 @@
-function thresholds = plotThresholdForMeanPerformance(calcIDStr, plot)
+function thresholds = plotThresholdForMeanPerformance(calcIDStr, plot, criterion)
 % threshold = thresholdForMeanPerformance(calcIDStr)
 %
 % Instead of taking the mean over a set of thresholds, we can also
@@ -8,6 +8,7 @@ function thresholds = plotThresholdForMeanPerformance(calcIDStr, plot)
 % 10/27/16  xd  wrote it.
 
 if notDefined('plot'), plot = true; end
+if notDefined('criterion'), criterion = 70.71; end
 
 %% Load and calculate mean thresholds
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
@@ -24,7 +25,7 @@ avgPerformance = avgPerformance / length(calcIDList);
 %% Extract thresholds
 thresholds = zeros(size(avgPerformance,4),size(avgPerformance,1));
 for ii = 1:size(thresholds,2)
-    thresholds(:,ii) = multipleThresholdExtraction(squeeze(avgPerformance(ii,:,:,:)),70.9);
+    thresholds(:,ii) = multipleThresholdExtraction(squeeze(avgPerformance(ii,:,:,:)),criterion);
 end
 
 % Remove negatives and replace with NaN's

@@ -77,14 +77,39 @@ for ii = 1:length(patches)
     contrasts{ii} = tempContrasts;
 end
 
-figure;
+%% 
+figure('Position',[0 0 2100 500]);
+subplot(1,3,1);
 p = bar(1:4, contrasts{1}, 'grouped');
 set(p(1), 'FaceColor', 'r');
 set(p(2), 'FaceColor', 'g');
 set(p(3), 'FaceColor', 'b');
+set(gca,'XTick',1:4,'XTickLabel',{'Blue' 'Yellow' 'Green' 'Red'});
+set(gca,'LineWidth',2,'FontSize',20);
+xlabel('Illumination Direction','FontSize',26);
+ylabel('Contrast','FontSize',26);
+title('Patch 1','FontSize',26);
 
-figure;
+subplot(1,3,2);
 p = bar(1:4, contrasts{2}, 'grouped');
 set(p(1), 'FaceColor', 'r');
 set(p(2), 'FaceColor', 'g');
 set(p(3), 'FaceColor', 'b');
+set(gca,'XTick',1:4,'XTickLabel',{'Blue' 'Yellow' 'Green' 'Red'});
+set(gca,'LineWidth',2,'FontSize',20);
+xlabel('Illumination Direction','FontSize',26);
+ylabel('Contrast','FontSize',26);
+title('Patch 2','FontSize',26);
+
+subplot(1,3,3);
+p = bar(1:4, abs(contrasts{1}) - abs(contrasts{2}), 'grouped');
+set(p(1), 'FaceColor', 'r');
+set(p(2), 'FaceColor', 'g');
+set(p(3), 'FaceColor', 'b');
+set(gca,'XTick',1:4,'XTickLabel',{'Blue' 'Yellow' 'Green' 'Red'});
+set(gca,'LineWidth',2,'FontSize',20);
+xlabel('Illumination Direction','FontSize',26);
+ylabel('Contrast','FontSize',26);
+title('Delta','FontSize',26);
+
+ylim([-0.2 0.2]);
