@@ -5,7 +5,7 @@
 % 8/04/16  xd  wrote it
 % 10/27/16  xd  added some file saving and plotting options
 
-%clear;% close all; ieInit;
+clear;% close all; ieInit;
 %% Some parameters
 %
 % If set to true, each subject fit get's it's own individual figure window.
@@ -15,18 +15,18 @@ singlePlots = false;
 % This is the calcIDStr for the SVM dataset we want to use to fit to the
 % % experimental results.
 modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.93_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.93_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
 modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.00_1.00_FOV1.00_PCA400_ABBA_SVM_Constant';
 modelDataIDStr = 'FirstOrderModel_LMS_0.00_1.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
 modelDataIDStr = 'FirstOrderModel_LMS_1.00_0.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_RSNeutral';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_RSNeutral';
 
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
-saveData = false;
-saveFilename = 'MSMosaicFitDataUniform';
+saveData = true;
+saveFilename = 'LMosaicFitDataUniform';
 
 %% Subject ID's
 % DON'T CHANGE
@@ -55,7 +55,7 @@ analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 allDirs = getAllSubdirectoriesContainingString(fullfile(analysisDir,'SimpleChooserData'),modelDataIDStr);
 [~, calcParams] = loadModelData(allDirs{1});
 
-for subjectNumber = 1:9%length(orderOfSubjects)
+for subjectNumber = 1:length(orderOfSubjects)
     subjectId = orderOfSubjects{subjectNumber};
     load('/Users/Shared/Matlab/Experiments/Newcastle/stereoChromaticDiscriminationExperiment/analysis/FitThresholdsAllSubjectsExp8.mat')
     
@@ -78,12 +78,7 @@ for subjectNumber = 1:9%length(orderOfSubjects)
     g = nanmean([d1.Greener.threshold,d2.Greener.threshold]);
     r = nanmean([d1.Redder.threshold,d2.Redder.threshold]);
     y = nanmean([d1.Yellower.threshold,d2.Yellower.threshold]);
-    
-    b = t(subjectNumber, 1);
-    y = t(subjectNumber, 2);
-    g = t(subjectNumber, 3);
-    r = t(subjectNumber, 4);
-    
+        
     % Plot a the thresholds along with the model predictions.
     if ~singlePlots
         subplot(2,5,subjectNumber);

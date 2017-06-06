@@ -26,7 +26,7 @@ individualPlots = false;
 saveData = false;
 
 % Settings for loading
-usePregeneratedData = true;
+usePregeneratedData = false;
 pregenDataPath = 'IndividualFitThresholds_dPrime';
 
 %% Fixed variables
@@ -104,7 +104,7 @@ for subjectNumber = 1:length(orderOfSubjects)
     % where i is an individual fixation during the trial.
     
     % Pool together all fixations in one cell array.
-    allFixations = [r1(:,2); r1(:,3); r2(:,2); r2(:,3)];
+    allFixations = [r1(:,2); r2(:,2)];
     
     if usePregeneratedData
         t = perSubjectAggregateThresholds{subjectNumber};
