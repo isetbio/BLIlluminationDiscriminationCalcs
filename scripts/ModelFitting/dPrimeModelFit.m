@@ -56,7 +56,6 @@ if ~usePregeneratedData
     perSubjectExperimentalThresholds = cell(length(orderOfSubjects),1);   
 end
 
-
 %% Load d-prime lookup table
 
 % Multiply percentages by 100 since the lookup table is in decimals and the

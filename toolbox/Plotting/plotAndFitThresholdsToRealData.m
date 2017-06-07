@@ -139,7 +139,7 @@ if parser.Results.CreatePlot
     figParams = BLIllumDiscrFigParams([],'FitThresholdToData');
     if ~isempty(plotInfo.colors), figParams.colors = plotInfo.colors; end;
     
-    plotInfo.title = sprintf('Data fitted at %.3f noise',interpNoise);
+    plotInfo.title = sprintf('Data fitted at %d noise',round(interpNoise));
     plotInfo.xlabel = 'Illumination Direction';
     plotInfo.ylabel = 'Stimulus Level (\DeltaE)';
     
