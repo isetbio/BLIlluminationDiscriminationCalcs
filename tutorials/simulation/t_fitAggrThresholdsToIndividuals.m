@@ -2,7 +2,7 @@
 %
 % Uses the uniform mean over the model data to fit performance to subjects.
 %
-% 8/04/16  xd  wrote it
+% 8/04/16   xd  wrote it
 % 10/27/16  xd  added some file saving and plotting options
 
 clear;% close all; ieInit;

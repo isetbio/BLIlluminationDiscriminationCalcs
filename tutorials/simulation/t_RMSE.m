@@ -7,6 +7,7 @@
 
 clear; 
 %% List all the data file names
+
 % Data mat file names
 dataFiles = {'StandardMosaicFitDataWeighted',...
              'LMMosaicFitDataWeighted',...
@@ -29,16 +30,17 @@ xAxisLabels = {'Standard_w', 'LM_w', 'LS_w', 'MS_w',...
                'Standard_u', 'LM_u', 'LS_u', 'MS_u',...
                'L_u', 'M_u', 'S_u'};
 
-%% Load LSE data for each mosaic
+%% Load LSE(RMSE) data for each mosaic
+
 % Vectors to save mean and std error
-meanLSE = zeros(length(dataFiles),1);
-stderrLSE = zeros(size(meanLSE));
+meanRMSE = zeros(length(dataFiles),1);
+stderrRMSE = zeros(size(meanRMSE));
 
 % Loop over data files and calculate mean and std error
 for i = 1:length(dataFiles)
     load(dataFiles{i});
-    meanLSE(i) = mean(LSE);
-    stderrLSE(i) = std(LSE)/sqrt(length(LSE));
+    meanRMSE(i) = mean(LSE);
+    stderrRMSE(i) = std(LSE)/sqrt(length(LSE));
 end
 
 %% Plot the data
@@ -46,8 +48,8 @@ figParams = BLIllumDiscrFigParams;
 
 figure('Position',[1000 900 960 420]); 
 hold on;
-bar(1:length(dataFiles), meanLSE);
-errorbar(1:length(dataFiles),meanLSE,stderrLSE,'.','LineWidth',figParams.lineWidth);
+bar(1:length(dataFiles), meanRMSE);
+errorbar(1:length(dataFiles),meanRMSE,stderrRMSE,'.','LineWidth',figParams.lineWidth);
 
 set(gca, 'XTick', 1:length(dataFiles), 'XTickLabels', xAxisLabels);
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);

@@ -26,7 +26,7 @@ staticMosaicParams.integrationTimeInSeconds = 0.100;
 emMosaicParams.fov = staticMosaicParams.fov;
 emMosaicParams.integrationTimeInSeconds = 0.010;
 emMosaicParams.numberOfEM = 10;
-emMosaicParams.currentFlag = false;
+emMosaicParams.currentFlag = 'none';
 emMosaicParams.osType = 'linear';
 
 %% Create the cone mosaics
@@ -52,16 +52,16 @@ emMosaic.os = osCreate(emMosaicParams.osType);
 
 % Load all target scene sensors
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
-folderPath = fullfile(analysisDir,'OpticalImageData','Neutral_FullImage','Standard');
+folderPath = fullfile(analysisDir,'OpticalImageData','Neutral','Standard');
 standardOIList = getFilenamesInDirectory(folderPath);
 
 standardOIPool = cell(1, length(standardOIList));
 calcParams.meanStandard = 0;
 for jj = 1:length(standardOIList)
-    standardOIPool{jj} = loadOpticalImageData('Neutral_FullImage/Standard',strrep(standardOIList{jj},'OpticalImage.mat',''));
+    standardOIPool{jj} = loadOpticalImageData('Neutral/Standard',strrep(standardOIList{jj},'OpticalImage.mat',''));
 end
 
-comparisonOI = loadOpticalImageData('Neutral_FullImage/BlueIllumination','blue1L-RGB');
+comparisonOI = loadOpticalImageData('Neutral/BlueIllumination','blue1L-RGB');
 
 %% Calculations
 %

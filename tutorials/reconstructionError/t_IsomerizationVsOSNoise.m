@@ -10,7 +10,7 @@
 
 clear; ieInit; 
 %% Set parameters
-%
+
 % These parameters control what calculations get done in this script. We'll
 % keep the rng frozen so that results can be duplicated.
 rng(1);
@@ -55,20 +55,19 @@ coneTypeToMatch = 3;
 mosaic                 = coneMosaic;
 mosaic.fov             = fov;
 mosaic.integrationTime = integrationTimeInSeconds;
-mosaic.sampleTime      = integrationTimeInSeconds;
-mosaic.noiseFlag       = false;
+mosaic.noiseFlag       = 'none';
 mosaic.os              = osCreate(osType);
 largeMosaic            = mosaic.copy;
 
 % Load optical images we will use. One standard OI and one comparison OI
 % will be loaded for this script.
 analysisDir    = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
-folderPath     = fullfile(analysisDir,'OpticalImageData','Neutral_FullImage','Standard');
+folderPath     = fullfile(analysisDir,'OpticalImageData','Neutral','Standard');
 standardOIList = getFilenamesInDirectory(folderPath);
 standardOIPool = cell(1, length(standardOIList));
 
-OI = loadOpticalImageData('Neutral_FullImage/Standard',strrep(standardOIList{1},'OpticalImage.mat',''));
-OI2 = loadOpticalImageData('Neutral_FullImage/BlueIllumination',['blue' num2str(comparisonStimLevel) 'L-RGB']);
+OI = loadOpticalImageData('Neutral/Standard',strrep(standardOIList{1},'OpticalImage.mat',''));
+OI2 = loadOpticalImageData('Neutral/BlueIllumination',['blue' num2str(comparisonStimLevel) 'L-RGB']);
 
 % Resize the large OI so that the difference in size is even.
 largeMosaic.fov = oiGet(OI,'fov');

@@ -40,17 +40,18 @@ reducedIntensityOI = oiCompute(humanOI,reducedIntensityScene);
 % later.
 mosaic = coneMosaic;
 mosaic.integrationTime = timeStepInSeconds;
-mosaic.sampleTime = timeStepInSeconds;
 mosaic.rows = 5;
 mosaic.cols = 5;
 mosaic.os = osCreate(osType);
-mosaic.os.noiseFlag = false;
-mosaic.noiseFlag = false;
+mosaic.os.noiseFlag = 'none';
+mosaic.noiseFlag = 'none';
 mosaic.emGenSequence(numberOfEMPositions);
 
 %% Calculate mean signals
 [~,originalConeCurrent] = mosaic.compute(originalOI);
 [~,reducedIntensityConeCurrent] = mosaic.compute(reducedIntensityOI);
+
+%% !!BREAKS HERE NEED TO COMPUTE CURRENT SEPARATELY!!
 
 %% Do many noisy draws
 %

@@ -15,8 +15,8 @@ figParams = BLIllumDiscrFigParams;
 c = figParams.colors;
 c = c([1 4 2 3]);
 
-figure; hold on;
 % Plot identity line
+figure; hold on;
 plot([0 1000],[0 1000],'k','linewidth',2);
 
 % Plot data
@@ -39,7 +39,6 @@ axis square
 
 set(gca,'FontSize',figParams.axisFontSize,'FontName',figParams.fontName,'LineWidth',figParams.axisLineWidth);
 set(gca,'XTick',get(gca,'YTick'));
-
 
 xlabel('Experimental Thresholds','FontSize',figParams.labelFontSize,'FontName',figParams.fontName);
 ylabel('Fitted Thresholds','FontSize',figParams.labelFontSize,'FontName',figParams.fontName);
