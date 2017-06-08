@@ -12,13 +12,13 @@ ieInit;
 %% Set parameters for the data set to generate
 
 % Some parameters common to both static and eye movement calculations
-numPCA = 100;
+numPCA = 400;
 numEMPCA = 425;
 wave = [380 8 51];
 dataSetSize = 1000;
 
 % Some paramters of the static cone mosaic.
-staticMosaicParams.fov = 0.83;
+staticMosaicParams.fov = 1;
 staticMosaicParams.integrationTimeInSeconds = 0.100;
 
 % Some parameters of the eye movement cone mosaic. We want to keep the fov
@@ -93,7 +93,7 @@ staticPercentError = staticError/norm(staticDataset(:));
 
 fprintf('\n');
 fprintf('The static reconstruction from PCA has absolute error : %4.4f \n',staticError);
-fprintf('The static reconstruction from PCA has percent error : %2.2f \n',100*staticPercentError);
+fprintf('The static reconstruction from PCA has percent error  : %2.2f \n',100*staticPercentError);
 
 clearvars staticDataset staticCoeff m s reconstructStaticData
 
@@ -131,7 +131,7 @@ EMIsomError = norm(EMIsomDataset(:)-reconstructEMIsomData(:));
 EMIsomPercentError = EMIsomError/norm(EMIsomDataset(:));
 
 fprintf('The EMIsom reconstruction from PCA has absolute error : %4.4f \n',EMIsomError);
-fprintf('The EMIsom reconstruction from PCA has percent error : %2.2f \n',100*EMIsomPercentError);
+fprintf('The EMIsom reconstruction from PCA has percent error  : %2.2f \n',100*EMIsomPercentError);
 
 clearvars EMIsomDataset EMIsomCoeff m s reconstructEMIsomData
 
@@ -157,6 +157,6 @@ EMCurrError = norm(EMCurrDataset(:)-reconstructEMCurrData(:));
 EMCurrPercentError = EMCurrError/norm(EMCurrDataset(:));
 
 fprintf('The EMCurr reconstruction from PCA has absolute error : %4.4f \n',EMCurrError);
-fprintf('The EMCurr reconstruction from PCA has percent error : %2.2f \n',100*EMCurrPercentError);
+fprintf('The EMCurr reconstruction from PCA has percent error  : %2.2f \n',100*EMCurrPercentError);
 
 clearvars EMIsomDataset EMIsomCoeff m s reconstructEMCurrData
