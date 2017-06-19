@@ -1,5 +1,5 @@
-function [thresholds,paramsValues] = multipleThresholdExtraction(data,varargin)
-% [thresholds,paramsValues] = multipleThresholdExtraction(data,varargin)
+function [thresholds,paramsValues,stimLevels] = multipleThresholdExtraction(data,varargin)
+% [thresholds,paramsValues,stimLevels] = multipleThresholdExtraction(data,varargin)
 %
 % Given a NxM data matrix containing M sets of data with N datapoints in
 % each, this function will return a length M vector of thresholds and a Mx4
@@ -9,6 +9,7 @@ function [thresholds,paramsValues] = multipleThresholdExtraction(data,varargin)
 % extracted at the given criterion, which should be a percentage.
 %
 % 6/21/16  xd  wrote it
+% 6/19/17  xd  update to use true delta E vals
 
 p = inputParser;
 defaultIlluminantPath = '/Users/xiaomaoding/Documents/stereoChromaticDiscriminationExperiment/IlluminantsInDeltaE.mat';
@@ -29,10 +30,12 @@ paramsValues = zeros(size(data,2),4);
 
 %% Get thresholds
 for ii = 1:size(data,2)
-    [thresholds(ii),paramsValues(ii,:)] = singleThresholdExtraction(p.Results.data(:,ii),p.Results.criterion,...
-                                                                    p.Results.stimLevels,p.Results.numTrials,...
-                                                                    p.Results.useTrueIlluminants,...
-                                                                    p.Results.color,p.Results.illumPath);
+    [thresholds(ii),...
+     paramsValues(ii,:),...
+     stimLevels] = singleThresholdExtraction(p.Results.data(:,ii),p.Results.criterion,...
+                                             p.Results.stimLevels,p.Results.numTrials,...
+                                             p.Results.useTrueIlluminants,...
+                                             p.Results.color,p.Results.illumPath);
 end
 
 end

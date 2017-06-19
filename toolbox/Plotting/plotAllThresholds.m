@@ -24,8 +24,8 @@ parser.parse(varargin{:});
 
 % PlotInfo things
 figParams = BLIllumDiscrFigParams;
-plotInfo = createPlotInfoStruct;
-plotInfo.stimLevels = calcParams.stimLevels;
+plotInfo  = createPlotInfoStruct;
+plotInfo.stimLevels = calcParams.illumLevels;
 plotInfo.colors = figParams.colors;
 plotInfo.xlabel = sprintf('%s Noise Levels',subsref({'Poisson' 'Gaussian'},struct('type','{}','subs',{{find(parser.Results.NoiseIndex==0,1)}})));
 plotInfo.ylabel = 'Stimulus Levels (\DeltaE)';
@@ -51,7 +51,10 @@ if isempty(thresholds) || parser.Results.Reset
     % Once the data has been nicely formatted, we can extract the thresholds.
     thresholds = zeros(size(formattedData{1},2),length(calcParams.colors));
     for ii = 1:size(thresholds,2)
-        thresholds(:,ii) = multipleThresholdExtraction(formattedData{ii},plotInfo.criterion,calcParams.illumLevels);
+        thresholds(:,ii) = multipleThresholdExtraction(formattedData{ii},...
+                                                       plotInfo.criterion,calcParams.illumLevels,...
+                                                       calcParams.testingSetSize,false,...
+                                                       calcParams.colors{ii});
     end
     
     % Save the thresholds in the same folder. This allows us to just load

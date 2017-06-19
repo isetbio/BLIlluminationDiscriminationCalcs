@@ -36,6 +36,7 @@ plot([min(stimLevelsFine) threshold], [plotInfo.criterion plotInfo.criterion],'C
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
 axis square;
 ylim(figParams.ylimit);
+xlim([0 max(plotInfo.stimLevels)]);
 
 xl = xlabel(plotInfo.xlabel,'FontSize',figParams.labelFontSize);
 yl = ylabel(plotInfo.ylabel,'FontSize',figParams.labelFontSize);

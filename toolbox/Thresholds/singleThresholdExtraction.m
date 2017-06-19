@@ -1,4 +1,4 @@
-function [threshold,paramsValues] = singleThresholdExtraction(data,varargin)
+function [threshold,paramsValues,stimLevels] = singleThresholdExtraction(data,varargin)
 % [threshold,paramsValues] = singleThresholdExtraction(data,varargin)
 %
 % This function fits a cumulative Weibull to the data variable and returns
@@ -34,33 +34,36 @@ p.parse(data,varargin{:});
 criterion      = p.Results.criterion/100;
 stimLevels     = p.Results.stimLevels;
 numTrials      = p.Results.numTrials;
+data           = p.Results.data(:) * numTrials / 100;
 
-paramsEstimate = [10 5 0.5 0.05];
 % Need to remove lapse rate if data does not reach 100%. Palamedes gives
 % unreasonable results otherwise.
-paramsFree     = [1 1 0 (mean(data(end-4:end)) > 99.5)]; 
+paramsEstimate = [10 5 0.5 0.05];
+paramsFree     = [1 1 0 (mean(data(end-4:end)) > 90)]; 
+outOfNum       = repmat(numTrials,length(stimLevels),1);
 PF             = @PAL_Weibull;
 lapseLimits    = [0 0.5];
 options        = PAL_minimize('options');
+disp(num2str(mean(data(end-4:end))))
 
-%% Expand data into individual trials
-% Because we know the exact testing set size for each stimulus value, we
-% can expand it into individual trials using the percent correct
-% performance data. This can then be binned in a similar manner to what the
-% experimental analysis code does.
-
-trialStim = [];
-trialData = [];
-for ii = 1:length(data)
-    trialStim = [trialStim(:); repmat(stimLevels(ii),numTrials,1)];
-    
-    numTrueResponses = ceil(numTrials * data(ii) / 100);
-    trialData = [trialData(:); ones(numTrueResponses,1); zeros(numTrials-numTrueResponses,1)];
-end
-
-shuffleIdx = randperm(length(trialStim));
-trialStim = trialStim(shuffleIdx);
-trialData = trialData(shuffleIdx);
+% %% Expand data into individual trials
+% % Because we know the exact testing set size for each stimulus value, we
+% % can expand it into individual trials using the percent correct
+% % performance data. This can then be binned in a similar manner to what the
+% % experimental analysis code does.
+% 
+% trialStim = [];
+% trialData = [];
+% for ii = 1:length(data)
+%     trialStim = [trialStim(:); repmat(stimLevels(ii),numTrials,1)];
+%     
+%     numTrueResponses = ceil(numTrials * data(ii) / 100);
+%     trialData = [trialData(:); ones(numTrueResponses,1); zeros(numTrials-numTrueResponses,1)];
+% end
+% 
+% shuffleIdx = randperm(length(trialStim));
+% trialStim = trialStim(shuffleIdx);
+% trialData = trialData(shuffleIdx);
 
 %% Map onto true illuminant values if needed
 if p.Results.useTrueIlluminants
@@ -84,13 +87,13 @@ if p.Results.useTrueIlluminants
     end
     illuminantLookUpTable = [(0:length(stimLevels))',  illums.illuminantDistance{colorIdx}(:,2)];    
 
-    mapIndices = arrayfun(@(X) find(illuminantLookUpTable(:,1) == X), trialStim);
-    trialStim = illuminantLookUpTable(mapIndices,2);
+    mapIndices = arrayfun(@(X) find(illuminantLookUpTable(:,1) == X), stimLevels);
+    stimLevels = illuminantLookUpTable(mapIndices,2);
 end
 
-%% Bin the thresholds 
-nTrialsPerBin = 10;
-[stimLevels,data,outOfNum] = GetAggregatedStairTrials(trialStim, trialData, nTrialsPerBin);
+% %% Bin the thresholds 
+% nTrialsPerBin = 10;
+% [stimLevels,data,outOfNum] = GetAggregatedStairTrials(trialStim, trialData, nTrialsPerBin);
 
 %% Fit the data to a curve
 if paramsFree(4)

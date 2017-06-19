@@ -13,7 +13,7 @@ plotInfo.colors = [];
 plotInfo.xlabel = 'Stimulus Levels';
 plotInfo.ylabel = 'Percent Correct';
 plotInfo.title = 'Weibull Fit to Data';
-plotInfo.criterion = 70.9;
+plotInfo.criterion = 70.71;
 
 end
 

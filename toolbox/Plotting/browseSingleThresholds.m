@@ -71,13 +71,14 @@ while ~strcmp(THE_ONE_KEY,'escape')
     if inaction
         % Extract thresholds
         dataToUse = squeeze(formattedData{colorIdx}(:,noiseIdx));
-        [threshold,params] = singleThresholdExtraction(dataToUse,70.9,calcParams.illumLevels);
+        [threshold,params,stimLevels] = singleThresholdExtraction(dataToUse,70.71,calcParams.illumLevels,...
+                                                       calcParams.testingSetSize,true,calcParams.colors{colorIdx});
         
         % Some plotting metadata (titles, axes, and such)
         plotInfo = createPlotInfoStruct;
         plotInfo.fitColor = figParams.colors{colorIdx};
         plotInfo.title = sprintf('Noise Level: %d',noiseLevels(noiseIdx));
-        plotInfo.stimLevels = calcParams.illumLevels;
+        plotInfo.stimLevels = stimLevels;%calcParams.illumLevels;
         
         % This creates a new plot so we need to assign the keypressfunction
         % every time.
