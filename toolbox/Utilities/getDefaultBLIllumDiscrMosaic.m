@@ -12,7 +12,7 @@ mosaic.fov = 0.83;
 mosaic.integrationTime = 0.050;
 mosaic.noiseFlag = false;
 mosaic.wave = SToWls([380 8 51]);
-mosaic.spatialdensity = [0 0.62 0.31 0.07];
+mosaic.spatialDensity = [0 0.62 0.31 0.07];
 
 end
 

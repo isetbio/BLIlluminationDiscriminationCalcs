@@ -13,14 +13,11 @@
 % gather all of the parameters together in one place.
 %
 % 4/29/15  dhb, xd           Wrote it.
-% 5/31/15  dhb               Tuning for multiple calculations
+% 5/31/15  dhb               Tuning for multiple calculations.
 % 7/29/15  xd                Renamed.
 
 %% Clear and initialize
-close all; ieInit; parpool(50);
-
-%% Set identifiers to run
-calcIDStrs = {'SVM_Neutral_Control'};
+close all; ieInit; parpool(8);
 
 %% Parameters of the calculation
 %
@@ -31,15 +28,15 @@ calcIDStrs = {'SVM_Neutral_Control'};
 % on the structure at runtime to make sure our caches are consistent with
 % the current parameters being used.
 
-c.calcIDStr = 'SVM_Static_Isomerizations_Constant';
-c.cacheFolderList = {'Constant', 'Constant_FullImage'};
-c.sensorFOV = 0.83;
-tempScene = loadSceneData([c.cacheFolderList{2} '/Standard'],'CT1blue0-RGB');
+c.calcIDStr = 'RSYellow';
+c.cacheFolderList = {'RSYellow', 'RealScenesYellow'};
+c.sensorFOV = 2;
+tempScene = loadSceneData([c.cacheFolderList{2} '/Standard'],'Target0');
 numberofOI = numel(splitSceneIntoMultipleSmallerScenes(tempScene,c.sensorFOV));
 % numberofOI = generateOIForParallelComputing(c);
 
 % This part loops through the calculations for all caldIDStrs specified
-theIndex = 1:2:numberofOI;
+theIndex = 1:numberofOI;
 parfor k1 = 1:length(theIndex)
     % Define the steps of the calculation that should be carried out.
     calcParams.CACHE_SCENES = false;
@@ -50,17 +47,17 @@ parfor k1 = 1:length(theIndex)
     
     calcParams.RUN_MODEL = true;
     calcParams.MODEL_ORDER = 1;
-    calcParams.overWriteFlag = false;      % Whether or not to overwrite existing data.
+    calcParams.overWriteFlag = false;     % Whether or not to overwrite existing data.
     
     calcParams.CALC_THRESH = false;
     
     % Set the calcID
-    calcParams.calcIDStr = [c.calcIDStr '_' num2str(theIndex(k1))];
+%     calcParams.calcIDStr = [c.calcIDStr '_' num2str(k1)];
     
-    calcParams.cacheFolderList = {c.cacheFolderList{1} calcParams.calcIDStr};
+    calcParams.cacheFolderList = {c.cacheFolderList{1} [c.cacheFolderList{1} '_' num2str(k1)]};
 
     analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
-    dirToRemovePath = fullfile(analysisDir,'OpticalImageData',calcParams.calcIDStr);
+    dirToRemovePath = fullfile(analysisDir,'OpticalImageData',calcParams.cacheFolderList{2});
     
     if exist(dirToRemovePath,'dir')
         % Need to specify the calibration file to use
@@ -78,19 +75,19 @@ parfor k1 = 1:length(theIndex)
         % that, if set to a value > 0, will subsample the optical image to the
         % size sensorFOV*OIvSensorScale.
         calcParams.coneIntegrationTime = 0.050;
-        calcParams.sensorFOV = c.sensorFOV;
+        calcParams.sensorFOV = 1;
         calcParams.OIvSensorScale = 0;
         
         % Specify the number of trials for each combination of Kp Kg as well as
         % the range of illuminants to use (max 50).
         calcParams.trainingSetSize = 1000;
         calcParams.testingSetSize = 1000;
-        calcParams.illumLevels = 1:50;
+        calcParams.illumLevels = 1:20;
         
         % Here we specify which data function and classification function to use.
         calcParams.standardizeData = true;
         calcParams.cFunction = 3;
-        calcParams.dFunction = 7;
+        calcParams.dFunction = 1;
         calcParams.usePCA = true;
         calcParams.numPCA = 400;
         
@@ -102,7 +99,7 @@ parfor k1 = 1:length(theIndex)
         % Kg is the scale factor for Gaussian noise.  The standard deviation of
         % the Gaussian noise is equal to the square root of the mean
         % photoisomerizations across the available target image samples.
-        calcParams.KgLevels = 0:3:30;
+        calcParams.KgLevels = 0:3:20;
         
         % Update to calcIDStr to a uniformly formatted name
         calcParams.calcIDStr = params2Name_FirstOrderModel(calcParams);
@@ -119,6 +116,7 @@ parfor k1 = 1:length(theIndex)
         
         %% Create data sets using the simple chooser model
         if (calcParams.RUN_MODEL)
+            disp(calcParams.calcIDStr);
             RunModel(calcParams,calcParams.overWriteFlag);
         end
         
@@ -129,7 +127,4 @@ parfor k1 = 1:length(theIndex)
     end
 end
 
-% deleteOIForParallelComputing(c);
-% end
-exit;
 

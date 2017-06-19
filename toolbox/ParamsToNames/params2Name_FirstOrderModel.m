@@ -9,9 +9,6 @@ function name = params2Name_FirstOrderModel(params)
 
 name = 'FirstOrderModel';
 
-% OI folder information
-name = [name '_' params.cacheFolderList{2}];
-
 % Cone density and other properties of the mosaic
 name = sprintf([name '_LMS_%2.2f_%2.2f_%2.2f'],params.spatialDensity(2),params.spatialDensity(3),params.spatialDensity(4));
 name = sprintf([name '_FOV%2.2f'],params.sensorFOV);
@@ -22,6 +19,9 @@ end
 
 % Things about data and classifier
 name = [name '_' dataFunctionText(params.dFunction) '_' classifierFunctionText(params.cFunction)];
+
+% OI folder information
+name = [name '_' params.cacheFolderList{2}];
 
 end
 
