@@ -37,6 +37,9 @@ saveFilename = [modelDataIDStr '_ModelFits'];
 % Set to true to save the weighted performance matrices.
 savePerf = false;
 
+% Whether to dynamically scale axes
+scaleAxes = false;
+
 %% Some constant values
 % Subject ID's
 % DON'T CHANGE
@@ -59,8 +62,9 @@ if ~singlePlots
 end
 
 for subjectNumber = 1:length(orderOfSubjects)
-    subjectId = orderOfSubjects{subjectNumber};
     tic
+    subjectId = orderOfSubjects{subjectNumber};
+    
     %% Load the data
     %
     % We need to load the fixations from the experiment. These paths are
@@ -154,14 +158,18 @@ for subjectNumber = 1:length(orderOfSubjects)
     theTitle = theTitle.String;
     title(strrep(theTitle,'Data fitted at',[subjectId ',']));
     
-    upperLimit = max([b y g r perSubjectFittedThresholds{subjectNumber}]) * 1.5;
-    upperLimit = 10 * ceil(upperLimit / 10);
-    ylim([0 upperLimit]);
+    % Change the y-axis limit to be scaled to the range of the thresholds
+    % to get a sense of the relative differences.
+    if scaleAxes
+        upperLimit = max([b y g r perSubjectFittedThresholds{subjectNumber}]) * 1.5; %#ok<*UNRCH>
+        upperLimit = 10 * ceil(upperLimit / 10);
+        ylim([0 upperLimit]);
+    end
     
     % Save the weighted thresholds along with the proper noise level at
     % which to interpolate the results.
     if savePerf
-        itpN = perSubjectFittedNoiseLevel{subjectNumber}; %#ok<UNRCH>
+        itpN = perSubjectFittedNoiseLevel{subjectNumber};
         save([subjectId '-weightedPerf.mat'],'results','itpN');
     end
     
@@ -199,5 +207,5 @@ end
 %% Save the data
 if saveData
     save([saveFilename '.mat'],'perSubjectAggregateThresholds','perSubjectExperimentalThresholds',...
-        'perSubjectFittedThresholds','perSubjectFittedNoiseLevel','LSE'); %#ok<UNRCH>
+        'perSubjectFittedThresholds','perSubjectFittedNoiseLevel','LSE');
 end
