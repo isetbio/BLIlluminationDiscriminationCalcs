@@ -12,12 +12,12 @@
 % 8/04/16  xd  wrote it 
 % 10/27/16  xd  added some file saving and plotting options
 
-clear; close all;
+clear; %close all;
 %% Some parameters
 %
 % If set to true, each subject fit get's it's own individual figure window.
 % Otherwise, everything is plotted as a subplot on 1 figure.
-singlePlots = true;
+singlePlots = false;
 
 % This is the calcIDStr for the SVM dataset we want to use to fit to the
 % experimental results.
@@ -32,7 +32,7 @@ modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Con
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
 saveData = false;
-saveFilename = 'LMosaicFitDataWeighted';
+saveFilename = [modelDataIDStr '_ModelFits'];
 
 % Set to true to save the weighted performance matrices.
 savePerf = false;
@@ -58,9 +58,9 @@ if ~singlePlots
     figure('Position',[150 238 2265 1061]);
 end
 
-for subjectNumber = 1%:length(orderOfSubjects)
+for subjectNumber = 1:length(orderOfSubjects)
     subjectId = orderOfSubjects{subjectNumber};
-    
+    tic
     %% Load the data
     %
     % We need to load the fixations from the experiment. These paths are
@@ -111,7 +111,9 @@ for subjectNumber = 1%:length(orderOfSubjects)
     
     % Extract the thresholds for each color direction.
     for ii = 1:4
-        t{ii} = multipleThresholdExtraction(squeeze(results(ii,:,:)),70.9);
+        t{ii} = multipleThresholdExtraction(squeeze(results(ii,:,:)),70.71,...
+                                            calcParams.illumLevels,calcParams.testingSetSize,...
+                                            true,calcParams.colors{ii}); %#ok<SAGROW>
     end
     
     % Turn from cell into matrix. This allows for easier plotting later. We
@@ -140,10 +142,6 @@ for subjectNumber = 1%:length(orderOfSubjects)
     r = nanmean([d1.Redder.threshold,d2.Redder.threshold]);
     y = nanmean([d1.Yellower.threshold,d2.Yellower.threshold]);
     
-%     if max([b y g r]) == b
-%         disp(['Blue max ' subjectId]);
-%     end
-    
     % Plot a the thresholds along with the model predictions.
     if ~singlePlots
         subplot(2,5,subjectNumber);
@@ -164,10 +162,11 @@ for subjectNumber = 1%:length(orderOfSubjects)
     % which to interpolate the results.
     if savePerf
         itpN = perSubjectFittedNoiseLevel{subjectNumber}; %#ok<UNRCH>
-        save([subjectId '-weightedPerf'],'results','itpN');
+        save([subjectId '-weightedPerf.mat'],'results','itpN');
     end
     
     clearvars t;
+    fprintf('Subject %d took %0.2f min to complete.\n',subjectNumber,toc/60);
 end
 
 if ~singlePlots
@@ -199,6 +198,6 @@ end
 
 %% Save the data
 if saveData
-    save(saveFilename,'perSubjectAggregateThresholds','perSubjectExperimentalThresholds',...
+    save([saveFilename '.mat'],'perSubjectAggregateThresholds','perSubjectExperimentalThresholds',...
         'perSubjectFittedThresholds','perSubjectFittedNoiseLevel','LSE'); %#ok<UNRCH>
 end

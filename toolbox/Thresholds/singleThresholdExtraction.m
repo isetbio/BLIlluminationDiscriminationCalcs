@@ -11,6 +11,7 @@ function [threshold,paramsValues] = singleThresholdExtraction(data,varargin)
 % that the criterion is given as a percentage.
 %
 % 6/21/16  xd  wrote it
+% 6/19/17  xd  editted to match experimental set up
 
 p = inputParser;
 defaultIlluminantPath = '/Users/xiaomaoding/Documents/stereoChromaticDiscriminationExperiment/IlluminantsInDeltaE.mat';
@@ -35,12 +36,9 @@ stimLevels     = p.Results.stimLevels;
 numTrials      = p.Results.numTrials;
 
 paramsEstimate = [10 5 0.5 0.05];
-paramsFree     = [1 1 0 (mean(data(end-4:end)) > 99.5)]; % Need to remove lapse rate if data does not reach 100%
-if length(p.Results.numTrials) == 1
-    outOfNum = repmat(10,1,length(data));
-else
-    outOfNum = p.Results.numTrials;
-end
+% Need to remove lapse rate if data does not reach 100%. Palamedes gives
+% unreasonable results otherwise.
+paramsFree     = [1 1 0 (mean(data(end-4:end)) > 99.5)]; 
 PF             = @PAL_Weibull;
 lapseLimits    = [0 0.5];
 options        = PAL_minimize('options');
@@ -84,11 +82,8 @@ if p.Results.useTrueIlluminants
         otherwise
             colorIdx = nan;
     end
-    illuminantLookUpTable = [(0:length(stimLevels))',  illums.illuminantDistance{colorIdx}(:,2)];
-    maxValueStair =  illums.illuminantDistance{colorIdx}(end,2);
-    
-%     mapIndices = arrayfun(@(X) find(illuminantLookUpTable(:,1) == X), stimLevels);
-%     stimLevels = illuminantLookUpTable(mapIndices,2);
+    illuminantLookUpTable = [(0:length(stimLevels))',  illums.illuminantDistance{colorIdx}(:,2)];    
+
     mapIndices = arrayfun(@(X) find(illuminantLookUpTable(:,1) == X), trialStim);
     trialStim = illuminantLookUpTable(mapIndices,2);
 end
@@ -108,5 +103,6 @@ else
 end
 
 threshold = PF(paramsValues,criterion,'inverse');
+
 end
 
