@@ -9,7 +9,8 @@ function updatedParams = assignCalibrationFile(calcParams)
 % 5/25/16  xd  wrote it
 
 switch (calcParams.cacheFolderList{1})
-    case {'Constant' 'Shuffled'}
+    case {'Constant' 'Shuffled' 'RSNeutral' 'RSRed' 'RSBlue'...
+          'RSGreen' 'RSYellow'}
         calcParams.calibrationFile = 'EyeTrackerLCDNew';
         calcParams.distance = 0.683;
     case {'Neutral' 'NM1' 'NM2'}
