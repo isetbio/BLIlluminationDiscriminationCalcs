@@ -5,12 +5,17 @@
 %
 % 9/22/16  xd  wrote it
 
+<<<<<<< HEAD
 <<<<<<< 9a91d63a63847a79d53130f92531a22f7c498dce
 clear; %close all;
 =======
 clear; close all;
 parpool(30);
 >>>>>>> saving most recent version
+=======
+clear; close all;
+parpool(30);
+>>>>>>> 76a7f7464acd99e38a28440ae235fd82676cef6d
 %%
 trainingSetSize = 1000;
 testingSetSize = 1000;
@@ -18,16 +23,21 @@ testingSetSize = 1000;
 mosaicFOV = 1;
 kg = 3;
 
+<<<<<<< HEAD
 <<<<<<< 9a91d63a63847a79d53130f92531a22f7c498dce
 colors = {'Blue'};% 'Yellow' 'Green' 'Red'};
 =======
 colors = {'Blue' 'Yellow' 'Green' 'Red'};
 >>>>>>> saving most recent version
+=======
+colors = {'Blue' 'Yellow' 'Green' 'Red'};
+>>>>>>> 76a7f7464acd99e38a28440ae235fd82676cef6d
 
 %% Create a mosaic
 mosaic = getDefaultBLIllumDiscrMosaic;
 mosaic.fov = mosaicFOV;
 
+<<<<<<< HEAD
 <<<<<<< 9a91d63a63847a79d53130f92531a22f7c498dce
 %% Load the standards
 [standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir('Constant_FullImage',mosaic);
@@ -70,6 +80,8 @@ s = illuminantDistance{1}(2:end,2);
 [t,p] = singleThresholdExtraction(data(1,:)*1000,70.9,[],1000);
 plotFitForSingleThreshold(createPlotInfoStruct,data(1,:)*100,t,p);
 =======
+=======
+>>>>>>> 76a7f7464acd99e38a28440ae235fd82676cef6d
 calcIDStr = 'NM1';
 % parfor loop here, need list of folder names
 
@@ -122,5 +134,9 @@ parfor k1 = 1:length(theIndex)
 end
 %% Plot
 % [t,p] = singleThresholdExtraction(data(4,:)*1000,70.9,[],1000);
+<<<<<<< HEAD
 % plotFitForSingleThreshold(createPlotInfoStruct,data(4,:)*100,t,p);
 >>>>>>> saving most recent version
+=======
+% plotFitForSingleThreshold(createPlotInfoStruct,data(4,:)*100,t,p);
+>>>>>>> 76a7f7464acd99e38a28440ae235fd82676cef6d

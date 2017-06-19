@@ -16,10 +16,9 @@ dataset = zeros(n,numberOfCones);
 classes = ones(n,1);
 classes(1:n/2) = 0;
 
-% The first half of the data will be AB format.  The second half will be BA
+% The first half of the data will be A format.  The second half will be B
 % format. It is often the case that the comparison pool contains only one
-% sensor.  Having multiple entries just means that multiple versions of the
-% SAME stimuli were generated to account for pixel noise due to rendering.
+% sensor. 
 for jj = 1:n/2
     targetSample = randsample(length(targetPool), 1);
     comparisonSample = randsample(length(comparisonPool), 1);

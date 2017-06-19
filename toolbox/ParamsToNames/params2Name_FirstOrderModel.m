@@ -7,7 +7,7 @@ function name = params2Name_FirstOrderModel(params)
 %
 % 9/9/16  xd  wrote it
 
-name = [params.calcIDStr 'FirstOrderModel'];
+name = 'FirstOrderModel';
 
 % Cone density and other properties of the mosaic
 name = sprintf([name '_LMS_%2.2f_%2.2f_%2.2f'],params.spatialDensity(2),params.spatialDensity(3),params.spatialDensity(4));
