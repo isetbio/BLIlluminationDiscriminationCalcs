@@ -1,5 +1,5 @@
 function thresholds = plotThresholdForMeanPerformance(calcIDStr, plot, criterion)
-% threshold = thresholdForMeanPerformance(calcIDStr)
+% threshold = plotThresholdForMeanPerformance(calcIDStr, plot, criterion)
 %
 % Instead of taking the mean over a set of thresholds, we can also
 % calculate the mean performance over a set of patches. Then, using this
@@ -12,7 +12,7 @@ if notDefined('criterion'), criterion = 70.71; end
 
 %% Load and calculate mean thresholds
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
-calcIDList = getAllSubdirectoriesContainingString(fullfile(analysisDir,'SimpleChooserData'),calcIDStr);
+calcIDList  = getAllSubdirectoriesContainingString(fullfile(analysisDir,'SimpleChooserData'),calcIDStr);
 [dummyData,calcParams] = loadModelData(calcIDList{1});
 
 %% Find average performance
@@ -25,7 +25,10 @@ avgPerformance = avgPerformance / length(calcIDList);
 %% Extract thresholds
 thresholds = zeros(size(avgPerformance,4),size(avgPerformance,1));
 for ii = 1:size(thresholds,2)
-    thresholds(:,ii) = multipleThresholdExtraction(squeeze(avgPerformance(ii,:,:,:)),criterion);
+    thresholds(:,ii) = multipleThresholdExtraction(squeeze(avgPerformance(ii,:,:,:)),...
+                                                   criterion, calcParams.illumLevels,...
+                                                   calcParams.testingSetSize,...
+                                                   true, calcParams.colors{ii});
 end
 
 % Remove negatives and replace with NaN's
@@ -38,6 +41,7 @@ if plot
     p.xlabel = 'Noise level';
     p.ylabel = 'Stimulus Level (\DeltaE)';
     plotThresholdsAgainstNoise(p,thresholds,calcParams.noiseLevels');
+    ylim([calcParams.illumLevels(1) calcParams.illumLevels(end)]);
 end
 end
 
