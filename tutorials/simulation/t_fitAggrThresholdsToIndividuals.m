@@ -21,11 +21,12 @@ modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Con
 % modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.00_1.00_FOV1.00_PCA400_ABBA_SVM_Constant';
 % modelDataIDStr = 'FirstOrderModel_LMS_0.00_1.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
 % modelDataIDStr = 'FirstOrderModel_LMS_1.00_0.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_NM2';
 
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
-saveData = true;
-saveFilename = 'LMosaicFitDataUniform';
+saveData = false;
+saveFilename = 'NeutralUniformFit';
 
 %% Subject ID's
 % DON'T CHANGE
@@ -56,7 +57,8 @@ allDirs = getAllSubdirectoriesContainingString(fullfile(analysisDir,'SimpleChoos
 
 for subjectNumber = 1:length(orderOfSubjects)
     subjectId = orderOfSubjects{subjectNumber};
-    load('/Users/Shared/Matlab/Experiments/Newcastle/stereoChromaticDiscriminationExperiment/analysis/FitThresholdsAllSubjectsExp8.mat')
+%     load('/Users/Shared/Matlab/Experiments/Newcastle/stereoChromaticDiscriminationExperiment/analysis/FitThresholdsAllSubjectsExp8.mat')
+    load('Exp5AllData');
     
     % Create some label information for plotting.
     stimLevels = 1:50;
@@ -70,14 +72,21 @@ for subjectNumber = 1:length(orderOfSubjects)
     %
     % Load the subject performances. We need to calculate the mean
     % thresholds for the constant runs as well as the standard deviations.
-    subjectIdx = find(not(cellfun('isempty', strfind(orderOfSubjects,subjectId))));
-    d1 = subject{subjectIdx}.Constant{1};
-    d2 = subject{subjectIdx}.Constant{2};
-    b = nanmean([d1.Bluer.threshold,d2.Bluer.threshold]);
-    g = nanmean([d1.Greener.threshold,d2.Greener.threshold]);
-    r = nanmean([d1.Redder.threshold,d2.Redder.threshold]);
-    y = nanmean([d1.Yellower.threshold,d2.Yellower.threshold]);
-        
+%     subjectIdx = find(not(cellfun('isempty', strfind(orderOfSubjects,subjectId))));
+%     d1 = subject{subjectIdx}.NonMatched1{1};
+%     d2 = subject{subjectIdx}.NonMatched1{2};
+% %     d1 = subject{subjectIdx}.Constant{1};
+% %     d2 = subject{subjectIdx}.Constant{2};
+%     b = nanmean([d1.Bluer.threshold,d2.Bluer.threshold]);
+%     g = nanmean([d1.Greener.threshold,d2.Greener.threshold]);
+%     r = nanmean([d1.Redder.threshold,d2.Redder.threshold]);
+%     y = nanmean([d1.Yellower.threshold,d2.Yellower.threshold]);
+    d = NM2(subjectNumber,:);
+    b = d(1);
+    g = d(2);
+    r = d(3);
+    y = d(4);
+
     % Plot a the thresholds along with the model predictions.
     if ~singlePlots
         subplot(2,5,subjectNumber);
