@@ -2,6 +2,7 @@ function threshold = interpolateThreshold(target, thresholds)
 %INTERPOLATETHRESHOLD Summary of this function goes here
 %   Detailed explanation goes here
 
+if target == round(target), threshold = thresholds(target,:); return; end
 
 interpolateStartPoint = floor(target);
 interpolateEndPoint   = ceil(target);

@@ -1,5 +1,5 @@
-function [threshold,paramsValues] = singleThresholdExtraction(data,criterion,stimLevels,numTrials)
-% [threshold,paramsValues] = singleThresholdExtraction(data,criterion,stimLevels,numTrials)
+function [threshold,paramsValues] = singleThresholdExtraction(data,varargin)
+% [threshold,paramsValues] = singleThresholdExtraction(data,varargin)
 %
 % This function fits a cumulative Weibull to the data variable and returns
 % the threshold at the criterion as well as the parameters needed to plot the
@@ -12,39 +12,90 @@ function [threshold,paramsValues] = singleThresholdExtraction(data,criterion,sti
 %
 % 6/21/16  xd  wrote it
 
-if notDefined('stimLevels'), stimLevels = 1:length(data); end;
-if notDefined('numTrials'), numTrials = 100; end;
+p = inputParser;
+defaultIlluminantPath = '/Users/xiaomaoding/Documents/stereoChromaticDiscriminationExperiment/IlluminantsInDeltaE.mat';
 
-%% Check to make sure data is fittable
-%
-% We check the average value of the first 5 and last 5 numbers to get an
-% idea of if the data is fittable to a curve. If the first 5 values are
-% less than criterion and the last 5 are greater than criterion+10, we proceed with the
-% fitting.  Otherwise, we return NaN for the threshold, which indicates that
-% the data cannot be fit.
-% if mean(data(1:5)) > criterion+10 || mean(data(end-4:end)) < criterion, threshold = nan; paramsValues = zeros(1,4); return; end;
+p.addRequired('data',@isnumeric);
+p.addOptional('criterion',70.71,@isnumeric);
+p.addOptional('stimLevels',1:length(data),@isnumeric);
+p.addOptional('numTrials',100,@isnumeric);
+p.addOptional('useTrueIlluminants',false,@islogical);
+p.addOptional('color','blue',@isstr);
+p.addOptional('illumPath',defaultIlluminantPath,@ischar);
+
+p.parse(data,varargin{:});
 
 %% Set some parameters for the curve fitting
 %
 % Our input criterion is a percentage which needs to converted to a decimal
 % value. The paramsEstimate is just a rough estimate of the results and
 % shouldn't affect the outcome too much.
-criterion      = criterion/100;
+criterion      = p.Results.criterion/100;
+stimLevels     = p.Results.stimLevels;
+numTrials      = p.Results.numTrials;
+
 paramsEstimate = [10 5 0.5 0.05];
 paramsFree     = [1 1 0 (mean(data(end-4:end)) > 99.5)]; % Need to remove lapse rate if data does not reach 100%
-if length(numTrials) == 1
-    outOfNum = repmat(numTrials,1,length(data));
+if length(p.Results.numTrials) == 1
+    outOfNum = repmat(10,1,length(data));
 else
-    outOfNum = numTrials;
+    outOfNum = p.Results.numTrials;
 end
 PF             = @PAL_Weibull;
 lapseLimits    = [0 0.5];
+options        = PAL_minimize('options');
 
-%% Some optimization settings for the fit
-%
-% Some parameters for the fit. These are set so that the functions make a
-% solid attempt at fitting before deciding that it is not possible.
-options = PAL_minimize('options');
+%% Expand data into individual trials
+% Because we know the exact testing set size for each stimulus value, we
+% can expand it into individual trials using the percent correct
+% performance data. This can then be binned in a similar manner to what the
+% experimental analysis code does.
+
+trialStim = [];
+trialData = [];
+for ii = 1:length(data)
+    trialStim = [trialStim(:); repmat(stimLevels(ii),numTrials,1)];
+    
+    numTrueResponses = ceil(numTrials * data(ii) / 100);
+    trialData = [trialData(:); ones(numTrueResponses,1); zeros(numTrials-numTrueResponses,1)];
+end
+
+shuffleIdx = randperm(length(trialStim));
+trialStim = trialStim(shuffleIdx);
+trialData = trialData(shuffleIdx);
+
+%% Map onto true illuminant values if needed
+if p.Results.useTrueIlluminants
+    % Load illuminants
+    illums = load(p.Results.illumPath);
+    
+    % Create lookup table
+    % Illuminants =  (1) 'blue' (2) 'green'  (3) 'red' (4) 'yellow'
+    % Based on experimental analysis code. See AnalyzeStaircaseViaFitToTrailsExp8.m
+    switch p.Results.color
+        case 'blue'
+            colorIdx = 1;
+        case 'green'
+            colorIdx = 2;
+        case 'red'
+            colorIdx = 3;
+        case 'yellow'
+            colorIdx = 4;
+        otherwise
+            colorIdx = nan;
+    end
+    illuminantLookUpTable = [(0:length(stimLevels))',  illums.illuminantDistance{colorIdx}(:,2)];
+    maxValueStair =  illums.illuminantDistance{colorIdx}(end,2);
+    
+%     mapIndices = arrayfun(@(X) find(illuminantLookUpTable(:,1) == X), stimLevels);
+%     stimLevels = illuminantLookUpTable(mapIndices,2);
+    mapIndices = arrayfun(@(X) find(illuminantLookUpTable(:,1) == X), trialStim);
+    trialStim = illuminantLookUpTable(mapIndices,2);
+end
+
+%% Bin the thresholds 
+nTrialsPerBin = 10;
+[stimLevels,data,outOfNum] = GetAggregatedStairTrials(trialStim, trialData, nTrialsPerBin);
 
 %% Fit the data to a curve
 if paramsFree(4)
@@ -56,6 +107,6 @@ else
         paramsEstimate, paramsFree, PF, 'SearchOptions', options);
 end
 
-threshold = PF(paramsValues, criterion, 'inverse');
+threshold = PF(paramsValues,criterion,'inverse');
 end
 
