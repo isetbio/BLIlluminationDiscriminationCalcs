@@ -128,6 +128,8 @@ for ii = 1:length(illumLevels);
         end
     end
     
+    fprintf('%s illum step %d : %0.3f s\n',color,ii,toc);
+    
 end
 end
 
