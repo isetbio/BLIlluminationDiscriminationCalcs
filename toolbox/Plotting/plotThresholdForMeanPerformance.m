@@ -43,5 +43,6 @@ if plot
     plotThresholdsAgainstNoise(p,thresholds,calcParams.noiseLevels');
     ylim([calcParams.illumLevels(1) calcParams.illumLevels(end)]);
 end
+
 end
 

@@ -44,7 +44,7 @@ outOfNum       = repmat(numTrials,length(stimLevels),1);
 PF             = @PAL_Weibull;
 lapseLimits    = [0 0.5];
 options        = PAL_minimize('options');
-disp(num2str(mean(data(end-4:end))))
+% disp(num2str(mean(data(end-4:end))))
 
 % %% Expand data into individual trials
 % % Because we know the exact testing set size for each stimulus value, we
@@ -106,6 +106,10 @@ else
 end
 
 threshold = PF(paramsValues,criterion,'inverse');
+
+if threshold < 1 
+    threshold = nan;
+end
 
 end
 

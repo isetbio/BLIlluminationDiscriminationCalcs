@@ -12,11 +12,11 @@ function scene = loadSceneData(folderName, imageName)
 % 3/12/2015   xd  wrote it
 
 %% Get path to scene files
-dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
-scenePath = fullfile(dataBaseDir, 'SceneData', folderName, strcat(imageName, 'Scene.mat'));
+dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
+scenePath   = fullfile(dataBaseDir, 'SceneData', folderName, strcat(imageName, 'Scene.mat'));
 
 %% Load scene data
-data = load(scenePath);
+data  = load(scenePath);
 scene = data.scene;
 
 end
