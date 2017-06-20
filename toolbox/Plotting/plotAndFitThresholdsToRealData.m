@@ -148,7 +148,7 @@ if parser.Results.CreatePlot
     end
     hold on;
     
-    for ii = 1:length(data)
+    for ii = 1:min(length(data),4)
         % Because the horizontal lines on the error bar function scales with
         % the range of the data set (and for some reason the range is 0->data
         % if the data is a scalar) we will create a dummy data point so that
