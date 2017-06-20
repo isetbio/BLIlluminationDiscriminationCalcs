@@ -1,5 +1,5 @@
 function allPaths = getEMPaths(sensor,numPaths,varargin)
-% allPaths = getEMPaths(sensor, numPaths)
+% allPaths = getEMPaths(sensor,numPaths,varargin)
 %
 % This function will return numPaths eye movement paths associated with the
 % input sensor.  These paths will be returned as a 3D matrix in allPaths.

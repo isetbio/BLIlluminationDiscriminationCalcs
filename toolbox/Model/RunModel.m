@@ -1,5 +1,5 @@
 function results = RunModel(calcParams,overWrite,frozen,validation)
-% results = RunModel(calcParams,overwrite,frozen)
+% results = RunModel(calcParams,overWrite,frozen,validation)
 %
 % This function will run the computational observer model according to
 % specifications in the calcParams struct. Specifically, the sensor will be
