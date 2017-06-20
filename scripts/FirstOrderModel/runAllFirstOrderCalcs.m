@@ -28,10 +28,10 @@ close all; ieInit; parpool(8);
 % on the structure at runtime to make sure our caches are consistent with
 % the current parameters being used.
 
-c.calcIDStr = 'RSYellow';
-c.cacheFolderList = {'RSYellow', 'RealScenesYellow'};
+c.calcIDStr = 'RSGreen';
+c.cacheFolderList = {'RSGreen', 'RealScenesGreen'};
 c.sensorFOV = 2;
-tempScene = loadSceneData([c.cacheFolderList{2} '/Standard'],'Target0');
+tempScene = loadSceneData([c.cacheFolderList{2} '/Standard'],'target0');
 numberofOI = numel(splitSceneIntoMultipleSmallerScenes(tempScene,c.sensorFOV));
 % numberofOI = generateOIForParallelComputing(c);
 
@@ -103,7 +103,8 @@ parfor k1 = 1:length(theIndex)
         
         % Update to calcIDStr to a uniformly formatted name
         calcParams.calcIDStr = params2Name_FirstOrderModel(calcParams);
-
+        disp(calcParams.calcIDStr);
+        
         %% Convert the images to cached scenes for more analysis
         if (calcParams.CACHE_SCENES)
             convertRBGImagesToSceneFiles(calcParams,calcParams.forceSceneCompute);

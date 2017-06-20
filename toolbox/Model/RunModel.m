@@ -60,8 +60,6 @@ if calcParams.MODEL_ORDER >= 2
     mosaic.os = osCreate(calcParams.OSType);
     mosaic.os.noiseFlag = false;
     mosaic.sampleTime = calcParams.coneIntegrationTime;
-    
-%     mosaic.spatialDensity = [0 0.62 0.31 0.7];
 end
 
 if calcParams.MODEL_ORDER == 4
