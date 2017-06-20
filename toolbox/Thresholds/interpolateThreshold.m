@@ -1,6 +1,9 @@
 function threshold = interpolateThreshold(target, thresholds)
-%INTERPOLATETHRESHOLD Summary of this function goes here
-%   Detailed explanation goes here
+% threshold = interpolateThreshold(target, thresholds)
+% 
+% Interpolates the thresholds to the target value.
+%
+% 6/XX/17   xd  wrote it
 
 if target == round(target), threshold = thresholds(target,:); return; end
 

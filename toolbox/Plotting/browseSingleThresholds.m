@@ -1,5 +1,5 @@
 function browseSingleThresholds(calcIDStr,varargin)
-% browseSingleThresholds(calcIDStr)
+% browseSingleThresholds(calcIDStr,varargin)
 %
 % Given a calcIDStr, this function allows the user to browse the
 % psychometric threshold fits using the arrow keys. Press escape to end the

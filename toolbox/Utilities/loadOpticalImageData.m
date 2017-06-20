@@ -1,5 +1,5 @@
-function opticalImage = loadOpticalImageData(folderName, imageName)
-% opticalImage = loadOpticalImageData(folderName, imageName)
+function opticalImage = loadOpticalImageData(folderName,imageName)
+% opticalImage = loadOpticalImageData(folderName,imageName)
 %
 % Loads the saved optical image data for BLIlluminationCalcs.
 % Uses project preferences to know where to look

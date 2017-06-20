@@ -1,5 +1,5 @@
-function newoi = resizeOI(oi, fov)
-% newoi = resizeOI(oi, fov)
+function newoi = resizeOI(oi,fov)
+% newoi = resizeOI(oi,fov)
 % 
 % Script to resize an OI object to a new target fov size. This function
 % downsamples by averaging the signal within equally spaced blocks in the old

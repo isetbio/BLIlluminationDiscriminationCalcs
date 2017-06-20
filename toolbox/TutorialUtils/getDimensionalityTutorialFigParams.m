@@ -1,5 +1,5 @@
 function figParams = getDimensionalityTutorialFigParams
-% figParams = FigParams
+% figParams = getDimensionalityTutorialFigParams
 %
 % Set figure parameters.
 %

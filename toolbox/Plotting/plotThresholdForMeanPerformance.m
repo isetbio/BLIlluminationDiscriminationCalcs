@@ -1,5 +1,5 @@
-function thresholds = plotThresholdForMeanPerformance(calcIDStr, plot, criterion)
-% threshold = plotThresholdForMeanPerformance(calcIDStr, plot, criterion)
+function thresholds = plotThresholdForMeanPerformance(calcIDStr,plot,criterion)
+% threshold = plotThresholdForMeanPerformance(calcIDStr,plot,criterion)
 %
 % Instead of taking the mean over a set of thresholds, we can also
 % calculate the mean performance over a set of patches. Then, using this

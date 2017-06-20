@@ -1,5 +1,5 @@
-function setFigureFontSizes(figHandle, varargin)
-% setFigureFontSizes(figHandle, varargin)
+function setFigureFontSizes(figHandle,varargin)
+% setFigureFontSizes(figHandle,varargin)
 %
 % Method to automatically change the fonts of all labels, legends and titles in a figure
 % with handle figHandle.

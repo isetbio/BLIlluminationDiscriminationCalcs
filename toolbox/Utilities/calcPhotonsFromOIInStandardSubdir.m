@@ -1,5 +1,5 @@
 function [standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir(OIFolder,mosaic)
-% [standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir(OIFolder)
+% [standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir(OIFolder,mosaic)
 % 
 % Loads all the standard OI for a particular OIFolder and calculates the
 % response using mosaic. I do this often enough in scripts here and there

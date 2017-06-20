@@ -1,5 +1,5 @@
 function plotFitForSingleThreshold(plotInfo,data,threshold,fitParams)
-% plotFitForSingleThreshold(plotInfo,data,fitParams,threshold)
+% plotFitForSingleThreshold(plotInfo,data,threshold,fitParams)
 % 
 % This function will generate a plot for the fitted Weibull function as
 % well as the data used to fit. threshold and fitParams are the direct

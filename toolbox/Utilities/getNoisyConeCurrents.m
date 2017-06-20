@@ -1,5 +1,5 @@
 function currents = getNoisyConeCurrents(calcParams,currents,~,Kg)
-% currents = getNoisyConeCurrents(calcParams,isomerizations,~,Kg)
+% currents = getNoisyConeCurrents(calcParams,currents,~,Kg)
 %  
 % Multiplies the noise in the outer segment cone currents by a factor of Kg
 %

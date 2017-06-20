@@ -1,5 +1,5 @@
 function [threshold,paramsValues,stimLevels] = singleThresholdExtraction(data,varargin)
-% [threshold,paramsValues] = singleThresholdExtraction(data,varargin)
+% [threshold,paramsValues,stimLevels] = singleThresholdExtraction(data,varargin)
 %
 % This function fits a cumulative Weibull to the data variable and returns
 % the threshold at the criterion as well as the parameters needed to plot the

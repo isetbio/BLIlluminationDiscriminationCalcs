@@ -1,5 +1,5 @@
 function param = getFigureParameters
-% getFigureParameters
+% param = getFigureParameters
 %
 % Returns a set of default parameters for data plots.  This function
 % centralizes the plot format so changes only need to be made in one

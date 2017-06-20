@@ -1,5 +1,5 @@
 function mosaic = getDefaultBLIllumDiscrMosaic
-% sensor = getDefaultBLIllumDiscrSensor
+% mosaic = getDefaultBLIllumDiscrSensor
 % 
 % This functions returns a default sensor used mainly for testing in
 % the BLIlluminationDiscrimination Project
