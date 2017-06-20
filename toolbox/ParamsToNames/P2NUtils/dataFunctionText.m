@@ -15,12 +15,8 @@ switch functionNumber
         text = 'noABBA';
     case 4
         text = 'EyeMove';
-    case 5
-        text = 'ABBA_noS';
-    case 6 
-        text = 'ABBA_noM';
-    case 7
-        text = 'ABBA_noL';
+    otherwise
+        error('Invalid data function number!');
 end
 
 
