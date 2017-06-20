@@ -2,10 +2,11 @@
 %
 % Uses the uniform mean over the model data to fit performance to subjects.
 %
-% 8/04/16  xd  wrote it
+% 8/4/16    xd  wrote it
 % 10/27/16  xd  added some file saving and plotting options
+% 6/20/17   xd  change file naming conventions
 
-clear; close all; ieInit;
+clear;% close all;
 %% Some parameters
 %
 % If set to true, each subject fit get's it's own individual figure window.
@@ -20,12 +21,12 @@ modelDataIDStr = 'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.00_PCA400_ABBA_SVM_Con
 modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.93_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
 modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.00_1.00_FOV1.00_PCA400_ABBA_SVM_Constant';
 modelDataIDStr = 'FirstOrderModel_LMS_0.00_1.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_1.00_0.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_1.00_0.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
 
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
 saveData = false;
-saveFilename = 'MSMosaicFitDataUniform';
+saveFilename = [modelDataIDStr '_UniformModelFits'];
 
 %% Subject ID's
 % DON'T CHANGE
@@ -67,7 +68,7 @@ for subjectNumber = 1:length(orderOfSubjects)
     pI.title  = 'Thresholds v Noise';
     
     %% Get subject data
-   
+    %
     % Load the subject performances. We need to calculate the mean
     % thresholds for the constant runs as well as the standard deviations.
     subjectIdx = find(not(cellfun('isempty', strfind(orderOfSubjects,subjectId))));
@@ -77,7 +78,7 @@ for subjectNumber = 1:length(orderOfSubjects)
     g = nanmean([d1.Greener.threshold,d2.Greener.threshold]);
     r = nanmean([d1.Redder.threshold,d2.Redder.threshold]);
     y = nanmean([d1.Yellower.threshold,d2.Yellower.threshold]);
-    
+
     % Plot a the thresholds along with the model predictions.
     if ~singlePlots
         subplot(2,5,subjectNumber);
@@ -99,7 +100,7 @@ end
 % close all;
 
 %% Fit the aggregate
-%
+
 % Calculate the mean and std of thresholds for both the experimental
 % condition as well as the model performance. Use these to make plots.
 Z   = mean(cell2mat(perSubjectFittedThresholds));
@@ -115,7 +116,6 @@ ylim([0 20]);
 title(['Uniform Aggregate Fit, ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
 disp(['Uniform Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
 
-
 %% Calculate LSE
 LSE = zeros(length(perSubjectFittedThresholds),1);
 for i = 1:length(perSubjectFittedThresholds)
@@ -124,6 +124,6 @@ end
 
 %%
 if saveData
-    save(saveFilename,'perSubjectFittedNoiseLevel','perSubjectExperimentalThresholds',...
+    save([saveFilename '.mat'],'perSubjectFittedNoiseLevel','perSubjectExperimentalThresholds',...
         'perSubjectFittedThresholds','LSE');
 end
