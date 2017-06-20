@@ -74,7 +74,7 @@ for subjectNumber = 1:length(orderOfSubjects)
     r1 = r1.resultData;
     r2 = r2.resultData;
     
-    load(fullfile(fileparts(mfilename('fullpath')),'plotInfoMatConstant_1deg.mat'))
+    load('plotInfoMatConstant_1deg.mat')
     load('/Users/Shared/Matlab/Experiments/Newcastle/stereoChromaticDiscriminationExperiment/analysis/FitThresholdsAllSubjectsExp8.mat')
     
     %% Load dummy data to preallocate results matrix
