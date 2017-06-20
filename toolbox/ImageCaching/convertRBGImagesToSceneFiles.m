@@ -46,12 +46,6 @@ tic;
 brainardLabDisplay = ptb.GenerateIsetbioDisplayObjectFromPTBCalStruct('BrainardLabStereoLeftDisplay', calStructOBJ.cal, extraData, false);
 fprintf('Display object generation took %2.1f seconds\n', toc);
 
-% % Set gamma table to linspace because images are already gamma corrected
-% gammaTable = displayGet(brainardLabDisplay,'gtable');
-% gammaLength = size(gammaTable,1);
-% gammaTable = repmat(linspace(0,1,gammaLength)',1,3);
-% brainardLabDisplay = displaySet(brainardLabDisplay,'gtable',gammaTable);
-
 %% Precompute the scene files
 
 % Check if target folder exists, if not, create folder and sub folders

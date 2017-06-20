@@ -16,7 +16,7 @@ switch (calcParams.cacheFolderList{1})
         calcParams.calibrationFile = 'StereoLCDLeft';
         calcParams.distance = 0.764;
     otherwise
-        error('Unknown calcIDStr set');
+        warning('Unknown calcIDStr set');
 end
 updatedParams = calcParams;
 
