@@ -1,5 +1,5 @@
 function runAllFirstOrderCalcsParallel(numCores,oiFolder,sceneFolder,spatialDensity)
-% runAllFirstOrderCalcs
+% runAllFirstOrderCalcsParallel(numCores,oiFolder,sceneFolder,spatialDensity)
 %
 % Run the full set of calculations for the first order model in the
 % BLIlluminationDiscrimination project, for one set of parameters.  The

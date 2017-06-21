@@ -61,11 +61,13 @@ for ii = 1:length(calcParamsList)
     % There might be a slight possibility that the stars align and all
     % cores finish their current task with finishing the entire
     % calculation, but I think this is not likely to happen.
-    hasFinishedThisSet = false;
-    while ~hasFinishedThisSet
-        hasFinishedThisSet = 1 > 0; % REPLACE WITH ACTUAL FUNCTION
-        
+    analysisPath = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
+    thisDir = fileparts(mfilename('fullpath'));
+    script  = fullfile(thisDir, 'countNonEmptyDirs.sh');
+    [~,hasFinishedThisSet] = system(['sh ' script ' ''' fullfile(analysisPath,'SimpleChooserData') '''' ]);
+    while hasFinishedThisSet > 0
         pause(3600);
+        [~,hasFinishedThisSet] = system(['sh ' script ' ''' fullfile(analysisPath,'SimpleChooserData') '''' ]);
     end
 end
 
