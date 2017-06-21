@@ -62,12 +62,29 @@ for ii = 1:length(calcParamsList)
     % cores finish their current task with finishing the entire
     % calculation, but I think this is not likely to happen.
     analysisPath = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
-    thisDir = fileparts(mfilename('fullpath'));
-    script  = fullfile(thisDir, 'countNonEmptyDirs.sh');
-    [~,hasFinishedThisSet] = system(['sh ' script ' ''' fullfile(analysisPath,'SimpleChooserData') '''' ]);
-    while hasFinishedThisSet > 0
+    
+    %     thisDir = fileparts(mfilename('fullpath'));
+    %     script  = fullfile(thisDir, 'countNonEmptyDirs.sh');
+    %     [~,hasFinishedThisSet] = system(['sh ' script ' ''' fullfile(analysisPath,'SimpleChooserData') '''' ]);
+    %     while hasFinishedThisSet > 0
+    %         pause(3600);
+    %         [~,hasFinishedThisSet] = system(['sh ' script ' ''' fullfile(analysisPath,'SimpleChooserData') '''' ]);
+    %     end
+    
+    outputPath = fullfile(analysisPath,'SImpleChooserData');
+    
+    finish = false;
+    while ~finish
         pause(3600);
-        [~,hasFinishedThisSet] = system(['sh ' script ' ''' fullfile(analysisPath,'SimpleChooserData') '''' ]);
+        hasNotFinishedThisSet = 0;
+        folders = dir(outputPath);
+        folders = folders(arrayfun(@(x) x.name(1), folders) ~= '.');
+        for ff = 1:length(folders)
+            individualFolder = dir(fullfile(outputPath,folders(ff).name));
+            individualFolder = individualFolder(arrayfun(@(x) x.name(1), individualFolder) ~= '.');
+            hasNotFinishedThisSet = hasNotFinishedThisSet + isempty(individualFolder);
+        end
+        finish = hasNotFinishedThisSet == 0;
     end
 end
 
