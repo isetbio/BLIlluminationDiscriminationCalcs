@@ -45,12 +45,14 @@ for ii = 1:length(calcParamsList)
     numCores = num2str(coresPerExecutable);
     
     for jj = 1:numExecutables
-        command = ['matlab -nojvm -nodesktop -nodisplay -r "runAllFirstOrderCalcs(' ...
-                   numCores ',' oiFolder ',' sceneFolder ',' spatialDensity ...
+        command = ['matlab -nojvm -nodesktop -nodisplay ' ...
+                   '-r "tbUseProject(''BLIlluminationDiscriminationCalcs'',''runLocalHooks'',true);'...
+                   'runAllFirstOrderCalcsParallel(' ...
+                   numCores ',''' oiFolder ''',''' sceneFolder ''',' spatialDensity...
                    '); exit;" >output.txt 2>error.txt &'];
         
         % Execute from command line?
-%         system(command);
+        system(command);
         disp(command)
         
     end
@@ -59,7 +61,12 @@ for ii = 1:length(calcParamsList)
     % There might be a slight possibility that the stars align and all
     % cores finish their current task with finishing the entire
     % calculation, but I think this is not likely to happen.
-    
+    hasFinishedThisSet = false;
+    while ~hasFinishedThisSet
+        hasFinishedThisSet = 1 > 0; % REPLACE WITH ACTUAL FUNCTION
+        
+        pause(3600);
+    end
 end
 
 %% Run the analysis code
