@@ -1,4 +1,4 @@
-function BLIlluminationDiscriminationCalcs
+function BLIlluminationDiscriminationCalcsLocalHookTemplate
 % BLIlluminationDiscrimination
 %
 % Configure things for working on the IBIOColorDetect project.

@@ -3,8 +3,14 @@ function filenames = getFilenamesInDirectory(directory)
 % 
 % Given an input directory, this function will retrieve all the .mat files
 % in that directory. Additionally, it will attempt to sort the filenames
-% alphanumerically if possible. This assumes that the filenames follow
-% some sort of pattern as follows: (constant name)[variable #].
+% alphanumerically if possible. This assumes that the filenames follow some 
+% sort of pattern as follows: (constant name)[variable #], e.g. ex1.mat.
+%
+% Inputs: 
+%     directory  -  local directory to search
+%
+% Outputs:
+%     filenames  -  cell array of file names found
 %
 % xd   5/16/16  wrote it
 
