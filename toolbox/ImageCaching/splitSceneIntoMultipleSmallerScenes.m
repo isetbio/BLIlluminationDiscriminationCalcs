@@ -9,12 +9,24 @@ function [smallScenes,plotInfo] = splitSceneIntoMultipleSmallerScenes(largeScene
 % The cell matrix will be ordered like a completed puzzle of the original
 % scene.
 %
-% xd  6/30/16  wrote it
+% Inputs:
+%     largeScene  -  ISETBIO scene struct containing full scene to be split
+%     newFOV      -  the fov for each individual scene once the full one is split
+%
+% Outputs:
+%     smallScenes  -  cell array of scenes with indices corresponding to 
+%                     location in their original scene
+%     plotInfo     -  struct containing information about the size of each
+%                     scene in pixels as well as how many total small
+%                     scenes were created
+% 
+% 6/30/16  xd  wrote it
 
 %% Check that the newFOV is smaller
 if newFOV > sceneGet(largeScene,'fov'), error('FOV too large!'); end;
 
 %% Do the division
+
 % The function sceneCrop does not readjust the FOV of the cropped area. We
 % must do so ourselves by setting the cropped scenes' FOV to newFOV.
 % Additionally, we calculate the desired rectangle by scaling the full size
