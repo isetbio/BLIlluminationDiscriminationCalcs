@@ -16,6 +16,7 @@ function browseSingleThresholds(calcIDStr,varargin)
 % format [Poisson Gaussian].
 parser = inputParser;
 parser.addParameter('NoiseIndex', [1 0], @isnumeric);
+parser.addParameter('useTrueDE',true,@islogical);
 parser.parse(varargin{:});
 
 %% Load the data and calcParams here
@@ -72,7 +73,8 @@ while ~strcmp(THE_ONE_KEY,'escape')
         % Extract thresholds
         dataToUse = squeeze(formattedData{colorIdx}(:,noiseIdx));
         [threshold,params,stimLevels] = singleThresholdExtraction(dataToUse,70.71,calcParams.illumLevels,...
-                                                       calcParams.testingSetSize,true,calcParams.colors{colorIdx});
+                                                                  calcParams.testingSetSize,p.Results.useTrueDE,...
+                                                                  calcParams.colors{colorIdx});
         
         % Some plotting metadata (titles, axes, and such)
         plotInfo = createPlotInfoStruct;
@@ -118,7 +120,7 @@ close;
 clearvars -GLOBAL THE_ONE_KEY;
 end
 
-function myKeyPress(hObject,event)
+function myKeyPress(hObject,event) %#ok<INUSL>
 global THE_ONE_KEY;
 THE_ONE_KEY = event.Key;
 end
