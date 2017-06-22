@@ -4,6 +4,15 @@ function results = m2_SecondOrderModel(calcParams,mosaic,color)
 % The revamped code for the second order model. Computes and performs
 % classification on data with eye movements and/or cone currents. 
 %
+% Inputs:
+%     calcParams  -  calcParams struct with parameters for the calculation
+%     mosaic  -  ISETBIO coneMosaic object to use for calculating the isomerizations
+%     color  -  string describing which color direction to use
+%
+% Outputs:
+%     results  -  a matrix containing percent corrects for noise levels and
+%                 illumination steps
+%
 % 6/24/16  xd  wrote it
 
 %% Set values for variables that will be used through the function

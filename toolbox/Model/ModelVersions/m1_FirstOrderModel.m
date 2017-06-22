@@ -7,6 +7,15 @@ function results = m1_FirstOrderModel(calcParams,mosaic,color)
 % scene. This information is used in desired classification function to
 % simulate our illumination discrimination experiment.
 %
+% Inputs:
+%     calcParams  -  calcParams struct with parameters for the calculation
+%     mosaic  -  ISETBIO coneMosaic object to use for calculating the isomerizations
+%     color  -  string describing which color direction to use
+%
+% Outputs:
+%     results  -  a matrix containing percent corrects for noise levels and
+%                 illumination steps
+%
 % 6/23/16  xd  moved out of old code
 
 %% Set values for variables that will be used through the function
@@ -82,8 +91,8 @@ for ii = 1:length(illumLevels);
                 
                 % Choose the data generation function
                 datasetFunction = masterDataFunction(calcParams.dFunction);
-                [trainingData, trainingClasses] = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,trainingSetSize,mosaic);
-                [testingData, testingClasses]   = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,testingSetSize,mosaic);
+                [trainingData,trainingClasses] = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,trainingSetSize,mosaic);
+                [testingData,testingClasses]   = datasetFunction(calcParams,standardPool,{absorptionsTest},Kp,Kg,testingSetSize,mosaic);
                 
                 % Standardize data if flag is set to true
                 if calcParams.standardizeData

@@ -7,6 +7,17 @@ function results = RunModel(calcParams,overWrite,frozen,validation)
 % overWrite flag must be set to true if data should be overwritten.
 % Similarly, to generate reproducable results, set frozen to true.
 %
+% Inputs:
+%     calcParams  -  struct which contains parameters for this calculation
+%     overWrite   -  flag to determine whether to overwrite existing data
+%     frozen      -  flag to determine whether to use frozen noise
+%     validation  -  flag to determine whether current run is for a
+%                    validation script
+%
+% Outputs:
+%     results  -  a 4D matrix containing percent correct over color x
+%                 illumination step x kp x kg
+%
 % 6/23/16  xd  extracted from old code
 % 7/20/17  xd  changed to use input parser, remove redundant variable
 
