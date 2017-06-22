@@ -15,7 +15,7 @@ setenv('PATH',[PATH ':' matlabroot '/bin']);
 %% Run the calculation code
 
 % Generate all the optical images. We assume that the file directory has
-% been set up appropriately?
+% been set up appropriately.
 % makeAllOISets(coresForCreatingOI);
 
 % Create a list of partial calcParams. This gets looped over to execute all
@@ -54,7 +54,6 @@ for ii = 1:length(calcParamsList)
         % Execute from command line?
         system(command);
         disp(command)
-        
     end
     
     % Periodically check that the number of result folders is non-zero?
@@ -71,7 +70,7 @@ for ii = 1:length(calcParamsList)
     %         [~,hasFinishedThisSet] = system(['sh ' script ' ''' fullfile(analysisPath,'SimpleChooserData') '''' ]);
     %     end
     
-    outputPath = fullfile(analysisPath,'SImpleChooserData');
+    outputPath = fullfile(analysisPath,'SimpleChooserData');
     
     finish = false;
     while ~finish
@@ -89,6 +88,6 @@ for ii = 1:length(calcParamsList)
 end
 
 %% Run the analysis code
-
+% Maybe this isn't necessary
 
 
