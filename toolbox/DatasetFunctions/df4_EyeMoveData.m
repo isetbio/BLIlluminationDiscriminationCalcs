@@ -8,6 +8,25 @@ function [dataset,classes] = df4_EyeMoveData(calcParams,targetPool,comparisonPoo
 % Noise will be chosen appropriate to where the calcuation ends (photon for
 % isomerizations and osNoise for cone currents)
 %
+% Inputs:
+%     calcParams  -  calcParams struct describing the parameters for this
+%                    calculation
+%     targetPool  -  cell array of isomerization matrices or matrix
+%                    corresponding to the target stimuli
+%     comparisonPool  -  cell array of isomerization matrices or matrix
+%                        corresponding to the comparison stimuli
+%     kp  -  multiplicative factor for Poisson noise
+%     kg  -  multiplicative factor for additive zero-mean Gaussian noise
+%     n   -  number of samples to generate
+%     mosaic - a ISETBIO coneMosaic object set with appropriate parameters
+%              for eye movement and outer segment calculations
+%
+% Outputs:
+%     dataset  -  a set of vectorized isomerizations with appropriate noise
+%                 added with 50/50 distribution of the two classes. Rows
+%                 are observations and columns are features.
+%     classes  -  corresponding classes to the dataset output
+%
 % 7/11/16  xd  wrote it
 
 %% Pre allocate space for data and classes
