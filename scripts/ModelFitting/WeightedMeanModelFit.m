@@ -138,9 +138,8 @@ for subjectNumber = 1:length(orderOfSubjects)
     %
     % Load the subject performances. We need to calculate the mean
     % thresholds for the constant runs as well as the standard deviations.
-    subjectIdx = find(not(cellfun('isempty', strfind(orderOfSubjects,subjectId))));
-    d1 = subject{subjectIdx}.Constant{1};
-    d2 = subject{subjectIdx}.Constant{2};
+    d1 = subject{subjectNumber}.Constant{1};
+    d2 = subject{subjectNumber}.Constant{2};
     b = nanmean([d1.Bluer.threshold,d2.Bluer.threshold]);
     g = nanmean([d1.Greener.threshold,d2.Greener.threshold]);
     r = nanmean([d1.Redder.threshold,d2.Redder.threshold]);
@@ -198,13 +197,13 @@ title(['Weighted Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLeve
 disp(['Weighted Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
 
 %% Calculate LSE
-LSE = zeros(length(perSubjectFittedThresholds),1);
+RMSE = zeros(length(perSubjectFittedThresholds),1);
 for i = 1:length(perSubjectFittedThresholds)
-    LSE(i) = sqrt(sum((perSubjectFittedThresholds{i} - perSubjectExperimentalThresholds{i}).^2));
+    RMSE(i) = sqrt(sum((perSubjectFittedThresholds{i} - perSubjectExperimentalThresholds{i}).^2) / 4);
 end
 
 %% Save the data
 if saveData
     save([saveFilename '.mat'],'perSubjectAggregateThresholds','perSubjectExperimentalThresholds',...
-        'perSubjectFittedThresholds','perSubjectFittedNoiseLevel','LSE');
+        'perSubjectFittedThresholds','perSubjectFittedNoiseLevel','RMSE');
 end

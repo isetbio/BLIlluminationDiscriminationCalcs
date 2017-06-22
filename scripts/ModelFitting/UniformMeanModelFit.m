@@ -16,11 +16,11 @@ singlePlots = false;
 % This is the calcIDStr for the SVM dataset we want to use to fit to the
 % % experimental results.
 modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.93_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.00_1.00_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_0.00_1.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.93_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.00_1.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.00_1.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
 % modelDataIDStr = 'FirstOrderModel_LMS_1.00_0.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
 
 % Set to true to save the data after the script has finished running. Will
@@ -71,9 +71,8 @@ for subjectNumber = 1:length(orderOfSubjects)
     %
     % Load the subject performances. We need to calculate the mean
     % thresholds for the constant runs as well as the standard deviations.
-    subjectIdx = find(not(cellfun('isempty', strfind(orderOfSubjects,subjectId))));
-    d1 = subject{subjectIdx}.Constant{1};
-    d2 = subject{subjectIdx}.Constant{2};
+    d1 = subject{subjectNumber}.Constant{1};
+    d2 = subject{subjectNumber}.Constant{2};
     b = nanmean([d1.Bluer.threshold,d2.Bluer.threshold]);
     g = nanmean([d1.Greener.threshold,d2.Greener.threshold]);
     r = nanmean([d1.Redder.threshold,d2.Redder.threshold]);
@@ -117,13 +116,13 @@ title(['Uniform Aggregate Fit, ' num2str(mean(cell2mat(perSubjectFittedNoiseLeve
 disp(['Uniform Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
 
 %% Calculate LSE
-LSE = zeros(length(perSubjectFittedThresholds),1);
+RMSE = zeros(length(perSubjectFittedThresholds),1);
 for i = 1:length(perSubjectFittedThresholds)
-    LSE(i) = sqrt(sum((perSubjectFittedThresholds{i} - perSubjectExperimentalThresholds{i}).^2));
+    RMSE(i) = sqrt(sum((perSubjectFittedThresholds{i} - perSubjectExperimentalThresholds{i}).^2) / 4);
 end
 
 %%
 if saveData
     save([saveFilename '.mat'],'perSubjectFittedNoiseLevel','perSubjectExperimentalThresholds',...
-        'perSubjectFittedThresholds','LSE');
+        'perSubjectFittedThresholds','RMSE');
 end
