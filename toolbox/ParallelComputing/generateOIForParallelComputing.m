@@ -11,6 +11,9 @@ function generateOIForParallelComputing(calcParams)
 % the files generated. This way we are not stuck with hundreds of folders
 % of optical images.
 %
+% Inputs: 
+%     calcParams  -  struct which contains parameters for the calculation
+% 
 % 7/1/16  xd  wrote it
 
 %% Get some paths which we will use later

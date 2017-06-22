@@ -1,5 +1,5 @@
-function thresholds = plotThresholdForMeanPerformance(calcIDStr,plot,criterion)
-% threshold = plotThresholdForMeanPerformance(calcIDStr,plot,criterion)
+function thresholds = plotThresholdForMeanPerformance(calcIDStr,plot,criterion,useTrueDE)
+% threshold = plotThresholdForMeanPerformance(calcIDStr,plot,criterion,useTrueDE)
 %
 % Instead of taking the mean over a set of thresholds, we can also
 % calculate the mean performance over a set of patches. Then, using this
@@ -9,6 +9,7 @@ function thresholds = plotThresholdForMeanPerformance(calcIDStr,plot,criterion)
 
 if notDefined('plot'), plot = true; end
 if notDefined('criterion'), criterion = 70.71; end
+if notDefined('useTrueDE'), useTrueDE = true; end
 
 %% Load and calculate mean thresholds
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
@@ -26,9 +27,9 @@ avgPerformance = avgPerformance / length(calcIDList);
 thresholds = zeros(size(avgPerformance,4),size(avgPerformance,1));
 for ii = 1:size(thresholds,2)
     thresholds(:,ii) = multipleThresholdExtraction(squeeze(avgPerformance(ii,:,:,:)),...
-                                                   criterion, calcParams.illumLevels,...
+                                                   criterion,calcParams.illumLevels,...
                                                    calcParams.testingSetSize,...
-                                                   true, calcParams.colors{ii});
+                                                   useTrueDE,calcParams.colors{ii});
 end
 
 % Remove negatives and replace with NaN's

@@ -4,6 +4,9 @@ function deleteOIForParallelComputing(calcParams)
 % This function should be run after a parallel computation. This will
 % remove any OI folders used in the calculation so that we are not
 % clustered with hundreds of OI.
+%
+% Inputs: 
+%     calcParams  -  struct which contains parameters for the calculation
 % 
 % 7/1/16  xd  wrote it
 
