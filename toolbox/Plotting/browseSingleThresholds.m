@@ -5,6 +5,19 @@ function browseSingleThresholds(calcIDStr,varargin)
 % psychometric threshold fits using the arrow keys. Press escape to end the
 % program.
 %
+% Inputs:
+%     calcIDStr  -  name of the data folder which contains model performances
+% {name-value pairs}
+%     'noiseIndex'  -  a 1x2 matrix specifying whether to fit thresholds as
+%                      a function of Poisson or Gaussian noise (default = Gaussian)
+%     'useTrueDE'   -  boolean flag to determine whether to use real
+%                      illumination step sizes (default = true)
+%
+% Controls:
+%     Use the arrow keys to navigate noise level (left right) and color (up down).
+%     Press 's' to keep the current figure open after exiting the program.
+%     Use 'escape' to exit the program (will close current window).
+%
 % 6/27/16  xd  wrote it
 
 %% Setup the input parser
@@ -14,10 +27,10 @@ function browseSingleThresholds(calcIDStr,varargin)
 % to plot. The default assumption is 1x Poisson noise and all Gaussian
 % noise. Specify the index of 1 Noise Type and leave the other as 0, in the
 % format [Poisson Gaussian].
-parser = inputParser;
-parser.addParameter('NoiseIndex', [1 0], @isnumeric);
-parser.addParameter('useTrueDE',true,@islogical);
-parser.parse(varargin{:});
+p = inputParser;
+p.addParameter('NoiseIndex',[1 0],@isnumeric);
+p.addParameter('useTrueDE',true,@islogical);
+p.parse(varargin{:});
 
 %% Load the data and calcParams here
 [data,calcParams] = loadModelData(calcIDStr);
@@ -30,8 +43,8 @@ parser.parse(varargin{:});
 formattedData = cell(length(calcParams.colors),1);
 for ii = 1:length(calcParams.colors)
     currentDataToFormat = data(ii,:,:,:);
-    if parser.Results.NoiseIndex(1) ~= 0
-        formattedData{ii} = squeeze(currentDataToFormat(:,:,parser.Results.NoiseIndex(1),:));
+    if p.Results.NoiseIndex(1) ~= 0
+        formattedData{ii} = squeeze(currentDataToFormat(:,:,p.Results.NoiseIndex(1),:));
     else
         formattedData{ii} = squeeze(currentDataToFormat(:,:,:,1));
     end
@@ -52,7 +65,7 @@ colorIdx = 1;
 noiseIdx = 1;
 
 % Extract the relevant noise levels for plot title and indexing
-if parser.Results.NoiseIndex(1)
+if p.Results.NoiseIndex(1)
     noiseLevels = calcParams.KgLevels;
 else
     noiseLevels = calcParams.KpLevels;

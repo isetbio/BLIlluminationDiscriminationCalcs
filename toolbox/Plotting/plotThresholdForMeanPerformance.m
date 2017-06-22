@@ -1,15 +1,31 @@
-function thresholds = plotThresholdForMeanPerformance(calcIDStr,plot,criterion,useTrueDE)
+function thresholds = plotThresholdForMeanPerformance(calcIDStr,varargin)
 % threshold = plotThresholdForMeanPerformance(calcIDStr,plot,criterion,useTrueDE)
 %
 % Instead of taking the mean over a set of thresholds, we can also
 % calculate the mean performance over a set of patches. Then, using this
-% mean performance we extract a single thresold.
+% mean performance we extract a single set of thresolds.
+%
+% Inputs:
+%     calcIDStr  -  shared label amongst a set of calculations
+% {ordered optional}
+%     plot       -  whether to plot the results (default = true)
+%     criterion  -  what value to extract thresholds at (default = 70.71)
+%     useTrueDE  -  use real illumination step size values (default = true)
+%
+% Outputs:
+%     thresholds  -  calculated mean thresholds in a MxN matrix
 %
 % 10/27/16  xd  wrote it.
 
-if notDefined('plot'), plot = true; end
-if notDefined('criterion'), criterion = 70.71; end
-if notDefined('useTrueDE'), useTrueDE = true; end
+p = inputParser;
+p.addOptional('plot',true,@islogical);
+p.addOptional('criterion',70.71,@isnumeric);
+p.addOptional('useTrueDE',true,@islogical);
+p.parse(varargin{:});
+
+plot = p.Results.plot;
+criterion = p.Results.criterion;
+useTrueDE = p.Results.useTrueDE;
 
 %% Load and calculate mean thresholds
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');

@@ -6,6 +6,10 @@ function showJoinedSmallScenes(largeScene,fov)
 % as well as its second output variable to generate an image of the large
 % scene divided as the splitting function does.
 %
+% Inputs:
+%    largeScene  -  the scene to plot
+%    fov  -  the size of each patch
+% 
 % 7/7/16  xd  wrote it
 
 %% Use the large image and the plot info obj

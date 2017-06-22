@@ -8,6 +8,13 @@ function plotFitForSingleThreshold(plotInfo,data,threshold,fitParams)
 % information for that will be used to add details such as the axis labels
 % and title.
 %
+% Inputs:
+%     plotInfo   -  struct with some info about label and title text
+%     data       -  data to fit to
+%     threshold  -  data to use to fit to 'data' input
+%     fitParams  -  parameter vector obtained from the Palamedes Toolbox
+%                   when fitting a psychometric function
+%
 % 6/21/16  xd  wrote it
 
 %% Generate a default set of figure parameters used in this project

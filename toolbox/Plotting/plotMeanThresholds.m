@@ -8,6 +8,9 @@ function plotMeanThresholds(calcIDStr)
 % The noiseLevels to plot against need to be specified as currently there is
 % no single calcParams struct to read in.
 %
+% Inputs:
+%     calcIDStr  -  shared label for a set of calculations
+% 
 % 7/18/16  xd  wrote it
 
 %% Load and calculate mean thresholds
