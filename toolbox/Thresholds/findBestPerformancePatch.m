@@ -1,13 +1,25 @@
-function [bestPatchNumber,minThresh] = findBestPerformancePatch(calcIDStr,N)
-% [bestPatchNumber,minThresh] = findBestPerformancePatch(calcIDStr,N)
+function [bestPatchNumber,minThresh] = findBestPerformancePatch(calcIDStr,varargin)
+% [bestPatchNumber,minThresh] = findBestPerformancePatch(calcIDStr,varargin)
 % 
 % Finds the patch that provides the best (minimum) thresholds for each
 % noise level and color combination. Only returns results for combinations
 % that do not have NaN threshold for any patch.
 %
+% Inputs:
+%     calcIDStr  -  shared label for a set of calculations
+% {ordered optional}
+%     N - will return the 1-N best thresholds (default = 1)
+%
+% Outputs:
+%     bestPatchNumber  -  list of numbers corresponding to the N best patches
+%     minThresh  -  thresholds corresponding to the 'bestPatchNumber'
+% 
 % 7/20/16  xd  wrote it
 
-if notDefined('N'), N = 1; end;
+p = inputParser;
+p.addOptional('N',1,@isnumeric);
+p.parse(varargin{:});
+N = p.Results.N;
 
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 calcIDStrList = getAllSubdirectoriesContainingString(fullfile(analysisDir,'SimpleChooserData'),calcIDStr);

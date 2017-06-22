@@ -10,6 +10,21 @@ function [threshold,paramsValues,stimLevels] = singleThresholdExtraction(data,va
 % be NaN and the paramsValues will a zero row vector. It is also assumed
 % that the criterion is given as a percentage.
 %
+% Inputs:
+%     data  -  model threshold data
+% {ordered optional}
+%     criterion           -  what percent correct to extract threshold (default = 70.71)
+%     stimLevels          -  vector of all stimulus steps (default = 1:length(data))
+%     numTrials           - number of trials per step (default = 100)
+%     useTrueIlluminants  -  use true or nominal illumination steps (default = true)
+%     color               -  string that specifies with illumination direction color (default = 'blue')
+%     illumPath           -  path to where true illuminant values are stored
+%
+% Outputs:
+%     threshold    -  threshold determined from fitting a Weibull to the data
+%     paramValues  -  parameters for the fit given by Palamedes
+%     stimLevels   -  the stimulus steps used for the fit
+%
 % 6/21/16  xd  wrote it
 % 6/19/17  xd  editted to match experimental set up
 
@@ -20,7 +35,7 @@ p.addRequired('data',@isnumeric);
 p.addOptional('criterion',70.71,@isnumeric);
 p.addOptional('stimLevels',1:length(data),@isnumeric);
 p.addOptional('numTrials',100,@isnumeric);
-p.addOptional('useTrueIlluminants',false,@islogical);
+p.addOptional('useTrueIlluminants',true,@islogical);
 p.addOptional('color','blue',@isstr);
 p.addOptional('illumPath',defaultIlluminantPath,@ischar);
 

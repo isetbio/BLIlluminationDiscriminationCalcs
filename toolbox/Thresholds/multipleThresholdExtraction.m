@@ -8,6 +8,21 @@ function [thresholds,paramsValues,stimLevels] = multipleThresholdExtraction(data
 % and the data paramsValues will be a zero vector. The thresholds will be
 % extracted at the given criterion, which should be a percentage.
 %
+% Inputs:
+%     data  -  model threshold data
+% {ordered optional}
+%     criterion           -  what percent correct to extract threshold (default = 70.71)
+%     stimLevels          -  vector of all stimulus steps (default = 1:length(data))
+%     numTrials           - number of trials per step (default = 100)
+%     useTrueIlluminants  -  use true or nominal illumination steps (default = true)
+%     color               -  string that specifies with illumination direction color (default = 'blue')
+%     illumPath           -  path to where true illuminant values are stored
+%
+% Outputs:
+%     threshold    -  thresholds determined from fitting a Weibull to the data
+%     paramValues  -  a matrix of parameters for the fit given by Palamedes
+%     stimLevels   -  the stimulus steps used for the fits
+%
 % 6/21/16  xd  wrote it
 % 6/19/17  xd  update to use true delta E vals
 

@@ -1,7 +1,14 @@
-function threshold = interpolateThreshold(target, thresholds)
-% threshold = interpolateThreshold(target, thresholds)
+function threshold = interpolateThreshold(target,thresholds)
+% threshold = interpolateThreshold(target,thresholds)
 % 
 % Interpolates the thresholds to the target value.
+%
+% Input:
+%     target  -  value to interpolate to (must be nominal, i.e. threshold indices)
+%     thresholds  -  list of threhsolds to interpolate over
+%
+% Outputs:
+%     threshold  -  interpolated threhsold
 %
 % 6/XX/17   xd  wrote it
 
