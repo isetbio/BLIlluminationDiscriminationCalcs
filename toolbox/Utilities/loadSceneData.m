@@ -5,9 +5,12 @@ function scene = loadSceneData(folderName,imageName)
 % Preferences are used to find the right directory.
 % 
 % Inputs:
-% folderName - name of folder on ColorShare in which the data resides
-% imageNname - name of the original image used to create the scene, this is
-%              not the name of the scene file
+%     folderName  -  name of folder on ColorShare in which the data resides
+%     imageNname  -  name of the original image used to create the scene, 
+%                    this is not the name of the scene file
+%
+% Outputs:
+%     scene  -  ISETBIO scene file
 %
 % 3/12/2015   xd  wrote it
 

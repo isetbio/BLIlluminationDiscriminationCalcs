@@ -6,6 +6,13 @@ function opticalImage = loadOpticalImageDataWithRDT(folderName,imageName)
 % auto-validation for each push can read data from the server instead of
 % a local hard disk.
 %
+% Inputs:
+%     folderName  -  folder and subfolder to load opticalimage from
+%     imageName   -  file name to load (name of original image, not oi)
+% 
+% Outputs:
+%     opticalImage  -  ISETBIO opticalimage
+%
 % 4/24/17  xd  wrote it
 
 % Path to OI on archiva

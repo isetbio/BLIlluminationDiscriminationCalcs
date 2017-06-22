@@ -6,8 +6,11 @@ function newoi = resizeOI(oi,fov)
 % OI.
 %
 % Inputs:
-%   oi - original OI
-%   fov - target fov. This should be less than the original fov of the OI.
+%     oi - original OI
+%     fov - target fov. This should be less than the original fov of the OI.
+%
+% Outputs:
+%     newoi  -  resized opticalimage
 %
 % xd  4/22/2016 wrote it
 % xd  5/19/2016 added comments and formatting
