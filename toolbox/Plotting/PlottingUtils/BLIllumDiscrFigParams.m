@@ -1,12 +1,31 @@
-function figParams = BLIllumDiscrFigParams(figParams, modifier)
-% figParams = BLIllumDiscrFigParams(figParams, modifier)
+function figParams = BLIllumDiscrFigParams(varargin)
+% figParams = BLIllumDiscrFigParams(figParams,modifier)
 % 
 % Sets figure parameters for this project. Adapted from example code
 % by David Brainard.
 %
+% Inputs:
+%     figParams  -  struct containing any existing information for figure
+%                   formatting. can be empty.
+%     modifier   -  string determining a specific type of plot which may
+%                   add or modify existing parameters
+%
+% Output:
+%     figParams  -  struct containing figure formatting parameters tailored
+%                   for the desired plot
+%
 % 6/20/16  xd  wrote it
-if notDefined('modifier'), modifier = ''; end;
 
+%% Parse inputs
+p = inputParser;
+p.addOptional('figParams',[],@(X) isstruct(X) || isempty(X));
+p.addOptional('modifier','',@ischar);
+p.parse(varargin{:});
+
+figParams = p.Results.figParams;
+modifier  = p.Results.modifier;
+
+%% Set params
 figParams.basicSize = 700;
 figParams.position = [100 100 figParams.basicSize round(420/560*figParams.basicSize)];
 figParams.sqPosition = [100 100 round(7/7*figParams.basicSize) round(7/7*figParams.basicSize)];

@@ -15,9 +15,10 @@ function plotAllThresholds(calcIDStr,varargin)
 % noise. Specify the index of 1 Noise Type and leave the other as 0, in the
 % format [Poisson Gaussian].
 parser = inputParser;
-parser.addParameter('NoiseIndex', [1 0], @isnumeric);
+parser.addRequired('calcIDStr',@ischar);
+parser.addParameter('NoiseIndex',[1 0],@isnumeric);
 parser.addParameter('Reset',false,@islogical);
-parser.parse(varargin{:});
+parser.parse(calcIDStr,varargin{:});
 
 %% Load the data and calcParams here
 [data,calcParams] = loadModelData(calcIDStr);
@@ -25,7 +26,7 @@ parser.parse(varargin{:});
 % PlotInfo things
 figParams = BLIllumDiscrFigParams;
 plotInfo  = createPlotInfoStruct;
-plotInfo.stimLevels = calcParams.illumLevels;
+plotInfo.stimLevels = calcParams.stimLevels;
 plotInfo.colors = figParams.colors;
 plotInfo.xlabel = sprintf('%s Noise Levels',subsref({'Poisson' 'Gaussian'},struct('type','{}','subs',{{find(parser.Results.NoiseIndex==0,1)}})));
 plotInfo.ylabel = 'Stimulus Levels (\DeltaE)';
@@ -52,7 +53,7 @@ if isempty(thresholds) || parser.Results.Reset
     thresholds = zeros(size(formattedData{1},2),length(calcParams.colors));
     for ii = 1:size(thresholds,2)
         thresholds(:,ii) = multipleThresholdExtraction(formattedData{ii},...
-                                                       plotInfo.criterion,calcParams.illumLevels,...
+                                                       plotInfo.criterion,calcParams.stimLevels,...
                                                        calcParams.testingSetSize,false,...
                                                        calcParams.colors{ii});
     end

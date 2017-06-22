@@ -33,13 +33,13 @@ p.parse(data,varargin{:});
 % shouldn't affect the outcome too much.
 criterion      = p.Results.criterion/100;
 stimLevels     = p.Results.stimLevels;
-numTrials      = p.Results.numTrials;
+numTrials      = 100;%p.Results.numTrials;
 data           = p.Results.data(:) * numTrials / 100;
 
 % Need to remove lapse rate if data does not reach 100%. Palamedes gives
 % unreasonable results otherwise.
 paramsEstimate = [10 5 0.5 0.05];
-paramsFree     = [1 1 0 (mean(data(end-4:end)) > 90)]; 
+paramsFree     = [1 1 0 (mean(data(end-4:end)) > 99)]; 
 outOfNum       = repmat(numTrials,length(stimLevels),1);
 PF             = @PAL_Weibull;
 lapseLimits    = [0 0.5];
