@@ -7,7 +7,7 @@ function allPaths = getEMPaths(sensor,numPaths,varargin)
 % BLIlluminationDiscriminationCalcs
 %
 % Inputs:
-%    sensor  - The sensor with which to generate the eye movement paths.
+%    sensor   - The sensor with which to generate the eye movement paths.
 %    numPaths - The total number of paths desired
 %
 %  {name-value pairs}
@@ -18,8 +18,9 @@ function allPaths = getEMPaths(sensor,numPaths,varargin)
 %    'saccades' - A struct containing information relevant for generating
 %                 saccadic eye movement. This will used along with the
 %                 fixational eye movements if specified.
-%  {fields}
-%     n         - The total number of positions (there will be n-1 saccades)
+%
+%                 {fields}
+%                 n - The total number of positions (there will be n-1 saccades)
 %
 %    'sPath'    - A pre-generated saccadic eye movement path.  This will
 %                 used along with the fixational eye movements if specified.
@@ -32,6 +33,9 @@ function allPaths = getEMPaths(sensor,numPaths,varargin)
 %                 entry. If this is set as an input, this function will
 %                 only generate a set of fixation eye movements and add it
 %                 to the fullPath variable.
+% 
+% Outputs:
+%    allPaths  -  n x 2 x numPaths matrix containing all generated paths
 %
 % 7/27/15  xd  wrote it
 % 8/5/15   xd  added optional sPath parameter
@@ -95,6 +99,7 @@ for ii = 1:numPaths
 end
 
 %% Adjust the final path
+%
 % Since we do not check the path locations after adding the fixational eye
 % movements, it is possible that a few positions are actually out of the
 % bounding area. We fix this by simply setting any positions outside the

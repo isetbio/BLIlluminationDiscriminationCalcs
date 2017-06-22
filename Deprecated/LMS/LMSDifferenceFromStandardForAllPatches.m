@@ -56,7 +56,5 @@ for ii = 1:length(colors)
     end
 end
 
-%% L-M and (L+M)-S?
-
 end
 
