@@ -55,11 +55,13 @@ data           = p.Results.data(:);
 % unreasonable results otherwise.
 paramsEstimate = [10 5 0.5 0.05];
 paramsFree     = [1 1 0 (mean(data(end-4:end)) > 90)]; 
-outOfNum       = repmat(numTrials,1,length(data));
+if length(numTrials) == 1
+    numTrials       = repmat(numTrials,1,length(data));
+end
 PF             = @PAL_Weibull;
 lapseLimits    = [0 0.5];
 options        = PAL_minimize('options');
-data           = data(:) * numTrials / 100;
+data           = data(:) .* numTrials(:) / 100;
 % disp(num2str(mean(data(end-4:end))))
 
 %% Map onto true illuminant values if needed
@@ -90,11 +92,11 @@ end
 
 %% Fit the data to a curve
 if paramsFree(4)
-    paramsValues = PAL_PFML_Fit(stimLevels(:), data(:), outOfNum(:), ...
+    paramsValues = PAL_PFML_Fit(stimLevels(:), data(:), numTrials(:), ...
         paramsEstimate, paramsFree, PF, 'SearchOptions', options,...
         'lapseLimits',lapseLimits);
 else
-    paramsValues = PAL_PFML_Fit(stimLevels(:), data(:), outOfNum(:), ...
+    paramsValues = PAL_PFML_Fit(stimLevels(:), data(:), numTrials(:), ...
         paramsEstimate, paramsFree, PF, 'SearchOptions', options);
 end
 
