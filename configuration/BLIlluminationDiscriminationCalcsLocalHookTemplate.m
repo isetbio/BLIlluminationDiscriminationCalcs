@@ -67,7 +67,7 @@ else
                     clonedGhPagesLocation = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscrimCalcsGhPages/BLIlluminationDiscriminationCalcs';
                     validationRootDir = fullfile(projectBaseDir,'validation');
                 otherwise
-                    sharedRootDir = fullfile(userpath,'output');
+                    sharedRootDir = fullfile(strrep(userpath,':',''),'output');
                     clonedWikiDir = '';
                     clonedGhPagesLocation = '';
                     validationRootDir = fullfile(projectBaseDir,'validation');
