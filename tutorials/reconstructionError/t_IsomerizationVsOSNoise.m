@@ -42,10 +42,10 @@ numberOfSamples = 10;
 comparisonStimLevel = 50;
 
 % Type of os. Options are 'linear' 'biophys' 'identity'.
-osType = 'linear';
+osType = 'biophys';
 
 % Type of cone to plot, 2 = L, 3 = M, 4 = S
-coneTypeToMatch = 3;
+coneTypeToMatch = 2;
 
 %% Load optical images and create mosaic
 %
@@ -58,6 +58,7 @@ mosaic.integrationTime = integrationTimeInSeconds;
 mosaic.noiseFlag       = 'none';
 mosaic.os              = osCreate(osType);
 largeMosaic            = mosaic.copy;
+mosaic.os.timeStep     = integrationTimeInSeconds;
 
 % Load optical images we will use. One standard OI and one comparison OI
 % will be loaded for this script.
@@ -68,15 +69,6 @@ standardOIPool = cell(1, length(standardOIList));
 
 OI = loadOpticalImageData('Neutral/Standard',strrep(standardOIList{1},'OpticalImage.mat',''));
 OI2 = loadOpticalImageData('Neutral/BlueIllumination',['blue' num2str(comparisonStimLevel) 'L-RGB']);
-
-% Resize the large OI so that the difference in size is even.
-largeMosaic.fov = oiGet(OI,'fov');
-colPadding = (largeMosaic.cols-mosaic.cols)/2;
-rowPadding = (largeMosaic.rows-mosaic.rows)/2;
-if mod(colPadding,1), largeMosaic.cols = largeMosaic.cols + 1; end
-if mod(rowPadding,1), largeMosaic.rows = largeMosaic.rows + 1; end
-colPadding = (largeMosaic.cols-mosaic.cols)/2;
-rowPadding = (largeMosaic.rows-mosaic.rows)/2;
 
 % Get the LMS absorptions for both OI. Also calculate what the standard
 % deviation for the Gaussian noise should be based on the absorptions in
@@ -91,12 +83,19 @@ gaussianStd = sqrt(mean2(largeMosaic.applyEMPath(LMS,'padRows',0,'padCols',0)));
 % for both OI. We calculate noise free versions of both the isomerizations
 % as well as the cone current.
 mosaic.emGenSequence(numberOfEMPositions);
-isomerizationData = mosaic.applyEMPath(LMS,'padRows',rowPadding,'padCols',colPadding);
-coneCurrentData   = mosaic.os.compute(isomerizationData/integrationTimeInSeconds,mosaic.pattern);
+isomerizationData    = mosaic.compute(OI);
+mosaic.computeCurrent;
+coneCurrentData = mosaic.current;
 
-% Calculate mean isomerizations and cone current data for second OI
-isomerizationData2 = mosaic.applyEMPath(LMS2,'padRows',rowPadding,'padCols',colPadding);
-coneCurrentData2   = mosaic.os.compute(isomerizationData2/integrationTimeInSeconds,mosaic.pattern);
+isomerizationData2   = mosaic.compute(OI2);
+mosaic.computeCurrent;
+coneCurrentData2 = mosaic.current;
+% isomerizationData = mosaic.applyEMPath(LMS,'padRows',rowPadding,'padCols',colPadding);
+% coneCurrentData   = mosaic.os.compute(isomerizationData/integrationTimeInSeconds,mosaic.pattern);
+% 
+% % Calculate mean isomerizations and cone current data for second OI
+% isomerizationData2 = mosaic.applyEMPath(LMS2,'padRows',rowPadding,'padCols',colPadding);
+% coneCurrentData2   = mosaic.os.compute(isomerizationData2/integrationTimeInSeconds,mosaic.pattern);
 
 %% Load figParams 
 figParams = BLIllumDiscrFigParams;
@@ -209,9 +208,9 @@ set(h,'XLim',[min(xaxis) max(xaxis)]);
 % classifier may perform on the dataset. This is because if the two signals
 % are different, then the line should veer away from the identity. In this
 % case, a simple classifier might just add up all the values and ask which
-% one greater. If the mean of the noise distribution is relatively close to
-% the identity with respect to the variance of the noise, then it becomes
-% difficult to make accurate classifications.
+% one is greater. If the mean of the noise distribution is relatively close
+% to the identity with respect to the variance of the noise, then it
+% becomes difficult to make accurate classifications.
 figure('Position',figParams.sqPosition); hold on;
 for ii = 1:numberOfSamples
     plot(cumsum(theIsomerizationToPlotWithNoise(ii,:)),cumsum(theIsomerizationToPlotWithNoise2(ii,:)),'k');
