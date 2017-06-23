@@ -7,7 +7,7 @@
 
 clear; close all;
 %% Load data
-load('UniformIndividualFitThresholds.mat');
+load('FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant_UniformModelFits.mat');
 
 %% Plot data
 numSubjects = length(perSubjectExperimentalThresholds);
@@ -25,7 +25,7 @@ for ii = 1:numSubjects
     y = perSubjectFittedThresholds{ii};
     
     for jj = 1:length(x)
-        plot(x(jj),y(jj),'.','Color',c{jj},'MarkerSize',20);
+        plot(x(jj),y(jj),'.','Color',c{jj},'MarkerSize',50);
     end
 end
 
