@@ -44,11 +44,14 @@ savePerf = true;
 % Whether to dynamically scale axes
 scaleAxes = false;
 
+% Paths to data files
+pathToFixationData = '/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCodeTempLocation/Exp8ProcessedData/';
+pathToExperimentData = '/Users/Shared/Matlab/Experiments/Newcastle/stereoChromaticDiscriminationExperiment/analysis/FitThresholdsAllSubjectsExp8.mat';
+
 %% Some constant values
 % Subject ID's
 % DON'T CHANGE
 orderOfSubjects = {'azm','bmj', 'vle', 'vvu', 'idh','hul','ijj','eom','dtm','ktv'}';
-pathToFixationData = '/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCodeTempLocation/Exp8ProcessedData/';
 
 %% Preallocate some space for data
 %
@@ -78,7 +81,7 @@ for subjectNumber = 1:length(orderOfSubjects)
     r2 = r2.resultData;
     
     load('plotInfoMatConstant_1deg.mat')
-    load('/Users/Shared/Matlab/Experiments/Newcastle/stereoChromaticDiscriminationExperiment/analysis/FitThresholdsAllSubjectsExp8.mat')
+    load(pathToExperimentData)
     
     %% Load dummy data to preallocate results matrix
     analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');

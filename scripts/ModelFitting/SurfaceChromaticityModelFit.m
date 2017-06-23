@@ -108,16 +108,3 @@ end
 
 disp(['Uniform Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
 
-
-
-% %% Calculate LSE
-% LSE = zeros(length(perSubjectFittedThresholds),1);
-% for i = 1:length(perSubjectFittedThresholds)
-%     LSE(i) = sqrt(sum((perSubjectFittedThresholds{i} - perSubjectExperimentalThresholds{i}).^2));
-% end
-% 
-% %%
-% if saveData
-%     save([saveFilename '.mat'],'perSubjectFittedNoiseLevel','perSubjectExperimentalThresholds',...
-%         'perSubjectFittedThresholds','LSE');
-% end

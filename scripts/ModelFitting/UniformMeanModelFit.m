@@ -12,12 +12,12 @@ clear;% close all;
 % This is the calcIDStr for the SVM dataset we want to use to fit to the
 % % experimental results.
 modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.93_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.00_1.00_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_0.00_1.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_1.00_0.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.93_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.00_1.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.00_1.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_1.00_0.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
 
 % If set to true, each subject fit get's it's own individual figure window.
 % Otherwise, everything is plotted as a subplot on 1 figure.
@@ -28,8 +28,11 @@ showPlots = false;
 
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
-saveData = true;
+saveData = false;
 saveFilename = [modelDataIDStr '_UniformModelFits'];
+
+% Path to data
+pathToExperimentData = '/Users/Shared/Matlab/Experiments/Newcastle/stereoChromaticDiscriminationExperiment/analysis/FitThresholdsAllSubjectsExp8.mat';
 
 %% Subject ID's
 % DON'T CHANGE
@@ -60,7 +63,7 @@ allDirs = getAllSubdirectoriesContainingString(fullfile(analysisDir,'SimpleChoos
 
 for subjectNumber = 1:length(orderOfSubjects)
     subjectId = orderOfSubjects{subjectNumber};
-    load('/Users/Shared/Matlab/Experiments/Newcastle/stereoChromaticDiscriminationExperiment/analysis/FitThresholdsAllSubjectsExp8.mat')
+    load(pathToExperimentData)
     
     % Create some label information for plotting.
     stimLevels = 1:50;
@@ -90,9 +93,11 @@ for subjectNumber = 1:length(orderOfSubjects)
         'NoiseVector',calcParams.noiseLevels,'NewFigure',singlePlots,'CreatePlot',showPlots);
     perSubjectExperimentalThresholds{subjectNumber} = [b y g r];
     
-    theTitle = get(gca,'title');
-    theTitle = theTitle.String;
-    title(strrep(theTitle,'Data fitted at',[subjectId ',']));
+    if showPlots
+        theTitle = get(gca,'title'); %#ok<*UNRCH>
+        theTitle = theTitle.String;
+        title(strrep(theTitle,'Data fitted at',[subjectId ',']));
+    end
 end
 
 if ~singlePlots && showPlots
@@ -112,10 +117,11 @@ semModelThreshold   = std(cell2mat(perSubjectExperimentalThresholds))/sqrt(10);
 plotAndFitThresholdsToRealData(pI,meanExpThreshold,meanModelThreshold,'ThresholdError',semExpThreshold,'DataError',semModelThreshold,...
     'NoiseVector',calcParams.noiseLevels,'NewFigure',true,'CreatePlot',showPlots);
 
-ylim([0 20]);
-
-title(['Uniform Aggregate Fit, ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
-disp(['Uniform Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
+if showPlots
+    ylim([0 20]);
+    title(['Uniform Aggregate Fit, ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
+    disp(['Uniform Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
+end
 
 %% Calculate LSE
 RMSE = zeros(length(perSubjectFittedThresholds),1);
