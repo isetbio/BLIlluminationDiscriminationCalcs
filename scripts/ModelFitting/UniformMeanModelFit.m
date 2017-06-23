@@ -7,25 +7,28 @@
 % 6/20/17   xd  change file naming conventions
 
 clear;% close all;
-%% Some parameters
-%
-% If set to true, each subject fit get's it's own individual figure window.
-% Otherwise, everything is plotted as a subplot on 1 figure.
-singlePlots = false;
+%% Set parameters
 
 % This is the calcIDStr for the SVM dataset we want to use to fit to the
 % % experimental results.
 modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
-% modelDataIDStr = 'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
-% modelDataIDStr = 'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
-% modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.93_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
-% modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.00_1.00_FOV1.00_PCA400_ABBA_SVM_Constant';
-% modelDataIDStr = 'FirstOrderModel_LMS_0.00_1.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
-% modelDataIDStr = 'FirstOrderModel_LMS_1.00_0.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+modelDataIDStr = 'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
+modelDataIDStr = 'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.93_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
+modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.00_1.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+modelDataIDStr = 'FirstOrderModel_LMS_0.00_1.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+modelDataIDStr = 'FirstOrderModel_LMS_1.00_0.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+
+% If set to true, each subject fit get's it's own individual figure window.
+% Otherwise, everything is plotted as a subplot on 1 figure.
+singlePlots = false;
+
+% Whether to just generate to data or to show the plots
+showPlots = false;
 
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
-saveData = false;
+saveData = true;
 saveFilename = [modelDataIDStr '_UniformModelFits'];
 
 %% Subject ID's
@@ -42,7 +45,7 @@ perSubjectExperimentalThresholds = cell(length(orderOfSubjects),1);
 perSubjectFittedNoiseLevel = cell(length(orderOfSubjects),1);
 
 %% Calculation and plotting loop
-if ~singlePlots
+if ~singlePlots && showPlots
     figure('Position',[150 238 2265 1061]);
 end
 
@@ -79,12 +82,12 @@ for subjectNumber = 1:length(orderOfSubjects)
     y = nanmean([d1.Yellower.threshold,d2.Yellower.threshold]);
 
     % Plot a the thresholds along with the model predictions.
-    if ~singlePlots
+    if ~singlePlots && showPlots
         subplot(2,5,subjectNumber);
     end
     [perSubjectFittedThresholds{subjectNumber},perSubjectFittedNoiseLevel{subjectNumber}]...
         = plotAndFitThresholdsToRealData(pI,aggregateThresholds,[b y g r],...
-        'NoiseVector',calcParams.noiseLevels,'NewFigure',singlePlots);
+        'NoiseVector',calcParams.noiseLevels,'NewFigure',singlePlots,'CreatePlot',showPlots);
     perSubjectExperimentalThresholds{subjectNumber} = [b y g r];
     
     theTitle = get(gca,'title');
@@ -92,23 +95,22 @@ for subjectNumber = 1:length(orderOfSubjects)
     title(strrep(theTitle,'Data fitted at',[subjectId ',']));
 end
 
-if ~singlePlots
+if ~singlePlots && showPlots
     st = suptitle('Constant');
     set(st,'FontSize',30);
 end
-% close all;
 
 %% Fit the aggregate
 
 % Calculate the mean and std of thresholds for both the experimental
 % condition as well as the model performance. Use these to make plots.
-Z   = mean(cell2mat(perSubjectFittedThresholds));
-Zs  = std(cell2mat(perSubjectFittedThresholds))/sqrt(10);
-Zr  = mean(cell2mat(perSubjectExperimentalThresholds));
-Zrs = std(cell2mat(perSubjectExperimentalThresholds))/sqrt(10);
+meanExpThreshold    = mean(cell2mat(perSubjectFittedThresholds));
+semExpThreshold     = std(cell2mat(perSubjectFittedThresholds))/sqrt(10);
+meanModelThreshold  = mean(cell2mat(perSubjectExperimentalThresholds));
+semModelThreshold   = std(cell2mat(perSubjectExperimentalThresholds))/sqrt(10);
 
-plotAndFitThresholdsToRealData(pI,Z,Zr,'ThresholdError',Zs,'DataError',Zrs,...
-    'NoiseVector',calcParams.noiseLevels,'NewFigure',true);
+plotAndFitThresholdsToRealData(pI,meanExpThreshold,meanModelThreshold,'ThresholdError',semExpThreshold,'DataError',semModelThreshold,...
+    'NoiseVector',calcParams.noiseLevels,'NewFigure',true,'CreatePlot',showPlots);
 
 ylim([0 20]);
 
