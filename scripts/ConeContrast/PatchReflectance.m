@@ -1,15 +1,22 @@
+%% PatchReflectance
+%
+% This script plots the mean patch reflectance of two different patches in
+% a stimuli on top of one another. By default, it loads the target scene
+% from the constant-scene condition experiment.
+%
+% 6/XX/17  xd  wrote it
 
 clear; close all;
-%%
+%% Choose patched and fov
 patches = [3 162];
 fov = 1;
 
-%%
+%% Load scene and split into patches
 t = loadSceneData('Constant_FullImage/Standard','CT1Blue0-RGB');
 t = splitSceneIntoMultipleSmallerScenes(t,fov);
 t = t(patches);
 
-%%
+%% Retrieve and calculate mean reflectance
 r1 = sceneGet(t{1},'reflectance');
 r2 = sceneGet(t{2},'reflectance');
 
@@ -18,7 +25,7 @@ m2 = mean(reshape(r2,[],51));
 
 w = sceneGet(t{1},'wavelength');
 
-%%
+%% Plot
 figure; hold on;
 plot(w,m1,'LineWidth',2);
 plot(w,m2,'LineWidth',2);
