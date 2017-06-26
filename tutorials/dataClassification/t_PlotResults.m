@@ -23,7 +23,7 @@ ColorMapping = containers.Map({'Blue' 'Green' 'Yellow' 'Red'},{'b.-' 'g.-' 'y.-'
 
 cl = {'kNN' 'DA' 'SVM'};
 stimLevels = 1:2:50;
-criterion  = 70.9;
+criterion  = 70.71;
 
 tN = zeros(3,1);
 % Actual code to plot the data
