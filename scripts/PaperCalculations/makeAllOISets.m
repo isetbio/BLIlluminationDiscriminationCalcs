@@ -7,7 +7,7 @@ function makeAllOISets(numCores)
 %
 % 6/20/17   xd  wrote it
 
-parpool(numCores); % set to however many the machine can reasonable handle
+p = parpool(numCores); % set to however many the machine can reasonable handle
 
 %% Constant
 c.calcIDStr = 'Constant';
@@ -32,4 +32,7 @@ c.calcIDStr = 'NM2';
 c.cacheFolderList = {'NM2', 'NM2_FullImage'};
 c.sensorFOV = 1;
 generateOIForParallelComputing(c);
+
+%% Shutdown parallel stuff
+delete(p);
 end
