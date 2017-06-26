@@ -16,7 +16,7 @@ savePlots = false;
 
 %% Plot
 
-% DO NOT TOUCH THESE VARIABLES. These  are settings that are supposed to be
+% DO NOT TOUCH THESE VARIABLES. These are settings that are supposed to be
 % constant and representative of experimental conditions and/or the
 % organizational structure of the plotting code.
 ColorMapping = containers.Map({'Blue' 'Green' 'Yellow' 'Red'},{'b.-' 'g.-' 'y.-' 'r.-'});
