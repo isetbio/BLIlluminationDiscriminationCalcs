@@ -48,7 +48,7 @@ emMosaic.emPositions = zeros(emMosaicParams.numberOfEMPositions,2);
 OI = loadOpticalImageData('Constant_1/Standard','CT1blue0-RGB');
 
 %% Calculate NF Isomerizations
-%
+
 % We compute the noise free currents. These will be used to determine the
 % noise we will be testing.
 staticIsom = staticMosaic.compute(OI,'currentFlag',false);
