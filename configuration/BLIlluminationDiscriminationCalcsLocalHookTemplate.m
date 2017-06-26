@@ -56,8 +56,6 @@ else
             sharedRootDir = fullfile(filesep,'Volumes','Users1','Dropbox (Aguirre-Brainard Lab)');
             clonedWikiDir = '/Users/Shared/GitWebSites/BLIlluminationDiscriminationCalcs.wiki';
             clonedGhPagesLocation = '/Users/Shared/GitWebSites/BLIlluminationDiscriminationCalcs';
-            validationRootDir = fullfile(projectBaseDir,'validation');
-            
         otherwise
             % Some unspecified machine, try user specific customization
             switch(sysInfo.userShortName)
@@ -65,15 +63,14 @@ else
                     sharedRootDir = fullfile(filesep, 'Users', 'xiaomaoding', 'Dropbox (Aguirre-Brainard Lab)');
                     clonedWikiDir = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcsWiki/BLIlluminationDiscriminationCalcs.wiki';
                     clonedGhPagesLocation = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscrimCalcsGhPages/BLIlluminationDiscriminationCalcs';
-                    validationRootDir = fullfile(projectBaseDir,'validation');
                 otherwise
                     sharedRootDir = fullfile(strrep(userpath,':',''),'output');
                     clonedWikiDir = '';
                     clonedGhPagesLocation = '';
-                    validationRootDir = fullfile(projectBaseDir,'validation');
             end
     end 
 end
+validationRootDir = fullfile(projectBaseDir,'validation');
 
 %% This section might work on any computer
 % Use this for DropBox data path, might need to change based on local settings
