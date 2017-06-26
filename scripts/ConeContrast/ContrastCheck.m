@@ -77,7 +77,7 @@ for ii = 1:length(patches)
     contrasts{ii} = tempContrasts;
 end
 
-%% 
+%% Plot
 figure('Position',[0 0 2100 500]);
 subplot(1,3,1);
 p = bar(1:4, contrasts{1}, 'grouped');
