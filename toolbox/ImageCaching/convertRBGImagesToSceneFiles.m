@@ -44,7 +44,7 @@ extraData.subSamplingSvector = calcParams.S;
 % Generate an isetbio display object to model the display used to
 % obtain the calibration data, and save this.
 tic;
-brainardLabDisplay = ptb.GenerateIsetbioDisplayObjectFromPTBCalStruct('BrainardLabStereoLeftDisplay', calStructOBJ.cal, extraData, false);
+brainardLabDisplay = ptb.GenerateIsetbioDisplayObjectFromPTBCalStruct('BrainardLabDisplay', calStructOBJ.cal, extraData, false);
 fprintf('Display object generation took %2.1f seconds\n', toc);
 
 %% Precompute the scene files
