@@ -1,5 +1,5 @@
-function croppedoi = oiCrop(oi, cropRect)
-% croppedoi = oiCrop(oi, cropRect)
+function croppedoi = oiCrop(oi,cropRect)
+% croppedoi = oiCrop(oi,cropRect)
 % 
 % This function takes in an ISETBIO optical image and crops it according to
 % the cropRect parameter. 

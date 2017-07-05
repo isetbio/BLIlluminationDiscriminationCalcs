@@ -7,7 +7,7 @@
 
 clear; close all;
 %% Load data
-load('UniformIndividualFitThresholds.mat');
+load('FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant_UniformModelFits.mat');
 
 %% Plot data
 numSubjects = length(perSubjectExperimentalThresholds);
@@ -15,8 +15,8 @@ figParams = BLIllumDiscrFigParams;
 c = figParams.colors;
 c = c([1 4 2 3]);
 
-figure; hold on;
 % Plot identity line
+figure; hold on;
 plot([0 1000],[0 1000],'k','linewidth',2);
 
 % Plot data
@@ -25,7 +25,7 @@ for ii = 1:numSubjects
     y = perSubjectFittedThresholds{ii};
     
     for jj = 1:length(x)
-        plot(x(jj),y(jj),'.','Color',c{jj},'MarkerSize',20);
+        plot(x(jj),y(jj),'.','Color',c{jj},'MarkerSize',50);
     end
 end
 
@@ -39,7 +39,6 @@ axis square
 
 set(gca,'FontSize',figParams.axisFontSize,'FontName',figParams.fontName,'LineWidth',figParams.axisLineWidth);
 set(gca,'XTick',get(gca,'YTick'));
-
 
 xlabel('Experimental Thresholds','FontSize',figParams.labelFontSize,'FontName',figParams.fontName);
 ylabel('Fitted Thresholds','FontSize',figParams.labelFontSize,'FontName',figParams.fontName);

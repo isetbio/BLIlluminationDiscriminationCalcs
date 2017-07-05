@@ -19,7 +19,7 @@ for subjectNumber = 1:length(orderOfSubjects)
 end
 
 %% Calc thresholds
-folderToLoad = 'OneClass_NM2';
+folderToLoad = 'OneClass_NM1';
 f = getFilenamesInDirectory(folderToLoad);
 
 % Take weighted mean

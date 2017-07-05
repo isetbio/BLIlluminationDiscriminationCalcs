@@ -4,6 +4,10 @@ function plotReflectancesOfAllPatches(largeScene,fov)
 % Plots the mean reflectances for each patch returned by the split scenes
 % function.
 %
+% Inputs:
+%    largeScene  -  the scene to plot
+%    fov  -  the size of each patch
+% 
 % 7/13/16  xd  wrote it
 
 %% Set up variables

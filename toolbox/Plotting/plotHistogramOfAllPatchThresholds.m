@@ -5,8 +5,13 @@ function plotHistogramOfAllPatchThresholds(calcIDStr)
 % levels. Each subplot contains threshold histograms for all 4 color
 % directions for a particular noise level.  Noise levels with >90% NaN
 % for thresholds for any color direction across the patches will be
-% excluded. calcIDStr specifies the calculation set
+% excluded. 
 %
+% Input:
+%     calcIDStr  -  name of calculation to plot. Since this function plots
+%                   many patches, do NOT include the number label at the
+%                   end of the name
+% 
 % 7/18/16  xd  wrote it
 
 %% Load file names

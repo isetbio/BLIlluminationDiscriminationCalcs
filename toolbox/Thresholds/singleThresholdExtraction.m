@@ -1,5 +1,5 @@
-function [threshold,paramsValues] = singleThresholdExtraction(data,criterion,stimLevels,numTrials)
-% [threshold,paramsValues] = singleThresholdExtraction(data,criterion,stimLevels,numTrials)
+function [threshold,paramsValues,stimLevels] = singleThresholdExtraction(data,varargin)
+% [threshold,paramsValues,stimLevels] = singleThresholdExtraction(data,varargin)
 %
 % This function fits a cumulative Weibull to the data variable and returns
 % the threshold at the criterion as well as the parameters needed to plot the
@@ -10,52 +10,101 @@ function [threshold,paramsValues] = singleThresholdExtraction(data,criterion,sti
 % be NaN and the paramsValues will a zero row vector. It is also assumed
 % that the criterion is given as a percentage.
 %
-% 6/21/16  xd  wrote it
-
-if notDefined('stimLevels'), stimLevels = 1:length(data); end;
-if notDefined('numTrials'), numTrials = 100; end;
-
-%% Check to make sure data is fittable
+% Inputs:
+%     data  -  model threshold data
+% {ordered optional}
+%     criterion           -  what percent correct to extract threshold (default = 70.71)
+%     stimLevels          -  vector of all stimulus steps (default = 1:length(data))
+%     numTrials           - number of trials per step (default = 100)
+%     useTrueIlluminants  -  use true or nominal illumination steps (default = true)
+%     color               -  string that specifies with illumination direction color (default = 'blue')
+%     illumPath           -  path to where true illuminant values are stored
 %
-% We check the average value of the first 5 and last 5 numbers to get an
-% idea of if the data is fittable to a curve. If the first 5 values are
-% less than criterion and the last 5 are greater than criterion+10, we proceed with the
-% fitting.  Otherwise, we return NaN for the threshold, which indicates that
-% the data cannot be fit.
-% if mean(data(1:5)) > criterion+10 || mean(data(end-4:end)) < criterion, threshold = nan; paramsValues = zeros(1,4); return; end;
+% Outputs:
+%     threshold    -  threshold determined from fitting a Weibull to the data
+%     paramValues  -  parameters for the fit given by Palamedes
+%     stimLevels   -  the stimulus steps used for the fit
+%
+% 6/21/16  xd  wrote it
+% 6/19/17  xd  editted to match experimental set up
+
+p = inputParser;
+defaultIlluminantPath = '/Users/xiaomaoding/Documents/stereoChromaticDiscriminationExperiment/IlluminantsInDeltaE.mat';
+
+p.addRequired('data',@isnumeric);
+p.addOptional('criterion',70.71,@isnumeric);
+p.addOptional('stimLevels',1:length(data),@isnumeric);
+p.addOptional('numTrials',100,@isnumeric);
+p.addOptional('useTrueIlluminants',true,@islogical);
+p.addOptional('color','blue',@isstr);
+p.addOptional('illumPath',defaultIlluminantPath,@ischar);
+
+p.parse(data,varargin{:});
 
 %% Set some parameters for the curve fitting
-%
+
 % Our input criterion is a percentage which needs to converted to a decimal
 % value. The paramsEstimate is just a rough estimate of the results and
 % shouldn't affect the outcome too much.
-criterion      = criterion/100;
+criterion      = p.Results.criterion/100;
+stimLevels     = p.Results.stimLevels;
+numTrials      = p.Results.numTrials;
+data           = p.Results.data(:);
+
+% Need to remove lapse rate if data does not reach 100%. Palamedes gives
+% unreasonable results otherwise.
 paramsEstimate = [10 5 0.5 0.05];
-paramsFree     = [1 1 0 (mean(data(end-4:end)) > 99.5)]; % Need to remove lapse rate if data does not reach 100%
+paramsFree     = [1 1 0 (mean(data(end-4:end)) > 90)]; 
 if length(numTrials) == 1
-    outOfNum = repmat(numTrials,1,length(data));
-else
-    outOfNum = numTrials;
+    numTrials       = repmat(numTrials,1,length(data));
 end
 PF             = @PAL_Weibull;
 lapseLimits    = [0 0.5];
+options        = PAL_minimize('options');
+data           = data(:) .* numTrials(:) / 100;
+% disp(num2str(mean(data(end-4:end))))
 
-%% Some optimization settings for the fit
-%
-% Some parameters for the fit. These are set so that the functions make a
-% solid attempt at fitting before deciding that it is not possible.
-options = PAL_minimize('options');
+%% Map onto true illuminant values if needed
+if p.Results.useTrueIlluminants
+    % Load illuminants
+    illums = load(p.Results.illumPath);
+    
+    % Create lookup table
+    % Illuminants =  (1) 'blue' (2) 'green'  (3) 'red' (4) 'yellow'
+    % Based on experimental analysis code. See AnalyzeStaircaseViaFitToTrailsExp8.m
+    switch p.Results.color
+        case 'blue'
+            colorIdx = 1;
+        case 'green'
+            colorIdx = 2;
+        case 'red'
+            colorIdx = 3;
+        case 'yellow'
+            colorIdx = 4;
+        otherwise
+            colorIdx = nan;
+    end
+    illuminantLookUpTable = [(0:length(stimLevels))',  illums.illuminantDistance{colorIdx}(:,2)];    
+
+    mapIndices = arrayfun(@(X) find(illuminantLookUpTable(:,1) == X), stimLevels);
+    stimLevels = illuminantLookUpTable(mapIndices,2);
+end
 
 %% Fit the data to a curve
 if paramsFree(4)
-    paramsValues = PAL_PFML_Fit(stimLevels(:), data(:), outOfNum(:), ...
+    paramsValues = PAL_PFML_Fit(stimLevels(:), data(:), numTrials(:), ...
         paramsEstimate, paramsFree, PF, 'SearchOptions', options,...
         'lapseLimits',lapseLimits);
 else
-    paramsValues = PAL_PFML_Fit(stimLevels(:), data(:), outOfNum(:), ...
+    paramsValues = PAL_PFML_Fit(stimLevels(:), data(:), numTrials(:), ...
         paramsEstimate, paramsFree, PF, 'SearchOptions', options);
 end
 
-threshold = PF(paramsValues, criterion, 'inverse');
+threshold = PF(paramsValues,criterion,'inverse');
+
+if threshold < 1 
+    threshold = nan;
+end
+
 end
 

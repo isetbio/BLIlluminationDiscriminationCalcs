@@ -1,5 +1,5 @@
-function scene = getSceneFromRGBImage(calcParams, folderName, imageName, display)
-% scene = getSceneFromRGBImage(calcParams, folderName, imageName, display)
+function scene = getSceneFromRGBImage(calcParams,folderName,imageName,display)
+% scene = getSceneFromRGBImage(calcParams,folderName,imageName,display)
 %
 % Function to generate an ISETBIO scene from an RGB Image.  The scene
 % will also be saved to the appropriate project folder, determined by

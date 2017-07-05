@@ -3,6 +3,13 @@ function subdir = getAllSubdirectoriesContainingString(path,string)
 % 
 % Looks in a directory and returns all subdirectory names that contain a
 % given target string.
+%
+% Inputs:
+%     path    -  directory to search in
+%     string  -  string to look for
+% 
+% Outputs:
+%     subdir  -  cell array of subdirectories containing the 'string' input
 % 
 % 7/10/16  xd  wrote it
 

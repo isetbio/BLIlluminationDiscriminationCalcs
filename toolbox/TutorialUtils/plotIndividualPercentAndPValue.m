@@ -1,5 +1,5 @@
-function plotIndividualPercentAndPValue(data, ii, jj)
-% plotIndividualPercentAndPValue(data, ii, jj)
+function plotIndividualPercentAndPValue(data,ii,jj)
+% plotIndividualPercentAndPValue(data,ii,jj)
 %
 % This will plot a specific target data set from the tutorials.  Be sure to
 % load the data.mat file into a variable and call this function while

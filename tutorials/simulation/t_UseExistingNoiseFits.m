@@ -4,12 +4,14 @@
 %
 % 12/8/16  xd  wrote it
 
-clear; %close all;
+clear; close all;
 %% Load data
-load(fullfile(mfilename('fullpath'),'../../tutorialData/uniformIndividualFitThresholds'));
+% load(fullfile(mfilename('fullpath'),'../../tutorialData/uniformIndividualFitThresholds'));
+load('NeutralUniformFit');
 
 modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
 modelDataIDStr = 'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
+modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Neutral';
 
 singlePlots = false;
 
@@ -34,8 +36,18 @@ if ~singlePlots
     figure('Position',[150 238 2265 1061]);
 end
 orderOfSubjects = {'azm','bmj', 'vle', 'vvu', 'idh','hul','ijj','eom','dtm','ktv'}';
+load('Exp5AllData');
 for ii = 1:length(perSubjectFittedNoiseLevel)
-    expThreshold = perSubjectExperimentalThresholds{ii};
+    d1 = subject{ii}.Matched{1};
+    d2 = subject{ii}.Matched{2};
+    b = nanmean([d1.Bluer.threshold,d2.Bluer.threshold]);
+    g = nanmean([d1.Greener.threshold,d2.Greener.threshold]);
+    r = nanmean([d1.Redder.threshold,d2.Redder.threshold]);
+    y = nanmean([d1.Yellower.threshold,d2.Yellower.threshold]);
+    
+    expThreshold = [b y g r];
+    perSubjectExperimentalThresholds{ii} = expThreshold;
+%     expThreshold = perSubjectExperimentalThresholds{ii};
     
     noise = 1 + perSubjectFittedNoiseLevel{ii}/(noiseVector(2) - noiseVector(1));
     

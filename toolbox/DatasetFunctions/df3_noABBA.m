@@ -5,6 +5,23 @@ function [dataset,classes] = df3_noABBA(calcParams,targetPool,comparisonPool,kp,
 % purpose for this function is because our data originally had been
 % formatted without AB/BA and this allows us to reproduce old results.
 %
+% Inputs:
+%     calcParams  -  calcParams struct describing the parameters for this
+%                    calculation
+%     targetPool  -  cell array of isomerization matrices or matrix
+%                    corresponding to the target stimuli
+%     comparisonPool  -  cell array of isomerization matrices or matrix
+%                        corresponding to the comparison stimuli
+%     kp  -  multiplicative factor for Poisson noise
+%     kg  -  multiplicative factor for additive zero-mean Gaussian noise
+%     n   -  number of samples to generate
+%
+% Outputs:
+%     dataset  -  a set of vectorized isomerizations with appropriate noise
+%                 added with 50/50 distribution of the two classes. Rows
+%                 are observations and columns are features.
+%     classes  -  corresponding classes to the dataset output
+%
 % 6/2/16  xd  wrote it
 
 %% Get size of photon data

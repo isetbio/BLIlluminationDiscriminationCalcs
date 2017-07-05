@@ -1,6 +1,6 @@
 %% t_PlotResults
 % 
-% This function was written to  be used in conjunction with
+% This function was written to be used in conjunction with
 % ComparingClassifiersWithData. This is not guaranteed to work with data
 % generated through other means (due to formatting).
 %
@@ -16,14 +16,14 @@ savePlots = false;
 
 %% Plot
 
-% DO NOT TOUCH THESE VARIABLES. These  are settings that are supposed to be
+% DO NOT TOUCH THESE VARIABLES. These are settings that are supposed to be
 % constant and representative of experimental conditions and/or the
 % organizational structure of the plotting code.
 ColorMapping = containers.Map({'Blue' 'Green' 'Yellow' 'Red'},{'b.-' 'g.-' 'y.-' 'r.-'});
 
 cl = {'kNN' 'DA' 'SVM'};
 stimLevels = 1:2:50;
-criterion  = 70.9;
+criterion  = 70.71;
 
 tN = zeros(3,1);
 % Actual code to plot the data

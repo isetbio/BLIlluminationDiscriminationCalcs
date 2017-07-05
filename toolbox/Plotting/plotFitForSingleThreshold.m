@@ -1,5 +1,5 @@
 function plotFitForSingleThreshold(plotInfo,data,threshold,fitParams)
-% plotFitForSingleThreshold(plotInfo,data,fitParams,threshold)
+% plotFitForSingleThreshold(plotInfo,data,threshold,fitParams)
 % 
 % This function will generate a plot for the fitted Weibull function as
 % well as the data used to fit. threshold and fitParams are the direct
@@ -7,6 +7,13 @@ function plotFitForSingleThreshold(plotInfo,data,threshold,fitParams)
 % points used to generated the fit. plotInfo is a struct that contains
 % information for that will be used to add details such as the axis labels
 % and title.
+%
+% Inputs:
+%     plotInfo   -  struct with some info about label and title text
+%     data       -  data to fit to
+%     threshold  -  data to use to fit to 'data' input
+%     fitParams  -  parameter vector obtained from the Palamedes Toolbox
+%                   when fitting a psychometric function
 %
 % 6/21/16  xd  wrote it
 
@@ -36,6 +43,7 @@ plot([min(stimLevelsFine) threshold], [plotInfo.criterion plotInfo.criterion],'C
 set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
 axis square;
 ylim(figParams.ylimit);
+xlim([0 max(plotInfo.stimLevels)]);
 
 xl = xlabel(plotInfo.xlabel,'FontSize',figParams.labelFontSize);
 yl = ylabel(plotInfo.ylabel,'FontSize',figParams.labelFontSize);

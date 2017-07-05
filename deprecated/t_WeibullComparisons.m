@@ -22,26 +22,26 @@ r1 = load(fullfile(dataPath,subject,['/' subject '-Constant-1.mat']));
 r2 = load(fullfile(dataPath,subject,['/' subject '-Constant-2.mat']));
 r1 = r1.params.trialData;
 r2 = r2.params.trialData;
-load('/Users/xiaomaoding/Documents/MATLAB/BLIlluminationDiscriminationCalcs/IllumDist.mat');
+load('/Users/xiaomaoding/Documents/stereoChromaticDiscriminationExperiment/IlluminantsInDeltaE.mat');
 
 % Load model data
-modelPath = '/Users/xiaomaoding/Documents/MATLAB/BLIlluminationDiscriminationCalcs/tutorials/simulation/WeightedPerformances';
+modelPath = '/Users/xiaomaoding/Documents/MATLAB/projects/Analysis/BLIlluminationDiscriminationCalcs/tutorials/simulation/WeightedPerformances';
 m = load(fullfile(modelPath,[subject '-weightedPerf.mat']));
 n = m.itpN;
 
 % The interpolated noise level is also included in the .mat file. Here, we
 % will interpolate between the performance results before calculating the
 % thresholds.
-lower = floor(n/3) + 1;
+lower = floor(n/5) + 1;
 interp = true;
-if n == 30
+if n == 50
     interp = false;
 end
 
 m = squeeze(m.results(1,:,:,:));
 
 if interp
-    lowerVal = n/3 + 1 - lower;
+    lowerVal = n/5 + 1 - lower;
     upperVal = 1 - lowerVal;
     m = lowerVal*squeeze(m(:,lower)) + upperVal*squeeze(m(:,lower + 1));
 else
@@ -109,10 +109,10 @@ stimLevels = stimLevels ./ trialCount;
 %% Plot Weibull
 % 
 % Extract the threshold and also plot it.
-[t,p] = singleThresholdExtraction(responseCorrect,70.71,stimLevels,trialCount);
+[t,p] = singleThresholdExtraction(responseCorrect,70.71,stimLevels,trialCount,false);
 pI = createPlotInfoStruct;
 pI.stimLevels = stimLevels;
 plotFitForSingleThreshold(pI,responsePercent,t,p);
 
-[t,p] = singleThresholdExtraction(m,70.71);
+[t,p] = singleThresholdExtraction(m);
 plotFitForSingleThreshold(createPlotInfoStruct,m,t,p);

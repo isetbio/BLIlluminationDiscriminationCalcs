@@ -1,9 +1,22 @@
 function browseSingleThresholds(calcIDStr,varargin)
-% browseSingleThresholds(calcIDStr)
+% browseSingleThresholds(calcIDStr,varargin)
 %
 % Given a calcIDStr, this function allows the user to browse the
 % psychometric threshold fits using the arrow keys. Press escape to end the
 % program.
+%
+% Inputs:
+%     calcIDStr  -  name of the data folder which contains model performances
+% {name-value pairs}
+%     'noiseIndex'  -  a 1x2 matrix specifying whether to fit thresholds as
+%                      a function of Poisson or Gaussian noise (default = Gaussian)
+%     'useTrueDE'   -  boolean flag to determine whether to use real
+%                      illumination step sizes (default = true)
+%
+% Controls:
+%     Use the arrow keys to navigate noise level (left right) and color (up down).
+%     Press 's' to keep the current figure open after exiting the program.
+%     Use 'escape' to exit the program (will close current window).
 %
 % 6/27/16  xd  wrote it
 
@@ -14,9 +27,10 @@ function browseSingleThresholds(calcIDStr,varargin)
 % to plot. The default assumption is 1x Poisson noise and all Gaussian
 % noise. Specify the index of 1 Noise Type and leave the other as 0, in the
 % format [Poisson Gaussian].
-parser = inputParser;
-parser.addParameter('NoiseIndex', [1 0], @isnumeric);
-parser.parse(varargin{:});
+p = inputParser;
+p.addParameter('NoiseIndex',[1 0],@isnumeric);
+p.addParameter('useTrueDE',true,@islogical);
+p.parse(varargin{:});
 
 %% Load the data and calcParams here
 [data,calcParams] = loadModelData(calcIDStr);
@@ -29,8 +43,8 @@ parser.parse(varargin{:});
 formattedData = cell(length(calcParams.colors),1);
 for ii = 1:length(calcParams.colors)
     currentDataToFormat = data(ii,:,:,:);
-    if parser.Results.NoiseIndex(1) ~= 0
-        formattedData{ii} = squeeze(currentDataToFormat(:,:,parser.Results.NoiseIndex(1),:));
+    if p.Results.NoiseIndex(1) ~= 0
+        formattedData{ii} = squeeze(currentDataToFormat(:,:,p.Results.NoiseIndex(1),:));
     else
         formattedData{ii} = squeeze(currentDataToFormat(:,:,:,1));
     end
@@ -51,7 +65,7 @@ colorIdx = 1;
 noiseIdx = 1;
 
 % Extract the relevant noise levels for plot title and indexing
-if parser.Results.NoiseIndex(1)
+if p.Results.NoiseIndex(1)
     noiseLevels = calcParams.KgLevels;
 else
     noiseLevels = calcParams.KpLevels;
@@ -71,13 +85,15 @@ while ~strcmp(THE_ONE_KEY,'escape')
     if inaction
         % Extract thresholds
         dataToUse = squeeze(formattedData{colorIdx}(:,noiseIdx));
-        [threshold,params] = singleThresholdExtraction(dataToUse,70.9,calcParams.illumLevels);
+        [threshold,params,stimLevels] = singleThresholdExtraction(dataToUse,70.71,calcParams.illumLevels,...
+                                                                  calcParams.testingSetSize,p.Results.useTrueDE,...
+                                                                  calcParams.colors{colorIdx});
         
         % Some plotting metadata (titles, axes, and such)
         plotInfo = createPlotInfoStruct;
         plotInfo.fitColor = figParams.colors{colorIdx};
         plotInfo.title = sprintf('Noise Level: %d',noiseLevels(noiseIdx));
-        plotInfo.stimLevels = calcParams.illumLevels;
+        plotInfo.stimLevels = stimLevels;%calcParams.illumLevels;
         
         % This creates a new plot so we need to assign the keypressfunction
         % every time.
@@ -117,7 +133,7 @@ close;
 clearvars -GLOBAL THE_ONE_KEY;
 end
 
-function myKeyPress(hObject,event)
+function myKeyPress(hObject,event) %#ok<INUSL>
 global THE_ONE_KEY;
 THE_ONE_KEY = event.Key;
 end

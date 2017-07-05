@@ -7,7 +7,28 @@ function [fittedThresholds,interpNoise] = plotAndFitThresholdsToRealData(plotInf
 % function will try find the best overall fit for each column of thresholds
 % to the corresponding value in data.
 %
-% 6/22/16  xd  wrote it
+% Inputs:
+%     plotInfo    -  struct with some parameters like label and title text
+%     thresholds  -  NxM matrix of M sets of N thresholds. Each set of N
+%                    thresholds is used together when calculating fit
+%                    errors.
+%     data  -  N vector containing real data to fit to.
+% {name-value pairs}
+%     'ThresholdError'  -  used to plot error bars on the fitted thresholds
+%     'DataError'       -  used to plot error bars on the original data
+%     'NoiseLevel'      -  uses this value instead of fitting a value to the
+%     'NoiseVector'     -  the true noise levels (this program fits using 
+%                          the nominal values, i.e. the matrix indices
+%     'NewFigure'       -  whether to create a new Matlab figure when plotting
+%     'CreatePlot'      -  whether to plot the results or just return them
+%
+% Outputs:
+%     fittedThresholds  -  the best fit thresholds to the data
+%     interpNoise  -  the noise level that corresponds to the best fit
+%                     which will be in true noise values if 'NoiseVector'
+%                     is provided, nominal otherwise
+%
+% 6/22/16   xd  wrote it
 % 11/18/16  xd  change to LSE metric instead of abs difference
 
 %% Create input parser for possible error bar data
@@ -139,7 +160,7 @@ if parser.Results.CreatePlot
     figParams = BLIllumDiscrFigParams([],'FitThresholdToData');
     if ~isempty(plotInfo.colors), figParams.colors = plotInfo.colors; end;
     
-    plotInfo.title = sprintf('Data fitted at %.3f noise',interpNoise);
+    plotInfo.title = sprintf('Data fitted at %d noise',round(interpNoise));
     plotInfo.xlabel = 'Illumination Direction';
     plotInfo.ylabel = 'Stimulus Level (\DeltaE)';
     
@@ -148,7 +169,7 @@ if parser.Results.CreatePlot
     end
     hold on;
     
-    for ii = 1:length(data)
+    for ii = 1:min(length(data),4)
         % Because the horizontal lines on the error bar function scales with
         % the range of the data set (and for some reason the range is 0->data
         % if the data is a scalar) we will create a dummy data point so that

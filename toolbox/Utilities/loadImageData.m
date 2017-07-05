@@ -5,8 +5,15 @@ function imageData = loadImageData(imageFile)
 % BLIlluminationDiscriminationCalcs project, which currently is set by the
 % project's preferences.
 %
+% Inputs:
+%     imageFile  -  name of the image file
+%
+% Outputs:
+%     imageData  -  RGB image file
+%
 % 2/26/2015     npc     Wrote it.
 % 5/25/2016     xd      Updated to support different variable names
+
 % Get the directory find the image
 dataBaseDir   = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
 imageFilePath = fullfile(dataBaseDir, 'ImageData', imageFile);

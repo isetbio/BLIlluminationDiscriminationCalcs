@@ -1,7 +1,14 @@
 function threshold = averageNRandomThresholds(calcIDStr,N)
 % threshold = averageNRandomThresholds(calcIDStr,N)
 % 
-% Returns the average thresholds from N samples for a given calcIDStr set.
+% Returns the average thresholds from N patches for a given calcIDStr set.
+%
+% Inputs:
+%     calcIDStr  -  shared label for the set of calculations
+%     N  -  number of patches to average over
+% 
+% Outputs:
+%     threshold  -  mean threshold over N random patches
 %
 % 7/21/16  xd  wrote it
 

@@ -19,8 +19,10 @@ saveData = false;
 
 %% Load some things
 % Z = load(fullfile(mfilename('fullpath'),'../../tutorialData/IndividualFitThresholds'));
-load(fullfile(mfilename('fullpath'),'../../tutorialData/IndividualFitThresholds_dPrime'));
 % perSubjectFittedNoiseLevel = Z.perSubjectFittedNoiseLevel;
+
+load(fullfile(mfilename('fullpath'),'../../tutorialData/IndividualFitThresholds_dPrime'));
+
 %% Fixed variables
 %
 % Don't change these
@@ -33,9 +35,9 @@ pathToFixationData = '/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCod
 % experimental thresholds. This should be enough for any auxiliary plot we
 % want to create.
 
-% perSubjectAggregateThresholds = cell(length(orderOfSubjects),1);
-% perSubjectFittedThresholds = cell(length(orderOfSubjects),1);
-% perSubjectExperimentalThresholds = cell(length(orderOfSubjects),1);
+perSubjectAggregateThresholds = cell(length(orderOfSubjects),1);
+perSubjectFittedThresholds = cell(length(orderOfSubjects),1);
+perSubjectExperimentalThresholds = cell(length(orderOfSubjects),1);
 
 %% Load d-prime lookup table
 %
@@ -84,7 +86,7 @@ for subjectNumber = 1:length(orderOfSubjects)
     % where i is an individual fixation during the trial.
     
     % Pool together all fixations in one cell array.
-    allFixations = [r1(:,2); r1(:,3); r2(:,2); r2(:,3)];
+    allFixations = [r1(:,2); r2(:,2)];
     
 %     tic
 %     % Loop over fixations to calculate performance

@@ -1,10 +1,17 @@
-function opticalImage = loadOpticalImageDataWithRDT(folderName, imageName)
-% opticalImage = loadOpticalImageDataWithRDT(rd, imageName)
+function opticalImage = loadOpticalImageDataWithRDT(folderName,imageName)
+% opticalImage = loadOpticalImageDataWithRDT(folderName,imageName)
 % 
 % Loads an optical image from the archiva server using the Remote Data
 % Toolbox. This function is mainly used in validation scripts so that the
 % auto-validation for each push can read data from the server instead of
 % a local hard disk.
+%
+% Inputs:
+%     folderName  -  folder and subfolder to load opticalimage from
+%     imageName   -  file name to load (name of original image, not oi)
+% 
+% Outputs:
+%     opticalImage  -  ISETBIO opticalimage
 %
 % 4/24/17  xd  wrote it
 

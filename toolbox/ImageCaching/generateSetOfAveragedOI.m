@@ -5,6 +5,10 @@ function generateSetOfAveragedOI(sceneDir,fov)
 % crops to the size determined by fov. Saves the results in an OI folder
 % with the name sceneDir_'UNIFORM'.
 %
+% Inputs:
+%     sceneDir  -  directory from which to load the scenes
+%     fov  -  how much of the scene to average over
+%
 % 7/26/16  xd  wrote it
 
 dataDir = getpref('BLIlluminationDiscriminationCalcs','DataBaseDir');

@@ -7,6 +7,14 @@ function [meanThreshold,stdErr] = meanThresholdOverSamples(calcIDList,criterion)
 % noise/stimulus level conditions. We only take the average over data
 % points in which NaN does not appear at any entry.
 %
+% Inputs:
+%     calcIDList  -  list of calcIDStr's to average over
+%     criterion   -  percent correct at which to extract threshold
+%
+% Outputs:
+%     meanThreshold  -  the mean threshold over the calcIDStr's
+%     stdErr         -  SEM for 'meanThreshold'
+% 
 % 6/23/16  xd  wrote it
 
 %% Initialize return variables to 0

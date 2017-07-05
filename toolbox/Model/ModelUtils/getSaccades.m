@@ -17,6 +17,9 @@ function path = getSaccades(n,b,varargin)
 %             bounds and error if not so. This is a n-by-2 matrix
 %             representing n locations.
 %
+% Outputs:
+%    path - path containing saccades
+%
 % 8/5/15   xd  moved from getEMPaths
 % 3/14/16  xd  changed saccade locations to be chosen randomly instead of
 %              based on current location

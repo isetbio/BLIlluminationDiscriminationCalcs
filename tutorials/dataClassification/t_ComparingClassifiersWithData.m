@@ -39,7 +39,7 @@ additionalNamingText = '_NewOI';
 
 % Just some variables that tell the script which folders and data files to use
 colors  = {'Blue' 'Yellow' 'Red' 'Green'};
-folders = {'Neutral_FullImage' 'NM1_FullImage' 'NM2_FullImage'}; % Rename to OIFolders?
+folders = {'Neutral'};
 
 % These variables specify the number of illumination steps and the noise
 % multipliers to use. Generally keep the number of steps constant and vary
@@ -136,7 +136,10 @@ for ff = 1:length(folders)
     
     %% Save stuff
     stdText = {'nostd' 'std'};
-    nameOfFile = sprintf('ClassifierAnalysis_%d_%d_%s_%s%s',trainingSetSize,testingSetSize,stdText{standardizeData+1},strtok(folders{ff},'_'),additionalNamingText);
+    nameOfFile = sprintf('ClassifierAnalysis_%d_%d_%s_%s%s',...
+                         trainingSetSize,testingSetSize,...
+                         stdText{standardizeData+1},...
+                         strtok(folders{ff},'_'),additionalNamingText);
     fullSavePath = fullfile(analysisDir, 'ClassifierComparisons',nameOfFile);
     save(fullSavePath, 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect',...
         'Colors','NoiseSteps');

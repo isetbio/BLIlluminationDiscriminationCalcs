@@ -6,6 +6,13 @@ function results = randomSampleOnExistingData(calcIDStr,N)
 % some random numbers. If the random numbers are less than the percent
 % correct for the selected data sample, the trial is marked correct.
 %
+% Inputs:
+%     calcIDStr  -  shared label for the calculation set
+%     N  -  number of iterations
+% 
+% Outputs:
+%     results  -  percent correct performance gathered from the simulation
+%
 % 7/21/16  xd  wrote it
 
 %% Load paths and setup data

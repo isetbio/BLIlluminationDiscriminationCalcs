@@ -5,6 +5,11 @@ function plotAllPatches(calcIDStr,patchInfo)
 % figure. Plots will corresponds to the region in the image that the patch
 % is located.
 %
+% Inputs:
+%     calcIDStr  -  name of folder that contains model information
+%     patchInfo  -  struct that contains some data about number of patches
+%                   and size of each patch
+%
 % 7/10/16  xd  wrote it
 
 %% Load some path and metadata variables

@@ -6,12 +6,13 @@ function convertRBGImagesToSceneFiles(calcParams,forceCompute)
 % folder
 %
 % Inputs:
-%   calcParams   - A set of parameters used to specify parameters such as
-%                  target folder names and crop size
-%   forceCompute - Setting this to true will cause this function to
-%                  compute a new scene even if a cached version already exists
+%     calcParams    -  A set of parameters used to specify parameters such 
+%                      as target folder names and crop size
+%     forceCompute  -  Setting this to true will cause this function to
+%                      compute a new scene even if a cached version 
+%                      already exists
 %
-% 3/12/2015   xd  wrote it
+% 3/12/15   xd  wrote it
 
 %% Point at where input data live
 dataBaseDir = getpref('BLIlluminationDiscriminationCalcs', 'DataBaseDir');
@@ -43,14 +44,8 @@ extraData.subSamplingSvector = calcParams.S;
 % Generate an isetbio display object to model the display used to
 % obtain the calibration data, and save this.
 tic;
-brainardLabDisplay = ptb.GenerateIsetbioDisplayObjectFromPTBCalStruct('BrainardLabStereoLeftDisplay', calStructOBJ.cal, extraData, false);
+brainardLabDisplay = ptb.GenerateIsetbioDisplayObjectFromPTBCalStruct('BrainardLabDisplay', calStructOBJ.cal, extraData, false);
 fprintf('Display object generation took %2.1f seconds\n', toc);
-
-% % Set gamma table to linspace because images are already gamma corrected
-% gammaTable = displayGet(brainardLabDisplay,'gtable');
-% gammaLength = size(gammaTable,1);
-% gammaTable = repmat(linspace(0,1,gammaLength)',1,3);
-% brainardLabDisplay = displaySet(brainardLabDisplay,'gtable',gammaTable);
 
 %% Precompute the scene files
 

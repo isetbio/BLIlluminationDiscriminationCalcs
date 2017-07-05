@@ -2,15 +2,12 @@
 %
 % Uses the uniform mean over the model data to fit performance to subjects.
 %
-% 8/04/16  xd  wrote it
+% 8/4/16    xd  wrote it
 % 10/27/16  xd  added some file saving and plotting options
+% 6/20/17   xd  change file naming conventions
 
-clear;% close all; ieInit;
-%% Some parameters
-%
-% If set to true, each subject fit get's it's own individual figure window.
-% Otherwise, everything is plotted as a subplot on 1 figure.
-singlePlots = false;
+clear;% close all;
+%% Set parameters
 
 % This is the calcIDStr for the SVM dataset we want to use to fit to the
 % % experimental results.
@@ -18,11 +15,24 @@ modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Con
 % modelDataIDStr = 'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
 % modelDataIDStr = 'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
 % modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.93_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
-modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.00_1.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.00_1.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.00_1.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_1.00_0.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+
+% If set to true, each subject fit get's it's own individual figure window.
+% Otherwise, everything is plotted as a subplot on 1 figure.
+singlePlots = false;
+
+% Whether to just generate to data or to show the plots
+showPlots = false;
+
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
 saveData = false;
-saveFilename = 'MSMosaicFitDataUniform';
+saveFilename = [modelDataIDStr '_UniformModelFits'];
+
+% Path to data
+pathToExperimentData = '/Users/Shared/Matlab/Experiments/Newcastle/stereoChromaticDiscriminationExperiment/analysis/FitThresholdsAllSubjectsExp8.mat';
 
 %% Subject ID's
 % DON'T CHANGE
@@ -38,7 +48,7 @@ perSubjectExperimentalThresholds = cell(length(orderOfSubjects),1);
 perSubjectFittedNoiseLevel = cell(length(orderOfSubjects),1);
 
 %% Calculation and plotting loop
-if ~singlePlots
+if ~singlePlots && showPlots
     figure('Position',[150 238 2265 1061]);
 end
 
@@ -53,7 +63,7 @@ allDirs = getAllSubdirectoriesContainingString(fullfile(analysisDir,'SimpleChoos
 
 for subjectNumber = 1:length(orderOfSubjects)
     subjectId = orderOfSubjects{subjectNumber};
-    load('/Users/Shared/Matlab/Experiments/Newcastle/stereoChromaticDiscriminationExperiment/analysis/FitThresholdsAllSubjectsExp8.mat')
+    load(pathToExperimentData)
     
     % Create some label information for plotting.
     stimLevels = 1:50;
@@ -67,57 +77,60 @@ for subjectNumber = 1:length(orderOfSubjects)
     %
     % Load the subject performances. We need to calculate the mean
     % thresholds for the constant runs as well as the standard deviations.
-    subjectIdx = find(not(cellfun('isempty', strfind(orderOfSubjects,subjectId))));
-    d1 = subject{subjectIdx}.Constant{1};
-    d2 = subject{subjectIdx}.Constant{2};
+    d1 = subject{subjectNumber}.Constant{1};
+    d2 = subject{subjectNumber}.Constant{2};
     b = nanmean([d1.Bluer.threshold,d2.Bluer.threshold]);
     g = nanmean([d1.Greener.threshold,d2.Greener.threshold]);
     r = nanmean([d1.Redder.threshold,d2.Redder.threshold]);
     y = nanmean([d1.Yellower.threshold,d2.Yellower.threshold]);
-    
+
     % Plot a the thresholds along with the model predictions.
-    if ~singlePlots
+    if ~singlePlots && showPlots
         subplot(2,5,subjectNumber);
     end
     [perSubjectFittedThresholds{subjectNumber},perSubjectFittedNoiseLevel{subjectNumber}]...
         = plotAndFitThresholdsToRealData(pI,aggregateThresholds,[b y g r],...
-        'NoiseVector',calcParams.noiseLevels,'NewFigure',singlePlots);
+        'NoiseVector',calcParams.noiseLevels,'NewFigure',singlePlots,'CreatePlot',showPlots);
     perSubjectExperimentalThresholds{subjectNumber} = [b y g r];
     
-    theTitle = get(gca,'title');
-    theTitle = theTitle.String;
-    title(strrep(theTitle,'Data fitted at',[subjectId ',']));
+    if showPlots
+        theTitle = get(gca,'title'); %#ok<*UNRCH>
+        theTitle = theTitle.String;
+        title(strrep(theTitle,'Data fitted at',[subjectId ',']));
+    end
 end
 
-if ~singlePlots
+if ~singlePlots && showPlots
     st = suptitle('Constant');
     set(st,'FontSize',30);
 end
-% close all;
 
 %% Fit the aggregate
-%
+
 % Calculate the mean and std of thresholds for both the experimental
 % condition as well as the model performance. Use these to make plots.
-Z   = mean(cell2mat(perSubjectFittedThresholds));
-Zs  = std(cell2mat(perSubjectFittedThresholds))/sqrt(10);
-Zr  = mean(cell2mat(perSubjectExperimentalThresholds));
-Zrs = std(cell2mat(perSubjectExperimentalThresholds))/sqrt(10);
+meanExpThreshold    = mean(cell2mat(perSubjectFittedThresholds));
+semExpThreshold     = std(cell2mat(perSubjectFittedThresholds))/sqrt(10);
+meanModelThreshold  = mean(cell2mat(perSubjectExperimentalThresholds));
+semModelThreshold   = std(cell2mat(perSubjectExperimentalThresholds))/sqrt(10);
 
-plotAndFitThresholdsToRealData(pI,Z,Zr,'ThresholdError',Zs,'DataError',Zrs,...
-    'NoiseVector',calcParams.noiseLevels,'NewFigure',true);
+plotAndFitThresholdsToRealData(pI,meanExpThreshold,meanModelThreshold,'ThresholdError',semExpThreshold,'DataError',semModelThreshold,...
+    'NoiseVector',calcParams.noiseLevels,'NewFigure',true,'CreatePlot',showPlots);
 
-ylim([0 20]);
-title('Uniform Aggregate Fit');
+if showPlots
+    ylim([0 20]);
+    title(['Uniform Aggregate Fit, ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
+    disp(['Uniform Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
+end
 
 %% Calculate LSE
-LSE = zeros(length(perSubjectFittedThresholds),1);
+RMSE = zeros(length(perSubjectFittedThresholds),1);
 for i = 1:length(perSubjectFittedThresholds)
-    LSE(i) = sqrt(sum((perSubjectFittedThresholds{i} - perSubjectExperimentalThresholds{i}).^2));
+    RMSE(i) = sqrt(sum((perSubjectFittedThresholds{i} - perSubjectExperimentalThresholds{i}).^2) / 4);
 end
 
 %%
 if saveData
-    save(saveFilename,'perSubjectFittedNoiseLevel','perSubjectExperimentalThresholds',...
-        'perSubjectFittedThresholds','LSE');
+    save([saveFilename '.mat'],'perSubjectFittedNoiseLevel','perSubjectExperimentalThresholds',...
+        'perSubjectFittedThresholds','RMSE');
 end

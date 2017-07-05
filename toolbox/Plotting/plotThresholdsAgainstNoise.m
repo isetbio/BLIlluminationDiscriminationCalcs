@@ -9,6 +9,11 @@ function plotThresholdsAgainstNoise(plotInfo,thresholds,noiseLevels)
 % thresholds and noiseLevels will be matched up when plotted. This function
 % also requires a stimLevels filed in plotInfo to be specified.
 %
+% Inputs:
+%     plotInfo     -  struct containing some data about label and title text
+%     thresholds   -  threshold data to plot 
+%     noiseLevels  - noise levels to plot against (the x-axis)
+% 
 % 6/21/16  xd  wrote it
 
 %% Check that inputs are correct
@@ -29,14 +34,8 @@ for ii = 1:size(thresholds,2)
     % Find locations where data makes sense
     nonzeroIdx = thresholds(:,ii) > 0;
     
-    % Fit a line to the data
-%     [p, S] = polyfit(noiseLevels(nonzeroIdx,ii), thresholds(nonzeroIdx,ii), 1);
-%     noiseLevelsFine = 0:(max(noiseLevels(:))-min(noiseLevels(:)))/1000:max(noiseLevels(:));
-%     fitToLine = polyval(p, noiseLevelsFine,S);
-    
     plot(noiseLevels(nonzeroIdx,ii),thresholds(nonzeroIdx,ii),'o-','Color',figParams.colors{ii},...
         'MarkerSize',figParams.markerSize,'LineWidth',figParams.lineWidth);
-%     plot(noiseLevelsFine,fitToLine,'Color',figParams.colors{ii},'LineStyle',figParams.lineStyle,'LineWidth',figParams.lineWidth);
 end
 
 % Make figure look nicer
@@ -45,11 +44,10 @@ axis square; grid on;
 ylim([min(plotInfo.stimLevels) max(plotInfo.stimLevels)]);
 xlim([0 max([noiseLevels(:); 10])]);
 
-xl = xlabel(plotInfo.xlabel);
-yl = ylabel(plotInfo.ylabel);
-t = title(plotInfo.title,'Interpreter','none');
-% yl.Position = yl.Position + figParams.deltaYlabelPosition;
-% xl.Position = xl.Position + figParams.deltaXlabelPosition;
+xlabel(plotInfo.xlabel);
+ylabel(plotInfo.ylabel);
+title(plotInfo.title,'Interpreter','none');
+
 
 end
 

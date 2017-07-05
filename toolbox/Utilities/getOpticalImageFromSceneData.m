@@ -1,13 +1,14 @@
-function oi = getOpticalImageFromSceneData(calcParams, oi, folderName, imageName)
-% oi = getOpticalImageFromSceneData(calcParams, oi, folderName, imageName)
+function oi = getOpticalImageFromSceneData(calcParams,oi,folderName,imageName)
+% oi = getOpticalImageFromSceneData(calcParams,oi,folderName,imageName)
 %
-% Loads the scene file from ColorShare1 and turns it into an optical
+% Loads the scene file from local directory and turns it into an optical
 % image using default human optics
 %
 % Inputs:
-%   oi - optical image to compute using scene
+%   calcParams - struct containing information about the calculation
+%   oi         - optical image to compute using scene
 %   folderName - folder in which target scene resides on ColorShare
-%   imageName - name of original image used to calculate the scene
+%   imageName  - name of original image used to calculate the scene
 %
 % Outputs:
 %   oi - newly calculated oi using input oi and target scene

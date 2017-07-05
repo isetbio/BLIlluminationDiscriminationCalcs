@@ -1,4 +1,4 @@
-%% LMRatio
+%% t_LMRatio
 %
 % This script uses data generated using mosaics of differing LM cone ratios
 % to see the effect of M% on SVM performance. It could be the case the
