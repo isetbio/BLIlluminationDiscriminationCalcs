@@ -30,6 +30,9 @@ calcIDStr = 'Constant_1';
 % Size of mosaic
 fov = 1;
 
+% Frozen random seed
+rng(1);
+
 %% Make mosaic
 mosaic = getDefaultBLIllumDiscrMosaic;
 mosaic.fov = fov;
@@ -38,12 +41,13 @@ mosaic.fov = fov;
 %
 % Load the standard OIs and calculate isomerizations.
 [standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir(calcIDStr,mosaic);
+% calcParams.frozen = 1;
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 comparisonOIPath = fullfile(analysisDir, 'OpticalImageData',calcIDStr,'BlueIllumination');
 OINames = getFilenamesInDirectory(comparisonOIPath);
 
 % Load the specific comparison OI and calculate photons.
-comparison = loadOpticalImageData([calcIDStr '/' 'BlueIllumination'], strrep(OINames{comparisonToPlot}, 'OpticalImage.mat', ''));
+comparison = loadOpticalImageData([calcIDStr '/' 'BlueIllumination'],strrep(OINames{comparisonToPlot},'OpticalImage.mat',''));
 photonComparison = mosaic.compute(comparison,'currentFlag',false);
 
 %% Loop over the two kg values
@@ -54,17 +58,18 @@ for ii = 1:length(kg)
     [testingData,testingClasses] = df1_ABBA(calcParams,standardPhotonPool(1),{photonComparison},1,kg(ii),testingSetSize);
     
     % Perform standardization and PCA
-    [testingData,m,s] = zscore(testingData);
-    trainingData = zscore(trainingData);
+    [trainingData,m,s] = zscore(trainingData);
+    testingData = (testingData - repmat(m,size(testingData,1),1)) ./ repmat(s,size(testingData,1),1);
     
     % Project data onto PCA components
-    coeff = pca(testingData,'NumComponents',numPCA);
-    testingData = testingData * coeff;
+    coeff = pca(trainingData,'NumComponents',numPCA);
+    testingData  = testingData * coeff;
     trainingData = trainingData * coeff;
     
     %% Do SVM
-    [~,svm] = cf3_SupportVectorMachine(trainingData,testingData,trainingClasses,testingClasses);
-
+    [perf,svm] = cf3_SupportVectorMachine(trainingData,testingData,trainingClasses,testingClasses);
+    fprintf('kg: %d, SVM perf: %0.4f\n',kg(ii), perf);
+    
     %% Get hyperplane
     b = svm.Beta;
     n = null(b');
@@ -76,7 +81,7 @@ for ii = 1:length(kg)
     plot(trainingData(trainingSetSize/2+1:end,1),trainingData(trainingSetSize/2+1:end,2),'*','MarkerSize',8);
     plot(trainingData(1:trainingSetSize/2,1),trainingData(1:trainingSetSize/2,2),'o','MarkerSize',8);
     % ylim([min(trainingData(:,2)) max(trainingData(:,2))]);
-    ylim([-4 4]);
+%     ylim([-4 4]);
     
     % Plot decision boundary
     plot([0,h(1)]*100,[0,h(2)]*100,'k--','LineWidth',2);
