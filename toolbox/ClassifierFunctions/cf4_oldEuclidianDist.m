@@ -4,7 +4,11 @@ function percentCorrect = cf4_oldEuclidianDist(trainingData,testingData,training
 % The old distance based classifier takes 2 draws of target and 1 draw of
 % comparison. It calculates the distance between the two targets and one of
 % the targets and the comparison. Then it picks the one which was closest
-% to the target. This replicates that using the data generated.
+% to the target. This replicates that using the data generated. This
+% procedure requires twice the amount of data than the other functions
+% because it uses the two halves of target stimuli from the training data
+% and test data and only the comparison stimuli from the test set. Thus,
+% the effective amount of data being classified is halved.
 %
 % Inputs:
 %     trainingData  -  N1xM matrix containing N observations with M
