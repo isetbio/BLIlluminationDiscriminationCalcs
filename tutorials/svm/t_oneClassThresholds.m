@@ -19,7 +19,7 @@ for subjectNumber = 1:length(orderOfSubjects)
 end
 
 %% Calc thresholds
-folderToLoad = 'OneClass_NM1';
+folderToLoad = 'OneClass_Constant';
 f = getFilenamesInDirectory(folderToLoad);
 
 % Take weighted mean
@@ -46,8 +46,9 @@ end
 
 %% 
 t = zeros(1,4);
+colors = {'blue' 'green' 'red' 'yellow'};
 for ii = 1:4
-t(ii) = singleThresholdExtraction(data(ii,:)*1000,70.9,[],1000);
+t(ii) = singleThresholdExtraction(data(ii,:)*100,70.71,1:50,1000,true,colors{ii});
 end
 
 %% 
