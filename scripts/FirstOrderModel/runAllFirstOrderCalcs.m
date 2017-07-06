@@ -20,7 +20,7 @@ function runAllFirstOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs = {'SVM_Neutral_Control'};
+calcIDStrs = {'ConstantFullImage'};
 
 %% Parameters of the calculation
 %
@@ -35,8 +35,8 @@ calcIDStrs = {'SVM_Neutral_Control'};
 for k1 = 1:length(calcIDStrs)
     
     % Define the steps of the calculation that should be carried out.
-    calcParams.CACHE_SCENES = false;
-    calcParams.forceSceneCompute = false;  % Will overwrite any existing data.
+    calcParams.CACHE_SCENES = true;
+    calcParams.forceSceneCompute = true;  % Will overwrite any existing data.
     
     calcParams.CACHE_OIS = true;
     calcParams.forceOICompute = false;    % Will overwrite any existing data.
@@ -51,8 +51,8 @@ for k1 = 1:length(calcIDStrs)
     calcParams.calcIDStr = calcIDStrs{k1};
     
     % Folder list to run over for conversions into isetbio format
-%     calcParams = updateCacheFolderList(calcParams);
-    calcParams.cacheFolderList = {'Neutral', 'Neutral'};
+    calcParams = updateCacheFolderList(calcParams);
+%     calcParams.cacheFolderList = {'Neutral', 'Neutral'};
     
     % Need to specify the calibration file to use
     calcParams = assignCalibrationFile(calcParams);
