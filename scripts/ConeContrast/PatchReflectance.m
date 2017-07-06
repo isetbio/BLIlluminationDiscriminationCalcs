@@ -8,8 +8,8 @@
 
 clear; close all;
 %% Choose patched and fov
-patches = [3 162];
-fov = 1;
+patches = [3 162];          % Which patches in the stimuli to compare
+fov = 1;                    % Size of the patches/cone mosaic
 
 %% Load scene and split into patches
 t = loadSceneData('Constant_FullImage/Standard','CT1Blue0-RGB');
@@ -17,6 +17,10 @@ t = splitSceneIntoMultipleSmallerScenes(t,fov);
 t = t(patches);
 
 %% Retrieve and calculate mean reflectance
+%
+% Use the ISETBIO built in functions to calculate the reflectance
+% properties of the scene.
+
 r1 = sceneGet(t{1},'reflectance');
 r2 = sceneGet(t{2},'reflectance');
 

@@ -1,20 +1,22 @@
-%% t_fitAggrThresholdsToIndividuals
+%% SurfaceChromaticityModelFit
 %
 % Uses the uniform mean over the model data to fit performance to subjects.
+% This script performs fits to the data from the surface chromaticity
+% varying experiment.
 %
 % 8/4/16    xd  wrote it
 % 10/27/16  xd  added some file saving and plotting options
 % 6/20/17   xd  change file naming conventions
 
-clear;% close all;
+clear; close all;
 %% Some parameters
-%
+
 % If set to true, each subject fit get's it's own individual figure window.
 % Otherwise, everything is plotted as a subplot on 1 figure.
 singlePlots = false;
 
 % This is the calcIDStr for the SVM dataset we want to use to fit to the
-% % experimental results.
+% experimental results.
 modelDataIDStrs = {'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Neutral',...
                    'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_NM1',...
                    'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_NM2'};
@@ -24,20 +26,23 @@ modelDataIDStrs = {'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_N
 saveData = false;
 saveFilename = 'ChromaticityModelFits';
 
-%% Load data
+%% Load experimental data
 load('Exp5AllData.mat');
+
+% Need to change order of data for plotting purposes. We do the same for
+% the model data later on.
 Neutral = Neutral(:,[1 4 2 3]);
 NM1 = NM1(:,[1 4 2 3]);
 NM2 = NM2(:,[1 4 2 3]);
 
 %% Preallocate some space for data
-
+%
 % We save the aggregate thresholds, the fitted thresholds, and the
 % experimental thresholds. This should be enough for any auxiliary plot we
 % want to create.
-perSubjectFittedThresholds = cell(size(Neutral,1),1);
+perSubjectFittedThresholds       = cell(size(Neutral,1),1);
 perSubjectExperimentalThresholds = cell(size(Neutral,1),1);
-perSubjectFittedNoiseLevel = cell(size(Neutral,1),1);
+perSubjectFittedNoiseLevel       = cell(size(Neutral,1),1);
 
 %% Calculation and plotting loop
 if ~singlePlots
@@ -76,7 +81,8 @@ for subjectNumber = 1:size(Neutral,1)
     end
     [perSubjectFittedThresholds{subjectNumber},perSubjectFittedNoiseLevel{subjectNumber}]...
         = plotAndFitThresholdsToRealData(pI,aggregateThresholds,dataToFit,...
-        'NoiseVector',calcParams.noiseLevels,'NewFigure',singlePlots);
+                                         'NoiseVector',calcParams.noiseLevels,...
+                                         'NewFigure',singlePlots);
  
 end
 
@@ -86,7 +92,7 @@ if ~singlePlots
 end
 
 %% Fit the aggregate
-
+%
 % Calculate the mean and std of thresholds for both the experimental
 % condition as well as the model performance. Use these to make plots.
 mFit = mean(cell2mat(perSubjectFittedThresholds));
@@ -107,4 +113,3 @@ for ii = 1:length(modelDataIDStrs)
 end
 
 disp(['Uniform Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
-
