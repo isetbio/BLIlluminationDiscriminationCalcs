@@ -48,6 +48,5 @@ xlabel(plotInfo.xlabel);
 ylabel(plotInfo.ylabel);
 title(plotInfo.title,'Interpreter','none');
 
-
 end
 
