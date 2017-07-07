@@ -6,8 +6,9 @@
 % stimuli in the dataset for this script.
 %
 % 10/20/16  xd  wrote it
+%  7/ 7/16  xd  update to keep noise frozen for reproducibility
 
-clear; %close all;
+clear; close all;
 %% Set parameters
 
 % Choose which blue stimulus to plot as well as how much additive noise.
@@ -38,7 +39,7 @@ mosaic = getDefaultBLIllumDiscrMosaic;
 mosaic.fov = fov;
 
 %% Load data
-%
+
 % Load the standard OIs and calculate isomerizations.
 [standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir(calcIDStr,mosaic);
 calcParams.frozen = 1;
@@ -82,11 +83,15 @@ for ii = 1:length(kg)
     fprintf('kg: %d, SVM perf: %0.4f\n',kg(ii), perf);
     
     %% Get hyperplane
+    %
+    % The svm.Beta field contains a vector that is orthogonal to the
+    % hyperplane decision boundary. Thus, the null space of this vector is
+    % the hyperplane.
     b = svm.Beta;
     n = null(b');
     h = n(1:2,1);
     
-    % Plot the data
+    %% Plot the data
     subplot(1,2,ii);
     hold on;
     plot(trainingData(trainingSetSize/2+1:end,1),trainingData(trainingSetSize/2+1:end,2),'*','MarkerSize',8);
