@@ -11,7 +11,7 @@
 clear; close all;
 %% Some parameters
 
-% If set to true, each subject fit get's it's own individual figure window.
+% If set to true, each subject fit gets it's own individual figure window.
 % Otherwise, everything is plotted as a subplot on 1 figure.
 singlePlots = false;
 
