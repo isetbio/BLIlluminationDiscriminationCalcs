@@ -35,7 +35,7 @@ pI.title  = 'Thresholds v Noise';
 if ~singlePlots
     figure('Position',[150 238 2265 1061]);
 end
-orderOfSubjects = {'azm','bmj', 'vle', 'vvu', 'idh','hul','ijj','eom','dtm','ktv'}';
+orderOfSubjects = {'azm','bmj','vle','vvu','idh','hul','ijj','eom','dtm','ktv'}';
 load('Exp5AllData');
 for ii = 1:length(perSubjectFittedNoiseLevel)
     d1 = subject{ii}.Matched{1};
@@ -63,12 +63,12 @@ for ii = 1:length(perSubjectFittedNoiseLevel)
 end
 
 %%
-Z   = mean(cell2mat(perSubjectFittedThresholds));
-Zs  = std(cell2mat(perSubjectFittedThresholds))/sqrt(10);
-Zr  = mean(cell2mat(perSubjectExperimentalThresholds));
-Zrs = std(cell2mat(perSubjectExperimentalThresholds))/sqrt(10);
+fitMean = mean(cell2mat(perSubjectFittedThresholds));
+fitSEM  = std(cell2mat(perSubjectFittedThresholds))/sqrt(10);
+expMean = mean(cell2mat(perSubjectExperimentalThresholds));
+expSEM  = std(cell2mat(perSubjectExperimentalThresholds))/sqrt(10);
 
-plotAndFitThresholdsToRealData(pI,Z,Zr,'ThresholdError',Zs,'DataError',Zrs,...
+plotAndFitThresholdsToRealData(pI,fitMean,expMean,'ThresholdError',fitSEM,'DataError',expSEM,...
     'NoiseVector',calcParams.noiseLevels,'NewFigure',true);
 
 ylim([0 20]);
