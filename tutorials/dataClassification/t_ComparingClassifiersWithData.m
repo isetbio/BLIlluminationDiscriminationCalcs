@@ -29,7 +29,8 @@ OIvSensorScale = 1.3;
 
 % If set to true, the data will be standardized using the mean and standard
 % deviation of the training set. This is generally used to help the
-% performance of linear classifiers by making the feature space spherical.
+% performance of linear classifiers by removing inherent bias due to
+% differences in feature magnitudes.
 standardizeData = true;
 
 % Additional text to add to the end of the name of the saved data file.
@@ -66,15 +67,15 @@ mosaic.fov = sSize;
 %% Perform calculation
 for ff = 1:length(folders)
     %% Load all target scene sensors
-    analysisDir = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
-    folderPath = fullfile(analysisDir, 'OpticalImageData', folders{ff}, 'Standard');
+    analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
+    folderPath = fullfile(analysisDir,'OpticalImageData',folders{ff},'Standard');
     data = what(folderPath);
     standardOIList = data.mat;
     
-    standardPhotonPool = cell(1, length(standardOIList));
+    standardPhotonPool = cell(1,length(standardOIList));
     calcParams.meanStandard = 0;
     for jj = 1:length(standardOIList)
-        standardOI = loadOpticalImageData([folders{ff} '/Standard'], strrep(standardOIList{jj}, 'OpticalImage.mat', ''));
+        standardOI = loadOpticalImageData([folders{ff} '/Standard'],strrep(standardOIList{jj},'OpticalImage.mat',''));
         standardPhotonPool{jj} = mosaic.compute(standardOI,'currentFlag',false);
         calcParams.meanStandard = calcParams.meanStandard + mean2(standardPhotonPool{jj}) / length(standardOIList);
     end
@@ -90,13 +91,13 @@ for ff = 1:length(folders)
         
         % Load all Optical image names in the target directory in
         % alphanumerical order. This corresponds to increasing illumination steps.
-        comparisonOIPath = fullfile(analysisDir, 'OpticalImageData', folders{ff}, [colors{cc} 'Illumination']);
+        comparisonOIPath = fullfile(analysisDir,'OpticalImageData',folders{ff},[colors{cc} 'Illumination']);
         OINames = getFilenamesInDirectory(comparisonOIPath);
         
         for kk = illumSteps
             
             % Load the OI for this illumination step
-            comparison = loadOpticalImageData([folders{ff} '/' colors{cc} 'Illumination'], strrep(OINames{kk}, 'OpticalImage.mat', ''));
+            comparison = loadOpticalImageData([folders{ff} '/' colors{cc} 'Illumination'],strrep(OINames{kk},'OpticalImage.mat',''));
             photonComparison = mosaic.compute(comparison,'currentFlag',false);
             
             tic
@@ -121,7 +122,7 @@ for ff = 1:length(folders)
                 % We calculate the first numPCA components. These should
                 % explain the most variance out of all the components. We
                 % then project our original dataset onto there component.
-                coeff = pca([trainingData;testingData],'NumComponents',numPCA);
+                coeff = pca(trainingData,'NumComponents',numPCA);
                 trainingData = trainingData*coeff;
                 testingData  = testingData*coeff;
                 
@@ -140,8 +141,8 @@ for ff = 1:length(folders)
                          trainingSetSize,testingSetSize,...
                          stdText{standardizeData+1},...
                          strtok(folders{ff},'_'),additionalNamingText);
-    fullSavePath = fullfile(analysisDir, 'ClassifierComparisons',nameOfFile);
-    save(fullSavePath, 'DApercentCorrect', 'NNpercentCorrect', 'SVMpercentCorrect',...
+    fullSavePath = fullfile(analysisDir,'ClassifierComparisons',nameOfFile);
+    save(fullSavePath,'DApercentCorrect','NNpercentCorrect','SVMpercentCorrect',...
         'Colors','NoiseSteps');
 
 end

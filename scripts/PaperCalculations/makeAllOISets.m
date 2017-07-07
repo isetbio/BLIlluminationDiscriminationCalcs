@@ -1,5 +1,5 @@
 function makeAllOISets(numCores)
-%% makALlOISets
+%% makeAllOISets(numCores)
 %
 % Creates all the optical images necessary for the computations. This
 % script takes in the scene files that contain the full stimulus and breaks

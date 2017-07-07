@@ -1,4 +1,4 @@
-%% t_PlotModelVsExp
+%% PlotModelVsExperiment
 %
 % This script takes the model and predicted data and plots them against
 % each other to get a sense of what the data looks like.
@@ -9,7 +9,7 @@ clear; close all;
 %% Load data
 load('FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant_UniformModelFits.mat');
 
-%% Plot data
+%% Plot 
 numSubjects = length(perSubjectExperimentalThresholds);
 figParams = BLIllumDiscrFigParams;
 c = figParams.colors;

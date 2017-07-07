@@ -1,10 +1,10 @@
 function percentCorrect = cf1_NearestNeighbor(trainingData,testingData,trainingClasses,testingClasses)
 % percentCorrect = cf1_NearestNeighbor(trainingData,testingData,trainingClasses,testingClasses)
 %
-% This function determines the pairwise distance between the row vectors in
-% trainingData and testingData. For each vector in testingData, it finds
-% the closest vector in trainingData.  If both vectors have the same class,
-% then the choice is considered corret.
+% This function trains a Nearest Neighbor classifier using Matlab's fitcknn
+% function. Only a 1-Nearest Neighbor classifier is being utilized. This
+% can be changed by updating the parameters to the fitcknn call, see online
+% documentation for the function for more details.
 %
 % Inputs:
 %     trainingData  -  N1xM matrix containing N observations with M
@@ -21,11 +21,11 @@ function percentCorrect = cf1_NearestNeighbor(trainingData,testingData,trainingC
 %                        output on 'testingData' when trained on
 %                        'trainingData'
 %
-% 5/26/16  xd  wrote it
+% 5/26/16    xd    wrote it
+% 7/6/17     xd    changed algorithm to use Matlab's fitcknn
 
-distMatrix = pdist2(trainingData,testingData);
-[~,minIdx] = min(distMatrix);
-classifiedClasses = trainingClasses(minIdx);
+knn = fitcknn(trainingData,trainingClasses);
+classifiedClasses = predict(knn,testingData);
 percentCorrect = sum(classifiedClasses == testingClasses) / size(testingData,1) * 100;
 
 end

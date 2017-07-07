@@ -1,4 +1,4 @@
-%% t_UseRealEMDistribution
+%% WeightedMeanModelFit
 %
 % Uses a real EM Distrbution data file from the psychophysical experiments
 % in order to come to a prediction of performance. The data is also saved

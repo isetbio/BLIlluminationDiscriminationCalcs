@@ -28,9 +28,9 @@ mosaic.fov = mosaicFOV;
 colorDir = 'BlueIllumination';
 illumStep = 10;
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
-comparisonOIPath = fullfile(analysisDir, 'OpticalImageData', 'Neutral_FullImage', colorDir);
+comparisonOIPath = fullfile(analysisDir, 'OpticalImageData', 'Constant_FullImage', colorDir);
 OINames = getFilenamesInDirectory(comparisonOIPath);
-comparison = loadOpticalImageData(['Neutral_FullImage' '/' colorDir], strrep(OINames{illumStep}, 'OpticalImage.mat', ''));
+comparison = loadOpticalImageData(['Constant_FullImage' '/' colorDir], strrep(OINames{illumStep}, 'OpticalImage.mat', ''));
 photonComparison = mosaic.compute(comparison,'currentFlag',false);
 comparisonPhotonPool = {photonComparison};
 

@@ -12,15 +12,16 @@ function runAllFirstOrderCalcs
 % this documents for us the flow of the whole calculation, and also lets us
 % gather all of the parameters together in one place.
 %
-% 4/29/15  dhb, xd           Wrote it.
+% 4/29/15  dhb, xd           Wrote it
 % 5/31/15  dhb               Tuning for multiple calculations
-% 7/29/15  xd                Renamed.
+% 7/29/15  xd                Renamed
+% 7/6/17   xd                Reorganized for clarity
 
 %% Clear and initialize
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs = {'SVM_Neutral_Control'};
+calcIDStrs = {'ConstantFullImage'};
 
 %% Parameters of the calculation
 %
@@ -34,56 +35,42 @@ calcIDStrs = {'SVM_Neutral_Control'};
 % This part loops through the calculations for all caldIDStrs specified
 for k1 = 1:length(calcIDStrs)
     
-    % Define the steps of the calculation that should be carried out.
+    % Define the steps of the calculation that should be carried out
     calcParams.CACHE_SCENES = false;
-    calcParams.forceSceneCompute = false;  % Will overwrite any existing data.
+    calcParams.forceSceneCompute = false;  % Will overwrite any existing data
     
-    calcParams.CACHE_OIS = true;
-    calcParams.forceOICompute = false;    % Will overwrite any existing data.
+    calcParams.CACHE_OIS = false;
+    calcParams.forceOICompute = false;     % Will overwrite any existing data
     
     calcParams.RUN_MODEL = false;
-    calcParams.MODEL_ORDER = 1; 
-    calcParams.overWriteFlag = true;      % Whether or not to overwrite existing data.
+    calcParams.MODEL_ORDER = 1;            % Corresponds to model function number
+    calcParams.overWriteFlag = false;      % Whether or not to overwrite existing data
     
-    calcParams.CALC_THRESH = false;
+    calcParams.CALC_THRESH = false;        % Immediately calculate thresholds after finishing
     
-    % Set the calcID
+    % Set the calcIDStr so functions that fill in some of the struct fields
+    % know what to do. This will be changed when the files are actually
+    % saved.
     calcParams.calcIDStr = calcIDStrs{k1};
     
-    % Folder list to run over for conversions into isetbio format
-%     calcParams = updateCacheFolderList(calcParams);
-    calcParams.cacheFolderList = {'Neutral', 'Neutral'};
+    % Folder list to run over for conversions into ISETBIO format.
+    % Alternatively, manually set this value by uncommenting the second
+    % line.
+    calcParams = updateCacheFolderList(calcParams);
+%     calcParams.cacheFolderList = {'Neutral', 'Neutral'};
     
-    % Need to specify the calibration file to use
+    % Need to specify the display calibration file to use.
     calcParams = assignCalibrationFile(calcParams);
     
-    % Specify how to crop the image.  We don't want it all.
-    % Code further on makes the most sense if the image is square (because we
-    % define a square patch of cone mosaic when we build the sensor), so the
-    % cropped region should always be square.
+    % Specify how to crop the image.  This is used to convert the RGB image
+    % to an ISETBIO scene. We don't want it all as there may be some black
+    % space. 
     calcParams = updateCropRect(calcParams);  
-    calcParams.S = [380 8 51];
-    calcParams.spatialDensity = [0 0.62 0.31 0.07];
-        
+    
     % Parameters for creating the sensor. OIvSensorScale is a parameter
     % that, if set to a value > 0, will subsample the optical image to the
     % size sensorFOV*OIvSensorScale.
-    calcParams.coneIntegrationTime = 0.050;
-    calcParams.sensorFOV = 1;
     calcParams.OIvSensorScale = 0;
-    
-    % Specify the number of trials for each combination of Kp Kg as well as
-    % the range of illuminants to use (max 50).
-    calcParams.trainingSetSize = 1000;
-    calcParams.testingSetSize = 1000;
-    calcParams.illumLevels = 1:50;
-    
-    % Here we specify which data function and classification function to use. 
-    calcParams.standardizeData = true;
-    calcParams.cFunction = 3;
-    calcParams.dFunction = 1;
-    calcParams.usePCA = true;
-    calcParams.numPCA = 100;
     
     % Kp represents the scale factor for the Poisson noise.  This is the
     % realistic noise representation of the photons arriving at the retina.
@@ -94,6 +81,19 @@ for k1 = 1:length(calcIDStrs)
     % the Gaussian noise is equal to the square root of the mean 
     % photoisomerizations across the available target image samples. 
     calcParams.KgLevels = 0:5:50;
+    
+    calcParams.S = [380 8 51];                              % S vector representation of the wavelength to use for the calculation
+    calcParams.spatialDensity = [0 0.62 0.31 0.07];         % Distribution of cones [null L M S]
+    calcParams.coneIntegrationTime = 0.050;                 % Amount of time to simulate in seconds
+    calcParams.sensorFOV = 1;                               % Size of cone mosaic in degrees
+    calcParams.trainingSetSize = 1000;                      % Number of response vectors in training set
+    calcParams.testingSetSize = 1000;                       % Number of response vectors in test set
+    calcParams.illumLevels = 1:50;                          % Illumination step sizes to cover in calculation
+    calcParams.standardizeData = true;                      % Whether to standardize data before classification
+    calcParams.cFunction = 3;                               % Calculation function number
+    calcParams.dFunction = 1;                               % Dataset generation function number
+    calcParams.usePCA = true;                               % Whether to perform PCA before classification
+    calcParams.numPCA = 400;                                % Number of PCA components to project vectors onto
     
     % Update to calcIDStr to a uniformly formatted name
     calcParams.calcIDStr = params2Name_FirstOrderModel(calcParams);

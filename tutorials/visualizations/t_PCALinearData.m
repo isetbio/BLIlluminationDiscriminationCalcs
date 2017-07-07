@@ -146,4 +146,4 @@ set(gca,'LineWidth',2)
 set(gca,'FontSize',28,'FontName','Helvetica')
 ylabel('Principal Component 1','FontSize',44,'FontName','Helvetica')
 xlabel('Stimulus Level','FontSize',44,'FontName','Helvetica')
-title('Mean PCA by Stimulus Level','FontSize',34,'FontName','Helvetica');
+title('Mean PCA by Stimulus Level','FontSize',34,'FontName','Helvetica')

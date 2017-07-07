@@ -57,7 +57,7 @@ for runNumber = 1:repeats
             
             % Initialize some variables per run/loop
             illumStep = staircaseStartingPoints(stairStart);
-            flips = -1; % Start at -1 since the first trial is guaranteed to flip
+            flips = -1; % Start at -1 since the first trial is guaranteed to 'flip'
             prev = 0;
             curr = 0;
 
@@ -69,8 +69,6 @@ for runNumber = 1:repeats
                 photonComparison = mosaic.compute(comparison,'currentFlag',false);
                 
                 testingData = df3_noABBA(calcParams,standardPhotonPool,{photonComparison},1,kg,2);
-                %     testingData = (testingData - repmat(m,2,1)) ./ repmat(s,2,1);
-                %     testingData = testingData*coeff;
                 
                 [classi,score] = predict(theSVM,testingData);
                 
@@ -86,18 +84,6 @@ for runNumber = 1:repeats
                     illumStep = illumStep + up;
                     curr = up;
                 end
-
-%                 if sum(isCorrect)==2
-%                     % If correct
-%                     numCorrect(colorIdx,illumStep) = numCorrect(colorIdx,illumStep) + 2;
-%                     illumStep = illumStep + down;
-%                     curr = down;
-%                 else
-%                     % If incorrect
-%                     numCorrect(colorIdx,illumStep) = numCorrect(colorIdx,illumStep) + sum(isCorrect);
-%                     illumStep = illumStep + up;
-%                     curr = up;
-%                 end
 
                 % Check if we flipped
                 if prev ~= curr

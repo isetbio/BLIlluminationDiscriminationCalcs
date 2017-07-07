@@ -1,4 +1,4 @@
-%% t_fitAggrThresholdsToIndividuals
+%% UniformMeanModelFit
 %
 % Uses the uniform mean over the model data to fit performance to subjects.
 %

@@ -1,7 +1,7 @@
-%% t_RMSE
+%% FitRMSEs
 %
 % Plots the RMSE for each of the different mosaic conditions. Uses
-% data saved from fits done in another script.
+% data saved from the fitting scripts.
 %
 % 3/31/17  xd  wrote it
 
@@ -30,7 +30,11 @@ xAxisLabels = {'Standard_w', 'L_w', 'M_w', 'S_w',...
                'Standard_u','L_u', 'M_u', 'S_u',...
                'LM_u', 'LS_u', 'MS_u'};
 
-%% Load LSE(RMSE) data for each mosaic
+%% Load RMSE data for each mosaic
+%
+% The RMSE for each individual subject is calculated and saved in the
+% fitting script. Here we load all the data and calculate the mean and SEM
+% for each mosaic type.
 
 % Vectors to save mean and std error
 meanRMSE = zeros(length(dataFiles),1);
@@ -59,5 +63,8 @@ xlabel('Mosaic type','FontSize',figParams.labelFontSize);
 ylabel('RMSE','FontSize',figParams.labelFontSize);
 
 %% Save RMSE values for paper figures
+%
+% These are for the 2x6 plot of alternate mosaics. Thus, we do not save the
+% RMSE values for the standard mosaics.
 RMSE = [meanRMSE(9:end) meanRMSE(2:7)];
 save('RMSE','RMSE');
