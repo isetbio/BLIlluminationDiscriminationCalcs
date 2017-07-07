@@ -6,8 +6,9 @@ function results = m2_SecondOrderModel(calcParams,mosaic,color)
 %
 % Inputs:
 %     calcParams  -  calcParams struct with parameters for the calculation
-%     mosaic  -  ISETBIO coneMosaic object to use for calculating the isomerizations
-%     color  -  string describing which color direction to use
+%     mosaic      -  ISETBIO coneMosaic object to use for calculating the 
+%                    isomerizations
+%     color       -  string describing which color direction to use
 %
 % Outputs:
 %     results  -  a matrix containing percent corrects for noise levels and
