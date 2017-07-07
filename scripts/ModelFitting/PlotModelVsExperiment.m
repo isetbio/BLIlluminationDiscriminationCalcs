@@ -1,4 +1,4 @@
-%% t_PlotModelVsExp
+%% PlotModelVsExperiment
 %
 % This script takes the model and predicted data and plots them against
 % each other to get a sense of what the data looks like.
