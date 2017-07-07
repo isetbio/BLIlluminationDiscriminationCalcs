@@ -6,7 +6,7 @@
 % stimuli in the dataset for this script.
 %
 % 10/20/16  xd  wrote it
-%  7/ 7/16  xd  update to keep noise frozen for reproducibility
+% 07/07/16  xd  update to keep noise frozen for reproducibility
 
 clear; close all;
 %% Set parameters

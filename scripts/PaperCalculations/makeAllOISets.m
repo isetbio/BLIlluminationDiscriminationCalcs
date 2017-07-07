@@ -5,9 +5,12 @@ function makeAllOISets(numCores)
 % script takes in the scene files that contain the full stimulus and breaks
 % into 1 degree patches before computing the optical images.
 %
+% Inputs:
+%    numCores  -  number of parpool workers to allocate
+%
 % 6/20/17   xd  wrote it
 
-p = parpool(numCores); % set to however many the machine can reasonable handle
+p = parpool(numCores); 
 
 %% Constant
 c.calcIDStr = 'Constant';

@@ -6,6 +6,9 @@
 % generate the resulting data. It will not execute any of the scripts that
 % perform analysis and plotting using the data.
 %
+% Warning: The entire set of calculations performed by this is script could
+% take over a month to finish!
+%
 % 06/22/17  xd  wrote it
 
 %% Parameters to set
@@ -36,7 +39,7 @@ setenv('PATH',[PATH ':' matlabroot '/bin']);
 
 % Generate all the optical images. We assume that the file directory has
 % been set up appropriately.
-% makeAllOISets(coresForCreatingOI);
+makeAllOISets(coresForCreatingOI);
 
 % Create a list of partial calcParams. This gets looped over to execute all
 % the calculations.
@@ -54,8 +57,8 @@ calcParamsList{9}  = setfield(struct('spatialDensity',[0 0.62 0.31 0.07]),'cache
 calcParamsList{10} = setfield(struct('spatialDensity',[0 0.62 0.31 0.07]),'cacheFolderList',{'NM2','NM2_FullImage'});
 
 % Run number of scripts according to params with number of parallel cores.
-
 for ii = 1:length(calcParamsList)
+    if isempty(calcParamsList{ii}), continue; end
     
     % Set up strings for vars
     cacheFolderList = calcParamsList{ii}.cacheFolderList;

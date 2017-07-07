@@ -3,7 +3,7 @@
 % This script takes the model and predicted data and plots them against
 % each other to get a sense of what the data looks like.
 %
-% 11/10/16
+% 11/10/16  xd  wrote it
 
 clear; close all;
 %% Load data
