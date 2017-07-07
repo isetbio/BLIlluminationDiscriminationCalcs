@@ -2,9 +2,29 @@
 %
 % The purpose of this script is to provide a single script through which
 % all the main (not necessarily supplemental) calculations are executed.
+% Note that this script will only execute the model calculations and
+% generate the resulting data. It will not execute any of the scripts that
+% perform analysis and plotting using the data.
+%
+% 06/22/17  xd  wrote it
 
 %% Parameters to set
+%
+% There parameters simply control how many cores (parpool workers) to
+% assign to each task.
+
+% Define the number of cores used to generate the optical images. This step
+% is fairly quick so even a low number of cores should do the job.
 coresForCreatingOI = 30;
+
+% Define the number of times to execute the script and the number of cores
+% used on each execution. The product of the two values is the total number
+% of cores assigned to a calculation set. The reason that the code is set
+% up this way is because the cluster we used is shared with other labs and
+% often times other people have set up jobs to run. If we wanted to use 40
+% cores, and only 30 are available, splitting up the job like this will
+% immediately start 24 cores and the remaining 16 will be queued to run as
+% soon as possible.
 coresPerExecutable = 8;
 numExecutables = 5;
 
@@ -57,19 +77,15 @@ for ii = 1:length(calcParamsList)
     end
     
     % Periodically check that the number of result folders is non-zero?
+    % This indicates that an output folder has been created and no file has
+    % been saved there which means the calculation for that folder is still
+    % running. When no such folders exist, we move onto the next set of
+    % calculations.
+    % 
     % There might be a slight possibility that the stars align and all
     % cores finish their current task with finishing the entire
     % calculation, but I think this is not likely to happen.
     analysisPath = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
-    
-    %     thisDir = fileparts(mfilename('fullpath'));
-    %     script  = fullfile(thisDir, 'countNonEmptyDirs.sh');
-    %     [~,hasFinishedThisSet] = system(['sh ' script ' ''' fullfile(analysisPath,'SimpleChooserData') '''' ]);
-    %     while hasFinishedThisSet > 0
-    %         pause(3600);
-    %         [~,hasFinishedThisSet] = system(['sh ' script ' ''' fullfile(analysisPath,'SimpleChooserData') '''' ]);
-    %     end
-    
     outputPath = fullfile(analysisPath,'SimpleChooserData');
     
     finish = false;
@@ -86,8 +102,3 @@ for ii = 1:length(calcParamsList)
         finish = hasNotFinishedThisSet == 0;
     end
 end
-
-%% Run the analysis code
-% Maybe this isn't necessary
-
-
