@@ -1,14 +1,18 @@
 function makeAllOISets(numCores)
-%% makeAllOISets(numCores)
+% makeAllOISets(numCores)
 %
 % Creates all the optical images necessary for the computations. This
 % script takes in the scene files that contain the full stimulus and breaks
-% into 1 degree patches before computing the optical images.
+% into 1 degree patches before computing the optical images. 
+%
+% This script should not be modified as it contains the parameters used for
+% the paper calculations. If you are adopting code from this function, copy
+% it to a new file to edit.
 %
 % Inputs:
-%    numCores  -  number of parpool workers to allocate
+%     numCores  -  number of parpool workers to allocate
 %
-% 6/20/17   xd  wrote it
+% 06/20/17  xd  wrote it
 
 p = parpool(numCores); 
 

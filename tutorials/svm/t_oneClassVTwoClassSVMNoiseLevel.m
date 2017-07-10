@@ -22,15 +22,15 @@ mosaic = getDefaultBLIllumDiscrMosaic;
 mosaic.fov = mosaicFOV;
 
 %% Load Standard
-[standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir('Constant_FullImage',mosaic);
+[standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir('Constant_1',mosaic);
 
 %% Load a comparison
 colorDir = 'BlueIllumination';
 illumStep = 10;
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
-comparisonOIPath = fullfile(analysisDir, 'OpticalImageData', 'Constant_FullImage', colorDir);
+comparisonOIPath = fullfile(analysisDir, 'OpticalImageData', 'Constant_1', colorDir);
 OINames = getFilenamesInDirectory(comparisonOIPath);
-comparison = loadOpticalImageData(['Constant_FullImage' '/' colorDir], strrep(OINames{illumStep}, 'OpticalImage.mat', ''));
+comparison = loadOpticalImageData(['Constant_1' '/' colorDir], strrep(OINames{illumStep}, 'OpticalImage.mat', ''));
 photonComparison = mosaic.compute(comparison,'currentFlag',false);
 comparisonPhotonPool = {photonComparison};
 
@@ -38,9 +38,7 @@ comparisonPhotonPool = {photonComparison};
 [trainingData,trainingClasses] = df3_noABBA(calcParams,standardPhotonPool,standardPhotonPool,1,kg,2*trainingSetSize);
 % trainingClasses(:) = 1;
 
-s = std(trainingData,[],1);
-m = mean(trainingData,1);
-trainingData = zscore(trainingData);
+[trainingData,m,s] = zscore(trainingData);
 coeff = pca(trainingData,'NumComponents',numPCA);
 trainingData = trainingData*coeff;
 
