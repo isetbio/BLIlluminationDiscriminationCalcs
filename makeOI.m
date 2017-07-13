@@ -1,5 +1,5 @@
-parpool(5);
-c.calcIDStr = 'RSGreen';
-c.cacheFolderList = {'RSGreen', 'RealScenesGreen'};
-c.sensorFOV = 2;
+parpool(30);
+c.calcIDStr = 'Constant';
+c.cacheFolderList = {'Constant', 'Constant_FullImage'};
+c.sensorFOV = 1;
 generateOIForParallelComputing(c);
