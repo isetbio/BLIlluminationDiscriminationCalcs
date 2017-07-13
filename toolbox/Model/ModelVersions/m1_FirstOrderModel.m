@@ -9,8 +9,8 @@ function results = m1_FirstOrderModel(calcParams,mosaic,color)
 %
 % Inputs:
 %     calcParams  -  calcParams struct with parameters for the calculation
-%     mosaic  -  ISETBIO coneMosaic object to use for calculating the isomerizations
-%     color  -  string describing which color direction to use
+%     mosaic      -  ISETBIO coneMosaic object to use for calculating the isomerizations
+%     color       -  string describing which color direction to use
 %
 % Outputs:
 %     results  -  a matrix containing percent corrects for noise levels and
@@ -116,12 +116,12 @@ for ii = 1:length(illumLevels);
                 results(ii,jj,kk) = classifierFunction(trainingData,testingData,trainingClasses,testingClasses);
             end
             
-            % Update the last 5 correct and check if startKg needs to be shifted.
-            % If the average of the last 5 is greater than 99.5%, we set the
-            % remaining values for each illumination level for the startKg noise
-            % level to equal 100%. We then add 1 to the start Kg. This should
-            % provide a nice boost to performance speed without affecting the model
-            % results.
+            % Update the last 5 correct and check if startKg needs to be
+            % shifted. If the average of the last 5 is greater than 99.6%,
+            % we set the remaining values for each illumination level for
+            % the startKg noise level to equal 100%. We then add 1 to the
+            % start Kg. This should provide a nice boost to performance
+            % speed without affecting the model results.
             if ii >= 5
                 lastFiveCorrect = squeeze(results(ii-4:ii,jj,startKg(jj)));
                 if mean(lastFiveCorrect) > 99.6

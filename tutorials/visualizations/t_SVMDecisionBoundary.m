@@ -1,38 +1,62 @@
-%% t_SVMDecisionBoundary
+function t_SVMDecisionBoundary(varargin)
+% t_SVMDecisionBoundary(varargin)
 %
 % This script describes how to train an SVM and extract the decision
 % boundary to allow for visualization. The SVM is trained on a PCA
 % representation of the data. We will use some blue stimulus and the target
 % stimuli in the dataset for this script.
 %
+% This function only takes in 1 optional params struct which must contain
+% the same fields as the params below. You can just edit the parameters in
+% this function to see the effects of changing them. The reason that this
+% is written as a function is because it is used to generate a figure
+% elsewhere.
+%
 % 10/20/16  xd  wrote it
 % 07/07/16  xd  update to keep noise frozen for reproducibility
+% 07/08/16  xd  turned into script for paper plot ease of use
 
-clear; close all;
-%% Set parameters
+%% Set default parameters
 
 % Choose which blue stimulus to plot as well as how much additive noise.
 % Pick 0 (no Gaussian noise) and some value > 0.
-comparisonToPlot = 1;
-kg = [0 15];
+params.comparisonToPlot = 1;
+params.kg = [0 15];
 
 % Size of the testing and training sets. The larger the training set, the
 % better the reproducibility of the result. However, it will also take
 % longer to run/train the PCA/SVM. The number of PCA components is limited
 % to the number of testing set samples, and if set higher, will still only
 % reach that limit.
-trainingSetSize = 1000;
-testingSetSize = 1000;
-numPCA = 400;
+params.trainingSetSize = 1000;
+params.testingSetSize = 1000;
+params.numPCA = 400;
 
 % Which section of the grid to use.
-calcIDStr = 'Constant_1';
+params.calcIDStr = 'Constant_1';
 
 % Size of mosaic
-fov = 1;
+params.fov = 1;
 
-% Frozen random seed
-rng(1);
+% RNG Seed
+params.randomSeed = 1;
+
+%% Parse input
+p = inputParser;
+p.addOptional('params',params,@(X) isstruct(X) || isempty(X));
+p.parse(varargin{:});
+
+comparisonToPlot = p.Results.params.comparisonToPlot;
+kg               = p.Results.params.kg;
+trainingSetSize  = p.Results.params.trainingSetSize;
+testingSetSize   = p.Results.params.testingSetSize;
+numPCA           = p.Results.params.numPCA;
+calcIDStr        = p.Results.params.calcIDStr;
+fov              = p.Results.params.fov;
+randomSeed       = p.Results.params.randomSeed;
+
+%% Set random seed
+rng(randomSeed);
 
 %% Make mosaic
 mosaic = getDefaultBLIllumDiscrMosaic;
@@ -96,8 +120,6 @@ for ii = 1:length(kg)
     hold on;
     plot(trainingData(trainingSetSize/2+1:end,1),trainingData(trainingSetSize/2+1:end,2),'*','MarkerSize',8);
     plot(trainingData(1:trainingSetSize/2,1),trainingData(1:trainingSetSize/2,2),'o','MarkerSize',8);
-    % ylim([min(trainingData(:,2)) max(trainingData(:,2))]);
-    % ylim([-4 4]);
     
     % Plot decision boundary
     plot([-h(1),h(1)]*100,[-h(2),h(2)]*100,'k--','LineWidth',2);
@@ -113,4 +135,5 @@ for ii = 1:length(kg)
     legend({'AB','BA'},'FontSize',14,'FontName','Helvetica','Location','northwest');
     set(gca,'LineWidth',2,'FontSize',28,'FontName','Helvetica');
 
+end
 end

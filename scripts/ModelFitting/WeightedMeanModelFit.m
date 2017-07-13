@@ -31,7 +31,7 @@ modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Con
 singlePlots = false;
 
 % Whether to just generate to data or to show the plots
-showPlots = false;
+showPlots = true;
 
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
@@ -39,7 +39,7 @@ saveData = false;
 saveFilename = [modelDataIDStr '_WeightedModelFits'];
 
 % Set to true to save the weighted performance matrices.
-savePerf = true;
+savePerf = false;
 
 % Whether to dynamically scale axes
 scaleAxes = false;

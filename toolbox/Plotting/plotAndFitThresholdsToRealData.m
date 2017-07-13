@@ -99,8 +99,8 @@ if size(sumLSE,1) > 1
 end
 
 % Check against NaN
-if isnan(sumLSE(interpolateStartPoint)), interpolateEndPoint = interpolateStartPoint; end;
-if isnan(sumLSE(interpolateEndPoint)),   interpolateEndPoint = interpolateStartPoint; end;
+if isnan(sumLSE(interpolateStartPoint)), interpolateStartPoint = interpolateStartPoint + 1; end;
+if isnan(sumLSE(interpolateEndPoint)),   interpolateEndPoint = interpolateEndPoint - 1; end;
 
 % If the NoiseLevel field is greater than 0, than the user specified an
 % input noise level. We will interpolate to that value instead of what
@@ -112,7 +112,7 @@ end
 
 % We do the interpolation if the two points are not equal. Otherwise, we
 % can just proceed using the point.
-if interpolateStartPoint ~= interpolateEndPoint
+if interpolateStartPoint ~= interpolateEndPoint && interpolateStartPoint < interpolateEndPoint
     
     % Get thresholds at the start and end points
     startPointThreshold = thresholds(interpolateStartPoint,:);
