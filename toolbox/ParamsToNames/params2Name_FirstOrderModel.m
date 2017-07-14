@@ -7,10 +7,7 @@ function name = params2Name_FirstOrderModel(params)
 %
 % 9/9/16  xd  wrote it
 
-name = [params.calcIDStr 'FirstOrderModel'];
-
-% OI folder information
-name = [name '_' params.cacheFolderList{2}];
+name = 'FirstOrderModel';
 
 % Cone density and other properties of the mosaic
 name = sprintf([name '_LMS_%2.2f_%2.2f_%2.2f'],params.spatialDensity(2),params.spatialDensity(3),params.spatialDensity(4));
@@ -23,8 +20,8 @@ end
 % Things about data and classifier
 name = [name '_' dataFunctionText(params.dFunction) '_' classifierFunctionText(params.cFunction)];
 
-% Add number of training samples
-name = sprintf([name '_NumSamples%d'],params.trainingSetSize);
+% OI folder information
+name = [name '_' params.cacheFolderList{2}];
 
 end
 

@@ -39,12 +39,12 @@ setenv('PATH',[PATH ':' matlabroot '/bin']);
 
 % Generate all the optical images. We assume that the file directory has
 % been set up appropriately.
-makeAllOISets(coresForCreatingOI);
+% makeAllOISets(coresForCreatingOI);
 
 % Create a list of partial calcParams. This gets looped over to execute all
 % the calculations.
 calcParamsList = {};
-calcParamsList{1} = setfield(struct('spatialDensity',[0 0.62 0.31 0.07]),'cacheFolderList',{'Constant','Constant_FullImage'});
+% calcParamsList{1} = setfield(struct('spatialDensity',[0 0.62 0.31 0.07]),'cacheFolderList',{'Constant','Constant_FullImage'});
 calcParamsList{2} = setfield(struct('spatialDensity',[0 0.93 0.00 0.07]),'cacheFolderList',{'Constant','Constant_FullImage'});
 calcParamsList{3} = setfield(struct('spatialDensity',[0 0.00 0.93 0.07]),'cacheFolderList',{'Constant','Constant_FullImage'});
 calcParamsList{4} = setfield(struct('spatialDensity',[0 0.66 0.34 0.00]),'cacheFolderList',{'Constant','Constant_FullImage'});
@@ -65,11 +65,12 @@ for ii = 1:length(calcParamsList)
     oiFolder        = calcParamsList{ii}.cacheFolderList{1};
     sceneFolder     = calcParamsList{ii}.cacheFolderList{2};
     spatialDensity  = mat2str(calcParamsList{ii}.spatialDensity);
-    numCores = num2str(coresPerExecutable);
+    numCores        = num2str(coresPerExecutable);
     
     for jj = 1:numExecutables
-        command = ['matlab -nojvm -nodesktop -nodisplay ' ...
-                   '-r "tbUseProject(''BLIlluminationDiscriminationCalcs'',''runLocalHooks'',true);'...
+        command = ['matlab -nodesktop -nodisplay ' ...
+                   '-r "tbUseProject(''BLIlluminationDiscriminationCalcs'',''runLocalHooks'',false);'...
+                   'pause(60);'...
                    'cd ~;'...
                    'runAllFirstOrderCalcsParallel(' ...
                    numCores ',''' oiFolder ''',''' sceneFolder ''',' spatialDensity...
@@ -78,6 +79,7 @@ for ii = 1:length(calcParamsList)
         % Execute from command line
         system(command);
         disp(command)
+        pause(600);
     end
     
     % Periodically check that the number of result folders is non-zero?

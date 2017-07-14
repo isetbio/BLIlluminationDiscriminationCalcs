@@ -17,10 +17,10 @@ function makeAllOISets(numCores)
 p = parpool(numCores); 
 
 %% Constant
-c.calcIDStr = 'Constant';
-c.cacheFolderList = {'Constant', 'Constant_FullImage'};
-c.sensorFOV = 1;
-generateOIForParallelComputing(c);
+% c.calcIDStr = 'Constant';
+% c.cacheFolderList = {'Constant', 'Constant_FullImage'};
+% c.sensorFOV = 1;
+% generateOIForParallelComputing(c);
 
 %% Neutral
 c.calcIDStr = 'Neutral';

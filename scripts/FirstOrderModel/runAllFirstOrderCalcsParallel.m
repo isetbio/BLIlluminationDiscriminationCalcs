@@ -27,8 +27,10 @@ function runAllFirstOrderCalcsParallel(numCores,oiFolder,sceneFolder,spatialDens
 %
 % 7/6/17    xd    Reorganized for clarity
 
+
 %% Clear and initialize
-close all; ieInit; parpool(numCores);
+%close all; ieInit; 
+parpool(numCores);
 
 %% Calculate how many patches there are
 %
@@ -41,6 +43,7 @@ close all; ieInit; parpool(numCores);
 c.calcIDStr       = sceneFolder;
 c.cacheFolderList = {oiFolder,sceneFolder};
 c.sensorFOV       = 1;
+dataDir           = getpref('BLIlluminationDiscriminationCalcs','DataBaseDir');
 fileNames         = getFilenamesInDirectory(fullfile(dataDir,'SceneData',c.cacheFolderList{2},'Standard'));
 tempScene         = loadSceneData([c.cacheFolderList{2} '/Standard'],fileNames{1}(1:end-9));
 numberofOI        = numel(splitSceneIntoMultipleSmallerScenes(tempScene,c.sensorFOV));
@@ -62,6 +65,9 @@ parfor k1 = 1:length(theIndex)
     calcParams.RUN_MODEL = true;
     calcParams.MODEL_ORDER = 1;           % Corresponds to model function number
     calcParams.overWriteFlag = false;     % Whether or not to overwrite existing data.
+    
+    % Temp placeholder
+    calcParams.calcIDStr = c.calcIDStr;
     
     % Edit the cache folder list to point to an actual OI
     calcParams.cacheFolderList = {c.cacheFolderList{1} [c.cacheFolderList{1} '_' num2str(theIndex(k1))]};
@@ -92,7 +98,7 @@ parfor k1 = 1:length(theIndex)
         % deviation of the Gaussian noise is equal to the square root of
         % the mean photoisomerizations across the available target image
         % samples.
-        calcParams.KgLevels = 0:5:50;
+        calcParams.KgLevels = 0:5:30;
         
         calcParams.S = [380 8 51];                              % S vector representation of the wavelength to use for the calculation
         calcParams.spatialDensity = spatialDensity;             % Distribution of cones [null L M S]
