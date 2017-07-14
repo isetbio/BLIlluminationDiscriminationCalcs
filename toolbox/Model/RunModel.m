@@ -28,7 +28,7 @@ p.addOptional('overWrite',false,@islogical);
 p.addOptional('frozen',false,@islogical);
 p.addOptional('validation',false,@islogical);
 
-p.parse(calcParams,overWrite,varargin{:})
+p.parse(calcParams,varargin{:})
 calcParams = p.Results.calcParams;
 overWrite  = p.Results.overWrite;
 frozen     = p.Results.frozen;
