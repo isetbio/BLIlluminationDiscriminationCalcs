@@ -1,5 +1,5 @@
-function results = RunModel(calcParams,overWrite,frozen,validation)
-% results = RunModel(calcParams,overWrite,frozen,validation)
+function results = RunModel(calcParams,varargin)
+% results = RunModel(calcParams,varargin)
 %
 % This function will run the computational observer model according to
 % specifications in the calcParams struct. Specifically, the sensor will be
@@ -9,6 +9,7 @@ function results = RunModel(calcParams,overWrite,frozen,validation)
 %
 % Inputs:
 %     calcParams  -  struct which contains parameters for this calculation
+% {Ordered-Optional}
 %     overWrite   -  flag to determine whether to overwrite existing data
 %     frozen      -  flag to determine whether to use frozen noise
 %     validation  -  flag to determine whether current run is for a
@@ -27,7 +28,7 @@ p.addOptional('overWrite',false,@islogical);
 p.addOptional('frozen',false,@islogical);
 p.addOptional('validation',false,@islogical);
 
-p.parse(calcParams,overWrite,frozen,validation)
+p.parse(calcParams,overWrite,varargin{:})
 calcParams = p.Results.calcParams;
 overWrite  = p.Results.overWrite;
 frozen     = p.Results.frozen;
