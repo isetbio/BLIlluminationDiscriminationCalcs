@@ -16,7 +16,7 @@ function updatedParams = updateCropRect(calcParams)
 switch (calcParams.calcIDStr)
     case {'ValidateFOM'}
         calcParams.cropRect = [550 450 40 40];
-    case {'Neutral_FullImage'}
+    case {'Neutral_FullImage' 'NM1_FullImage' 'NM2_FullImage'}
         calcParams.cropRect = [489 393 535 480];
     case {'ConstantFullImage' 'ShuffledFullImage'}
         calcParams.cropRect = [560 261 802 667];

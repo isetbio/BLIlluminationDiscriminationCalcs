@@ -61,6 +61,8 @@ analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 allDirs = getAllSubdirectoriesContainingString(fullfile(analysisDir,'SimpleChooserData'),modelDataIDStr);
 [~, calcParams] = loadModelData(allDirs{1});
 
+thresholdMatrix = zeros(length(orderOfSubjects),8);
+
 for subjectNumber = 1:length(orderOfSubjects)
     subjectId = orderOfSubjects{subjectNumber};
     load(pathToExperimentData)
@@ -83,6 +85,11 @@ for subjectNumber = 1:length(orderOfSubjects)
     g = nanmean([d1.Greener.threshold,d2.Greener.threshold]);
     r = nanmean([d1.Redder.threshold,d2.Redder.threshold]);
     y = nanmean([d1.Yellower.threshold,d2.Yellower.threshold]);
+    
+    thresholdMatrix(subjectNumber,:) = [ d1.Bluer.threshold,d2.Bluer.threshold , ...
+                                         d1.Greener.threshold,d2.Greener.threshold , ...
+                                         d1.Redder.threshold,d2.Redder.threshold, ...
+                                         d1.Yellower.threshold,d2.Yellower.threshold ];
 
     % Plot a the thresholds along with the model predictions.
     if ~singlePlots && showPlots

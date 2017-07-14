@@ -21,7 +21,7 @@ function runAllFirstOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
-calcIDStrs = {'ConstantFullImage'};
+calcIDStrs = {'NM1_FullImage' 'NM2_FullImage'};
 
 %% Parameters of the calculation
 %
@@ -36,8 +36,8 @@ calcIDStrs = {'ConstantFullImage'};
 for k1 = 1:length(calcIDStrs)
     
     % Define the steps of the calculation that should be carried out
-    calcParams.CACHE_SCENES = false;
-    calcParams.forceSceneCompute = false;  % Will overwrite any existing data
+    calcParams.CACHE_SCENES = true;
+    calcParams.forceSceneCompute = true;  % Will overwrite any existing data
     
     calcParams.CACHE_OIS = false;
     calcParams.forceOICompute = false;     % Will overwrite any existing data
