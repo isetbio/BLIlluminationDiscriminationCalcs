@@ -54,19 +54,13 @@ else
         case 'eagleray'
             % DHB's desktop
             sharedRootDir = fullfile(filesep,'Volumes','Users1','Dropbox (Aguirre-Brainard Lab)');
-            clonedWikiDir = '/Users/Shared/GitWebSites/BLIlluminationDiscriminationCalcs.wiki';
-            clonedGhPagesLocation = '/Users/Shared/GitWebSites/BLIlluminationDiscriminationCalcs';
         otherwise
             % Some unspecified machine, try user specific customization
             switch(sysInfo.userShortName)
                 case 'xiaomaoding'
                     sharedRootDir = fullfile(filesep, 'Users', 'xiaomaoding', 'Dropbox (Aguirre-Brainard Lab)');
-                    clonedWikiDir = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscriminationCalcsWiki/BLIlluminationDiscriminationCalcs.wiki';
-                    clonedGhPagesLocation = '/Users/Shared/Matlab/Analysis/BLIlluminationDiscrimCalcsGhPages/BLIlluminationDiscriminationCalcs';
                 otherwise
                     sharedRootDir = fullfile(strrep(userpath,':',''),'output');
-                    clonedWikiDir = '';
-                    clonedGhPagesLocation = '';
             end
     end 
 end
@@ -102,8 +96,8 @@ p = struct(...
     'alternateFullDataDir',                '',  ...                                                              % Alternate FULL (hash) data directory location. Specify '' to use the default location, i.e., $validationRootDir/data/full
     'useRemoteDataToolbox',  true, ...                                                                           % If true use Remote Data Toolbox to fetch validation data on demand.
     'remoteDataToolboxConfig', rdtConfig, ...                                                                    % Struct, file path, or project name with Remote Data Toolbox configuration.
-    'clonedWikiLocation',                  clonedWikiDir, ... 	                                                 % Local path to the directory where the wiki is cloned. Only relevant for publishing tutorials.
-    'clonedGhPagesLocation',               clonedGhPagesLocation, ... 	                                         % Local path to the directory where the gh-pages repository is cloned. Only relevant for publishing tutorials.
+    'clonedWikiLocation',                  '', ... 	                                                             % Local path to the directory where the wiki is cloned. Only relevant for publishing tutorials.
+    'clonedGhPagesLocation',               '', ... 	                                                             % Local path to the directory where the gh-pages repository is cloned. Only relevant for publishing tutorials.
     'githubRepoURL',                       'http://isetbio.github.io/BLIlluminationDiscriminationCalcs', ... 	 % Github URL for the project. This is only used for publishing tutorials.
     'generateGroundTruthDataIfNotFound',   true, ...  	                                                         % Flag indicating whether to generate ground truth if one is not found
     'numericTolerance',                    1e-12, ...
