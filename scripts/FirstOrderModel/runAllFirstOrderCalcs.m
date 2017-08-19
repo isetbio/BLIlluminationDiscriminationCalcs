@@ -3,8 +3,8 @@ function runAllFirstOrderCalcs
 %
 % Run the full set of calculations for the first order model in the
 % BLIlluminationDiscrimination project, for one set of parameters.  The
-% calcParam fields detailed in this function are only the ones relevant to
-% the first order model.  To see all the fields, refer to the
+% calcParams struct fields detailed in this function are only the ones
+% relevant to the first order model.  To see all the fields, refer to the
 % createCalcParams function in the toolbox.
 %
 % Typically, we will only execute pieces of this at any given time, because
