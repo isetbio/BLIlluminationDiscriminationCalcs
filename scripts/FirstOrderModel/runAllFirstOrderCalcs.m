@@ -21,13 +21,22 @@ function runAllFirstOrderCalcs
 close all; ieInit;
 
 %% Set identifiers to run
+%
+% These strings refer to pre-defined sets of data to be analyzed.
+% The meaning of the strings is defined in updateCacheFolderList.m,
+% which has a switch statement that defines input and output data 
+% directories corresponding to each pre-defined set.
+%
+% These strings are also used to set some paramters that vary across
+% our analysis of different experiments.  These are handled by
+% a switch statment in updateCropRect.m
 calcIDStrs = {'NM1_FullImage' 'NM2_FullImage'};
 
 %% Parameters of the calculation
 %
 % We'll define this as a structure, with the fields providing the name of
 % what is specified.  These fields could later be viewed as key-value pairs
-% either for override by key-value calling arguments or for saving out in
+% either for override by key-value calling arguments or for saving out inidn
 % some sensible manner in a database. We could also run some sort of check
 % on the structure at runtime to make sure our caches are consistent with
 % the current parameters being used.
@@ -44,6 +53,9 @@ for k1 = 1:length(calcIDStrs)
     
     calcParams.RUN_MODEL = false;
     calcParams.MODEL_ORDER = 1;            % Corresponds to model function number
+    
+    % This flag is to prevent re-doing a bunch of calculations in a big batch.  When
+    % set to false, output that already exists is treated as good and not recomputed.
     calcParams.overWriteFlag = false;      % Whether or not to overwrite existing data
     
     calcParams.CALC_THRESH = false;        % Immediately calculate thresholds after finishing
@@ -57,7 +69,6 @@ for k1 = 1:length(calcIDStrs)
     % Alternatively, manually set this value by uncommenting the second
     % line.
     calcParams = updateCacheFolderList(calcParams);
-%     calcParams.cacheFolderList = {'Neutral', 'Neutral'};
     
     % Need to specify the display calibration file to use.
     calcParams = assignCalibrationFile(calcParams);
