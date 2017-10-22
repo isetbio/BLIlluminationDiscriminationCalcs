@@ -30,7 +30,7 @@ p.parse(varargin{:});
 UnitTest.setPref('verbosity',p.Results.verbosity);
 UnitTest.setPref('generatePlots',p.Results.generatePlots);
 UnitTest.setPref('graphMismatchedData',p.Results.graphMismatchedData);
-UnitTest.setPref('numericTolerance',p.Results.numericTolerance);
+UnitTest.setPref('numericTolerance', p.Results.numericTolerance);
 
 % Run time error behavior
 % valid options are: 'rethrowExceptionAndAbort', 'catchExceptionAndContinue'
