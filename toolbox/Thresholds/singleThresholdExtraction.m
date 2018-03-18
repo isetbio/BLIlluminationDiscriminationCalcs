@@ -15,7 +15,7 @@ function [threshold,paramsValues,stimLevels] = singleThresholdExtraction(data,va
 % {ordered optional}
 %     criterion           -  what percent correct to extract threshold (default = 70.71)
 %     stimLevels          -  vector of all stimulus steps (default = 1:length(data))
-%     numTrials           - number of trials per step (default = 100)
+%     numTrials           -  number of trials per step (default = 100)
 %     useTrueIlluminants  -  use true or nominal illumination steps (default = true)
 %     color               -  string that specifies with illumination direction color (default = 'blue')
 %     illumPath           -  path to where true illuminant values are stored
@@ -53,8 +53,8 @@ data           = p.Results.data(:);
 
 % Need to remove lapse rate if data does not reach 100%. Palamedes gives
 % unreasonable results otherwise.
-paramsEstimate = [10 5 0.5 0.05];
-paramsFree     = [1 1 0 1];%(mean(data(end-4:end)) > 90)]; 
+paramsEstimate = [10 5 0.5 0.01];
+paramsFree     = [1 1 0 0];%(mean(data(end-4:end)) > 90)]; 
 if length(numTrials) == 1
     numTrials       = repmat(numTrials,1,length(data));
 end
