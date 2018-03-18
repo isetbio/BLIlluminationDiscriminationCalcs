@@ -35,7 +35,7 @@ showPlots = true;
 
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
-saveData = false;
+saveData = true;
 saveFilename = [modelDataIDStr '_WeightedModelFits'];
 
 % Set to true to save the weighted performance matrices.
@@ -44,8 +44,12 @@ savePerf = false;
 % Whether to dynamically scale axes
 scaleAxes = false;
 
+% Whether to save the averaged model fit figure
+saveAvgFigure = true;
+
 % Paths to data files
 pathToFixationData = '/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCodeTempLocation/Exp8ProcessedData/';
+pathToFixationData = '/Users/xiaomaoding/Dropbox (Aguirre-Brainard Lab)/xColorShare/Xiaomao/Exp8ImageProcessingCodeTempLocation/';
 pathToExperimentData = '/Users/Shared/Matlab/Experiments/Newcastle/stereoChromaticDiscriminationExperiment/analysis/FitThresholdsAllSubjectsExp8.mat';
 
 %% Some constant values
@@ -129,7 +133,8 @@ for subjectNumber = 1:length(orderOfSubjects)
     % Turn from cell into matrix. This allows for easier plotting later. We
     % also reorganize the matrix so that the color order is b, y, g, r.
     t = cell2mat(t);
-    t = t(:,[1 4 2 3]);    
+    disp(subjectNumber)
+    t = t(:,[1 4 2 3])    
     perSubjectAggregateThresholds{subjectNumber} = t;
     
     % Create some label information for plotting.
@@ -205,6 +210,10 @@ if showPlots
     ylim([0 20]);
     title(['Weighted Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
     disp(['Weighted Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
+    
+    if saveAvgFigure
+        savefig([saveFilename '.fig']);
+    end
 end
 
 %% Calculate LSE

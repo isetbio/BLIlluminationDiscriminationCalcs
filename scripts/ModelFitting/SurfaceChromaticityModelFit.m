@@ -23,7 +23,7 @@ modelDataIDStrs = {'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_N
 
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
-saveData = false;
+saveData = true;
 saveFilename = 'ChromaticityModelFits';
 
 %% Load experimental data
@@ -105,7 +105,8 @@ for ii = 1:length(modelDataIDStrs)
     s = (ii-1) * 4 + 1;
     subplot(2,3,ii+3);
     
-    plotAndFitThresholdsToRealData(pI,mFit(s:s+3),mExp(s:s+3),'ThresholdError',sFit(s:s+3),'DataError',sExp(s:s+3),...
+    plotAndFitThresholdsToRealData(pI,mFit(s:s+3),mExp(s:s+3),...
+        'ThresholdError',sFit(s:s+3),'DataError',sExp(s:s+3),...
         'NoiseVector',calcParams.noiseLevels,'NewFigure',false);
     
     ylim([0 20]);
@@ -113,3 +114,9 @@ for ii = 1:length(modelDataIDStrs)
 end
 
 disp(['Uniform Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
+
+%%
+if saveData
+    save([saveFilename '.mat'],'perSubjectFittedNoiseLevel','perSubjectExperimentalThresholds',...
+        'perSubjectFittedThresholds');
+end
