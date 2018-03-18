@@ -45,7 +45,7 @@ thresholdError = parser.Results.ThresholdError;
 dataError = parser.Results.DataError;
 
 %% Check that thresholds and data have the same number of entries
-if size(thresholds,2) ~= length(data), error('thresholds and data size are not matching!'); end;
+if size(thresholds,2) ~= length(data), error('thresholds and data size are not matching!'); end
 
 %% Determine the best average match
 %
@@ -57,7 +57,7 @@ thresholdLSE = (thresholds - repmat(data(:)',size(thresholds,1),1)).^2;
 sumLSE = sum(thresholdLSE,2);
 
 [~,minLSEIdx] = min(sumLSE);
-if parser.Results.NoiseLevel > 0,
+if parser.Results.NoiseLevel > 0
     minLSEIdx = parser.Results.NoiseLevel;
 end
 
@@ -66,11 +66,11 @@ interpolateStartPoint = minLSEIdx;
 
 % Read in the threshold values from this point, so that if we do not end up
 % interpolated, there is still a value set here.
-fittedThresholds = thresholds(interpolateStartPoint,:);
+fittedThresholds = thresholds(ceil(interpolateStartPoint),:);
 fittedError = zeros(size(fittedThresholds));
 
 if (~isempty(thresholdError))
-    fittedError = thresholdError(interpolateStartPoint,:);
+    fittedError = thresholdError(ceil(interpolateStartPoint),:);
 end
 
 % Target to which to interpolate. We initialize it to the start point and
@@ -78,7 +78,14 @@ end
 % interpolation.
 interpolateEndPoint = interpolateStartPoint;
 
-% If x is the minimum point, we want to interpolate between x-1 and x+1
+% If the NoiseLevel field is greater than 0, than the user specified an
+% input noise level. We will interpolate to that value instead of what
+% we just calculated.
+if parser.Results.NoiseLevel > 0
+    interpolateStartPoint = parser.Results.NoiseLevel;
+    interpolateEndPoint = interpolateStartPoint;
+else
+  % If x is the minimum point, we want to interpolate between x-1 and x+1
 % since our error is a quadratic function, meaning that the true minimum
 % must be between these two points.
 if size(sumLSE,1) > 1
@@ -99,15 +106,8 @@ if size(sumLSE,1) > 1
 end
 
 % Check against NaN
-if isnan(sumLSE(interpolateStartPoint)), interpolateStartPoint = interpolateStartPoint + 1; end;
-if isnan(sumLSE(interpolateEndPoint)),   interpolateEndPoint = interpolateEndPoint - 1; end;
-
-% If the NoiseLevel field is greater than 0, than the user specified an
-% input noise level. We will interpolate to that value instead of what
-% we just calculated.
-if parser.Results.NoiseLevel > 0,
-    interpolateStartPoint = parser.Results.NoiseLevel;
-    interpolateEndPoint = interpolateStartPoint;
+if isnan(sumLSE(interpolateStartPoint)), interpolateStartPoint = interpolateStartPoint + 1; end
+if isnan(sumLSE(interpolateEndPoint)),   interpolateEndPoint = interpolateEndPoint - 1; end
 end
 
 % We do the interpolation if the two points are not equal. Otherwise, we
@@ -142,6 +142,18 @@ if interpolateStartPoint ~= interpolateEndPoint && interpolateStartPoint < inter
     end
 else
     interpolatedPoint = interpolateStartPoint;
+    if size(thresholds,1) > 1
+        interpolateStartPoint = floor(interpolateStartPoint);
+        
+        % Get thresholds at the start and end points
+        startPointThreshold = thresholds(interpolateStartPoint,:);
+        endPointThreshold   = thresholds(interpolateStartPoint + 1,:);
+        
+        % Interpolate the thresholds
+        fittedThresholds = interp1([interpolateStartPoint interpolateStartPoint+1],...
+            [startPointThreshold; endPointThreshold],...
+            interpolatedPoint);
+    end
 end
 
 % Here we use the noise index to find the actual noise level in the data.
@@ -158,7 +170,7 @@ end
 %% Plot
 if parser.Results.CreatePlot
     figParams = BLIllumDiscrFigParams([],'FitThresholdToData');
-    if ~isempty(plotInfo.colors), figParams.colors = plotInfo.colors; end;
+    if ~isempty(plotInfo.colors), figParams.colors = plotInfo.colors; end
     
     plotInfo.title = sprintf('Data fitted at %d noise',round(interpNoise));
     plotInfo.xlabel = 'Illumination Direction';
