@@ -104,8 +104,10 @@ for ii = 1:length(kg)
     
     %% Do SVM
     [perf,svm] = cf3_SupportVectorMachine(trainingData,testingData,trainingClasses,testingClasses);
-    fprintf('kg: %d, SVM perf: %0.4f\n',kg(ii), perf);
-    
+    classifiedClasses = predict(svm,trainingData);
+    percentCorrect = sum(classifiedClasses == trainingClasses) / size(trainingClasses,1) * 100;
+    fprintf('Test kg: %d, SVM perf: %0.4f\n',kg(ii), perf);
+    fprintf('Train kg: %d, SVM perf: %0.4f\n',kg(ii), percentCorrect);
     %% Get hyperplane
     %
     % The svm.Beta field contains a vector that is orthogonal to the
