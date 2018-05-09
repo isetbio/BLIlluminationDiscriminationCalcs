@@ -29,7 +29,7 @@ showPlots = true;
 
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
-saveData = true;
+saveData = false;
 saveFilename = [modelDataIDStr '_UniformModelFits'];
 
 % Whether to save the averaged model fit figure

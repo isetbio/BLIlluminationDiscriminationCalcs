@@ -73,7 +73,7 @@ if ~singlePlots && showPlots
 end
 
 for subjectNumber = 1:length(orderOfSubjects)
-    subjectId = orderOfSubjects{subjectNumber};
+    subjectId = 'eom';%orderOfSubjects{subjectNumber};
     
     %% Load the data
     %

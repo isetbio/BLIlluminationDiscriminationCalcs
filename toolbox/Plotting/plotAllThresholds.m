@@ -1,4 +1,4 @@
-function plotAllThresholds(calcIDStr,varargin)
+function thresholds = plotAllThresholds(calcIDStr,varargin)
 % plotAllThresholds(calcIDStr,varargin)
 %
 % This function takes in a calcParams struct and attempts to plot the data
@@ -81,7 +81,7 @@ if isempty(thresholds) || p.Results.Reset
 end
 
 % Do actual plotting in this function
-plotThresholdsAgainstNoise(plotInfo,thresholds,calcParams.noiseLevels(:));
+% plotThresholdsAgainstNoise(plotInfo,thresholds,calcParams.noiseLevels(:));
 
 end
 

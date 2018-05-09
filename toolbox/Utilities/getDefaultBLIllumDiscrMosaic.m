@@ -12,7 +12,7 @@ function mosaic = getDefaultBLIllumDiscrMosaic
 % 7/8/16   xd  changed to use coneMosaic
 
 mosaic = coneMosaic;
-mosaic.fov = 0.83;
+mosaic.fov = 1;
 mosaic.integrationTime = 0.050;
 mosaic.noiseFlag = 'none';
 mosaic.wave = SToWls([380 8 51]);
