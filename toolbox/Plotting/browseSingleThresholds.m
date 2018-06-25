@@ -99,6 +99,7 @@ while ~strcmp(THE_ONE_KEY,'escape')
         % every time.
         plotFitForSingleThreshold(plotInfo,dataToUse,threshold,params);
         set(gcf,'KeyPressFcn',@myKeyPress);
+        disp(threshold)
         
         % Reset the global variable
         inaction = false;

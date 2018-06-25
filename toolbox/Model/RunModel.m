@@ -82,6 +82,10 @@ if calcParams.MODEL_ORDER == 2
     mosaic.sampleTime = calcParams.coneIntegrationTime;
 end
 
+if isfield(calcParams,'hexMosaic')
+    mosaic = calcParams.hexMosaic;
+end
+
 %% Run the desired model
 %
 % We loop over the colors and compute the result. This is all saved into a

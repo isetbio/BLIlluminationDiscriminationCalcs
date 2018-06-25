@@ -70,7 +70,7 @@ startKg = ones(length(calcParams.KpLevels),1);
 
 %% Do the actual calculation here
 results = zeros(length(illumLevels),length(KpLevels),length(KgLevels));
-for ii = 1:length(illumLevels);
+for ii = 1:length(illumLevels)
     
     % Precompute the test optical image to save computational time.
     imageName = OINamesList{illumLevels(ii)};
@@ -86,7 +86,7 @@ for ii = 1:length(illumLevels);
         Kp = KpLevels(jj);
         
         if startKg(jj) <= length(KgLevels)
-            for kk = startKg(jj):length(KgLevels);
+            for kk = startKg(jj):length(KgLevels)
                 Kg = KgLevels(kk);
                 
                 % Choose the data generation function

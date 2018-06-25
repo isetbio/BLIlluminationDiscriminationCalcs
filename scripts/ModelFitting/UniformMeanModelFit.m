@@ -6,7 +6,7 @@
 % 10/27/16  xd  added some file saving and plotting options
 % 6/20/17   xd  change file naming conventions
 
-clear;% close all;
+clear; close all;
 %% Set parameters
 
 % This is the calcIDStr for the SVM dataset we want to use to fit to the
@@ -18,6 +18,7 @@ modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Con
 % modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.00_1.00_FOV1.00_PCA400_ABBA_SVM_Constant';
 % modelDataIDStr = 'FirstOrderModel_LMS_0.00_1.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
 % modelDataIDStr = 'FirstOrderModel_LMS_1.00_0.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
+% modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_noABBA_distanceBased_Constant';
 
 % If set to true, each subject fit get's it's own individual figure window.
 % Otherwise, everything is plotted as a subplot on 1 figure.
@@ -30,6 +31,9 @@ showPlots = true;
 % be saved into local directory where this script is called from.
 saveData = false;
 saveFilename = [modelDataIDStr '_UniformModelFits'];
+
+% Whether to save the averaged model fit figure
+saveAvgFigure = true;
 
 % Path to data
 pathToExperimentData = '/Users/Shared/Matlab/Experiments/Newcastle/stereoChromaticDiscriminationExperiment/analysis/FitThresholdsAllSubjectsExp8.mat';
@@ -116,18 +120,24 @@ end
 
 % Calculate the mean and std of thresholds for both the experimental
 % condition as well as the model performance. Use these to make plots.
-meanExpThreshold    = mean(cell2mat(perSubjectFittedThresholds));
-semExpThreshold     = std(cell2mat(perSubjectFittedThresholds))/sqrt(10);
-meanModelThreshold  = mean(cell2mat(perSubjectExperimentalThresholds));
-semModelThreshold   = std(cell2mat(perSubjectExperimentalThresholds))/sqrt(10);
+meanExpThreshold   = mean(cell2mat(perSubjectExperimentalThresholds));
+semExpThreshold    = std(cell2mat(perSubjectExperimentalThresholds))/sqrt(length(perSubjectExperimentalThresholds));
+meanModelThreshold = mean(cell2mat(perSubjectFittedThresholds));
+semModelThreshold  = std(cell2mat(perSubjectFittedThresholds))/sqrt(length(perSubjectFittedThresholds));
 
-plotAndFitThresholdsToRealData(pI,meanExpThreshold,meanModelThreshold,'ThresholdError',semExpThreshold,'DataError',semModelThreshold,...
+plotAndFitThresholdsToRealData(pI,meanModelThreshold,meanExpThreshold,...
+    'ThresholdError',semModelThreshold,...
+    'DataError',semExpThreshold,...
     'NoiseVector',calcParams.noiseLevels,'NewFigure',true,'CreatePlot',showPlots);
 
 if showPlots
     ylim([0 20]);
     title(['Uniform Aggregate Fit, ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
     disp(['Uniform Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
+    
+    if saveAvgFigure
+        savefig([saveFilename '.fig']);
+    end
 end
 
 %% Calculate LSE
