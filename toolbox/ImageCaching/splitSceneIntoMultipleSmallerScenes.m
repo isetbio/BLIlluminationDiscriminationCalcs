@@ -23,7 +23,7 @@ function [smallScenes,plotInfo] = splitSceneIntoMultipleSmallerScenes(largeScene
 % 6/30/16  xd  wrote it
 
 %% Check that the newFOV is smaller
-if newFOV > sceneGet(largeScene,'fov'), error('FOV too large!'); end;
+if newFOV > sceneGet(largeScene,'fov'), error('FOV too large!'); end
 
 %% Do the division
 
