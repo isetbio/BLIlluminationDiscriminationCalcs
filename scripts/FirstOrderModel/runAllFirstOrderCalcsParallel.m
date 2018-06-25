@@ -1,4 +1,9 @@
-function runAllFirstOrderCalcsParallel(numCores,oiFolder,sceneFolder,spatialDensity)
+% function rv';%unAllFirstOrderCalcsParallel(numCores,oiFolder,sceneFolder,spatialDensity)
+tbUseProject('BLIlluminationDiscriminationCalcs','runLocalHooks',false);
+numCores = 5;
+oiFolder = 'Constant';
+sceneFolder = 'Constant_FullImage';
+spatialDensity = [0 0.62 0.31 0.07];
 % runAllFirstOrderCalcsParallel(numCores,oiFolder,sceneFolder,spatialDensity)
 %
 % This function is a modified version of runAllFirstOrderCalcs made for the
@@ -46,11 +51,11 @@ c.sensorFOV       = 1;
 dataDir           = getpref('BLIlluminationDiscriminationCalcs','DataBaseDir');
 fileNames         = getFilenamesInDirectory(fullfile(dataDir,'SceneData',c.cacheFolderList{2},'Standard'));
 tempScene         = loadSceneData([c.cacheFolderList{2} '/Standard'],fileNames{1}(1:end-9));
-numberofOI        = numel(splitSceneIntoMultipleSmallerScenes(tempScene,c.sensorFOV));
+%numberofOI        = numel(splitSceneIntoMultipleSmallerScenes(tempScene,c.sensorFOV));
 
 % This is so that you can skip certain OI if not needed or to speed up
 % calculations for testing an idea/thought.
-theIndex = 1:numberofOI;
+theIndex = 1:270;
 
 %% Parameters of the calculation
 %
@@ -104,13 +109,13 @@ parfor k1 = 1:length(theIndex)
         calcParams.spatialDensity = spatialDensity;             % Distribution of cones [null L M S]
         calcParams.coneIntegrationTime = 0.050;                 % Amount of time to simulate in seconds
         calcParams.sensorFOV = 1;                               % Size of cone mosaic in degrees
-        calcParams.trainingSetSize = 1000;                      % Number of response vectors in training set
-        calcParams.testingSetSize = 1000;                       % Number of response vectors in test set
+        calcParams.trainingSetSize = 2000;                      % Number of response vectors in training set
+        calcParams.testingSetSize = 2000;                       % Number of response vectors in test set
         calcParams.illumLevels = 1:50;                          % Illumination step sizes to cover in calculation
-        calcParams.standardizeData = true;                      % Whether to standardize data before classification
-        calcParams.cFunction = 3;                               % Calculation function number
-        calcParams.dFunction = 1;                               % Dataset generation function number
-        calcParams.usePCA = true;                               % Whether to perform PCA before classification
+        calcParams.standardizeData = false;                      % Whether to standardize data before classification
+        calcParams.cFunction = 4;                               % Calculation function number
+        calcParams.dFunction = 3;                               % Dataset generation function number
+        calcParams.usePCA = false;                              % Whether to perform PCA before classification
         calcParams.numPCA = 400;                                % Number of PCA components to project vectors onto
         
         % Update to calcIDStr to a uniformly formatted name
@@ -124,4 +129,4 @@ parfor k1 = 1:length(theIndex)
     end
 end
 
-end
+% end
