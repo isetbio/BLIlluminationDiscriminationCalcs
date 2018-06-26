@@ -20,6 +20,7 @@ function opticalImage = loadOpticalImageData(folderName,imageName)
 
 %% Get data
     data = load(opticsPath);
-    opticalImage = data.opticalimage;
+    fnames = fieldnames(data);
+    opticalImage = data.(fnames{1});
 end
 
