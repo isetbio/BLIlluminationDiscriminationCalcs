@@ -1,11 +1,15 @@
-function runAllFirstOrderCalcsHexMosaic(numCores,oiFolder,sceneFolder,spatialDensity)
+% function runAllFirstOrderCalcsHexMosaic(numCores,oiFolder,sceneFolder,spatialDensity)
 %%
 
-
+tbUseProject('BLIlluminationDiscriminationCalcs','runLocalHooks',false);
+numCores = 4;
+oiFolder = 'Neutral_CorrectSize';
+sceneFolder = 'Neutral_CorrectSize';
+spatialDensity = [0 0.62 0.31 0.07];
 
 %% Clear and initialize
-ieInit;
-% parpool(numCores);
+% ieInit;
+parpool(numCores);
 
 %% Load mosaic
 dataDir = getpref('BLIlluminationDiscriminationCalcs','DataBaseDir');
@@ -55,7 +59,7 @@ theIndex = 1:numberofOI;
 for k1 = 1:length(theIndex)
     
     calcParams.RUN_MODEL = true;
-    calcParams.MODEL_ORDER = 1;           % Corresponds to model function number
+    calcParams.MODEL_ORDER = 3;           % Corresponds to model function number
     calcParams.overWriteFlag = false;     % Whether or not to overwrite existing data.
     
     % Calculate proper EM position
@@ -93,7 +97,7 @@ for k1 = 1:length(theIndex)
         % deviation of the Gaussian noise is equal to the square root of
         % the mean photoisomerizations across the available target image
         % samples.
-        calcParams.KgLevels = 0:5:30;
+        calcParams.KgLevels = 0:1:4;
         
         calcParams.S = [380 8 51];                              % S vector representation of the wavelength to use for the calculation
         calcParams.spatialDensity = spatialDensity;             % Distribution of cones [null L M S]
@@ -113,6 +117,7 @@ for k1 = 1:length(theIndex)
         calcParams.cacheFolderList{2} = [calcParams.cacheFolderList{2} '_' num2str(k1)];
         calcParams.calcIDStr = params2Name_FirstOrderModel(calcParams);
         disp(calcParams.calcIDStr);
+        calcParams.cacheFolderList = {sceneFolder oiFolder};
         
         %% Create data sets using the simple chooser model
         if (calcParams.RUN_MODEL)
@@ -121,4 +126,4 @@ for k1 = 1:length(theIndex)
     end
 end
 
-end
+% end

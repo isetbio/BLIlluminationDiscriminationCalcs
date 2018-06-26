@@ -65,25 +65,25 @@ end
 % calcParams struct. Certain models have more variables than others so we
 % need to pay careful attention to what model is being run when performing
 % this step.
-mosaic                 = coneMosaic;
-mosaic.fov             = calcParams.sensorFOV;
-mosaic.wave            = SToWls(calcParams.S);
-mosaic.noiseFlag       = 'none';
-mosaic.integrationTime = calcParams.coneIntegrationTime;
-mosaic.spatialDensity  = calcParams.spatialDensity;
-
-if calcParams.MODEL_ORDER == 2
-    % Adjust eye movements
-    calcParams.em = emCreate;
-    calcParams.em = emSet(calcParams.em,'emFlag',[calcParams.enableTremor calcParams.enableDrift calcParams.enableMSaccades]);
-    
-    mosaic.os = osCreate(calcParams.OSType);
-    mosaic.os.noiseFlag = 'none';
-    mosaic.sampleTime = calcParams.coneIntegrationTime;
-end
-
 if isfield(calcParams,'hexMosaic')
     mosaic = calcParams.hexMosaic;
+else
+    mosaic                 = coneMosaic;
+    mosaic.fov             = calcParams.sensorFOV;
+    mosaic.wave            = SToWls(calcParams.S);
+    mosaic.noiseFlag       = 'none';
+    mosaic.integrationTime = calcParams.coneIntegrationTime;
+    mosaic.spatialDensity  = calcParams.spatialDensity;
+    
+    if calcParams.MODEL_ORDER == 2
+        % Adjust eye movements
+        calcParams.em = emCreate;
+        calcParams.em = emSet(calcParams.em,'emFlag',[calcParams.enableTremor calcParams.enableDrift calcParams.enableMSaccades]);
+        
+        mosaic.os = osCreate(calcParams.OSType);
+        mosaic.os.noiseFlag = 'none';
+        mosaic.sampleTime = calcParams.coneIntegrationTime;
+    end
 end
 
 %% Run the desired model
