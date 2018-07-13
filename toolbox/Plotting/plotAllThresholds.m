@@ -81,7 +81,7 @@ if isempty(thresholds) || p.Results.Reset
 end
 
 % Do actual plotting in this function
-% plotThresholdsAgainstNoise(plotInfo,thresholds,calcParams.noiseLevels(:));
+plotThresholdsAgainstNoise(plotInfo,thresholds,calcParams.noiseLevels(:));
 
 end
 

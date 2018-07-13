@@ -115,7 +115,7 @@ for ii = 1:length(illumLevels)
             % speed without affecting the model results.
             if ii >= 5
                 lastFiveCorrect = squeeze(results(ii-4:ii,jj,startKg(jj)));
-                if mean(lastFiveCorrect) > 99.6
+                if mean(lastFiveCorrect) > 98
                     results(ii+1:end,jj,startKg(jj)) = 100;
                     startKg(jj) = startKg(jj) + 1;
                 end
