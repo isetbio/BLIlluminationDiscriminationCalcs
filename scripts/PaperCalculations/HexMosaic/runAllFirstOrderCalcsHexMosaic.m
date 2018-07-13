@@ -1,10 +1,10 @@
 % function runAllFirstOrderCalcsHexMosaic(numCores,oiFolder,sceneFolder,spatialDensity)
 %%
-
+clear global
 tbUseProject('BLIlluminationDiscriminationCalcs','runLocalHooks',false);
-numCores = 4;
-oiFolder = 'Neutral_CorrectSize';
-sceneFolder = 'Neutral_CorrectSize';
+numCores = 8;
+oiFolder = 'Constant_CorrectSize';
+sceneFolder = 'Constant_CorrectSize';
 spatialDensity = [0 0.62 0.31 0.07];
 
 %% Clear and initialize
@@ -56,14 +56,14 @@ theIndex = 1:numberofOI;
 % some sensible manner in a database. We could also run some sort of check
 % on the structure at runtime to make sure our caches are consistent with
 % the current parameters being used.
-for k1 = 1:length(theIndex)
+parfor k1 = 1:length(theIndex)
     
     calcParams.RUN_MODEL = true;
     calcParams.MODEL_ORDER = 3;           % Corresponds to model function number
     calcParams.overWriteFlag = false;     % Whether or not to overwrite existing data.
     
     % Calculate proper EM position
-    calcParams.oiCR = convertPatchToOICropRect(k1,p,oiPadding,oiSize);
+    calcParams.oiCR = convertPatchToOICropRect(k1,p,oiPadding,oiSize,sensorFOV);
     
     % Temp placeholder
     calcParams.calcIDStr = calcIDStr;
@@ -97,12 +97,12 @@ for k1 = 1:length(theIndex)
         % deviation of the Gaussian noise is equal to the square root of
         % the mean photoisomerizations across the available target image
         % samples.
-        calcParams.KgLevels = 0:1:4;
+        calcParams.KgLevels = 0:2:10;
         
         calcParams.S = [380 8 51];                              % S vector representation of the wavelength to use for the calculation
         calcParams.spatialDensity = spatialDensity;             % Distribution of cones [null L M S]
         calcParams.coneIntegrationTime = 0.050;                 % Amount of time to simulate in seconds
-        calcParams.sensorFOV = 1;                               % Size of cone mosaic in degrees
+        calcParams.sensorFOV = sensorFOV;                               % Size of cone mosaic in degrees
         calcParams.trainingSetSize = 1000;                      % Number of response vectors in training set
         calcParams.testingSetSize = 1000;                       % Number of response vectors in test set
         calcParams.illumLevels = 1:50;                          % Illumination step sizes to cover in calculation
@@ -127,3 +127,4 @@ for k1 = 1:length(theIndex)
 end
 
 % end
+clear globalPref;

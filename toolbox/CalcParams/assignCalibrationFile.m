@@ -17,10 +17,10 @@ function updatedParams = assignCalibrationFile(calcParams)
 % 5/25/16  xd  wrote it
 
 switch (calcParams.cacheFolderList{1})
-    case {'Constant' 'Shuffled'}
+    case {'Constant' 'Shuffled' 'Constant_CorrectSize'}
         calcParams.calibrationFile = 'EyeTrackerLCDNew';
         calcParams.distance = 0.683;
-    case {'Neutral' 'NM1' 'NM2'}
+    case {'Neutral' 'NM1' 'NM2' 'Neutral_CorrectSize' 'NM1_CorrectSize' 'NM2_CorrectSize'}
         calcParams.calibrationFile = 'StereoLCDLeft';
         calcParams.distance = 0.764;
     otherwise
