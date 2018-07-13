@@ -30,7 +30,7 @@ close all; ieInit;
 % These strings are also used to set some paramters that vary across
 % our analysis of different experiments.  These are handled by
 % a switch statment in updateCropRect.m
-calcIDStrs = {'NM1_FullImage' 'NM2_FullImage'};
+calcIDStrs = {'ConstantFullImage'};
 
 %% Parameters of the calculation
 %
