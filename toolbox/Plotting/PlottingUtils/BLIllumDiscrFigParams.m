@@ -74,8 +74,8 @@ switch (modifier)
         figParams.XTick = 0:5;
         figParams.axisFontSize = 18;
     case {'SVMvPCA'}
-        figParams.sqPosition = [100 100 1400 1400];
-        figParams.xlimit = [0 11];
+        figParams.sqPosition = [100 100 1000 1000];
+        figParams.xlimit = [0 50];
         figParams.ylimit = [45 100];
         figParams.insetPositions = {[0.208571428571429 0.790348101265821 0.0528571428571429 0.126898734177215]...
                                     [0.650000000000000 0.790348101265821 0.0528571428571429 0.126898734177215]...

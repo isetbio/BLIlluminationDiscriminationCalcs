@@ -9,7 +9,7 @@
 % 6/24/16  xd  wrote it
 % 8/26/16  xd  update accordingly to match new data format + comments
 
-clear; close all;
+clear; %close all;
 %% User options
 
 % Saves the figure as a pdf in the directory from which this script is
@@ -25,7 +25,7 @@ plotCV  = true;
 % This is the data set that goes along with this plotting script. The data
 % must be generated via the svmUsingPCAComparison script. If saveFig is
 % true, the generated pdf will be named with the fileName variable.
-fileName = 'SVM_FullvPCA.mat';
+fileName = 'SVM_FullVPCA_FOV-1.00poissApprox.mat';
 load(fileName);
 
 %% Fig Params

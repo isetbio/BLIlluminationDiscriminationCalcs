@@ -39,14 +39,14 @@ OIvSensorScale = 0;
 % stimulus condition. This is because doing such a large scale calculation
 % on every single patch used for each calculation would take far too much
 % time and likely would not produce any worthwhile results.
-OIFolder = 'Constant_1';
+OIFolder = 'Neutral_CorrectSize';
 colors   = {'Blue' 'Green' 'Red' 'Yellow'};
 
 % NoiseStep is chosen so that the SVM asymptote does not reach 100% (since
 % that would render the result rather meaningless). illumSteps is similarly
 % chosen to only include samples that are not at 100%.
 noiseStep  = 15;
-illumSteps = 1:10;
+illumSteps = [1 5 10 15 20 25 30 35 40 45 50];
 
 % We use kFold CV in this script. This variable determines how many folds
 % to use. CV is performed using the default Matlab implementation for SVMs.
@@ -54,7 +54,7 @@ numCrossVal = 10;
 
 % The number of PCA components to use. This can be set to a vector so that
 % the script loops over all values in the vector.
-numPCA = [400];
+numPCA = [100 200 400 800];
 
 %% Frozen noise
 %
@@ -73,7 +73,6 @@ rng(1);
 % getDefaultBLIllumDiscrMosaic function returns a mosaic with these
 % parameters. We just need to resize it.
 mosaic     = getDefaultBLIllumDiscrMosaic;
-mosaic.fov = sSize;
 
 %% Pre-allocate space for results
 %
@@ -94,7 +93,7 @@ MetaData.OIFolder        = OIFolder;
 MetaData.dimensions      = dimensions;
 MetaData.trainingSetSize = trainingSetSize;
 MetaData.testingSetSize  = testingSetSize;
-MetaData.mosaicSize      = sSize;
+MetaData.mosaicSize      = mosaic.fov;
 
 % SVMpercentCorrent contains the actual performance values. The first
 % dimension differentiates between the calculations done by the full data
@@ -129,7 +128,8 @@ standardIsomPool = cell(1, length(standardOIList));
 calcParams.meanStandard = 0;
 for jj = 1:length(standardOIList)
     standardOI = loadOpticalImageData([OIFolder '/Standard'],strrep(standardOIList{jj},'OpticalImage.mat',''));
-    standardIsomPool{jj} = mosaic.compute(resizeOI(standardOI,sSize*OIvSensorScale),'currentFlag',false);
+    mosaic.compute(resizeOI(standardOI,sSize*OIvSensorScale),'currentFlag',false);
+    standardIsomPool{jj} = mosaic.absorptions(mosaic.pattern > 0);
     calcParams.meanStandard = calcParams.meanStandard + mean2(standardIsomPool{jj}) / length(standardOIList);
 end
 
@@ -155,7 +155,8 @@ for colorIdx = 1:length(colors)
         % the mean absorptions and save them for SVM classification.
         OISubFolder = [OIFolder '/' colors{colorIdx} 'Illumination'];
         comparison = loadOpticalImageData(OISubFolder,strrep(OINames{illumSteps(illumStepIdx)},'OpticalImage.mat',''));
-        comparisonIsom = mosaic.compute(resizeOI(comparison,sSize*OIvSensorScale),'currentFlag',false);
+        mosaic.compute(resizeOI(comparison,sSize*OIvSensorScale),'currentFlag',false);
+        comparisonIsom = mosaic.absorptions(mosaic.pattern > 0);
         
         % Set variables to pass into data generation functions. kp
         % modulates Poisson noise which is kept at 1. kg modulates Gaussian
@@ -231,4 +232,4 @@ end
 
 %% Save the data
 fileName = params2Name_SVMPCAComparison(struct('sSize',sSize));
-save([fileName '.mat'],'SVMpercentCorrect','SVMrunTime','MetaData');
+save([fileName 'poissApprox.mat'],'SVMpercentCorrect','SVMrunTime','MetaData');
