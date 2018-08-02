@@ -59,6 +59,8 @@ else
             switch(sysInfo.userShortName)
                 case 'xiaomaoding'
                     sharedRootDir = fullfile(filesep, 'Users', 'xiaomaoding', 'Dropbox (Aguirre-Brainard Lab)');
+                case 'isetbio'
+                    sharedRootDir = fullfile(filesep, 'media', 'dropbox_disk', 'dropboxlab');
                 otherwise
                     sharedRootDir = fullfile(strrep(userpath,':',''),'output');
             end
