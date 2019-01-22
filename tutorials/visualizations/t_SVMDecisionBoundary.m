@@ -33,10 +33,10 @@ params.testingSetSize = 1000;
 params.numPCA = 400;
 
 % Which section of the grid to use.
-params.calcIDStr = 'Constant_1';
+params.calcIDStr = 'Constant_CorrectSize';
 
 % Size of mosaic
-params.fov = 1;
+params.fov = 1.1;
 
 % RNG Seed
 params.randomSeed = 1;
@@ -60,7 +60,7 @@ rng(randomSeed);
 
 %% Make mosaic
 mosaic = getDefaultBLIllumDiscrMosaic;
-mosaic.fov = fov;
+% mosaic.fov = fov;
 
 %% Load data
 
@@ -73,7 +73,8 @@ OINames = getFilenamesInDirectory(comparisonOIPath);
 
 % Load the specific comparison OI and calculate photons.
 comparison = loadOpticalImageData([calcIDStr '/' 'BlueIllumination'],strrep(OINames{comparisonToPlot},'OpticalImage.mat',''));
-photonComparison = mosaic.compute(comparison,'currentFlag',false);
+mosaic.compute(comparison,'currentFlag',false);
+photonComparison = mosaic.absorptions(mosaic.pattern > 0);
 
 %% Loop over the two kg values
 figure('Position',[160 800 800 400]);
@@ -136,6 +137,7 @@ for ii = 1:length(kg)
     title([tp{ii} 'Gaussian Noise'],'FontSize',24,'FontName','Helvetica');
     legend({'AB','BA'},'FontSize',14,'FontName','Helvetica','Location','northwest');
     set(gca,'LineWidth',2,'FontSize',28,'FontName','Helvetica');
-
+    ylim([-30 30]);
+    
 end
 end
