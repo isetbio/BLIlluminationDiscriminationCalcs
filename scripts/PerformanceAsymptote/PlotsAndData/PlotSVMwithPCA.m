@@ -25,7 +25,7 @@ plotCV  = true;
 % This is the data set that goes along with this plotting script. The data
 % must be generated via the svmUsingPCAComparison script. If saveFig is
 % true, the generated pdf will be named with the fileName variable.
-fileName = 'SVM_FullVPCA_FOV-1.00poissApprox.mat';
+fileName = 'SVM_FullVPCA_FOV-1.00patch162-review.mat';
 load(fileName);
 
 %% Fig Params
@@ -48,7 +48,7 @@ for colorIdx = 1:length(MetaData.dimensions.(firstDimension))
     runTimeForThisLoop = squeeze(SVMrunTime(colorIdx,:,:,:));
     
     % Create a subplot
-    subplot(2,2,colorIdx);
+%     subplot(2,2,colorIdx);
     hold on;
     
     % We will use our own color scheme for the different data sets plotted.
@@ -87,23 +87,23 @@ for colorIdx = 1:length(MetaData.dimensions.(firstDimension))
     
     % Create inset for runtime. We make it roughly the same size as the
     % legend, so the runtime bars line up nicely!
-    inset = axes('Position',figParams.insetPositions{colorIdx}); 
-    hold on;
-    
-    for ii = 1:length(MetaData.dimensions.(secondDimension)) 
-        barh(-ii,mean2(sum(runTimeForThisLoop(ii,:,:),3)),'FaceColor',hsv2rgb([hueFracForPlot*ii,figParams.s,figParams.v]));
-    end
-    
-    ylim(figParams.insetYLimit);
-    xlim(figParams.insetXLimit);
+%     inset = axes('Position',figParams.insetPositions{colorIdx}); 
+%     hold on;
+%     
+%     for ii = 1:length(MetaData.dimensions.(secondDimension)) 
+%         barh(-ii,mean2(sum(runTimeForThisLoop(ii,:,:),3)),'FaceColor',hsv2rgb([hueFracForPlot*ii,figParams.s,figParams.v]));
+%     end
+%     
+%     ylim(figParams.insetYLimit);
+%     xlim(figParams.insetXLimit);
     
     % Lots of formatting. 
-    set(inset,'Box','on');
-    set(inset,'YTick',[],'XTick',figParams.insetXLimit);
-    set(inset,'TickLength',figParams.insetTickLength);
-    set(inset,'FontName',figParams.fontName,'FontSize',figParams.insetAxisFontSize,'LineWidth',figParams.insetAxisLineWidth);
-    set(inset,'FontWeight','bold');
-    ixl = xlabel('Runtime (s)','FontSize',figParams.insetTitleFontSize);
+%     set(inset,'Box','on');
+%     set(inset,'YTick',[],'XTick',figParams.insetXLimit);
+%     set(inset,'TickLength',figParams.insetTickLength);
+%     set(inset,'FontName',figParams.fontName,'FontSize',figParams.insetAxisFontSize,'LineWidth',figParams.insetAxisLineWidth);
+%     set(inset,'FontWeight','bold');
+    ixl = xlabel('Illum Level','FontSize',figParams.insetTitleFontSize);
     ixl.Position = ixl.Position + figParams.insetDeltaXLabelPos;
 end
 

@@ -11,12 +11,12 @@ clear; close all;
 
 % This is the calcIDStr for the SVM dataset we want to use to fit to the
 % % experimental results.
-modelDataIDStrs = {'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant'...
-    'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.00_PCA400_ABBA_SVM_Constant'...
-    'FirstOrderModel_LMS_0.00_0.93_0.07_FOV1.00_PCA400_ABBA_SVM_Constant'...
-    'FirstOrderModel_LMS_1.00_0.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant'...
-    'FirstOrderModel_LMS_0.00_1.00_0.00_FOV1.00_PCA400_ABBA_SVM_Constant'...
-    'FirstOrderModel_LMS_0.00_0.00_1.00_FOV1.00_PCA400_ABBA_SVM_Constant'};
+modelDataIDStrs = {'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.09_PCA400_ABBA_SVM_Constant_CorrectSize'...
+    'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.09_PCA400_ABBA_SVM_Constant_CorrectSize'...
+    'FirstOrderModel_LMS_0.00_0.93_0.07_FOV1.09_PCA400_ABBA_SVM_Constant_CorrectSize'...
+    'FirstOrderModel_LMS_1.00_0.00_0.00_FOV1.09_PCA400_ABBA_SVM_Constant_CorrectSize'...
+    'FirstOrderModel_LMS_0.00_1.00_0.00_FOV1.09_PCA400_ABBA_SVM_Constant_CorrectSize'...
+    'FirstOrderModel_LMS_0.00_0.00_1.00_FOV1.09_PCA400_ABBA_SVM_Constant_CorrectSize'};
 titleStrs = {'LS' 'LM' 'MS' 'L' 'M' 'S'};
 RMSE = zeros(length(modelDataIDStrs),1);
 
@@ -29,13 +29,16 @@ singlePlots = false;
 showPlots = true;
 
 % Whether to save the averaged model fit figure
-saveAvgFigure = false;
+saveAvgFigure = true;
+
+% Whether to save data
+saveData = true;
 
 % Path to data
-pathToExperimentData = '/Users/Shared/Matlab/Experiments/Newcastle/stereoChromaticDiscriminationExperiment/analysis/FitThresholdsAllSubjectsExp8.mat';
+pathToExperimentData = 'G:\Dropbox (Aguirre-Brainard Lab)\xColorShare\Xiaomao\Exp8ImageProcessingCodeTempLocation\ThresholdData\FitThresholdsAllSubjectsExp8.mat';
 
 %% Preallocate some space for data
-load('FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant_UniformModelFits.mat');
+load('FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.09_PCA400_ABBA_SVM_Constant_CorrectSize_UniformModelFits.mat');
 RMSE = zeros(length(modelDataIDStrs),1);
 
 %% Calculation and plotting loop
@@ -46,7 +49,7 @@ for ii = 1:length(modelDataIDStrs)
     
     % Data is ordered blue, green, red, yellow so we need to reorganize it to
     % become blue, yellow, green, red.
-    aggregateThresholds = plotThresholdForMeanPerformance(modelDataIDStr,false);
+    aggregateThresholds = plotThresholdForMeanPerformance(modelDataIDStr,false,70.71);
     aggregateThresholds = aggregateThresholds(:,[1 4 2 3]);
     
     analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
@@ -85,7 +88,7 @@ for ii = 1:length(modelDataIDStrs)
         disp(['Uniform Aggregate Fit ' num2str(mean(cell2mat(perSubjectFittedNoiseLevel)))]);
         
         if saveAvgFigure
-            savefig([saveFilename '.fig']);
+            savefig(['AlternateMosaicsAtUniformNoise.fig']);
         end
     end
     
@@ -93,14 +96,14 @@ for ii = 1:length(modelDataIDStrs)
     
 end
 
-% %% Calculate LSE
-% RMSE = zeros(length(perSubjectFittedThresholds),1);
-% for i = 1:length(perSubjectFittedThresholds)
-%     RMSE(i) = sqrt(sum((perSubjectFittedThresholds{i} - perSubjectExperimentalThresholds{i}).^2) / 4);
-% end
-%
-% %%
-% if saveData
-%     save([saveFilename '.mat'],'perSubjectFittedNoiseLevel','perSubjectExperimentalThresholds',...
-%         'perSubjectFittedThresholds','RMSE');
-% end
+%% Calculate LSE
+RMSE = zeros(length(perSubjectFittedThresholds),1);
+for i = 1:length(perSubjectFittedThresholds)
+    RMSE(i) = sqrt(sum((perSubjectFittedThresholds{i} - perSubjectExperimentalThresholds{i}).^2) / 4);
+end
+
+%%
+if saveData
+    save(['RMSE.mat'],'perSubjectFittedNoiseLevel','perSubjectExperimentalThresholds',...
+        'perSubjectFittedThresholds','RMSE');
+end

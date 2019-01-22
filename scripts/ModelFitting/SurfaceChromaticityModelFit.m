@@ -17,9 +17,9 @@ singlePlots = false;
 
 % This is the calcIDStr for the SVM dataset we want to use to fit to the
 % experimental results.
-modelDataIDStrs = {'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Neutral',...
-                   'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_NM1',...
-                   'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_NM2'};
+modelDataIDStrs = {'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.09_PCA400_ABBA_SVM_Neutral_CorrectSize',...
+                   'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.09_PCA400_ABBA_SVM_NM1_CorrectSize',...
+                   'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.09_PCA400_ABBA_SVM_NM2_CorrectSize'};
 
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
@@ -46,14 +46,14 @@ perSubjectFittedNoiseLevel       = cell(size(Neutral,1),1);
 
 %% Calculation and plotting loop
 if ~singlePlots
-    figure('Position',[150 238 2265 1061]);
+    figure('Position',[0 0 2265 1061]);
 end
 
 % Data is ordered blue, green, red, yellow so we need to reorganize it to
 % become blue, yellow, green, red.
 aggregateThresholds = [];
 for ii = 1:length(modelDataIDStrs)
-    thresholds = plotThresholdForMeanPerformance(modelDataIDStrs{ii},false);
+    thresholds = plotThresholdForMeanPerformance(modelDataIDStrs{ii},false,70.71);
     aggregateThresholds = [aggregateThresholds thresholds(:,[1 4 2 3])]; %#ok<*AGROW>
 end
 

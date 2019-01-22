@@ -40,13 +40,13 @@ OIvSensorScale = 0;
 % on every single patch used for each calculation would take far too much
 % time and likely would not produce any worthwhile results.
 OIFolder = 'Neutral_CorrectSize';
-colors   = {'Blue' 'Green' 'Red' 'Yellow'};
+colors   = {'Blue'};
 
 % NoiseStep is chosen so that the SVM asymptote does not reach 100% (since
 % that would render the result rather meaningless). illumSteps is similarly
 % chosen to only include samples that are not at 100%.
-noiseStep  = 15;
-illumSteps = [1 5 10 15 20 25 30 35 40 45 50];
+noiseStep  = 4;
+illumSteps = [1 5 10 15 20 30 40 50];
 
 % We use kFold CV in this script. This variable determines how many folds
 % to use. CV is performed using the default Matlab implementation for SVMs.
@@ -54,7 +54,7 @@ numCrossVal = 10;
 
 % The number of PCA components to use. This can be set to a vector so that
 % the script loops over all values in the vector.
-numPCA = [100 200 400 800];
+numPCA = [400 800];
 
 %% Frozen noise
 %
@@ -110,6 +110,29 @@ SVMrunTime        = zeros(length(dimensions.Colors),length(dimensions.FullOrPCA)
 % set. We record both the runtime as well as the performance. This will be
 % used to justify decisions on how many PCA vectors to use in the model.
 
+%% Choose patch
+calcIDStr       = OIFolder;
+cacheFolderList = {OIFolder,OIFolder};
+sensorFOV       = mosaic.fov(1);
+dataDir = getpref('BLIlluminationDiscriminationCalcs','DataBaseDir');
+fileNames         = getFilenamesInDirectory(fullfile(dataDir,'SceneData',cacheFolderList{2},'Standard'));
+tempScene         = loadSceneData([cacheFolderList{2} '/Standard'],fileNames{1}(1:end-9));
+tempOI            = loadOpticalImageData([cacheFolderList{1} '/Standard'],fileNames{1}(1:end-9));
+[smallScenes,p]   = splitSceneIntoMultipleSmallerScenes(tempScene,sensorFOV);
+numberofOI        = numel(smallScenes);
+clear smallScenes;
+
+% Get sizes of scene and OI
+scenehFov = sceneGet(tempScene,'hfov');
+scenevFov = sceneGet(tempScene,'vfov');
+oihFov = oiGet(tempOI,'hfov');
+oivFov = oiGet(tempOI,'vfov');
+oiPadding = [oihFov - scenehFov, oivFov - scenevFov] / 2;
+oiSize = oiGet(tempOI,'cols') / oihFov;
+
+oiIdx = 162; %3;162
+oiCR = convertPatchToOICropRect(oiIdx,p,oiPadding,oiSize,sensorFOV);
+
 %% Load all target scene sensors
 %
 % We load all the target sensors beforehand because they will stay the same
@@ -128,6 +151,7 @@ standardIsomPool = cell(1, length(standardOIList));
 calcParams.meanStandard = 0;
 for jj = 1:length(standardOIList)
     standardOI = loadOpticalImageData([OIFolder '/Standard'],strrep(standardOIList{jj},'OpticalImage.mat',''));
+    standardOI = oiCrop(standardOI,oiCR);
     mosaic.compute(resizeOI(standardOI,sSize*OIvSensorScale),'currentFlag',false);
     standardIsomPool{jj} = mosaic.absorptions(mosaic.pattern > 0);
     calcParams.meanStandard = calcParams.meanStandard + mean2(standardIsomPool{jj}) / length(standardOIList);
@@ -155,6 +179,7 @@ for colorIdx = 1:length(colors)
         % the mean absorptions and save them for SVM classification.
         OISubFolder = [OIFolder '/' colors{colorIdx} 'Illumination'];
         comparison = loadOpticalImageData(OISubFolder,strrep(OINames{illumSteps(illumStepIdx)},'OpticalImage.mat',''));
+        comparison = oiCrop(comparison,oiCR);
         mosaic.compute(resizeOI(comparison,sSize*OIvSensorScale),'currentFlag',false);
         comparisonIsom = mosaic.absorptions(mosaic.pattern > 0);
         
@@ -211,7 +236,8 @@ for colorIdx = 1:length(colors)
         % Loop and perform above calculation for each numPCA.
         for numPCAIdx = 1:length(numPCA)
             tic
-            coeff = pca(trainingData,'NumComponents',numPCA(numPCAIdx));
+            [coeff,~,~,~,explained,~] = pca(trainingData,'NumComponents',numPCA(numPCAIdx));
+            ex{colorIdx} = explained;
             
             pcaSVM = fitcsvm(trainingData*coeff,trainingClasses,'KernelScale','auto');
             predictedClasses = predict(pcaSVM,testingData*coeff);
@@ -232,4 +258,4 @@ end
 
 %% Save the data
 fileName = params2Name_SVMPCAComparison(struct('sSize',sSize));
-save([fileName 'poissApprox.mat'],'SVMpercentCorrect','SVMrunTime','MetaData');
+save([fileName 'patch162-review.mat'],'SVMpercentCorrect','SVMrunTime','MetaData','ex');

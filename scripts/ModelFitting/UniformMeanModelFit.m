@@ -11,7 +11,7 @@ clear; close all;
 
 % This is the calcIDStr for the SVM dataset we want to use to fit to the
 % % experimental results.
-modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
+modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.09_PCA400_ABBA_SVM_Constant_CorrectSize';
 % modelDataIDStr = 'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
 % modelDataIDStr = 'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
 % modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.93_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
@@ -29,14 +29,14 @@ showPlots = true;
 
 % Set to true to save the data after the script has finished running. Will
 % be saved into local directory where this script is called from.
-saveData = false;
+saveData = true;
 saveFilename = [modelDataIDStr '_UniformModelFits'];
 
 % Whether to save the averaged model fit figure
 saveAvgFigure = true;
 
 % Path to data
-pathToExperimentData = '/Users/Shared/Matlab/Experiments/Newcastle/stereoChromaticDiscriminationExperiment/analysis/FitThresholdsAllSubjectsExp8.mat';
+pathToExperimentData ='G:\Dropbox (Aguirre-Brainard Lab)\xColorShare\Xiaomao\Exp8ImageProcessingCodeTempLocation\ThresholdData\FitThresholdsAllSubjectsExp8.mat';
 
 %% Subject ID's
 % DON'T CHANGE
@@ -53,12 +53,12 @@ perSubjectFittedNoiseLevel = cell(length(orderOfSubjects),1);
 
 %% Calculation and plotting loop
 if ~singlePlots && showPlots
-    figure('Position',[150 238 2265 1061]);
+    figure('Position',[0 0 2000 1000]);
 end
 
 % Data is ordered blue, green, red, yellow so we need to reorganize it to
 % become blue, yellow, green, red.
-aggregateThresholds = plotThresholdForMeanPerformance(modelDataIDStr,false);
+aggregateThresholds = plotThresholdForMeanPerformance(modelDataIDStr,false,70.71);
 aggregateThresholds = aggregateThresholds(:,[1 4 2 3]);
 
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');

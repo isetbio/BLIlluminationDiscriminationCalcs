@@ -18,7 +18,7 @@ clear; close all;
 
 % This is the calcIDStr for the SVM dataset we want to use to fit to the
 % experimental results.
-modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
+modelDataIDStr = 'FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.09_PCA400_ABBA_SVM_Constant_CorrectSize';
 % modelDataIDStr = 'FirstOrderModel_LMS_0.66_0.34_0.00_FOV1.00_PCA400_ABBA_SVM_Constant';
 % modelDataIDStr = 'FirstOrderModel_LMS_0.00_0.93_0.07_FOV1.00_PCA400_ABBA_SVM_Constant';
 % modelDataIDStr = 'FirstOrderModel_LMS_0.93_0.00_0.07_FOV1.00_PCA400_ABBA_SVM_Constant'; 
@@ -49,8 +49,8 @@ saveAvgFigure = true;
 
 % Paths to data files
 pathToFixationData = '/Users/xiaomaoding/Documents/MATLAB/Exp8ImageProcessingCodeTempLocation/Exp8ProcessedData/';
-pathToFixationData = '/Users/xiaomaoding/Dropbox (Aguirre-Brainard Lab)/xColorShare/Xiaomao/Exp8ImageProcessingCodeTempLocation/';
-pathToExperimentData = '/Users/Shared/Matlab/Experiments/Newcastle/stereoChromaticDiscriminationExperiment/analysis/FitThresholdsAllSubjectsExp8.mat';
+pathToFixationData = 'G:\Dropbox (Aguirre-Brainard Lab)\xColorShare\Xiaomao\Exp8ImageProcessingCodeTempLocation\';
+pathToExperimentData = 'G:\Dropbox (Aguirre-Brainard Lab)\xColorShare\Xiaomao\Exp8ImageProcessingCodeTempLocation\ThresholdData\FitThresholdsAllSubjectsExp8.mat';
 
 %% Some constant values
 % Subject ID's
@@ -69,7 +69,7 @@ perSubjectFittedNoiseLevel = cell(length(orderOfSubjects),1);
 
 %% Calculation and plotting loop
 if ~singlePlots && showPlots
-    figure('Position',[150 238 2265 1061]);
+    figure('Position',[0 0 2000 1000]);
 end
 
 for subjectNumber = 1:length(orderOfSubjects)
@@ -133,8 +133,8 @@ for subjectNumber = 1:length(orderOfSubjects)
     % Turn from cell into matrix. This allows for easier plotting later. We
     % also reorganize the matrix so that the color order is b, y, g, r.
     t = cell2mat(t);
-    disp(subjectNumber)
-    t = t(:,[1 4 2 3])    
+%     disp(subjectNumber)
+    t = t(:,[1 4 2 3]);    
     perSubjectAggregateThresholds{subjectNumber} = t;
     
     % Create some label information for plotting.

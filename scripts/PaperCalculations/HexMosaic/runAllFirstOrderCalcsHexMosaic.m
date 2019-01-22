@@ -1,7 +1,7 @@
 % function runAllFirstOrderCalcsHexMosaic(numCores,oiFolder,sceneFolder,spatialDensity)
 %%
-clear global
-tbUseProject('BLIlluminationDiscriminationCalcs','runLocalHooks',false);
+% clear global
+% tbUseProject('BLIlluminationDiscriminationCalcs','runLocalHooks',false);
 numCores = 8;
 oiFolder = 'Constant_CorrectSize';
 sceneFolder = 'Constant_CorrectSize';
@@ -9,12 +9,12 @@ spatialDensity = [0 0.62 0.31 0.07];
 
 %% Clear and initialize
 % ieInit;
-parpool(numCores);
+% parpool(numCores);
 
 %% Load mosaic
 dataDir = getpref('BLIlluminationDiscriminationCalcs','DataBaseDir');
-mosaic = load(fullfile(dataDir,'MosaicData','theHexMosaic1.10degs.mat'));
-mosaic = mosaic.theHexMosaic;
+mosaic = load(fullfile(dataDir,'MosaicData','coneMosaic1.1degs.mat'));
+mosaic = mosaic.coneMosaic;
 mosaic.noiseFlag = 'none';
 
 %% Calculate how many patches there are
@@ -46,8 +46,8 @@ oiSize = oiGet(tempOI,'cols') / oihFov;
 
 % This is so that you can skip certain OI if not needed or to speed up
 % calculations for testing an idea/thought.
-theIndex = 1:numberofOI;
-
+theIndex = 1;%18;
+tic
 %% Parameters of the calculation
 %
 % We'll define this as a structure, with the fields providing the name of
@@ -56,14 +56,16 @@ theIndex = 1:numberofOI;
 % some sensible manner in a database. We could also run some sort of check
 % on the structure at runtime to make sure our caches are consistent with
 % the current parameters being used.
-parfor k1 = 1:length(theIndex)
+for k1 = 1:length(theIndex)
+    
+    theIdx = theIndex(k1);
     
     calcParams.RUN_MODEL = true;
     calcParams.MODEL_ORDER = 3;           % Corresponds to model function number
     calcParams.overWriteFlag = false;     % Whether or not to overwrite existing data.
     
     % Calculate proper EM position
-    calcParams.oiCR = convertPatchToOICropRect(k1,p,oiPadding,oiSize,sensorFOV);
+    calcParams.oiCR = convertPatchToOICropRect(theIdx,p,oiPadding,oiSize,sensorFOV);
     
     % Temp placeholder
     calcParams.calcIDStr = calcIDStr;
@@ -97,7 +99,7 @@ parfor k1 = 1:length(theIndex)
         % deviation of the Gaussian noise is equal to the square root of
         % the mean photoisomerizations across the available target image
         % samples.
-        calcParams.KgLevels = 0:2:10;
+        calcParams.KgLevels = 0:5:30;
         
         calcParams.S = [380 8 51];                              % S vector representation of the wavelength to use for the calculation
         calcParams.spatialDensity = spatialDensity;             % Distribution of cones [null L M S]
@@ -114,7 +116,7 @@ parfor k1 = 1:length(theIndex)
         calcParams.hexMosaic = mosaic;
         
         % Update to calcIDStr to a uniformly formatted name
-        calcParams.cacheFolderList{2} = [calcParams.cacheFolderList{2} '_' num2str(k1)];
+        calcParams.cacheFolderList{2} = [calcParams.cacheFolderList{2} '_' num2str(theIdx) '_test2'];
         calcParams.calcIDStr = params2Name_FirstOrderModel(calcParams);
         disp(calcParams.calcIDStr);
         calcParams.cacheFolderList = {sceneFolder oiFolder};
@@ -125,6 +127,6 @@ parfor k1 = 1:length(theIndex)
         end
     end
 end
-
+fprintf('%0.2f min \n',toc/60);
 % end
 clear globalPref;
