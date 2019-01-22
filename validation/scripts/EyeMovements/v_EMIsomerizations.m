@@ -20,25 +20,28 @@ pathDir = fullfile(myDir,'Toolbox','');
 AddToMatlabPathDynamically(pathDir);
 
 %% Generate a default sensor
-mosaic = getDefaultBLIllumDiscrMosaic;
+mosaic = load(fullfile(fileparts('fullpath'),'coneMosaic1.1degs.mat'));
+mosaic = mosaic.coneMosaic;
+mosaic.noiseFlag = 'none';
 
 %% Load optical image data
-data = load('TestImage0OpticalImage');
-oi = data.opticalimage;
+data = load(fullfile(fileparts('fullpath'),'ValidationOI'));
+oi = data.oi;
+
+optics = load(fullfile(fileparts(fileparts('fullpath')),'ValidationOptics'));
+oi.optics = optics.optics;
 
 %% Create eye movement object.
 % We will sample nFrames of eye movement using the default settings in ISETBIO.
 nFrames = 20;
-em = emCreate;
-em = emSet(em, 'sample time', mosaic.integrationTime / nFrames);
 
-mosaicEM = mosaic.copy;
+mosaicEM  = mosaic.copy;
 mosaicEM0 = mosaic.copy;
 
-mosaicEM.integrationTime = mosaic.integrationTime / nFrames;
+mosaicEM.integrationTime  = mosaic.integrationTime / nFrames;
 mosaicEM0.integrationTime = mosaic.integrationTime / nFrames;
 
-mosaicEM.emGenSequence(nFrames,'em',em);
+mosaicEM.emGenSequence(nFrames);
 
 % Generate sensor positions, and then force them to be all zero movement.
 % sensorEM = emGenSequence(sensorEM);
@@ -58,31 +61,28 @@ photonsEM = mosaicEM.compute(oi,'currentFlag',false);
 %% Compare the total cone absorptions 
 % They should be very very close when we don't move the eyes, and pretty close
 % for fixational eye movements.
-tolerance = 1;
-% photons = sensorGet(sensor, 'photons');
-% photonsEM0 = sensorGet(sensorEM0, 'photons');
-photonsEM0 = sum(photonsEM0, 3);
-% photonsEM = sensorGet(sensorEM, 'photons');
-photonsEM = sum(photonsEM, 3);
+tolerance = 1e-2;
+photonsEM0 = sum(squeeze(photonsEM0), 3);
+photonsEM = sum(squeeze(photonsEM), 3);
 
 % Plot, left should lie along diagnonal, right should be close
 if (runTimeParams.generatePlots)
     figure; clf;
     subplot(1,2,1); hold on
     plot(photons(:),photonsEM0(:),'ro','MarkerFaceColor','r','MarkerSize',6);
-    plot([0 3500],[0 3500],'k');
+    plot([0 1000],[0 1000],'k');
     xlabel('Photons w/o Eye Movements');
     ylabel('Photons with Stationary Eye Movements');
     subplot(1,2,2); hold on
     plot(photons(:),photonsEM(:),'go','MarkerFaceColor','g','MarkerSize',6);
-    plot([0 3500],[0 3500],'k');
+    plot([0 1000],[0 1000],'k');
     xlabel('Photons w/o Eye Movements');
     ylabel('Photons with Fixational Eye Movements');
     drawnow;
 end
 
 % Assertions of closeness
-UnitTest.assertIsZero(norm(photons(:) - photonsEM0(:)) / numel(photons), 'Distance from static to EM0', 0.001);
+UnitTest.assertIsZero(norm(photons(:) - photonsEM0(:)) / numel(photons), 'Distance from static to EM0', 1e-8);
 UnitTest.assertIsZero(norm(photons(:) - photonsEM(:)) / numel(photons), 'Distance from static to EM', tolerance);
 
 %% Tuck away validation data

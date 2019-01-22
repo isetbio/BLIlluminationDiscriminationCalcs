@@ -19,32 +19,53 @@ AddToMatlabPathDynamically(pathDir);
 %
 % Fix random number generator seed 
 rng(1);
-tolerance = 200;
+tolerance = 20;
 
 % Generate a default sensor that will be used in many of the validation
 % scripts.
-mosaic = getDefaultBLIllumDiscrMosaic;
-
-% Create Remote Data Toolbox client
-
+mosaic = load(fullfile(fileparts('fullpath'),'coneMosaic1.1degs.mat'));
+mosaic = mosaic.coneMosaic;
+mosaic.noiseFlag = 'none';
 
 % Load several different renderings of the target image from the experiment.
-try
-    oi1 = loadOpticalImageDataWithRDT('Neutral/Standard', 'TestImage0');
-    oi2 = loadOpticalImageDataWithRDT('Neutral/Standard', 'TestImage1');
-    oi3 = loadOpticalImageDataWithRDT('Neutral/Standard', 'TestImage2');
-    oi4 = loadOpticalImageDataWithRDT('Neutral/Standard', 'TestImage4');
-    oi5 = loadOpticalImageDataWithRDT('Neutral/Standard', 'TestImage6');
-catch
-    error('It seems that you do not have the OI required for this validation. Please contact the project developers to obtain it');
-end
+% try
+%     oi1 = loadOpticalImageDataWithRDT('Neutral/Standard', 'TestImage0');
+%     oi2 = loadOpticalImageDataWithRDT('Neutral/Standard', 'TestImage1');
+%     oi3 = loadOpticalImageDataWithRDT('Neutral/Standard', 'TestImage2');
+%     oi4 = loadOpticalImageDataWithRDT('Neutral/Standard', 'TestImage4');
+%     oi5 = loadOpticalImageDataWithRDT('Neutral/Standard', 'TestImage6');
+% catch
+%     error('It seems that you do not have the OI required for this validation. Please contact the project developers to obtain it');
+% end
+
+optics = load(fullfile(fileparts(fileparts('fullpath')),'ValidationOptics'));
+
+data = load(fullfile(fileparts('fullpath'),'NoiseValidationOI1'));
+oi1 = data.oi;
+oi1.optics = optics.optics;
+
+data = load(fullfile(fileparts('fullpath'),'NoiseValidationOI2'));
+oi2 = data.oi;
+oi2.optics = optics.optics;
+
+data = load(fullfile(fileparts('fullpath'),'NoiseValidationOI3'));
+oi3 = data.oi;
+oi3.optics = optics.optics;
+
+data = load(fullfile(fileparts('fullpath'),'NoiseValidationOI4'));
+oi4 = data.oi;
+oi4.optics = optics.optics;
+
+data = load(fullfile(fileparts('fullpath'),'NoiseValidationOI5'));
+oi5 = data.oi;
+oi5.optics = optics.optics;
 
 % Calculate the photon absorptions
-p1 = mosaic.compute(oi1);
-p2 = mosaic.compute(oi2);
-p3 = mosaic.compute(oi3);
-p4 = mosaic.compute(oi4);
-p5 = mosaic.compute(oi5);
+p1 = mosaic.compute(oi1,'currentFlag',false);
+p2 = mosaic.compute(oi2,'currentFlag',false);
+p3 = mosaic.compute(oi3,'currentFlag',false);
+p4 = mosaic.compute(oi4,'currentFlag',false);
+p5 = mosaic.compute(oi5,'currentFlag',false);
 
 UnitTest.validationRecord('SIMPLE_MESSAGE', '***** Photon Distances *****');
 

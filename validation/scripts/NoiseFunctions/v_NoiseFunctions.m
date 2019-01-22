@@ -21,11 +21,16 @@ tolerance = 200;
 
 % Generate a default sensor that will be used in many of the validation
 % scripts.
-mosaic = getDefaultBLIllumDiscrMosaic;
+mosaic = load(fullfile(fileparts('fullpath'),'coneMosaic1.1degs.mat'));
+mosaic = mosaic.coneMosaic;
+mosaic.noiseFlag = 'none';
 
 % Load optical image data
-data = load('TestImage0OpticalImage');
-oi = data.opticalimage;
+data = load(fullfile(fileparts('fullpath'),'ValidationOI'));
+oi = data.oi;
+
+optics = load(fullfile(fileparts(fileparts('fullpath')),'ValidationOptics'));
+oi.optics = optics.optics;
 
 % Calculate the cone isomerizations to get the mean photons absorbed
 isomerizations = mosaic.compute(oi,'currentFlag',false);
@@ -58,8 +63,8 @@ UnitTest.validationData('approx', approx, ...
     'UsingTheFollowingVariableTolerancePairs', ...
      'approx',5e-7);
 
-UnitTest.assertIsZero(A - B, 'DIFFERENCE from iePoisson to poissrnd', tolerance);
-UnitTest.assertIsZero(B - C, 'DIFFERENCE from isPoisson to approx', tolerance);
-UnitTest.assertIsZero(C - A, 'DIFFERENCE from poissrnd to approx', tolerance);
+UnitTest.assertIsZero(abs(A - B), 'DIFFERENCE from iePoisson to poissrnd', tolerance);
+UnitTest.assertIsZero(abs(B - C), 'DIFFERENCE from isPoisson to approx', tolerance);
+UnitTest.assertIsZero(abs(C - A), 'DIFFERENCE from poissrnd to approx', tolerance);
 
 end
