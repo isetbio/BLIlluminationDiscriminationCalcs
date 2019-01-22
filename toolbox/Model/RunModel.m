@@ -50,7 +50,7 @@ end
 % we'll make it here. Also check if we want to overwrite existing data.
 analysisDir = getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir');
 targetPath  = fullfile(analysisDir, 'SimpleChooserData', calcParams.calcIDStr);
-if exist(targetPath, 'dir')
+if exist(targetPath, 'dir') && validation == false
     if ~overWrite
         return;
     end

@@ -35,6 +35,7 @@ calcIDList  = getAllSubdirectoriesContainingString(fullfile(analysisDir,'SimpleC
 %% Find average performance
 avgPerformance = zeros(size(dummyData));
 for ii = 1:length(calcIDList)
+    if ~exist(fullfile(analysisDir,'SimpleChooserData',calcIDList{ii},['calcParams' calcIDList{ii} '.mat']),'file'), continue; end
     avgPerformance = avgPerformance + loadModelData(calcIDList{ii});
 end
 avgPerformance = avgPerformance / length(calcIDList);

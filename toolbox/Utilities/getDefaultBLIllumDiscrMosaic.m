@@ -19,8 +19,8 @@ function mosaic = getDefaultBLIllumDiscrMosaic
 % mosaic.spatialDensity = [0 0.62 0.31 0.07];
 
 dataDir = getpref('BLIlluminationDiscriminationCalcs','DataBaseDir');
-mosaic = load(fullfile(dataDir,'MosaicData','theHexMosaic1.10degs.mat'));
-mosaic = mosaic.theHexMosaic;
+mosaic = load(fullfile(dataDir,'MosaicData','coneMosaic1.1degs.mat'));
+mosaic = mosaic.coneMosaic;
 mosaic.noiseFlag = 'none';
 
 end

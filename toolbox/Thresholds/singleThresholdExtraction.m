@@ -29,7 +29,7 @@ function [threshold,paramsValues,stimLevels] = singleThresholdExtraction(data,va
 % 6/19/17  xd  editted to match experimental set up
 
 p = inputParser;
-defaultIlluminantPath = '/Users/xiaomaoding/Documents/stereoChromaticDiscriminationExperiment/IlluminantsInDeltaE.mat';
+defaultIlluminantPath = 'G:\Dropbox (Aguirre-Brainard Lab)\xColorShare\Xiaomao\IlluminantsInDeltaE.mat';
 
 p.addRequired('data',@isnumeric);
 p.addOptional('criterion',70.71,@isnumeric);

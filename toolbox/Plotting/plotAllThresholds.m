@@ -27,7 +27,7 @@ function thresholds = plotAllThresholds(calcIDStr,varargin)
 p = inputParser;
 p.addRequired('calcIDStr',@ischar);
 p.addParameter('NoiseIndex',[1 0],@isnumeric);
-p.addParameter('Reset',false,@islogical);
+p.addParameter('Reset',true,@islogical);
 p.addParameter('UseTrueDE',true,@islogical);
 p.parse(calcIDStr,varargin{:});
 
