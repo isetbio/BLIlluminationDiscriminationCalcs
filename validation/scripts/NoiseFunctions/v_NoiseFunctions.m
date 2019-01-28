@@ -29,7 +29,11 @@ mosaic.noiseFlag = 'none';
 data = load(fullfile(fileparts('fullpath'),'ValidationOI'));
 oi = data.oi;
 
-optics = load(fullfile(fileparts(fileparts('fullpath')),'ValidationOptics'));
+dataDir = getpref('BLIlluminationDiscriminationCalcs','DataBaseDir');
+if ~exist(fullfile(dataDir,'ValidationData','ValidationOptics.mat'),'file')
+    error('ValidationOptics.mat not found! This file is needed for this validation to run!');
+end
+optics = load(fullfile(dataDir,'ValidationData','ValidationOptics.mat'));
 oi.optics = optics.optics;
 
 % Calculate the cone isomerizations to get the mean photons absorbed

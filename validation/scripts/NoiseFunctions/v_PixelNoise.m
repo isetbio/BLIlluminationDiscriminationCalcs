@@ -38,7 +38,11 @@ mosaic.noiseFlag = 'none';
 %     error('It seems that you do not have the OI required for this validation. Please contact the project developers to obtain it');
 % end
 
-optics = load(fullfile(fileparts(fileparts('fullpath')),'ValidationOptics'));
+dataDir = getpref('BLIlluminationDiscriminationCalcs','DataBaseDir');
+if ~exist(fullfile(dataDir,'ValidationData','ValidationOptics.mat'),'file')
+    error('ValidationOptics.mat not found! This file is needed for this validation to run!');
+end
+optics = load(fullfile(dataDir,'ValidationData','ValidationOptics.mat'));
 
 data = load(fullfile(fileparts('fullpath'),'NoiseValidationOI1'));
 oi1 = data.oi;
