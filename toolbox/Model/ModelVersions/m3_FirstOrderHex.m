@@ -15,8 +15,19 @@ analysisDir     = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 oiLoaderFunction = @(x,y) loadOpticalImageData(x,y);
 filenameFunction = @(x) getFilenamesInDirectory(x);
 if calcParams.validation
-    oiLoaderFunction = @(x,y) loadOpticalImageDataWithRDT(x,y);
-    filenameFunction = @(x) getFilenamesInDirectoryWithRDT(x);
+    localFile = mfilename('fullpath');
+    topDir = fileparts(fileparts(fileparts(fileparts(localFile))));
+    valDir = fullfile(topDir,'validation','scripts','FirstOrderModel');
+    
+    oiLoaderFunction = @(x,y) loadOpticalImageDataValidation(x,y);
+%     filenameFunction = @(x) getFilenamesInDirectoryWithRDT(x);
+    
+    dataDir = getpref('BLIlluminationDiscriminationCalcs','DataBaseDir');
+    if ~exist(fullfile(dataDir,'ValidationData','ValidationOptics.mat'),'file')
+        error('ValidationOptics.mat not found! This file is needed for this validation to run!');
+    end
+    optics = load(fullfile(dataDir,'ValidationData','ValidationOptics.mat'));
+    optics = optics.optics;
 end
 
 %% Load standard optical images
@@ -25,6 +36,9 @@ end
 % perform the calculations. We also calculate the mean photon isomerization
 % here to be used for Gaussian noise later on.
 folderPath = fullfile(analysisDir,'OpticalImageData',calcParams.cacheFolderList{2},'Standard');
+if calcParams.validation
+    folderPath = fullfile(valDir,calcParams.cacheFolderList{2},'Standard');
+end
 standardOIList = filenameFunction(folderPath);
 standardPool = cell(1, length(standardOIList));
 calcParams.meanStandard = 0;
@@ -32,9 +46,13 @@ for ii = 1:length(standardOIList)
     opticalImageName = standardOIList{ii};
     opticalImageName = strrep(opticalImageName,'OpticalImage.mat','');
     oi = oiLoaderFunction(fullfile(calcParams.cacheFolderList{2},'Standard'),opticalImageName);
-    oi = resizeOI(oi,calcParams.sensorFOV*calcParams.OIvSensorScale);
-    oi = oiCrop(oi,calcParams.oiCR);
-        
+    if calcParams.validation
+        oi.optics = optics;
+    else
+        oi = resizeOI(oi,calcParams.sensorFOV*calcParams.OIvSensorScale);
+        oi = oiCrop(oi,calcParams.oiCR);
+    end
+
     % With the hex mosaic, we need to take just the positions with actual
     % cones. Otherwise, there will be a lot of blanks in the absorptions
     % matrix which will slow things down.
@@ -50,6 +68,9 @@ end
 % Note: Alphanumerical loading presumes that the files are named in
 % alphanumeric order (image1, image2, image3,... etc.).
 folderPath = fullfile(analysisDir,'OpticalImageData',calcParams.cacheFolderList{2},[color 'Illumination']);
+if calcParams.validation
+    folderPath = fullfile(valDir,calcParams.cacheFolderList{2},[color 'Illumination']);
+end
 OINamesList = filenameFunction(folderPath);
 
 % Set a starting Kg value. This will allow us to stop calculating Kg values
@@ -65,8 +86,13 @@ for ii = 1:length(illumLevels)
     imageName = OINamesList{illumLevels(ii)};
     imageName = strrep(imageName,'OpticalImage.mat','');
     oiTest = oiLoaderFunction([calcParams.cacheFolderList{2} '/' [color 'Illumination']],imageName);
-    oiTest = resizeOI(oiTest,calcParams.sensorFOV*calcParams.OIvSensorScale);
-    oiTest = oiCrop(oiTest,calcParams.oiCR);
+    if calcParams.validation
+        oiTest.optics = optics;
+    else
+        oiTest = resizeOI(oiTest,calcParams.sensorFOV*calcParams.OIvSensorScale);
+        oiTest = oiCrop(oiTest,calcParams.oiCR);
+    end
+
     mosaic.compute(oiTest,'currentFlag',false);
     absorptionsTest = mosaic.absorptions(mosaic.pattern > 0);
     
