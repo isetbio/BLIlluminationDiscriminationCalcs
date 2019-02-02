@@ -1,5 +1,3 @@
-[![Build Status](http://brainard-jenkins.psych.upenn.edu/buildStatus/icon?job=BLIlluminationDiscriminationCalcs)](http://brainard-jenkins.psych.upenn.edu/job/BLIlluminationDiscriminationCalcs/)
-
 # BLIlluminationDiscriminationCalcs
 BrainardLab Illumination Discrimination Calculations 
 
