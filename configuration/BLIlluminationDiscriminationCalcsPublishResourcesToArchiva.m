@@ -13,6 +13,9 @@
 % To actually make this work, you'd need write credentials to the
 % BLIlluminationDiscrminationCalcs archiva repository.
 %
+% We are not actually using archiva for data anymore, we've got it on
+% dropbox and could provide to someone who wants it.
+%
 % See also rdtExampleReadData, rdtExamplePublishData as well as the
 % RemoteDataToolbox documentation, in the wiki on
 % gitHub.com/isetbio/RemoteDataToolbox/wiki.
