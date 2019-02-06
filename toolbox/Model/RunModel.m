@@ -54,7 +54,7 @@ if exist(targetPath, 'dir') && validation == false
     if ~overWrite
         return;
     end
-else
+elseif validation == false
     rootPath = fullfile(analysisDir, 'SimpleChooserData');
     mkdir(rootPath, calcParams.calcIDStr);
 end

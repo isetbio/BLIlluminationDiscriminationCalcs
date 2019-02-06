@@ -39,7 +39,7 @@ pathToExperimentData = 'G:\Dropbox (Aguirre-Brainard Lab)\xColorShare\Xiaomao\Ex
 
 %% Preallocate some space for data
 load('FirstOrderModel_LMS_0.62_0.31_0.07_FOV1.09_PCA400_ABBA_SVM_Constant_CorrectSize_UniformModelFits.mat');
-RMSE = zeros(length(modelDataIDStrs),1);
+RMSE = zeros(length(modelDataIDStrs),2);
 
 %% Calculation and plotting loop
 figure;
@@ -92,15 +92,17 @@ for ii = 1:length(modelDataIDStrs)
         end
     end
     
-    RMSE(ii) = sqrt(sum((currentThresh(:) - meanModelThreshold(:)).^2) / length(currentThresh));
+    tempRMSE = sqrt(sum((currentThresh - cell2mat(perSubjectExperimentalThresholds)).^2,2) / length(currentThresh));
+    RMSE(ii,1) = mean(tempRMSE);
+    RMSE(ii,2) = std(tempRMSE)/sqrt(numel(tempRMSE));
     
 end
 
 %% Calculate LSE
-RMSE = zeros(length(perSubjectFittedThresholds),1);
-for i = 1:length(perSubjectFittedThresholds)
-    RMSE(i) = sqrt(sum((perSubjectFittedThresholds{i} - perSubjectExperimentalThresholds{i}).^2) / 4);
-end
+% RMSE = zeros(length(perSubjectFittedThresholds),1);
+% for i = 1:length(perSubjectFittedThresholds)
+%     RMSE(i) = sqrt(sum((perSubjectFittedThresholds{i} - perSubjectExperimentalThresholds{i}).^2) / 4);
+% end
 
 %%
 if saveData

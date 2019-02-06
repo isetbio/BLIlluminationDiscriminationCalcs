@@ -27,7 +27,7 @@ calcParams = calcParams.calcParams;
 %% Set a seed to make things run repeatably
 rng(1);
 calcParams.frozen = true;
-
+% Run below again, new validation file works without frozen noise
 fprintf('Please note that the first order model validation script will take 6-7 minutes to run\n');
 
 %% Create data sets using the simple chooser model

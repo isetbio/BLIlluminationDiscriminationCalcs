@@ -12,7 +12,7 @@ patchV = mod(patchNum, p.vNum);
 % center in the patch as the mosaic computes from the center. We the resize
 % using the patchFov input to get it into units of dva and the resize into
 % units of OI "pixels"
-oiPatch = [patchH patchV] - 1 - 0.5;
+oiPatch = [patchH patchV] - [0 1] - 0.5;
 oiPatch = oiPatch * patchFov + oiPadding;
 hw = 2 * patchFov; 
 
