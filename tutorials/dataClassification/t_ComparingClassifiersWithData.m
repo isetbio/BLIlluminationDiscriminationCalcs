@@ -62,7 +62,10 @@ rng(1);
 
 %% Using the coneMosaic object here
 mosaic = getDefaultBLIllumDiscrMosaic;
-mosaic.fov = sSize;
+%mosaic.fov = sSize;
+if (sSize ~= 1)
+    error('Standard mosaic has size of 1 and we cannot change it anymore');
+end
 
 %% Perform calculation
 for ff = 1:length(folders)

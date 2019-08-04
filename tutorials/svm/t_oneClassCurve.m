@@ -17,7 +17,10 @@ colors = {'Blue'};% 'Yellow' 'Green' 'Red'};
 
 %% Create a mosaic
 mosaic = getDefaultBLIllumDiscrMosaic;
-mosaic.fov = mosaicFOV;
+%mosaic.fov = mosaicFOV;
+if (mosaicFOV ~= 1)
+    error('Standard mosaic has size of 1 and we cannot change it anymore');
+end
 
 %% Load the standards
 [standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir('Constant_FullImage',mosaic);
