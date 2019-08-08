@@ -60,19 +60,51 @@ rng(randomSeed);
 
 %% Make mosaic
 mosaic = getDefaultBLIllumDiscrMosaic;
-% mosaic.fov = fov;
+
+%% Choose patch
+% calcIDStr       = OIFolder;
+cacheFolderList = {calcIDStr,calcIDStr};
+sensorFOV       = mosaic.fov(1);
+dataDir = getpref('BLIlluminationDiscriminationCalcs','DataBaseDir');
+fileNames         = getFilenamesInDirectory(fullfile(dataDir,'SceneData',cacheFolderList{2},'Standard'));
+tempScene         = loadSceneData([cacheFolderList{2} '/Standard'],fileNames{1}(1:end-9));
+tempOI            = loadOpticalImageData([cacheFolderList{1} '/Standard'],fileNames{1}(1:end-9));
+[~,p]   = splitSceneIntoMultipleSmallerScenes(tempScene,sensorFOV);
+
+% Get sizes of scene and OI
+scenehFov = sceneGet(tempScene,'hfov');
+scenevFov = sceneGet(tempScene,'vfov');
+oihFov = oiGet(tempOI,'hfov');
+oivFov = oiGet(tempOI,'vfov');
+oiPadding = [oihFov - scenehFov, oivFov - scenevFov] / 2;
+oiSize = oiGet(tempOI,'cols') / oihFov;
+
+oiIdx = 162; %3;162
+oiCR = convertPatchToOICropRect(oiIdx,p,oiPadding,oiSize,sensorFOV);
 
 %% Load data
-
-% Load the standard OIs and calculate isomerizations.
-[standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir(calcIDStr,mosaic);
 calcParams.frozen = 1;
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
 comparisonOIPath = fullfile(analysisDir, 'OpticalImageData',calcIDStr,'BlueIllumination');
+standardOIPath = fullfile(analysisDir, 'OpticalImageData',calcIDStr,'Standard');
+
+standardNames = getFilenamesInDirectory(standardOIPath);
 OINames = getFilenamesInDirectory(comparisonOIPath);
+
+% Load the standard OIs and calculate isomerizations.
+% [standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir(calcIDStr,mosaic);
+standard = loadOpticalImageData([calcIDStr '/' 'Standard'],strrep(standardNames{1},'OpticalImage.mat',''));
+standard = oiCrop(standard,oiCR);
+mosaic.compute(standard,'currentFlag',false);
+standardPhotons = mosaic.absorptions(mosaic.pattern > 0);
+standardPhotonPool = {standardPhotons};
+calcParams.meanStandard = mean2(standardPhotons);
+
 
 % Load the specific comparison OI and calculate photons.
 comparison = loadOpticalImageData([calcIDStr '/' 'BlueIllumination'],strrep(OINames{comparisonToPlot},'OpticalImage.mat',''));
+
+comparison = oiCrop(comparison,oiCR);
 mosaic.compute(comparison,'currentFlag',false);
 photonComparison = mosaic.absorptions(mosaic.pattern > 0);
 

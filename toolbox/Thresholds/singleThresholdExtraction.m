@@ -53,8 +53,8 @@ data           = p.Results.data(:);
 
 % Need to remove lapse rate if data does not reach 100%. Palamedes gives
 % unreasonable results otherwise.
-paramsEstimate = [10 5 0.5 0.01];
-paramsFree     = [1 1 0 0];%(mean(data(end-4:end)) > 90)]; 
+paramsEstimate = [10 3 0.5 0.0];
+paramsFree     = [1 1 0 1];%(mean(data(end-4:end)) > 90)]; 
 if length(numTrials) == 1
     numTrials       = repmat(numTrials,1,length(data));
 end

@@ -54,7 +54,7 @@ numCrossVal = 10;
 
 % The number of PCA components to use. This can be set to a vector so that
 % the script loops over all values in the vector.
-numPCA = [400 800];
+numPCA = [50 100 200 400 800];
 
 %% Frozen noise
 %
@@ -72,7 +72,7 @@ rng(1);
 % because they are what is used (generally) in the model. Tj
 % getDefaultBLIllumDiscrMosaic function returns a mosaic with these
 % parameters. We just need to resize it.
-mosaic     = getDefaultBLIllumDiscrMosaic;
+mosaic = getDefaultBLIllumDiscrMosaic;
 
 %% Pre-allocate space for results
 %
@@ -100,6 +100,7 @@ MetaData.mosaicSize      = mosaic.fov;
 % SVM and ones done by the PCA-SVM.
 SVMpercentCorrect = zeros(length(dimensions.Colors),length(dimensions.FullOrPCA),length(dimensions.IllumSteps),length(dimensions.CVAndTest));
 SVMrunTime        = zeros(length(dimensions.Colors),length(dimensions.FullOrPCA),length(dimensions.IllumSteps),length(dimensions.CVAndTest)-1);
+SVMrmse = SVMpercentCorrect;
 
 %% Calculations
 %
@@ -233,14 +234,17 @@ for colorIdx = 1:length(colors)
         
         fprintf('SVM trained in %f seconds!\n',sum(SVMrunTime(colorIdx,1,illumStepIdx,:)));
         
+        [coeff,~,~,~,explained,~] = pca(trainingData);
+        ex{colorIdx} = explained;
+        
         % Loop and perform above calculation for each numPCA.
         for numPCAIdx = 1:length(numPCA)
             tic
-            [coeff,~,~,~,explained,~] = pca(trainingData,'NumComponents',numPCA(numPCAIdx));
-            ex{colorIdx} = explained;
+            thisCoeff = coeff(:,1:numPCA(numPCAIdx));
+            projData = trainingData*thisCoeff;
             
-            pcaSVM = fitcsvm(trainingData*coeff,trainingClasses,'KernelScale','auto');
-            predictedClasses = predict(pcaSVM,testingData*coeff);
+            pcaSVM = fitcsvm(projData,trainingClasses,'KernelScale','auto');
+            predictedClasses = predict(pcaSVM,testingData*thisCoeff);
             SVMpercentCorrect(colorIdx,numPCAIdx+1,illumStepIdx,3) = sum(predictedClasses == testingClasses)/testingSetSize;
             SVMrunTime(colorIdx,numPCAIdx+1,illumStepIdx,2) = toc;
             
@@ -252,6 +256,11 @@ for colorIdx = 1:length(colors)
             SVMrunTime(colorIdx,numPCAIdx+1,illumStepIdx,1) = toc;
             
             fprintf('PCA trained in %f seconds!\n',sum(SVMrunTime(colorIdx,numPCAIdx+1,illumStepIdx,:)));
+            
+            reconstructed = projData * thisCoeff';
+            thisRMSE = sqrt( sum((reconstructed - trainingData).^2,2) / size(trainingData,2));
+            SVMrmse(colorIdx,numPCAIdx+1,illumStepIdx,1) = mean(thisRMSE);
+            SVMrmse(colorIdx,numPCAIdx+1,illumStepIdx,2) = std(thisRMSE);
         end
     end
 end

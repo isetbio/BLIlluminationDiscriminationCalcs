@@ -39,7 +39,7 @@ figParams = BLIllumDiscrFigParams([],'SVMvPCA');
 % first dimension of the data matrix. If it is not, check the MetaData
 % struct to see what went wrong.
 f = figure('Position',figParams.sqPosition); 
-
+% subplot(1,2,1);
 firstDimension = MetaData.dimensions.labels{1};
 for colorIdx = 1:length(MetaData.dimensions.(firstDimension))
     
@@ -57,11 +57,12 @@ for colorIdx = 1:length(MetaData.dimensions.(firstDimension))
     % colors in the plot. Our simple scheme just involves going around the
     % hsv color wheel in uniform steps.
     secondDimension = MetaData.dimensions.labels{2};
-    hueFracForPlot = 1/length(MetaData.dimensions.(secondDimension));
+    hueFracForPlot = 1/length(MetaData.dimensions.(secondDimension));    
     for ii = 1:length(MetaData.dimensions.(secondDimension))
         if plotCV
             h = errorbar(MetaData.dimensions.IllumSteps,squeeze(dataForThisLoop(ii,:,1))*100,squeeze(dataForThisLoop(ii,:,2))*100,...
-                'LineWidth',figParams.lineWidth,'Color',hsv2rgb([hueFracForPlot*ii,figParams.s,figParams.v]));
+                '-o','MarkerSize',10,'LineWidth',figParams.lineWidth,'Color',hsv2rgb([hueFracForPlot*ii,figParams.s,figParams.v]),...
+                'MarkerFaceColor',hsv2rgb([hueFracForPlot*ii,figParams.s,figParams.v]));
         else
             h = plot(MetaData.dimensions.IllumSteps,squeeze(dataForThisLoop(ii,:,3))*100,'LineWidth',figParams.lineWidth,...
                 'Color',hsv2rgb([hueFracForPlot*ii,figParams.s,figParams.v]));
@@ -73,10 +74,13 @@ for colorIdx = 1:length(MetaData.dimensions.(firstDimension))
     xlim(figParams.xlimit);
     ylim(figParams.ylimit);
     
+    ylim([50 100]);
+    xlim([0 20]);
+    
     % Set the title, legend, and labels
     legend([{'Full'} cellfun(@(X)num2str(X),num2cell(MetaData.dimensions.(secondDimension)(2:end)),'UniformOutput',false)],...
-        'Location','Northwest','FontSize',figParams.legendFontSize);
-    t = title(MetaData.dimensions.(firstDimension){colorIdx},'FontSize',figParams.titleFontSize);
+        'Location','Northeast','FontSize',figParams.legendFontSize);
+%     t = title(MetaData.dimensions.(firstDimension){colorIdx},'FontSize',figParams.titleFontSize);
     xl = xlabel('Stimulus Level (\DeltaE)','FontSize',figParams.labelFontSize);
     yl = ylabel('% Correct','FontSize',figParams.labelFontSize);
     
@@ -103,9 +107,23 @@ for colorIdx = 1:length(MetaData.dimensions.(firstDimension))
 %     set(inset,'TickLength',figParams.insetTickLength);
 %     set(inset,'FontName',figParams.fontName,'FontSize',figParams.insetAxisFontSize,'LineWidth',figParams.insetAxisLineWidth);
 %     set(inset,'FontWeight','bold');
-    ixl = xlabel('Illum Level','FontSize',figParams.insetTitleFontSize);
-    ixl.Position = ixl.Position + figParams.insetDeltaXLabelPos;
+%     ixl = xlabel('Illum Level','FontSize',figParams.insetTitleFontSize);
+%     ixl.Position = ixl.Position + figParams.insetDeltaXLabelPos;
 end
+
+%%
+subplot(1,2,2);
+hold on;
+for ii = 1:size(SVMrmse,3)
+errorbar(MetaData.dimensions.FullOrPCA(2:end), squeeze(SVMrmse(1,2:end,ii,1)),squeeze(SVMrmse(1,2:end,ii,2)),...
+    'linewidth',figParams.lineWidth);
+end
+xl = xlabel('Num Components','FontSize',figParams.labelFontSize);
+yl = ylabel('RMSE','FontSize',figParams.labelFontSize);
+set(gca,'FontName',figParams.fontName,'FontSize',figParams.axisFontSize,'LineWidth',figParams.axisLineWidth);
+axis square;
+box off
+xlim([0 900]);
 
 %% Save the figure
 if saveFig, FigureSave(fileName,f,figParams.figType); end;

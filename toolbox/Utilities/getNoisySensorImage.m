@@ -47,6 +47,9 @@ end
 [~,nP] = coneMosaic.photonNoise(isomerizations, 'noiseFlag', noiseFlag);
 
 % Get the Gaussian noise
+% if strcmp(noiseFlag,'frozen')
+%     rng(1);
+% end
 nG = sqrt(calcParams.meanStandard) * randn(size(isomerizations));
 
 % Add noise back with multipliers

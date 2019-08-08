@@ -22,8 +22,8 @@ figParams = BLIllumDiscrFigParams([],'sThreshold');
 
 % We'll also extract some parameters based on what is specified in the
 % plotInfo struct here.
-if isempty(plotInfo.stimLevels), plotInfo.stimLevels = 1:length(data); end;
-if ~isempty(plotInfo.fitColor), figParams.defaultFitLineColor = plotInfo.fitColor; end;
+if isempty(plotInfo.stimLevels), plotInfo.stimLevels = 1:length(data); end
+if ~isempty(plotInfo.fitColor), figParams.defaultFitLineColor = plotInfo.fitColor; end
 
 % Create a finely spaced data vector to generate data points along a curve for plotting.
 % stimLevelsFine = min(plotInfo.stimLevels):(max(plotInfo.stimLevels)-min(plotInfo.stimLevels))/1000:max(plotInfo.stimLevels);
