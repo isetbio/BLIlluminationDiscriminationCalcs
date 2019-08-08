@@ -38,7 +38,10 @@ numPCA = 400;
 % resize the OI according to the specifications in the parameters set above
 % at the top of the script.
 mosaic = getDefaultBLIllumDiscrMosaic;
-mosaic.fov = mosaicSizeInDegrees;
+%mosaic.fov = mosaicSizeInDegrees;
+if (mosaicSizeInDegrees ~= 1)
+    error('Standard mosaic has size of 1 and we cannot change it anymore');
+end
 
 %% Load the standards
 %

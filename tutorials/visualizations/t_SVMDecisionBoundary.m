@@ -60,6 +60,11 @@ rng(randomSeed);
 
 %% Make mosaic
 mosaic = getDefaultBLIllumDiscrMosaic;
+% The default mosaic is 1 degree and we can no longer
+% change it.  Since this is a tutorial we don't mind
+% too much, even though 1.1 appears to be the size
+% we wanted.
+% mosaic.fov = fov;
 
 %% Choose patch
 % calcIDStr       = OIFolder;

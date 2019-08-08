@@ -20,7 +20,6 @@ numPCA = 400;
 
 %% Make mosaic
 mosaic = getDefaultBLIllumDiscrMosaic;
-mosaic.fov = 1;
 
 %% Load data
 [standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir(calcIDStr,mosaic);

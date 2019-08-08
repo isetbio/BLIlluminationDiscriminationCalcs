@@ -57,8 +57,10 @@ for nn = 1:length(dataToLoad)
         title(cl{kk});
         axis square;
     end
-    st = suptitle(strrep(dataToLoad{nn},'_','\_'));
-    set(st,'FontSize', 30);
+    if (exist('suptitle','file'))
+    	st = suptitle(strrep(dataToLoad{nn},'_','\_'));
+    	set(st,'FontSize', 30);
+    end
     
     % Save the plot if desired
     if savePlots, FigureSave(fullfile(getpref('BLIlluminationDiscriminationCalcs', 'AnalysisDir'), 'Plots',dataToLoad{nn}),gcf,'pdf'); end
