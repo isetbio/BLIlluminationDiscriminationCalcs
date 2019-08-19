@@ -48,7 +48,7 @@ end
 % Load the standard OI from an arbitrary OI set. In this case, it is the
 % Constant_FullImage OI's. It doesn't really matter what we load it from
 % because we are testing the SVM performance between two identical classes.
-[standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir('Constant_FullImage',mosaic);
+[standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir('Constant_CorrectSize',mosaic);
 
 %% Perform classification
 kp = 1; kg = 0;

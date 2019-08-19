@@ -63,12 +63,12 @@ mosaic.os.timeStep     = integrationTimeInSeconds;
 % Load optical images we will use. One standard OI and one comparison OI
 % will be loaded for this script.
 analysisDir    = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
-folderPath     = fullfile(analysisDir,'OpticalImageData','Neutral','Standard');
+folderPath     = fullfile(analysisDir,'OpticalImageData','Neutral_CorrectSize','Standard');
 standardOIList = getFilenamesInDirectory(folderPath);
 standardOIPool = cell(1, length(standardOIList));
 
-OI = loadOpticalImageData('Neutral/Standard',strrep(standardOIList{1},'OpticalImage.mat',''));
-OI2 = loadOpticalImageData('Neutral/BlueIllumination',['blue' num2str(comparisonStimLevel) 'L-RGB']);
+OI = loadOpticalImageData('Neutral_CorrectSize/Standard',strrep(standardOIList{1},'OpticalImage.mat',''));
+OI2 = loadOpticalImageData('Neutral_CorrectSize/BlueIllumination',['blue' num2str(comparisonStimLevel) 'L-RGB']);
 
 % Get the LMS absorptions for both OI. Also calculate what the standard
 % deviation for the Gaussian noise should be based on the absorptions in
@@ -115,7 +115,7 @@ conesMatch = mosaic.pattern == coneTypeToMatch;
 maxVal = 0;
 idx = 0;
 for zz = 1:length(coneRow)
-    tVal = norm(squeeze(isomerizationData(coneRow(zz),coneCol(zz),:)-isomerizationData2(coneRow(zz),coneCol(zz),:)));
+    tVal = norm(squeeze(isomerizationData(:,coneRow(zz),coneCol(zz),:)-isomerizationData2(coneRow(zz),coneCol(zz),:)));
     if  tVal > maxVal
         maxVal = tVal;
         idx = zz;
@@ -134,7 +134,7 @@ xaxis = integrationTimeInSeconds:integrationTimeInSeconds:numberOfEMPositions*in
 % white noise.
 figure('Position',[100 100 1600 1000]);
 subplot(2,1,1); hold on;
-theIsomerizationToPlot = squeeze(isomerizationData(coneRow,coneCol,:))';
+theIsomerizationToPlot = squeeze(isomerizationData(:,coneRow,coneCol,:))';
 theIsomerizationToPlotWithNoise = coneMosaic.photonNoise(repmat(theIsomerizationToPlot,numberOfSamples,1));
 theIsomerizationToPlotWithNoise = theIsomerizationToPlotWithNoise + ...
     isomNoiseFactor * gaussianStd * randn(size(theIsomerizationToPlotWithNoise));
@@ -271,7 +271,7 @@ conesMatch = mosaic.pattern == coneTypeToMatch;
 [coneRow, coneCol] = find(conesMatch);
 figure('Position',figParams.sqPosition); hold on;
 for ii = 1:length(coneRow)
-    theIsomerizationToPlot = squeeze(isomerizationData(coneRow(ii),coneCol(ii),:));
+    theIsomerizationToPlot = squeeze(isomerizationData(:,coneRow(ii),coneCol(ii),:));
     h1 = plot(xaxis,theIsomerizationToPlot,'r','LineWidth',3);
     h1.Color(4) = 0.5;
     

@@ -13,7 +13,7 @@ clear; close all;
 %% Parameters to set
 %
 % String to define set of model calculations to use for this script.
-calcIDStr = 'Constant_FullImage';
+calcIDStr = 'Constant_CorrectSize';
 
 % Number of PCA components to calculate.
 numPCA = 400;
@@ -43,7 +43,8 @@ testingDataOnlyOneTarget(1:numberOfSamplesPerStep,:) = df3_noABBA(calcParams,sta
 for ii = 2:length(OINames)+1
     tic
     comparison = loadOpticalImageData([calcIDStr '/' 'BlueIllumination'], strrep(OINames{ii-1}, 'OpticalImage.mat', ''));
-    photonComparison = mosaic.compute(comparison,'currentFlag',false);
+    mosaic.compute(comparison,'currentFlag',false);
+    photonComparison = mosaic.absorptions(mosaic.pattern > 0);
     
     startIdx = 1 + (ii-1) * numberOfSamplesPerStep;
     endIdx = ii * numberOfSamplesPerStep;

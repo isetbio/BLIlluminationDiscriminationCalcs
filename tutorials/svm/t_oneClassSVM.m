@@ -32,7 +32,7 @@ if (mosaicFOV ~= 1)
 end
 
 %% Load the standards
-[standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir('Neutral_FullImage',mosaic);
+[standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir('Neutral_CorrectSize',mosaic);
 
 %% Generate Data
 [trainingData,trainingClasses] = df3_noABBA(calcParams,standardPhotonPool,standardPhotonPool,1,kg,trainingSetSize);
@@ -53,7 +53,7 @@ totalNumTrials = 0;
 for runNumber = 1:repeats
     for colorIdx = 1:length(colors)
         colorDir = [colors{colorIdx} 'Illumination'];
-        comparisonOIPath = fullfile(analysisDir, 'OpticalImageData', 'Neutral_FullImage', colorDir);
+        comparisonOIPath = fullfile(analysisDir, 'OpticalImageData', 'Neutral_CorrectSize', colorDir);
         OINames = getFilenamesInDirectory(comparisonOIPath);
         
         for stairStart = 1:length(staircaseStartingPoints)
@@ -68,8 +68,9 @@ for runNumber = 1:repeats
             tic
             while flips < numOfFlips
                 % Probably most time consuming step? Pre-calc and profit?
-                comparison = loadOpticalImageData(['Neutral_FullImage' '/' colorDir], strrep(OINames{illumStep}, 'OpticalImage.mat', ''));
-                photonComparison = mosaic.compute(comparison,'currentFlag',false);
+                comparison = loadOpticalImageData(['Neutral_CorrectSize' '/' colorDir], strrep(OINames{illumStep}, 'OpticalImage.mat', ''));
+                mosaic.compute(comparison,'currentFlag',false);
+                photonComparison = mosaic.absorptions(mosaic.pattern > 0);
                 
                 testingData = df3_noABBA(calcParams,standardPhotonPool,{photonComparison},1,kg,2);
                 

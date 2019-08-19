@@ -52,16 +52,16 @@ emMosaic.os = osCreate(emMosaicParams.osType);
 
 % Load all target scene sensors
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
-folderPath = fullfile(analysisDir,'OpticalImageData','Neutral','Standard');
+folderPath = fullfile(analysisDir,'OpticalImageData','Neutral_CorrectSize','Standard');
 standardOIList = getFilenamesInDirectory(folderPath);
 
 standardOIPool = cell(1, length(standardOIList));
 calcParams.meanStandard = 0;
 for jj = 1:length(standardOIList)
-    standardOIPool{jj} = loadOpticalImageData('Neutral/Standard',strrep(standardOIList{jj},'OpticalImage.mat',''));
+    standardOIPool{jj} = loadOpticalImageData('Neutral_CorrectSize/Standard',strrep(standardOIList{jj},'OpticalImage.mat',''));
 end
 
-comparisonOI = loadOpticalImageData('Neutral/BlueIllumination','blue1L-RGB');
+comparisonOI = loadOpticalImageData('Neutral_CorrectSize/BlueIllumination','blue1L-RGB');
 
 %% Calculations
 %

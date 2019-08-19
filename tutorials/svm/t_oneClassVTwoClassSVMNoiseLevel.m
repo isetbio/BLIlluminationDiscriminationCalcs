@@ -25,16 +25,17 @@ if (mosaicFOV ~= 1)
 end
 
 %% Load Standard
-[standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir('Constant_1',mosaic);
+[standardPhotonPool,calcParams] = calcPhotonsFromOIInStandardSubdir('Constant_CorrectSize',mosaic);
 
 %% Load a comparison
 colorDir = 'BlueIllumination';
 illumStep = 10;
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
-comparisonOIPath = fullfile(analysisDir, 'OpticalImageData', 'Constant_1', colorDir);
+comparisonOIPath = fullfile(analysisDir, 'OpticalImageData', 'Constant_CorrectSize', colorDir);
 OINames = getFilenamesInDirectory(comparisonOIPath);
-comparison = loadOpticalImageData(['Constant_1' '/' colorDir], strrep(OINames{illumStep}, 'OpticalImage.mat', ''));
-photonComparison = mosaic.compute(comparison,'currentFlag',false);
+comparison = loadOpticalImageData(['Constant_CorrectSize' '/' colorDir], strrep(OINames{illumStep}, 'OpticalImage.mat', ''));
+mosaic.compute(comparison,'currentFlag',false);
+photonComparison = mosaic.absorptions(mosaic.pattern > 0);
 comparisonPhotonPool = {photonComparison};
 
 %% Generate Data

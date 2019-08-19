@@ -40,7 +40,7 @@ additionalNamingText = '_NewOI';
 
 % Just some variables that tell the script which folders and data files to use
 colors  = {'Blue' 'Yellow' 'Red' 'Green'};
-folders = {'Neutral'};
+folders = {'Constant_CorrectSize'};
 
 % These variables specify the number of illumination steps and the noise
 % multipliers to use. Generally keep the number of steps constant and vary
@@ -79,7 +79,8 @@ for ff = 1:length(folders)
     calcParams.meanStandard = 0;
     for jj = 1:length(standardOIList)
         standardOI = loadOpticalImageData([folders{ff} '/Standard'],strrep(standardOIList{jj},'OpticalImage.mat',''));
-        standardPhotonPool{jj} = mosaic.compute(standardOI,'currentFlag',false);
+        mosaic.compute(standardOI,'currentFlag',false);
+        standardPhotonPool{jj} = mosaic.absorptions(mosaic.pattern > 0);
         calcParams.meanStandard = calcParams.meanStandard + mean2(standardPhotonPool{jj}) / length(standardOIList);
     end
     
@@ -101,7 +102,8 @@ for ff = 1:length(folders)
             
             % Load the OI for this illumination step
             comparison = loadOpticalImageData([folders{ff} '/' colors{cc} 'Illumination'],strrep(OINames{kk},'OpticalImage.mat',''));
-            photonComparison = mosaic.compute(comparison,'currentFlag',false);
+            mosaic.compute(comparison,'currentFlag',false);
+            photonComparison = mosaic.absorptions(mosaic.pattern > 0);
             
             tic
             for nn = 1:length(noiseSteps)

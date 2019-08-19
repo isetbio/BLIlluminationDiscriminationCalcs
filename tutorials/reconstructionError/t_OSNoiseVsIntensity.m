@@ -24,7 +24,7 @@ numberOfEMPositions = 1000;
 % We load the scene file because we need to reduce the intensity of image.
 % We do this by dividing the original number of photons by 10 and then
 % calculating the OI using human optics.
-originalScene = loadSceneData('Neutral_FullImage/Standard','TestImage0');
+originalScene = loadSceneData('Neutral_CorrectSize/Standard','TestImage0');
 reducedIntensityScene = originalScene;
 reducedIntensityScene = sceneSet(reducedIntensityScene,'photons',sceneGet(originalScene,'photons')/10);
 

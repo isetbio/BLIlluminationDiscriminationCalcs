@@ -4,11 +4,10 @@ clear; close all;
 %%
 dataDir = getpref('BLIlluminationDiscriminationCalcs','DataBaseDir');
 analysisDir = getpref('BLIlluminationDiscriminationCalcs','AnalysisDir');
-calcIDStr = 'Constant_CorrectSize_Blue';
+calcIDStr = 'Constant_CorrectSize';
 
 %%
-mosaic = load(fullfile(dataDir,'MosaicData','theHexMosaic1.10degs.mat'));
-mosaic = mosaic.theHexMosaic;
+mosaic = getDefaultBLIllumDiscrMosaic;
 mosaic.noiseFlag = 'none';
 
 %%
@@ -16,7 +15,7 @@ standardOI = getFilenamesInDirectory(fullfile(analysisDir,'OpticalImageData',cal
 
 meanStandard = 0;
 for ii = 1:length(standardOI)
-    oi = loadOpticalImageData('Constant_CorrectSize_Blue/Standard',standardOI{ii}(1:end-16));
+    oi = loadOpticalImageData('Constant_CorrectSize/Standard',standardOI{ii}(1:end-16));
     
     mosaic.compute(oi,'currentFlag',false);
     absorptionsStandard = mosaic.absorptions(mosaic.pattern > 0);
@@ -29,7 +28,7 @@ blueOI = getFilenamesInDirectory(fullfile(analysisDir,'OpticalImageData',calcIDS
 
 blueDist = zeros(length(blueOI),1);
 for ii = 1:length(blueOI)
-    oi = loadOpticalImageData('Constant_CorrectSize_Blue/BlueIllumination',blueOI{ii}(1:end-16));
+    oi = loadOpticalImageData('Constant_CorrectSize/BlueIllumination',blueOI{ii}(1:end-16));
     
     mosaic.compute(oi,'currentFlag',false);
     absorptionsBlue = mosaic.absorptions(mosaic.pattern > 0);
