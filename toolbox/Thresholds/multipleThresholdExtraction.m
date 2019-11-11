@@ -27,7 +27,7 @@ function [thresholds,paramsValues,stimLevels] = multipleThresholdExtraction(data
 % 6/19/17  xd  update to use true delta E vals
 
 p = inputParser;
-defaultIlluminantPath = fullfile(getpref('BLIlluminationDiscriminationCalcs','SharedRootDir'),'xColorShare','Xiaomao','IlluminantsInDeltaE.mat');
+defaultIlluminantPath = fullfile(getpref('BLIlluminationDiscriminationCalcs','SharedRootDir'),'ColorShare','Xiaomao','IlluminantsInDeltaE.mat');
 
 p.addRequired('data',@isnumeric);
 p.addOptional('criterion',70.71,@isnumeric);
