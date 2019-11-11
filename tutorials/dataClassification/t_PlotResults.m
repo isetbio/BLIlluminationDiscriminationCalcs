@@ -10,7 +10,7 @@
 clear; %close all;
 
 % dataToLoad specifies the file name(s) to load.
-dataToLoad = {'ClassifierAnalysis_1000_1000_std_Neutral_NewOI'};
+dataToLoad = {'ClassifierAnalysis_1000_1000_std_Constant_NewOI'};
 
 savePlots = false;
 

@@ -45,7 +45,7 @@ emMosaic.emPositions = zeros(emMosaicParams.numberOfEMPositions,2);
 %
 % We load an arbitrary optical image used in the model. The results in this
 % script should hold irregardless of OI choice.
-OI = loadOpticalImageData('Constant_1/Standard','CT1blue0-RGB');
+OI = loadOpticalImageData('Constant_CorrectSize/Standard','CT1blue0-RGB');
 
 %% Calculate NF Isomerizations
 

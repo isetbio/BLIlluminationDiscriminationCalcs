@@ -148,7 +148,7 @@ for ff = 1:length(folders)
                          strtok(folders{ff},'_'),additionalNamingText);
     fullSavePath = fullfile(analysisDir,'ClassifierComparisons',nameOfFile);
     save(fullSavePath,'DApercentCorrect','NNpercentCorrect','SVMpercentCorrect',...
-        'Colors','NoiseSteps');
+        'colors','noiseSteps');
 
 end
 
