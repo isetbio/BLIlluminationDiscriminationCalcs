@@ -104,7 +104,7 @@ calcParams.rowPadding = 0;
 calcParams.colPadding = 0;
 calcParams.useSameEMPath = true;
 calcParams.coneIntegrationTime = emMosaicParams.integrationTimeInSeconds;
-calcParams.em = emCreate;
+calcParams.em = fixationalEM;
 
 EMStandardIsomerizations = cellfun(@(X)emMosaic.computeSingleFrame(X,'FullLMS',true),standardOIPool,'UniformOutput',false);
 EMComparisonIsomerizations = emMosaic.computeSingleFrame(comparisonOI,'FullLMS',true);
