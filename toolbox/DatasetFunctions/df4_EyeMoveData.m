@@ -45,14 +45,14 @@ for ii = 1:n/2
     
     % Make sure EM is not out of bounds of our image, maybe this should be
     % the other way around?
-    tempEM = mosaic.emPositions;
+    tempEM = squeeze(mosaic.emPositions);
     outOfBoundsX = abs(tempEM(:,1)) > calcParams.rowPadding;
     outOfBoundsY = abs(tempEM(:,2)) > calcParams.colPadding;
     tempEM(outOfBoundsX,1) = sign(tempEM(outOfBoundsX,1)) * calcParams.rowPadding;
     tempEM(outOfBoundsY,2) = sign(tempEM(outOfBoundsY,2)) * calcParams.colPadding;
     mosaic.emPositions = tempEM;
-    
     isomerizations = mosaic.applyEMPath(targetPool{randsample(numel(targetPool),1)},...
+        'emPath', squeeze(mosaic.emPositions), ...
         'padRows',calcParams.rowPadding,'padCols',calcParams.colPadding);
     if calcParams.enableOS
         mosaic.absorptions = isomerizations;
@@ -66,7 +66,7 @@ for ii = 1:n/2
         mosaic.emGenSequence(calcParams.numEMPositions,'em',calcParams.em);
         % Make sure EM is not out of bounds of our image, maybe this should be
         % the other way around?
-        tempEM = mosaic.emPositions;
+        tempEM = squeeze(mosaic.emPositions);
         outOfBoundsX = abs(tempEM(:,1)) > calcParams.rowPadding;
         outOfBoundsY = abs(tempEM(:,2)) > calcParams.colPadding;
         tempEM(outOfBoundsX,1) = sign(tempEM(outOfBoundsX,1)) * calcParams.rowPadding;
@@ -75,7 +75,9 @@ for ii = 1:n/2
     end
     
     % Generate the data using the comparison stimulus
-    isomerizations = mosaic.applyEMPath(comparisonPool{1},'padRows',calcParams.rowPadding,'padCols',calcParams.colPadding);
+    isomerizations = mosaic.applyEMPath(comparisonPool{1},...
+        'emPath', squeeze(mosaic.emPositions), ...
+        'padRows',calcParams.rowPadding,'padCols',calcParams.colPadding);
     if calcParams.enableOS
         mosaic.absorptions = isomerizations;
         isomerizations = mosaic.os.compute(mosaic);
