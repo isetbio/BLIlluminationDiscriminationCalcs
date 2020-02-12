@@ -11,4 +11,6 @@ The BLIlluminationDiscriminationCalcs project is (c) 2015 by the developers.  Th
 
 If you make use of this code in a published research, you should cite this project. Please contact David Brainard (brainard@psych.upenn.edu) for the appropriate current citation.
 
+Note: We have a validation suite for this repository, but it requires a dataset that you would have to ask us for separately.
+
 
